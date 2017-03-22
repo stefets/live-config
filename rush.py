@@ -20,10 +20,10 @@ def NavigateToScene(ev):
     nb_scenes = len(scenes())    
     if ev.ctrl == 20:
         cs=current_scene()
-        if ev.value == 0:
+        if ev.value == 1:
             if cs < nb_scenes:
                 switch_scene(cs+1)
-        elif ev.value == 1:
+        elif ev.value == 0:
             if cs > 1:
                 switch_scene(cs-1)
         elif ev.value == 2:
@@ -37,7 +37,8 @@ _post = Print('output', portnames='out')
 # Controller pour le changement de scene
 _control = Filter(CTRL) >> CtrlFilter(20) >> Process(NavigateToScene)
 
-_intro = Output('Q49', channel=1, program=22, volume=100)
+# Patch bidon pour intro
+_intro = Output('Q49', channel=1, program=1, volume=100)
 
 # Patch Synth. generique pour Barchetta, FreeWill, Limelight etc...
 keysynth =  Velocity(fixed=80) >> Output('PK5', channel=1, program=82, volume=100, ctrls={93:75, 91:75})
@@ -49,13 +50,13 @@ closer_main = KeySplit('c3', closer_base, closer_high)
 
 _scenes = {
     1: Scene("Intro", _intro),
-    2: Scene("MP3", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 /mnt/flash/root/online.mp3")),
+    2: Scene("MP3", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/voice1.mp3")),
     3: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> keysynth),
     4: Scene("FreeWill", Transpose(12) >> LatchNotes(False,reset='E4') >> keysynth),
     5: Scene("CloserToTheHeart", closer_main),
     6: SceneGroup("2112", [
-           Scene("Intro",  Filter(CTRL) >> CtrlSplit({ 21: System("mpg123 /mnt/flash/rush/2112.mp3")})),
-           Scene("Explosion",  Filter(CTRL) >> CtrlSplit({ 21: System("mpg123 /mnt/flash/alert.mp3")})),
+           Scene("Intro",  Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/rush/2112.mp3")),
+           Scene("Explosion",  Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/voice1.mp3")),
        ]),
 }
 
