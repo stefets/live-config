@@ -55,7 +55,7 @@ closer_main = KeySplit('c3', closer_base, closer_high)
 explosion = Velocity(fixed=127) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=120)
 
 _scenes = {
-    1: Scene("Debug", explosion),
+    1: Scene("Debug", Transpose(-29) >> LatchNotes(False,reset='G0') >> lowsynth),
     2: Scene("MP3", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/voice1.mp3")),
     3: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> keysynth),
     4: Scene("FreeWill", Transpose(12) >> LatchNotes(False,reset='E4') >> keysynth),
@@ -73,7 +73,7 @@ _scenes = {
 run(
     control=_control,
     pre=_pre, 
-#    post=_post,
+    post=_post,
     scenes=_scenes, 
 )
 
