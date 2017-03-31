@@ -4,6 +4,7 @@
 from mididings import *
 from mididings.extra import *
 from mididings.engine import *
+from mididings.event import *
 
 config(
 
@@ -11,12 +12,16 @@ config(
 
     out_ports = [ 
         ('Q49', '20:0','.*SD-90 Part A'),
-        ('PK5', '20:0','.*SD-90 Part A') ],
+        ('PK5', '20:0','.*SD-90 Part A'),
+        ('Thru', '20:0','.*SD-90 Part A') ],
 
     in_ports = [ 
         ('MidiDings IN 1', '20:2','.*SD-90 MIDI 1'),
         ('MidiDings IN 2', '20:3','.*SD-90 MIDI 2') ],
 )
+
+def SendSysex(ev):
+    return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
 
 # Scene navigation
 def NavigateToScene(ev):
@@ -33,13 +38,15 @@ def NavigateToScene(ev):
             #TODO - wrap subscene
             css=current_subscene()
             switch_subscene(css+1)
-    
+    elif ev.ctrl == 24:
+        restart()    
+
 # Pre/Post
 _pre = Print('input', portnames='in')
 _post = Print('output', portnames='out')
 
 # Controller pour le changement de scene
-_control = Filter(CTRL) >> CtrlFilter(20) >> Process(NavigateToScene)
+_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20) >> Process(NavigateToScene)
 
 # Play Switch (ToTry)
 #play = Filter(CTRL) >> CtrlFilter(21)
@@ -67,11 +74,13 @@ tss_foot_right = Transpose(-36) >> Velocity(fixed=100) >> Output('PK5', channel=
 tss_foot_main = KeySplit('d#3', tss_foot_left, tss_foot_right)
 
 # Patch debug
-debug = Output('PK5', channel=1, program=((99*128), 1), volume=100)
+#debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
+debug=Filter(NOTE) >> Process(SendSysex)
 
 # Liste des scenes
 _scenes = {
-    6: Scene("Debug", debug),
+    1: Scene("Initialize",  debug),
+    #1: Scene("Initialize",  Process(SendSysex)),
     2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> keysynth),
     3: Scene("FreeWill", Transpose(12) >> LatchNotes(False,reset='E4') >> keysynth),
     4: Scene("CloserToTheHeart", closer_main),
@@ -79,7 +88,7 @@ _scenes = {
            Scene("Bridge",  Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/rush/trees_full.mp3")),
            Scene("Synth", Transpose(-29) >> LatchNotes(False,reset='G0') >> lowsynth),
        ]),
-    1: SceneGroup("Time Stand Still", [
+    6: SceneGroup("Time Stand Still", [
            Scene("Q49@ch1 & PK5@ch2", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
        ]),
     7: SceneGroup("2112", [
