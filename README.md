@@ -1,2 +1,2 @@
-# rush-project
-Configuration MIDI du projet Rush
+# midi configuration
+Configuration for the mididings engine
