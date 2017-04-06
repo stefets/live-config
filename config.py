@@ -28,18 +28,18 @@ def NavigateToScene(ev):
     nb_scenes = len(scenes())    
     if ev.ctrl == 20:
         cs=current_scene()
-        if ev.value == 1:
+        if ev.value == 2:
             if cs < nb_scenes:
                 switch_scene(cs+1)
-        elif ev.value == 0:
+        elif ev.value == 1:
             if cs > 1:
                 switch_scene(cs-1)
-        elif ev.value == 2:
+        elif ev.value == 3:
             #TODO - wrap subscene
             css=current_subscene()
             switch_subscene(css+1)
-    elif ev.ctrl == 24:
-        restart()    
+        elif ev.value == 3:
+            restart()    
 
 # Pre/Post
 _pre = Print('input', portnames='in')
@@ -52,7 +52,7 @@ _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20) >> Process(Navigat
 #play = Filter(CTRL) >> CtrlFilter(21)
 
 # FX
-explosion = Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
+explosion = Velocity(fixed=80) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
 
 # Patch Synth. generique pour Barchetta, FreeWill, Limelight etc...
 keysynth = Velocity(fixed=80) >> Output('PK5', channel=1, program=((99*128),82), volume=100, ctrls={93:75, 91:75})
@@ -69,18 +69,18 @@ closer_main = KeySplit('c3', closer_base, closer_high)
 tss_high = Velocity(fixed=90) >> Output('Q49', channel=1, program=((99*128),92), volume=100)
 tss_base = Transpose(12) >> Velocity(fixed=90) >> Output('Q49', channel=1, program=((99*128),92), volume=100)
 tss_keyboard_main = KeySplit('c2', tss_base, tss_high)
-tss_foot_left = Transpose(-24) >> Velocity(fixed=100) >> Output('PK5', channel=2, program=((99*128),103), volume=100)
-tss_foot_right = Transpose(-36) >> Velocity(fixed=100) >> Output('PK5', channel=2, program=((99*128),103), volume=100)
+tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=75)
+tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=75)
 tss_foot_main = KeySplit('d#3', tss_foot_left, tss_foot_right)
 
 # Patch debug
 #debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
-debug=Filter(NOTE) >> Process(SendSysex)
+
+initialize=Filter(NOTE) >> Filter(NOTEON) >> KeyFilter("c-2") >> Process(SendSysex)
 
 # Liste des scenes
 _scenes = {
-    1: Scene("Initialize",  debug),
-    #1: Scene("Initialize",  Process(SendSysex)),
+    1: Scene("Initialize",  initialize),
     2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> keysynth),
     3: Scene("FreeWill", Transpose(12) >> LatchNotes(False,reset='E4') >> keysynth),
     4: Scene("CloserToTheHeart", closer_main),
@@ -94,13 +94,29 @@ _scenes = {
     7: SceneGroup("2112", [
            Scene("Intro", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/rush/2112.mp3")),
            Scene("Explosion", explosion),
+       ]),
+    8: SceneGroup("Bass cover", [
+           Scene("Toto - Rossana", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/toto_rossana_no_bass.mp3")),
+           Scene("Toto - Africa", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/toto_africa_no_bass.mp3")),
+           Scene("Yes - Owner of a lonely heart", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/yes_owner_lonely_heart.mp3")),
+           Scene("Queen - I want to break free", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/queen_want_break_free.mp3")),
+           Scene("Queen - Under Pressure", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/queen_under_pressure.mp3")),
+           Scene("Queen - Crazy little thing called love", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/queen_crazy_little_thing_called_love.mp3")),
+           Scene("Queen - Another one bites the dust", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/queen_another_on_bites_dust.mp3")),
+           Scene("ZZ Top - Sharp dressed man", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/zz_top_sharp_dressed_man.mp3")),
+           Scene("Tears for fears - Head over heels", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/t4f_head_over_heels.mp3")),
+           Scene("Tears for fears - Everybody wants to rule the world", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/t4f_everybody.mp3")),
+           Scene("Police - Walking on the moon", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/police_walking_moon.mp3")),
+           Scene("Police - Message in a bottle", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/police_message_bottle.mp3")),
+           Scene("Led Zeppelin - Rock and roll", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/led_zeppelin_rock_and_roll.mp3")),
+           Scene("Bon Jovi - Livin on a prayer", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/bon_jovi_prayer.mp3")),
        ])
 }
 
 # ---------------------------
 run(
     control=_control,
-    pre=_pre, 
+    #pre=_pre, 
     #post=_post,
     scenes=_scenes, 
 )
