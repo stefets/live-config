@@ -12,13 +12,29 @@ config(
 
     out_ports = [ 
         ('Q49', '20:0','.*SD-90 Part A'),
-        ('PK5', '20:0','.*SD-90 Part A'),
-        ('Thru', '20:0','.*SD-90 Part A') ],
+        ('PK5', '20:0','.*SD-90 Part A'), ],
 
     in_ports = [ 
-        ('MidiDings IN 1', '20:2','.*SD-90 MIDI 1'),
-        ('MidiDings IN 2', '20:3','.*SD-90 MIDI 2') ],
+        ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
+        ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
+
+    initial_scene = 1,
 )
+
+
+def Chord(ev):
+    if ev.data1 == 65:
+        return [ CtrlEvent(ev.port, ev.channel, 120, 0),
+                 NoteOnEvent(ev.port, ev.channel, ev.data1, ev.data2), 
+                 NoteOnEvent(ev.port, ev.channel, ev.data1+4, ev.data2), 
+                 NoteOnEvent(ev.port, ev.channel, ev.data1+7, ev.data2) ]
+    elif ev.data1 == 67:
+        return [ CtrlEvent(ev.port, ev.channel, 120, 0),
+				 NoteOnEvent(ev.port, ev.channel, ev.data1, ev.data2), 
+                 NoteOnEvent(ev.port, ev.channel, ev.data1+4, ev.data2), 
+                 NoteOnEvent(ev.port, ev.channel, ev.data1+7, ev.data2) ]
+    else:
+        return CtrlEvent(ev.port, ev.channel, 120, 0)
 
 def SendSysex(ev):
     return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
@@ -73,10 +89,12 @@ tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('PK5', channel=2,
 tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=75)
 tss_foot_main = KeySplit('d#3', tss_foot_left, tss_foot_right)
 
+# Patch pour Analog Kid
+analogkid_chord=Filter(NOTE) >> Filter(NOTEON) >> Process(Chord) >> Transpose(-24) >> Output('Q49', channel=1, program=((99*128),92), volume=100)
+
 # Patch debug
 #debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
 
-initialize=Filter(NOTE) >> Filter(NOTEON) >> KeyFilter("c-2") >> Process(SendSysex)
 
 # Liste des scenes
 _scenes = {
@@ -116,8 +134,8 @@ _scenes = {
 # ---------------------------
 run(
     control=_control,
-    #pre=_pre, 
-    #post=_post,
+    pre=_pre, 
+    post=_post,
     scenes=_scenes, 
 )
 # ---------------------------
