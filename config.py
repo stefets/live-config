@@ -32,7 +32,6 @@ def Chord(ev, trigger_notes=(41, 43), chord_offsets=(0, 4, 7)):
                     for i in chord_offsets]
     return ev
 #--------------------------------------------------------------------
-
 # For SD-90 only
 def SendSysex(ev):
     return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
@@ -50,11 +49,22 @@ def NavigateToScene(ev):
             if cs > 1:
                 switch_scene(cs-1)
         elif ev.value == 3:
-            #TODO - wrap subscene
             css=current_subscene()
-            switch_subscene(css+1)
+            nb_subscenes = len(scenes()[cs][1])
+            if nb_subscenes > 0 and css < nb_subscenes:
+                switch_subscene(css+1)
+            else:
+                switch_subscene(1)
     elif ev.ctrl == 22:
         subprocess.Popen(['/bin/bash', './kill.sh'])
+        switch_scene(1)
+
+#--------------------------------------------------------------------
+
+def Debug(ev):
+    s=scenes()[4]
+    print len(s[1])
+#--------------------------------------------------------------------
 
 # Pre/Post
 _pre = Print('input', portnames='in')
@@ -63,6 +73,7 @@ _post = Print('output', portnames='out')
 
 # Controller pour le changement de scene
 _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(NavigateToScene)
+#_control = Filter(NOTE) >> Filter(NOTEON) >> Process(Debug)
 #--------------------------------------------------------------------
 
 # Channel filter base for patche
@@ -71,11 +82,10 @@ cf=ChannelFilter(channels=[1,2])
 
 # Shortcut
 play = Filter(CTRL) >> CtrlFilter(21)
-#reset = Filter(CTRL) >> CtrlFilter(22) >> Panic()
 #--------------------------------------------------------------------
 
 # FX Section
-explosion = Velocity(fixed=80) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
+explosion = Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
 
 # Patch Synth. generique pour Barchetta, FreeWill, Limelight etc...
@@ -101,7 +111,6 @@ tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('PK5', channel=2,
 tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=75)
 tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
 #--------------------------------------------------------------------
-
 # Patch pour Analog Kid
 analogkid=cf >> Transpose(-24) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Output('PK5', channel=1, program=((99*128),50), volume=100)
 #--------------------------------------------------------------------
@@ -113,7 +122,7 @@ piano= Output('Q49', channel=1, program=((99*128),1), volume=100)
 #--------------------------------------------------------------------
 
 # Liste des scenes
-init=Filter(NOTE) >> Filter(NOTEON) >> Process(SendSysex)
+init=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
 _scenes = {
     1: Scene("Initialize",  init),
     2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> keysynth),
@@ -151,7 +160,7 @@ _scenes = {
 run(
     control=_control,
     pre=_pre, 
-    #post=_post,
+    post=_post,
     scenes=_scenes, 
 )
 # ---------------------------
