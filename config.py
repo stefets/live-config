@@ -2,10 +2,12 @@
 #-*- coding: utf-8 -*-
 
 import subprocess
+from time import sleep
 from mididings import *
 from mididings.extra import *
 from mididings.engine import *
 from mididings.event import *
+
 
 config(
 
@@ -32,6 +34,12 @@ def Chord(ev, trigger_notes=(41, 43), chord_offsets=(0, 4, 7)):
                     for i in chord_offsets]
     return ev
 #--------------------------------------------------------------------
+
+def Glissando(ev):
+    for i in range(0,100):
+        evcls = NoteOnEvent if i % 2 == 0 else NoteOffEvent
+    	yield evcls(ev.port, ev.channel, i, 100)
+    
 # For SD-90 only
 def SendSysex(ev):
     return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
@@ -61,22 +69,18 @@ def NavigateToScene(ev):
 
 #--------------------------------------------------------------------
 
-def Debug(ev):
-    s=scenes()[4]
-    print len(s[1])
-#--------------------------------------------------------------------
-
 # Pre/Post
 _pre = Print('input', portnames='in')
 _post = Print('output', portnames='out')
 #--------------------------------------------------------------------
 
 # Controller pour le changement de scene
-_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(NavigateToScene)
-#_control = Filter(NOTE) >> Filter(NOTEON) >> Process(Debug)
+#_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(NavigateToScene)
+_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
+#_control = Filter(NOTE) >> Filter(NOTEON) >> Process(Glissando)
 #--------------------------------------------------------------------
 
-# Channel filter base for patche
+# Channel filter base for patches
 cf=ChannelFilter(channels=[1,2])
 #--------------------------------------------------------------------
 
@@ -96,13 +100,13 @@ keysynth = Velocity(fixed=80) >> Output('PK5', channel=1, program=((99*128),82),
 lowsynth = cf >> Velocity(fixed=100) >> Output('PK5', channel=1, program=51, volume=100, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
-# Patch pour Closer to the hearth 
+# Patch Closer to the hearth 
 closer_high = Output('Q49', 1, program=((99*128),15), volume=100)
 closer_base = Output('PK5', 2, program=((99*128),51), volume=100)
 closer_main = cf >> KeySplit('c3', closer_base, closer_high)
 #--------------------------------------------------------------------
 
-# Patch pour Time Stand Still
+# Patch Time Stand Still
 tss_high = Velocity(fixed=90) >> Output('Q49', channel=1, program=((99*128),92), volume=100)
 tss_base = Transpose(12) >> Velocity(fixed=90) >> Output('Q49', channel=1, program=((99*128),92), volume=100)
 tss_keyboard_main = cf >> KeySplit('c2', tss_base, tss_high)
@@ -111,7 +115,8 @@ tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('PK5', channel=2,
 tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=75)
 tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
 #--------------------------------------------------------------------
-# Patch pour Analog Kid
+
+# Patch Analog Kid
 analogkid=cf >> Transpose(-24) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Output('PK5', channel=1, program=((99*128),50), volume=100)
 #--------------------------------------------------------------------
 
@@ -134,25 +139,25 @@ _scenes = {
        ]),
     6: Scene("Time Stand Still", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
     7: SceneGroup("2112", [
-           Scene("Intro", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/rush/2112.mp3")),
+           Scene("Intro", play >> System("mpg123 -q /mnt/flash/rush/2112.mp3")),
            Scene("Explosion", explosion),
        ]),
     8: Scene("AnalogKid", analogkid),
     9: SceneGroup("Bass cover", [
-           Scene("Toto - Rossana", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/toto_rossana_no_bass.mp3")),
-           Scene("Toto - Africa", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/toto_africa_no_bass.mp3")),
-           Scene("Yes - Owner of a lonely heart", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/yes_owner_lonely_heart.mp3")),
-           Scene("Queen - I want to break free", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/queen_want_break_free.mp3")),
-           Scene("Queen - Under Pressure", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/queen_under_pressure.mp3")),
-           Scene("Queen - Crazy little thing called love", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/queen_crazy_little_thing_called_love.mp3")),
-           Scene("Queen - Another one bites the dust", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/queen_another_on_bites_dust.mp3")),
-           Scene("ZZ Top - Sharp dressed man", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/zz_top_sharp_dressed_man.mp3")),
-           Scene("Tears for fears - Head over heels", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/t4f_head_over_heels.mp3")),
-           Scene("Tears for fears - Everybody wants to rule the world", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/t4f_everybody.mp3")),
-           Scene("Police - Walking on the moon", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/police_walking_moon.mp3")),
-           Scene("Police - Message in a bottle", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/police_message_bottle.mp3")),
-           Scene("Led Zeppelin - Rock and roll", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/led_zeppelin_rock_and_roll.mp3")),
-           Scene("Bon Jovi - Livin on a prayer", Filter(CTRL) >> CtrlFilter(21) >> System("mpg123 -q /mnt/flash/solo/audio/bon_jovi_prayer.mp3")),
+           Scene("Toto - Rossana", play >> System("mpg123 -q /mnt/flash/solo/audio/toto_rossana_no_bass.mp3")),
+           Scene("Toto - Africa", play >> System("mpg123 -q /mnt/flash/solo/audio/toto_africa_no_bass.mp3")),
+           Scene("Yes - Owner of a lonely heart", play >> System("mpg123 -q /mnt/flash/solo/audio/yes_owner_lonely_heart.mp3")),
+           Scene("Queen - I want to break free", play >> System("mpg123 -q /mnt/flash/solo/audio/queen_want_break_free.mp3")),
+           Scene("Queen - Under Pressure", play >> System("mpg123 -q /mnt/flash/solo/audio/queen_under_pressure.mp3")),
+           Scene("Queen - Crazy little thing called love", play >> System("mpg123 -q /mnt/flash/solo/audio/queen_crazy_little_thing_called_love.mp3")),
+           Scene("Queen - Another one bites the dust", play >> System("mpg123 -q /mnt/flash/solo/audio/queen_another_on_bites_dust.mp3")),
+           Scene("ZZ Top - Sharp dressed man", play >> System("mpg123 -q /mnt/flash/solo/audio/zz_top_sharp_dressed_man.mp3")),
+           Scene("Tears for fears - Head over heels", play >> System("mpg123 -q /mnt/flash/solo/audio/t4f_head_over_heels.mp3")),
+           Scene("Tears for fears - Everybody wants to rule the world", play >> System("mpg123 -q /mnt/flash/solo/audio/t4f_everybody.mp3")),
+           Scene("Police - Walking on the moon", play >> System("mpg123 -q /mnt/flash/solo/audio/police_walking_moon.mp3")),
+           Scene("Police - Message in a bottle", play >> System("mpg123 -q /mnt/flash/solo/audio/police_message_bottle.mp3")),
+           Scene("Led Zeppelin - Rock and roll", play >> System("mpg123 -q /mnt/flash/solo/audio/led_zeppelin_rock_and_roll.mp3")),
+           Scene("Bon Jovi - Livin on a prayer", play >> System("mpg123 -q /mnt/flash/solo/audio/bon_jovi_prayer.mp3")),
        ])
 }
 
