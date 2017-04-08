@@ -75,8 +75,8 @@ _post = Print('output', portnames='out')
 #--------------------------------------------------------------------
 
 # Controller pour le changement de scene
-#_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(NavigateToScene)
-_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
+_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(NavigateToScene)
+#_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
 #_control = Filter(NOTE) >> Filter(NOTEON) >> Process(Glissando)
 #--------------------------------------------------------------------
 
@@ -142,8 +142,10 @@ _scenes = {
            Scene("Intro", play >> System("mpg123 -q /mnt/flash/rush/2112.mp3")),
            Scene("Explosion", explosion),
        ]),
-    8: Scene("AnalogKid", analogkid),
-    9: SceneGroup("Bass cover", [
+    8: Scene("Analog Kid", analogkid),
+    9: Scene("EntreNous", play >> System("mpg123 -q /mnt/flash/rush/entrenous.mp3")),
+    10: Scene("Circumstances bridge", play >> System("mpg123 -q /mnt/flash/rush/circumstances.mp3")),
+    11: SceneGroup("Bass cover", [
            Scene("Toto - Rossana", play >> System("mpg123 -q /mnt/flash/solo/audio/toto_rossana_no_bass.mp3")),
            Scene("Toto - Africa", play >> System("mpg123 -q /mnt/flash/solo/audio/toto_africa_no_bass.mp3")),
            Scene("Yes - Owner of a lonely heart", play >> System("mpg123 -q /mnt/flash/solo/audio/yes_owner_lonely_heart.mp3")),
@@ -158,14 +160,18 @@ _scenes = {
            Scene("Police - Message in a bottle", play >> System("mpg123 -q /mnt/flash/solo/audio/police_message_bottle.mp3")),
            Scene("Led Zeppelin - Rock and roll", play >> System("mpg123 -q /mnt/flash/solo/audio/led_zeppelin_rock_and_roll.mp3")),
            Scene("Bon Jovi - Livin on a prayer", play >> System("mpg123 -q /mnt/flash/solo/audio/bon_jovi_prayer.mp3")),
-       ])
+       ]),
+    12: SceneGroup("Guitar cover", [
+            Scene("Rush - AnalogKid", play >> System("mpg123 -q /mnt/flash/solo/audio/analogkid.mp3")),
+            Scene("Rush - TimeStandSteel", play >> System("mpg123 -q /mnt/flash/solo/audio/time_stand_steel.mp3")),
+       ]),
 }
 
 # ---------------------------
 run(
     control=_control,
-    pre=_pre, 
-    post=_post,
+    #pre=_pre, 
+    #post=_post,
     scenes=_scenes, 
 )
 # ---------------------------
