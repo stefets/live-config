@@ -7,9 +7,12 @@ from mididings import *
 from mididings.extra import *
 from mididings.engine import *
 from mididings.event import *
+from mididings.extra.inotify import AutoRestart
 
 
 config(
+
+    backend = 'alsa',
 
     client_name = 'Master',
 
@@ -22,6 +25,11 @@ config(
         ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
 
     initial_scene = 1,
+)
+
+hook(
+    MemorizeScene('scene.txt'),
+    AutoRestart(),
 )
 
 #--------------------------------------------------------------------
@@ -74,26 +82,26 @@ _pre = Print('input', portnames='in')
 _post = Print('output', portnames='out')
 #--------------------------------------------------------------------
 
-# Controller pour le changement de scene
+# Controller pour le changement de scene (fcb1010 actual)
 _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(NavigateToScene)
 #_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
 #_control = Filter(NOTE) >> Filter(NOTEON) >> Process(Glissando)
 #--------------------------------------------------------------------
 
-# Channel filter base for patches
-cf=ChannelFilter(channels=[1,2])
+# Exclude channel 9 (fcb1010 control scene change via channel 9)
+cf=~ChannelFilter(9)
 #--------------------------------------------------------------------
 
-# Shortcut
+# Shortcut (fcb1010)
 play = Filter(CTRL) >> CtrlFilter(21)
 #--------------------------------------------------------------------
 
 # FX Section
-explosion = Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
+explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
 
 # Patch Synth. generique pour Barchetta, FreeWill, Limelight etc...
-keysynth = Velocity(fixed=80) >> Output('PK5', channel=1, program=((99*128),82), volume=100, ctrls={93:75, 91:75})
+keysynth = cf >> Velocity(fixed=80) >> Output('PK5', channel=3, program=((81*128),79), volume=100, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
 # Patch Syhth. generique pour lowbase
@@ -102,36 +110,37 @@ lowsynth = cf >> Velocity(fixed=100) >> Output('PK5', channel=1, program=51, vol
 
 # Patch Closer to the hearth 
 closer_high = Output('Q49', 1, program=((99*128),15), volume=100)
-closer_base = Output('PK5', 2, program=((99*128),51), volume=100)
+closer_base = Velocity(fixed=100) >> Output('PK5', 2, program=((99*128),51), volume=100)
 closer_main = cf >> KeySplit('c3', closer_base, closer_high)
 #--------------------------------------------------------------------
 
 # Patch Time Stand Still
-tss_high = Velocity(fixed=90) >> Output('Q49', channel=1, program=((99*128),92), volume=100)
-tss_base = Transpose(12) >> Velocity(fixed=90) >> Output('Q49', channel=1, program=((99*128),92), volume=100)
+tss_high = Velocity(fixed=90) >> Output('Q49', channel=3, program=((99*128),92), volume=80)
+tss_base = Transpose(12) >> Velocity(fixed=90) >> Output('Q49', channel=3, program=((99*128),92), volume=100)
 tss_keyboard_main = cf >> KeySplit('c2', tss_base, tss_high)
 
-tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=75)
-tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=75)
+tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=100)
+tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=100)
 tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
 #--------------------------------------------------------------------
 
 # Patch Analog Kid
-analogkid=cf >> Transpose(-24) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Output('PK5', channel=1, program=((99*128),50), volume=100)
+analogkid = cf >> Transpose(-24) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Output('PK5', channel=1, program=((99*128),50), volume=80)
+analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=80)
 #--------------------------------------------------------------------
 
 # Patch debug
 #debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
 #piano=Harmonize('c', 'major', ['unison','octave']) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
-piano= Output('Q49', channel=1, program=((99*128),1), volume=100)
+piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
 #--------------------------------------------------------------------
 
 # Liste des scenes
 init=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
 _scenes = {
-    1: Scene("Initialize",  init),
-    2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> keysynth),
-    3: Scene("FreeWill", Transpose(12) >> LatchNotes(False,reset='E4') >> keysynth),
+    1: Scene("Initialize",  piano),
+    2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
     5: SceneGroup("The Trees", [
            Scene("Bridge",  play >> System("mpg123 -q /mnt/flash/rush/trees_full.mp3")),
@@ -142,7 +151,7 @@ _scenes = {
            Scene("Intro", play >> System("mpg123 -q /mnt/flash/rush/2112.mp3")),
            Scene("Explosion", explosion),
        ]),
-    8: Scene("Analog Kid", analogkid),
+    8: Scene("Analog Kid", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
     9: Scene("EntreNous", play >> System("mpg123 -q /mnt/flash/rush/entrenous.mp3")),
     10: Scene("Circumstances bridge", play >> System("mpg123 -q /mnt/flash/rush/circumstances.mp3")),
     11: SceneGroup("Bass cover", [
