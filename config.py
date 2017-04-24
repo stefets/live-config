@@ -28,7 +28,7 @@ config(
 )
 
 hook(
-    MemorizeScene('scene.txt'),
+    #MemorizeScene('scene.txt'),
     AutoRestart(),
 )
 
@@ -129,6 +129,9 @@ analogkid = cf >> Transpose(-24) >> Harmonize('c', 'major', ['unison', 'third', 
 analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=80)
 #--------------------------------------------------------------------
 
+# Patch Limelight
+limelight = cf >> Key('d#6') >> Output('PK5', channel=16, program=((80*128),12), volume=100)
+
 # Patch debug
 #debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
 #piano=Harmonize('c', 'major', ['unison','octave']) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
@@ -138,7 +141,7 @@ piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),1), volu
 # Liste des scenes
 init=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
 _scenes = {
-    1: Scene("Initialize",  piano),
+    1: Scene("Initialize",  init),
     2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
@@ -169,10 +172,15 @@ _scenes = {
            Scene("Police - Message in a bottle", play >> System("mpg123 -q /mnt/flash/solo/audio/police_message_bottle.mp3")),
            Scene("Led Zeppelin - Rock and roll", play >> System("mpg123 -q /mnt/flash/solo/audio/led_zeppelin_rock_and_roll.mp3")),
            Scene("Bon Jovi - Livin on a prayer", play >> System("mpg123 -q /mnt/flash/solo/audio/bon_jovi_prayer.mp3")),
+           Scene("Pat Metheny - Letter from home", play >> System("mpg123 -q /mnt/flash/solo/audio/letter_from_home.mp3")),
        ]),
     12: SceneGroup("Guitar cover", [
             Scene("Rush - AnalogKid", play >> System("mpg123 -q /mnt/flash/solo/audio/analogkid.mp3")),
             Scene("Rush - TimeStandSteel", play >> System("mpg123 -q /mnt/flash/solo/audio/time_stand_steel.mp3")),
+            Scene("Rush - Limelight", play >> System("mpg123 -q /mnt/flash/solo/audio/limelight.mp3")),
+            Scene("Rush - RedBarchetta ", play >> System("mpg123 -q /mnt/flash/solo/audio/barchetta.mp3")),
+            Scene("Rush - KidGloves ", play >> System("mpg123 -q /mnt/flash/solo/audio/kid_gloves.mp3")),
+            Scene("Rush - FlyByNight ", play >> System("mpg123 -q /mnt/flash/solo/audio/fly_by_night.mp3")),
        ]),
 }
 
