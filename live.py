@@ -146,17 +146,17 @@ _scenes = {
     3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
     5: SceneGroup("The Trees", [
-            Scene("Bridge",  play >> System("mpg123 -q /mnt/flash/rush/trees_full.mp3")),
+            Scene("Bridge",  play >> System("mpg123 -q /mnt/flash/live/trees_full.mp3")),
             Scene("Synth", Transpose(-29) >> LatchNotes(False,reset='G0') >> lowsynth),
        ]),
     6: Scene("Time Stand Still", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
     7: SceneGroup("2112", [
-            Scene("Intro", play >> System("mpg123 -q /mnt/flash/rush/2112.mp3")),
+            Scene("Intro", play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
             Scene("Explosion", explosion),
        ]),
     8: Scene("Analog Kid", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
-    9: Scene("EntreNous", play >> System("mpg123 -q /mnt/flash/rush/entrenous.mp3")),
-    10: Scene("Circumstances bridge", play >> System("mpg123 -q /mnt/flash/rush/circumstances.mp3")),
+    9: Scene("EntreNous", play >> System("mpg123 -q /mnt/flash/live/entrenous.mp3")),
+    10: Scene("Circumstances bridge", play >> System("mpg123 -q /mnt/flash/live/circumstances.mp3")),
     11: SceneGroup("Bass cover", [
             Scene("Toto - Rossana", play >> System("mpg123 -q /mnt/flash/solo/audio/toto_rossana_no_bass.mp3")),
             Scene("Toto - Africa", play >> System("mpg123 -q /mnt/flash/solo/audio/toto_africa_no_bass.mp3")),
