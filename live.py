@@ -189,7 +189,7 @@ _scenes = {
        ]),	 
     15: SceneGroup("KidGloves", [
             Scene("Rush - KidGloves ", play >> System("mpg123 -q /mnt/flash/solo/audio/kid_gloves.mp3")),
-			Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+			Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),   
 }
 
