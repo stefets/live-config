@@ -23,4 +23,5 @@ then
 fi
 
 # OK
+cd $DIR
 python $DIR/live.py
