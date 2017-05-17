@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Connect an Edirol SD-90 with a keyboard
+# Connect my keyboard with sd-90 part-a (usb mode)
 
 aconnect -x
 
