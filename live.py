@@ -23,7 +23,7 @@ config(
         ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
         ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
 
-    initial_scene = 1,
+    initial_scene = 8,
 )
 
 hook(
@@ -100,7 +100,7 @@ explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, prog
 #--------------------------------------------------------------------
 
 # Patch Synth. generique pour Barchetta, FreeWill, Limelight etc...
-keysynth = cf >> Velocity(fixed=80) >> Output('PK5', channel=3, program=((81*128),79), volume=100, ctrls={93:75, 91:75})
+keysynth = cf >> Velocity(fixed=80) >> Output('PK5', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
 # Patch Syhth. generique pour lowbase
@@ -156,7 +156,8 @@ _scenes = {
     8: Scene("Analog Kid", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
     9: Scene("EntreNous", play >> System("mpg123 -q /mnt/flash/live/entrenous.mp3")),
     10: Scene("Circumstances bridge", play >> System("mpg123 -q /mnt/flash/live/circumstances.mp3")),
-    11: SceneGroup("Bass cover", [
+    11: Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    12: SceneGroup("Bass cover", [
             Scene("Toto - Rossana", play >> System("mpg123 -q /mnt/flash/solo/audio/toto_rossana_no_bass.mp3")),
             Scene("Toto - Africa", play >> System("mpg123 -q /mnt/flash/solo/audio/toto_africa_no_bass.mp3")),
             Scene("Yes - Owner of a lonely heart", play >> System("mpg123 -q /mnt/flash/solo/audio/yes_owner_lonely_heart.mp3")),
@@ -173,20 +174,20 @@ _scenes = {
             Scene("Bon Jovi - Livin on a prayer", play >> System("mpg123 -q /mnt/flash/solo/audio/bon_jovi_prayer.mp3")),
             Scene("Pat Metheny - Letter from home", play >> System("mpg123 -q /mnt/flash/solo/audio/letter_from_home.mp3")),
        ]),
-    12: SceneGroup("Rush guitar cover", [    
+    13: SceneGroup("Rush guitar cover", [    
             Scene("Rush - Limelight", play >> System("mpg123 -q /mnt/flash/solo/audio/limelight.mp3")),
             Scene("Rush - RedBarchetta ", play >> System("mpg123 -q /mnt/flash/solo/audio/barchetta.mp3")),
             Scene("Rush - FlyByNight ", play >> System("mpg123 -q /mnt/flash/solo/audio/fly_by_night.mp3")),
        ]),
-    13: SceneGroup("AnalogKid", [
+    14: SceneGroup("AnalogKid", [
             Scene("Rush - AnalogKid", play >> System("mpg123 -q /mnt/flash/solo/audio/analogkid.mp3")),
 			Scene("Analog Kid Keyboard", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
        ]),	 
-    14: SceneGroup("TimeStandSteel", [
+    15: SceneGroup("TimeStandSteel", [
             Scene("Rush - TimeStandSteel", play >> System("mpg123 -q /mnt/flash/solo/audio/time_stand_steel.mp3")),
 			Scene("Time Stand Still Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
        ]),	 
-    15: SceneGroup("KidGloves", [
+    16: SceneGroup("KidGloves", [
             Scene("Rush - KidGloves ", play >> System("mpg123 -q /mnt/flash/solo/audio/kid_gloves.mp3")),
 			Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),   
