@@ -24,4 +24,5 @@ fi
 
 # OK
 cd $DIR
+git pull
 python $DIR/live.py
