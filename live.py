@@ -23,7 +23,7 @@ config(
         ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
         ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
 
-    initial_scene = 8,
+    initial_scene = 1,
 )
 
 hook(
@@ -148,7 +148,10 @@ _scenes = {
             Scene("Bridge",  play >> System("mpg123 -q /mnt/flash/live/trees_full.mp3")),
             Scene("Synth", Transpose(-29) >> LatchNotes(False,reset='G0') >> lowsynth),
        ]),
-    6: Scene("Time Stand Still", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+    6: SceneGroup("Time Stand Still", [
+			Scene("TSS-Intro", play >> System("mpg123 -q /mnt/flash/live/tss.mp3")),
+			Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+	   ]),
     7: SceneGroup("2112", [
             Scene("Intro", play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
             Scene("Explosion", explosion),
@@ -178,6 +181,7 @@ _scenes = {
             Scene("Rush - Limelight", play >> System("mpg123 -q /mnt/flash/solo/audio/limelight.mp3")),
             Scene("Rush - RedBarchetta ", play >> System("mpg123 -q /mnt/flash/solo/audio/barchetta.mp3")),
             Scene("Rush - FlyByNight ", play >> System("mpg123 -q /mnt/flash/solo/audio/fly_by_night.mp3")),
+            Scene("Rush - Spirit of Radio ", play >> System("mpg123 -q /mnt/flash/solo/audio/spirit_of_radio.mp3")),
        ]),
     14: SceneGroup("AnalogKid", [
             Scene("Rush - AnalogKid", play >> System("mpg123 -q /mnt/flash/solo/audio/analogkid.mp3")),
@@ -190,6 +194,10 @@ _scenes = {
     16: SceneGroup("KidGloves", [
             Scene("Rush - KidGloves ", play >> System("mpg123 -q /mnt/flash/solo/audio/kid_gloves.mp3")),
 			Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+       ]),   
+    17: SceneGroup("Freewill", [
+            Scene("Rush - Freewill ", play >> System("mpg123 -q /mnt/flash/solo/audio/freewill.mp3")),
+			Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),   
 }
 
