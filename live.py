@@ -124,7 +124,7 @@ tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
 #--------------------------------------------------------------------
 
 # Patch Analog Kid
-analogkid = cf >> Transpose(-24) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=75) >> Output('PK5', channel=1, program=((99*128),50), volume=80)
+analogkid = cf >> Transpose(-24) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=75) >> Output('PK5', channel=1, program=((99*128),50), volume=100)
 analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=80)
 #--------------------------------------------------------------------
 
