@@ -124,8 +124,8 @@ tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
 #--------------------------------------------------------------------
 
 # Patch Analog Kid
-analogkid = cf >> Transpose(-24) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=75) >> Output('PK5', channel=1, program=((99*128),50), volume=100)
-analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=80)
+analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=75) >> Output('PK5', channel=1, program=((99*128),50), volume=75)
+analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=100)
 #--------------------------------------------------------------------
 
 # Patch Limelight
@@ -176,6 +176,7 @@ _scenes = {
             Scene("Led Zeppelin - Rock and roll", play >> System("mpg123 -q /mnt/flash/solo/audio/led_zeppelin_rock_and_roll.mp3")),
             Scene("Bon Jovi - Livin on a prayer", play >> System("mpg123 -q /mnt/flash/solo/audio/bon_jovi_prayer.mp3")),
             Scene("Pat Metheny - Letter from home", play >> System("mpg123 -q /mnt/flash/solo/audio/letter_from_home.mp3")),
+            Scene("Pat Metheny - Letter from home2", play >> System("mpg123 -q /mnt/flash/solo/audio/letter_from_home2.mp3")),
        ]),
     13: SceneGroup("Rush guitar cover", [    
             Scene("Rush - Limelight", play >> System("mpg123 -q /mnt/flash/solo/audio/limelight.mp3")),
