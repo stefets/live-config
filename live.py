@@ -2,6 +2,7 @@
 #-*- coding: utf-8 -*-
 
 import subprocess
+from threading import Timer
 from time import sleep
 from mididings import *
 from mididings.extra import *
@@ -42,12 +43,27 @@ def Chord(ev, trigger_notes=(41, 43), chord_offsets=(0, 4, 7)):
     return ev
 #--------------------------------------------------------------------
 
-# Not working
-def Glissando(ev):
-    for i in range(0,100):
-        evcls = NoteOnEvent if i % 2 == 0 else NoteOffEvent
-    	yield evcls(ev.port, ev.channel, i, 100)
-    
+# Glissando
+def gliss_function(note, note_max, port, chan, vel):
+    output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
+    note += 1
+    if note < note_max:
+        Timer(.01, lambda: gliss_function(note, note_max, port, chan, vel)).start()
+
+def gliss_exec(e):
+    gliss_function(120, 168, e.port, e.channel, 100)
+
+# Arpeggiator
+def arpeggiator_function(current, max,note, port, chan, vel):
+    output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
+    current += 1
+    if current < max:
+        Timer(.15, lambda: arpeggiator_function(current, max, note,  port, chan, vel)).start()
+
+def arpeggiator_exec(e):
+    arpeggiator_function(0,16, 50,  e.port, e.channel, 100)
+
+
 # For SD-90 only
 def SendSysex(ev):
     return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
@@ -73,7 +89,7 @@ def NavigateToScene(ev):
                 switch_subscene(1)
     elif ev.ctrl == 22:
         subprocess.Popen(['/bin/bash', './kill.sh'])
-   
+
 #--------------------------------------------------------------------
 
 # Pre/Post
@@ -82,9 +98,12 @@ _post = Print('output', portnames='out')
 #--------------------------------------------------------------------
 
 # Controller pour le changement de scene (fcb1010 actual)
-_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(NavigateToScene)
+_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
+
+# For debug
+#_control = ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlValueFilter(0) >> Call(gliss_exec)
 #_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
-#_control = Filter(NOTE) >> Filter(NOTEON) >> Process(Glissando)
+_control = Filter(NOTE) >> Filter(NOTEON) >> Call(arpeggiator_exec)
 #--------------------------------------------------------------------
 
 # Exclude channel 9 (fcb1010 control scene change via channel 9)
@@ -124,7 +143,7 @@ tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
 #--------------------------------------------------------------------
 
 # Patch Analog Kid
-analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=75) >> Output('PK5', channel=1, program=((99*128),50), volume=75)
+analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=50) >> Output('PK5', channel=1, program=((99*128),50), volume=75)
 analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=100)
 #--------------------------------------------------------------------
 
@@ -134,13 +153,13 @@ limelight = cf >> Key('d#6') >> Output('PK5', channel=16, program=((80*128),12),
 # Patch debug
 #debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
 #piano=Harmonize('c', 'major', ['unison','octave']) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
-piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
+piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),37), volume=100)
 #--------------------------------------------------------------------
 
 # Liste des scenes
 init=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
 _scenes = {
-    1: Scene("Initialize",  init),
+    1: Scene("Initialize",  piano),
     2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
@@ -205,7 +224,7 @@ _scenes = {
 # ---------------------------
 run(
     control=_control,
-    #pre=_pre, 
+    pre=_pre, 
     #post=_post,
     scenes=_scenes, 
 )
