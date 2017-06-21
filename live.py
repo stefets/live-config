@@ -195,7 +195,8 @@ _scenes = {
             Scene("Led Zeppelin - Rock and roll", play >> System("mpg123 -q /mnt/flash/solo/audio/led_zeppelin_rock_and_roll.mp3")),
             Scene("Bon Jovi - Livin on a prayer", play >> System("mpg123 -q /mnt/flash/solo/audio/bon_jovi_prayer.mp3")),
             Scene("Pat Metheny - Letter from home", play >> System("mpg123 -q /mnt/flash/solo/audio/letter_from_home.mp3")),
-            Scene("Pat Metheny - Letter from home2", play >> System("mpg123 -q /mnt/flash/solo/audio/letter_from_home2.mp3")),
+            Scene("Muse - Uprising", play >> System("mpg123 -q /mnt/flash/solo/audio/uprising.mp3")),
+            Scene("Compo - Shadow", play >> System("mpg123 -q /mnt/flash/solo/audio/shadow.mp3")),
        ]),
     13: SceneGroup("Rush guitar cover", [    
             Scene("Rush - Limelight", play >> System("mpg123 -q /mnt/flash/solo/audio/limelight.mp3")),
