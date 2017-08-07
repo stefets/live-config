@@ -24,7 +24,7 @@ config(
         ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
         ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
 
-    initial_scene = 1,
+    initial_scene = 2,
 )
 
 hook(
@@ -87,7 +87,7 @@ def NavigateToScene(ev):
                 switch_subscene(css+1)
             else:
                 switch_subscene(1)
-    elif ev.ctrl == 22:
+
         subprocess.Popen(['/bin/bash', './kill.sh'])
 
 #--------------------------------------------------------------------
@@ -103,7 +103,7 @@ _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(Navi
 # For debug
 #_control = ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlValueFilter(0) >> Call(gliss_exec)
 #_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
-_control = Filter(NOTE) >> Filter(NOTEON) >> Call(arpeggiator_exec)
+#_control = Filter(NOTE) >> Filter(NOTEON) >> Call(arpeggiator_exec)
 #--------------------------------------------------------------------
 
 # Exclude channel 9 (fcb1010 control scene change via channel 9)
@@ -150,6 +150,9 @@ analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128)
 # Patch Limelight
 limelight = cf >> Key('d#6') >> Output('PK5', channel=16, program=((80*128),12), volume=100)
 
+# Patch Centurion
+centurion = cf >> Transpose(12) >> LatchNotes(False,reset='C2') >> (Output('Q49', channel=1, program=((99*128),95), volume=85) // Output('Q49', channel=2, program=((99*128),81), volume=65))
+
 # Patch debug
 #debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
 #piano=Harmonize('c', 'major', ['unison','octave']) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
@@ -159,7 +162,7 @@ piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),37), vol
 # Liste des scenes
 init=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
 _scenes = {
-    1: Scene("Initialize",  piano),
+    1: Scene("Initialize",  init),
     2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
@@ -198,11 +201,13 @@ _scenes = {
             Scene("Muse - Uprising", play >> System("mpg123 -q /mnt/flash/solo/audio/uprising.mp3")),
             Scene("Compo - Shadow", play >> System("mpg123 -q /mnt/flash/solo/audio/shadow.mp3")),
        ]),
-    13: SceneGroup("Rush guitar cover", [    
+    13: SceneGroup("Guitar cover", [    
             Scene("Rush - Limelight", play >> System("mpg123 -q /mnt/flash/solo/audio/limelight.mp3")),
             Scene("Rush - RedBarchetta ", play >> System("mpg123 -q /mnt/flash/solo/audio/barchetta.mp3")),
             Scene("Rush - FlyByNight ", play >> System("mpg123 -q /mnt/flash/solo/audio/fly_by_night.mp3")),
             Scene("Rush - Spirit of Radio ", play >> System("mpg123 -q /mnt/flash/solo/audio/spirit_of_radio.mp3")),
+            Scene("Compo - Voleur", play >> System("mpg123 -q /mnt/flash/solo/audio/voleur.mp3")),
+            Scene("Compo - Centurion", play >> System("mpg123 -q /mnt/flash/solo/audio/centurion.mp3")),
        ]),
     14: SceneGroup("AnalogKid", [
             Scene("Rush - AnalogKid", play >> System("mpg123 -q /mnt/flash/solo/audio/analogkid.mp3")),
@@ -226,7 +231,7 @@ _scenes = {
 run(
     control=_control,
     pre=_pre, 
-    #post=_post,
+    post=_post,
     scenes=_scenes, 
 )
 # ---------------------------
