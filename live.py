@@ -21,10 +21,11 @@ config(
         ('PK5', '20:0','.*SD-90 Part A'), ],
 
     in_ports = [ 
+        #('Q49  - MIDI IN 1', '24:0','.*Q49 MIDI 1') # Alesis Q49 in USB MODE,
         ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
         ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
 
-    initial_scene = 2,
+    initial_scene = 1,
 )
 
 hook(
@@ -64,7 +65,8 @@ def arpeggiator_exec(e):
     arpeggiator_function(0,16, 50,  e.port, e.channel, 100)
 
 
-# For SD-90 only
+# Change the HEX string for your sound module
+# Reset string for Edirol SD-90
 def SendSysex(ev):
     return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
 #--------------------------------------------------------------------
@@ -87,7 +89,7 @@ def NavigateToScene(ev):
                 switch_subscene(css+1)
             else:
                 switch_subscene(1)
-
+    elif ev.ctrl == 22:
         subprocess.Popen(['/bin/bash', './kill.sh'])
 
 #--------------------------------------------------------------------
@@ -143,7 +145,7 @@ tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
 #--------------------------------------------------------------------
 
 # Patch Analog Kid
-analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=50) >> Output('PK5', channel=1, program=((99*128),50), volume=75)
+analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=75) >> Output('PK5', channel=1, program=((99*128),50), volume=75)
 analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=100)
 #--------------------------------------------------------------------
 
@@ -151,7 +153,24 @@ analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128)
 limelight = cf >> Key('d#6') >> Output('PK5', channel=16, program=((80*128),12), volume=100)
 
 # Patch Centurion
-centurion = cf >> Transpose(12) >> LatchNotes(False,reset='C2') >> (Output('Q49', channel=1, program=((99*128),95), volume=85) // Output('Q49', channel=2, program=((99*128),81), volume=65))
+centurion_synth = (Velocity(fixed=75) >> (Output('PK5', channel=1, program=((99*128),96), volume=85) // Output('Q49', channel=2, program=((99*128),82), volume=85)))
+# Jumper hack for Centurion
+centurion_patch=(cf >> 
+	(
+		(KeyFilter('E3') >> Key('D2')) // 
+		(KeyFilter('F3') >> Key('D3')) //
+		(KeyFilter('G3') >> Key('D4')) //
+		(KeyFilter('A3') >> Key('D5'))
+	) >> centurion_synth)
+
+# Test
+jumper2=(cf >> KeyFilter('E3:A#3') >>
+	(
+		(KeyFilter('E3') % (NoteOff('E3'))) // 
+		(KeyFilter('F3') % (Key('D3'))) //
+		(KeyFilter('G3') % (Key('D4'))) //
+		(KeyFilter('A3') % (Key('D5')))
+	) >> centurion_synth)
 
 # Patch debug
 #debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
@@ -159,10 +178,12 @@ centurion = cf >> Transpose(12) >> LatchNotes(False,reset='C2') >> (Output('Q49'
 piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),37), volume=100)
 #--------------------------------------------------------------------
 
-# Liste des scenes
-init=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
+# Reset logic
+reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
+
+# Scenes collection
 _scenes = {
-    1: Scene("Initialize",  init),
+    1: Scene("Reset",  reset),
     2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
@@ -199,15 +220,13 @@ _scenes = {
             Scene("Bon Jovi - Livin on a prayer", play >> System("mpg123 -q /mnt/flash/solo/audio/bon_jovi_prayer.mp3")),
             Scene("Pat Metheny - Letter from home", play >> System("mpg123 -q /mnt/flash/solo/audio/letter_from_home.mp3")),
             Scene("Muse - Uprising", play >> System("mpg123 -q /mnt/flash/solo/audio/uprising.mp3")),
-            Scene("Compo - Shadow", play >> System("mpg123 -q /mnt/flash/solo/audio/shadow.mp3")),
        ]),
-    13: SceneGroup("Guitar cover", [    
+    13: SceneGroup("Rush cover", [    
+            Scene("Rush - Mission", play >> System("mpg123 -q /mnt/flash/solo/audio/mission.mp3")),
             Scene("Rush - Limelight", play >> System("mpg123 -q /mnt/flash/solo/audio/limelight.mp3")),
             Scene("Rush - RedBarchetta ", play >> System("mpg123 -q /mnt/flash/solo/audio/barchetta.mp3")),
             Scene("Rush - FlyByNight ", play >> System("mpg123 -q /mnt/flash/solo/audio/fly_by_night.mp3")),
             Scene("Rush - Spirit of Radio ", play >> System("mpg123 -q /mnt/flash/solo/audio/spirit_of_radio.mp3")),
-            Scene("Compo - Voleur", play >> System("mpg123 -q /mnt/flash/solo/audio/voleur.mp3")),
-            Scene("Compo - Centurion", play >> System("mpg123 -q /mnt/flash/solo/audio/centurion.mp3")),
        ]),
     14: SceneGroup("AnalogKid", [
             Scene("Rush - AnalogKid", play >> System("mpg123 -q /mnt/flash/solo/audio/analogkid.mp3")),
@@ -225,13 +244,19 @@ _scenes = {
             Scene("Rush - Freewill ", play >> System("mpg123 -q /mnt/flash/solo/audio/freewill.mp3")),
 			Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),   
+    18: SceneGroup("ORIGINAL", [
+            Scene("Centurion backing track", play >> System("mpg123 -q /mnt/flash/solo/audio/centurion.mp3")),
+            Scene("Centurion - PK5",  centurion_patch),
+            Scene("Shadow", play >> System("mpg123 -q /mnt/flash/solo/audio/shadow.mp3")),
+            Scene("Voleur", play >> System("mpg123 -q /mnt/flash/solo/audio/voleur.mp3")),
+       ]),   
 }
 
 # ---------------------------
 run(
     control=_control,
-    pre=_pre, 
-    post=_post,
+    #pre=_pre, 
+    #post=_post,
     scenes=_scenes, 
 )
 # ---------------------------
