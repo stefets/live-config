@@ -64,12 +64,12 @@ def arpeggiator_function(current, max,note, port, chan, vel):
 def arpeggiator_exec(e):
     arpeggiator_function(0,16, 50,  e.port, e.channel, 100)
 
+#-------------------------------------------------------------------------------------------
 
 # Change the HEX string for your sound module
 # Reset string for Edirol SD-90
 def SendSysex(ev):
     return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
-#--------------------------------------------------------------------
 
 # Scene navigation
 def NavigateToScene(ev):
@@ -92,29 +92,34 @@ def NavigateToScene(ev):
     elif ev.ctrl == 22:
         subprocess.Popen(['/bin/bash', './kill.sh'])
 
-#--------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+# CONFIGURATION SECTION
+#-----------------------------------------------------------------------------------------------------------
 
-# Pre/Post
 _pre = Print('input', portnames='in')
 _post = Print('output', portnames='out')
-#--------------------------------------------------------------------
+
+# Reset logic
+reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
 
 # Controller pour le changement de scene (fcb1010 actual)
 _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
-
-# For debug
 #_control = ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlValueFilter(0) >> Call(gliss_exec)
 #_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
 #_control = Filter(NOTE) >> Filter(NOTEON) >> Call(arpeggiator_exec)
-#--------------------------------------------------------------------
 
-# Exclude channel 9 (fcb1010 control scene change via channel 9)
+# Channel 9 filter (my fcb1010 in my case)
 cf=~ChannelFilter(9)
-#--------------------------------------------------------------------
 
-# Shortcut (fcb1010)
-play = Filter(CTRL) >> CtrlFilter(21)
-#--------------------------------------------------------------------
+# Shortcut (Play button)
+play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
+player="mpg123 -q /mnt/flash/solo/audio/"
+
+#-----------------------------------------------------------------------------------------------------------
+# PATCH SECTION
+#-----------------------------------------------------------------------------------------------------------
+
+piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
 
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
@@ -153,8 +158,9 @@ analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128)
 limelight = cf >> Key('d#6') >> Output('PK5', channel=16, program=((80*128),12), volume=100)
 
 # Patch Centurion
-centurion_synth = (Velocity(fixed=75) >> (Output('PK5', channel=1, program=((99*128),96), volume=85) // Output('Q49', channel=2, program=((99*128),82), volume=85)))
-# Jumper hack for Centurion
+centurion_synth = (Velocity(fixed=75) >> (Output('PK5', channel=1, program=((99*128),96), volume=85) // Output('PK5', channel=2, program=((99*128),82), volume=85)))
+
+# Switch a key for another
 centurion_patch=(cf >> 
 	(
 		(KeyFilter('E3') >> Key('D2')) // 
@@ -172,16 +178,13 @@ jumper2=(cf >> KeyFilter('E3:A#3') >>
 		(KeyFilter('A3') % (Key('D5')))
 	) >> centurion_synth)
 
-# Patch debug
+# Patch debug section ----------------------------------
 #debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
 #piano=Harmonize('c', 'major', ['unison','octave']) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
-piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),37), volume=100)
-#--------------------------------------------------------------------
 
-# Reset logic
-reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
-
-# Scenes collection
+#-----------------------------------------------------------------------------------------------------------
+# SCENES SECTION
+#-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Reset",  reset),
     2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
@@ -200,58 +203,73 @@ _scenes = {
             Scene("Explosion", explosion),
        ]),
     8: Scene("Analog Kid", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
-    9: Scene("EntreNous", play >> System("mpg123 -q /mnt/flash/live/entrenous.mp3")),
+    9: Scene("Tabarnak", play >> System("mpg123 -q /mnt/flash/live/tabarnak.mp3")),
+    #9: Scene("EntreNous", play >> System("mpg123 -q /mnt/flash/live/entrenous.mp3")),
     10: Scene("Circumstances bridge", play >> System("mpg123 -q /mnt/flash/live/circumstances.mp3")),
-    11: Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    11: SceneGroup("Natural Science", [
+            Scene("Intro", play >> System("mpg123 -q /mnt/flash/live/ns_intro.mp3")),
+            Scene("Outro", play >> System("mpg123 -q /mnt/flash/live/ns_outro.mp3")),
+       ]),
+    #11: Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     12: SceneGroup("Bass cover", [
-            Scene("Toto - Rossana", play >> System("mpg123 -q /mnt/flash/solo/audio/toto_rossana_no_bass.mp3")),
-            Scene("Toto - Africa", play >> System("mpg123 -q /mnt/flash/solo/audio/toto_africa_no_bass.mp3")),
-            Scene("Yes - Owner of a lonely heart", play >> System("mpg123 -q /mnt/flash/solo/audio/yes_owner_lonely_heart.mp3")),
-            Scene("Queen - I want to break free", play >> System("mpg123 -q /mnt/flash/solo/audio/queen_want_break_free.mp3")),
-            Scene("Queen - Under Pressure", play >> System("mpg123 -q /mnt/flash/solo/audio/queen_under_pressure.mp3")),
-            Scene("Queen - Crazy little thing called love", play >> System("mpg123 -q /mnt/flash/solo/audio/queen_crazy_little_thing_called_love.mp3")),
-            Scene("Queen - Another one bites the dust", play >> System("mpg123 -q /mnt/flash/solo/audio/queen_another_on_bites_dust.mp3")),
-            Scene("ZZ Top - Sharp dressed man", play >> System("mpg123 -q /mnt/flash/solo/audio/zz_top_sharp_dressed_man.mp3")),
-            Scene("Tears for fears - Head over heels", play >> System("mpg123 -q /mnt/flash/solo/audio/t4f_head_over_heels.mp3")),
-            Scene("Tears for fears - Everybody wants to rule the world", play >> System("mpg123 -q /mnt/flash/solo/audio/t4f_everybody.mp3")),
-            Scene("Police - Walking on the moon", play >> System("mpg123 -q /mnt/flash/solo/audio/police_walking_moon.mp3")),
-            Scene("Police - Message in a bottle", play >> System("mpg123 -q /mnt/flash/solo/audio/police_message_bottle.mp3")),
-            Scene("Led Zeppelin - Rock and roll", play >> System("mpg123 -q /mnt/flash/solo/audio/led_zeppelin_rock_and_roll.mp3")),
-            Scene("Bon Jovi - Livin on a prayer", play >> System("mpg123 -q /mnt/flash/solo/audio/bon_jovi_prayer.mp3")),
-            Scene("Pat Metheny - Letter from home", play >> System("mpg123 -q /mnt/flash/solo/audio/letter_from_home.mp3")),
-            Scene("Muse - Uprising", play >> System("mpg123 -q /mnt/flash/solo/audio/uprising.mp3")),
+            Scene("Toto - Rossana", play >> System(player + "toto_rossana_no_bass.mp3")),
+            Scene("Toto - Africa", play >> System(player + "toto_africa_no_bass.mp3")),
+            Scene("Yes - Owner of a lonely heart", play >> System(player + "yes_owner_lonely_heart.mp3")),
+            Scene("Queen - I want to break free", play >> System(player + "queen_want_break_free.mp3")),
+            Scene("Queen - Under Pressure", play >> System(player + "queen_under_pressure.mp3")),
+            Scene("Queen - Crazy little thing called love", play >> System(player + "queen_crazy_little_thing_called_love.mp3")),
+            Scene("Queen - Another one bites the dust", play >> System(player + "queen_another_on_bites_dust.mp3")),
+            Scene("ZZ Top - Sharp dressed man", play >> System(player + "zz_top_sharp_dressed_man.mp3")),
+            Scene("Tears for fears - Head over heels", play >> System(player + "t4f_head_over_heels.mp3")),
+            Scene("Tears for fears - Everybody wants to rule the world", play >> System(player + "t4f_everybody.mp3")),
+            Scene("Police - Walking on the moon", play >> System(player + "police_walking_moon.mp3")),
+            Scene("Police - Message in a bottle", play >> System(player + "police_message_bottle.mp3")),
+            Scene("Led Zeppelin - Rock and roll", play >> System(player + "led_zeppelin_rock_and_roll.mp3")),
+            Scene("Bon Jovi - Livin on a prayer", play >> System(player + "bon_jovi_prayer.mp3")),
+            Scene("Pat Metheny - Letter from home", play >> System(player + "letter_from_home.mp3")),
+            Scene("Muse - Uprising", play >> System(player + "uprising.mp3")),
        ]),
     13: SceneGroup("Rush cover", [    
-            Scene("Rush - Mission", play >> System("mpg123 -q /mnt/flash/solo/audio/mission.mp3")),
-            Scene("Rush - Limelight", play >> System("mpg123 -q /mnt/flash/solo/audio/limelight.mp3")),
-            Scene("Rush - RedBarchetta ", play >> System("mpg123 -q /mnt/flash/solo/audio/barchetta.mp3")),
-            Scene("Rush - FlyByNight ", play >> System("mpg123 -q /mnt/flash/solo/audio/fly_by_night.mp3")),
-            Scene("Rush - Spirit of Radio ", play >> System("mpg123 -q /mnt/flash/solo/audio/spirit_of_radio.mp3")),
+            Scene("Mission", play >> System(player + "mission.mp3")),
+            Scene("Limelight", play >> System(player + "limelight.mp3")),
+            Scene("RedBarchetta ", play >> System(player + "barchetta.mp3")),
+            Scene("FlyByNight ", play >> System(player + "fly_by_night.mp3")),
+            Scene("Spirit of Radio ", play >> System(player + "spirit_of_radio.mp3")),
+            Scene("AnalogKid", play >> System(player + "analogkid.mp3")),
+            Scene("Analog Kid Keyboard", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
+            Scene("TimeStandSteel", play >> System(player + "time_stand_steel.mp3")),
+            Scene("Time Stand Still Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+            Scene("KidGloves ", play >> System(player + "kid_gloves.mp3")),
+            Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+            Scene("Freewill ", play >> System(player + "freewill.mp3")),
+            Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),
     14: SceneGroup("AnalogKid", [
-            Scene("Rush - AnalogKid", play >> System("mpg123 -q /mnt/flash/solo/audio/analogkid.mp3")),
-			Scene("Analog Kid Keyboard", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
+            Scene("AnalogKid", play >> System(player + "analogkid.mp3")),
+            Scene("Analog Kid Keyboard", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
        ]),	 
     15: SceneGroup("TimeStandSteel", [
-            Scene("Rush - TimeStandSteel", play >> System("mpg123 -q /mnt/flash/solo/audio/time_stand_steel.mp3")),
-			Scene("Time Stand Still Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+            Scene("TimeStandSteel", play >> System(player + "time_stand_steel.mp3")),
+            Scene("Time Stand Still Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
        ]),	 
     16: SceneGroup("KidGloves", [
-            Scene("Rush - KidGloves ", play >> System("mpg123 -q /mnt/flash/solo/audio/kid_gloves.mp3")),
-			Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+            Scene("Rush - KidGloves ", play >> System(player + "kid_gloves.mp3")),
+            Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),   
     17: SceneGroup("Freewill", [
-            Scene("Rush - Freewill ", play >> System("mpg123 -q /mnt/flash/solo/audio/freewill.mp3")),
-			Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+            Scene("Rush - Freewill ", play >> System(player + "freewill.mp3")),
+            Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),   
     18: SceneGroup("ORIGINAL", [
-            Scene("Centurion backing track", play >> System("mpg123 -q /mnt/flash/solo/audio/centurion.mp3")),
+            Scene("Centurion backing track", play >> System(player + "centurion.mp3")),
             Scene("Centurion - PK5",  centurion_patch),
-            Scene("Shadow", play >> System("mpg123 -q /mnt/flash/solo/audio/shadow.mp3")),
-            Scene("Voleur", play >> System("mpg123 -q /mnt/flash/solo/audio/voleur.mp3")),
+            Scene("Shadow", play >> System(player + "shadow.mp3")),
+            Scene("Voleur", play >> System(player + "voleur.mp3")),
        ]),   
 }
 
+# ---------------------------
+# EXECUTE SECTION 
 # ---------------------------
 run(
     control=_control,
@@ -259,4 +277,3 @@ run(
     #post=_post,
     scenes=_scenes, 
 )
-# ---------------------------
