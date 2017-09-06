@@ -21,7 +21,7 @@ config(
         ('PK5', '20:0','.*SD-90 Part A'), ],
 
     in_ports = [ 
-        ('Q49  - MIDI IN 1', '24:0','.*Q49 MIDI 1'), # Alesis Q49 in USB MODE
+        #('Q49  - MIDI IN 1', '24:0','.*Q49 MIDI 1'), # Alesis Q49 in USB MODE
         ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
         ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
 
@@ -101,7 +101,7 @@ _post = Print('output', portnames='out')
 
 # Reset logic
 reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
-reset=Filter(NOTEON) >> Process(SendSysex)
+#reset=Filter(NOTEON) >> Process(SendSysex)
 
 # Controller pour le changement de scene (fcb1010 actual)
 _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
@@ -196,8 +196,8 @@ jumper2=(cf >> KeyFilter('E3:A#3') >>
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Reset",  reset),
-    2:Scene("Centurion - Patch et Video", centurion_patch, [centurion_video]),
-    #2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    #2:Scene("Centurion - Patch et Video", centurion_patch, [centurion_video]),
+    2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
     5: SceneGroup("The Trees", [
@@ -271,7 +271,7 @@ _scenes = {
             Scene("Rush - Freewill ", play >> System(player + "freewill.mp3")),
             Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
 		]),   
-    18: SceneGroup("ORIGINAL", [
+    18: SceneGroup("Compos-guitare", [
             Scene("Centurion backing track", play >> System(player + "centurion.mp3")),
             Scene("Centurion - Patch et Video", centurion_patch, [centurion_video]),
             Scene("Shadow", play >> System(player + "shadow.mp3")),
@@ -284,7 +284,7 @@ _scenes = {
 # ---------------------------
 run(
     control=_control,
-    pre=_pre, 
-    post=_post,
+    #pre=_pre, 
+    #post=_post,
     scenes=_scenes, 
 )
