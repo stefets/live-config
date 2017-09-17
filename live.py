@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
+# Reset logic
+# Reset is channel 9, controller 22
+#       Send reset sysex message to SD-90
+#       Kill mpg123 and omxplayer process
+#
+
 import subprocess
 from threading import Timer
 from time import sleep
@@ -25,7 +31,7 @@ config(
         ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
         ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
 
-    initial_scene = 2,
+    initial_scene = 12,
 )
 
 hook(
@@ -90,10 +96,12 @@ def NavigateToScene(ev):
             else:
                 switch_subscene(1)
     elif ev.ctrl == 22:
+        # Reset logic
         subprocess.Popen(['/bin/bash', './kill.sh'])
 
 #-----------------------------------------------------------------------------------------------------------
 # CONFIGURATION SECTION
+#
 #-----------------------------------------------------------------------------------------------------------
 
 _pre = Print('input', portnames='in')
@@ -132,6 +140,7 @@ keysynth = cf >> Velocity(fixed=80) >> Output('PK5', channel=3, program=((96*128
 
 # Patch Syhth. generique pour lowbase
 lowsynth = cf >> Velocity(fixed=100) >> Output('PK5', channel=1, program=51, volume=100, ctrls={93:75, 91:75})
+lowsynth2 = cf >> Velocity(fixed=115) >> Output('PK5', channel=1, program=51, volume=115, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
 # Patch Closer to the hearth 
@@ -151,7 +160,7 @@ tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
 #--------------------------------------------------------------------
 
 # Patch Analog Kid
-analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=75) >> Output('PK5', channel=1, program=((99*128),50), volume=75)
+analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=85) >> Output('PK5', channel=1, program=((99*128),50), volume=100)
 analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=100)
 #--------------------------------------------------------------------
 
@@ -161,8 +170,8 @@ limelight = cf >> Key('d#6') >> Output('PK5', channel=16, program=((80*128),12),
 # Patch Centurion
 centurion_synth = (Velocity(fixed=85) >> 
 	(
-		Output('PK5', channel=1, program=((99*128),96), volume=85) // 
-		Output('PK5', channel=2, program=((99*128),82), volume=85)
+		Output('PK5', channel=1, program=((99*128),96), volume=100) // 
+		Output('PK5', channel=2, program=((99*128),82), volume=100)
 	))
 
 # Patch Centurion Video
@@ -178,7 +187,7 @@ centurion_patch=(cf >> LatchNotes(True,reset='C3') >>
 		(KeyFilter('A3') >> Key('D5'))
 	) >> centurion_synth)
 
-# Test
+# Test - not working :(
 jumper2=(cf >> KeyFilter('E3:A#3') >>
 	(
 		(KeyFilter('E3') % (NoteOff('E3'))) // 
@@ -196,7 +205,6 @@ jumper2=(cf >> KeyFilter('E3:A#3') >>
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Reset",  reset),
-    #2:Scene("Centurion - Patch et Video", centurion_patch, [centurion_video]),
     2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
@@ -214,13 +222,11 @@ _scenes = {
        ]),
     8: Scene("Analog Kid", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
     9: Scene("Tabarnak", play >> System("mpg123 -q /mnt/flash/live/tabarnak.mp3")),
-    #9: Scene("EntreNous", play >> System("mpg123 -q /mnt/flash/live/entrenous.mp3")),
-    10: Scene("Circumstances bridge", play >> System("mpg123 -q /mnt/flash/live/circumstances.mp3")),
+    10: Scene("Tabarnak", play >> System("mpg123 -q /mnt/flash/live/tabarnak.mp3")),
     11: SceneGroup("Natural Science", [
             Scene("Intro", play >> System("mpg123 -q /mnt/flash/live/ns_intro.mp3")),
             Scene("Outro", play >> System("mpg123 -q /mnt/flash/live/ns_outro.mp3")),
        ]),
-    #11: Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     12: SceneGroup("Bass cover", [
             Scene("Toto - Rossana", play >> System(player + "toto_rossana_no_bass.mp3")),
             Scene("Toto - Africa", play >> System(player + "toto_africa_no_bass.mp3")),
@@ -230,7 +236,8 @@ _scenes = {
             Scene("Queen - Crazy little thing called love", play >> System(player + "queen_crazy_little_thing_called_love.mp3")),
             Scene("Queen - Another one bites the dust", play >> System(player + "queen_another_on_bites_dust.mp3")),
             Scene("ZZ Top - Sharp dressed man", play >> System(player + "zz_top_sharp_dressed_man.mp3")),
-            Scene("Tears for fears - Head over heels", play >> System(player + "t4f_head_over_heels.mp3")),
+            Scene("T4F - Head over heels", play >> System(player + "t4f_head_over_heels.mp3")),
+            Scene("T4F - Head over heels - Synth", Transpose(-12) >> LatchNotes(False,reset='E2') >> lowsynth2),
             Scene("Tears for fears - Everybody wants to rule the world", play >> System(player + "t4f_everybody.mp3")),
             Scene("Police - Walking on the moon", play >> System(player + "police_walking_moon.mp3")),
             Scene("Police - Message in a bottle", play >> System(player + "police_message_bottle.mp3")),
@@ -254,28 +261,12 @@ _scenes = {
             Scene("Freewill ", play >> System(player + "freewill.mp3")),
             Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),
-    14: SceneGroup("AnalogKid", [
-            Scene("AnalogKid", play >> System(player + "analogkid.mp3")),
-            Scene("Analog Kid Keyboard", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
-       ]),	 
-    15: SceneGroup("TimeStandSteel", [
-            Scene("TimeStandSteel", play >> System(player + "time_stand_steel.mp3")),
-            Scene("Time Stand Still Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
-       ]),	 
-    16: SceneGroup("KidGloves", [
-            Scene("Rush - KidGloves ", play >> System(player + "kid_gloves.mp3")),
-            Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
-       ]),   
-    17: SceneGroup("Freewill", 
-		[
-            Scene("Rush - Freewill ", play >> System(player + "freewill.mp3")),
-            Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
-		]),   
-    18: SceneGroup("Compos-guitare", [
-            Scene("Centurion backing track", play >> System(player + "centurion.mp3")),
-            Scene("Centurion - Patch et Video", centurion_patch, [centurion_video]),
-            Scene("Shadow", play >> System(player + "shadow.mp3")),
-            Scene("Voleur", play >> System(player + "voleur.mp3")),
+    14: SceneGroup("Compositions", [    
+            Scene("Centurion - no guitar, no synth", play >> System(player + "centurion.mp3")),
+            Scene("Centurion - Synth", centurion_patch),
+            #Scene("Centurion - Patch et Video", centurion_patch, [centurion_video]),
+            Scene("Shadow - no bass", play >> System(player + "shadow.mp3")),
+            Scene("Voleur - no guitar", play >> System(player + "voleur.mp3")),
        ]),   
 }
 
