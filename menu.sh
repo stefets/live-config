@@ -3,11 +3,12 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 main="main.py"
-target="live.py"
+target=$(mktemp)
 
 function run()
 { 
 	sed -e "/__SCENES__/r $1.py" -e "/__SCENES__/d" $main > $target
+	clear
     python $target
 }
 
