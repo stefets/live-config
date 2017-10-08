@@ -24,4 +24,5 @@ fi
 
 # OK
 cd $DIR
-python $DIR/live.py
+git pull
+/bin/bash $DIR/menu.sh
