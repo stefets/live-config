@@ -1,8 +1,3 @@
-#-----------------------------------------------------------------------------------------------------------
-# SCENES SECTION
-#-----------------------------------------------------------------------------------------------------------
-_scenes = {
-    1: Scene("Reset",  reset),
     2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
@@ -25,4 +20,3 @@ _scenes = {
             Scene("Intro", play >> System("mpg123 -q /mnt/flash/live/ns_intro.mp3")),
             Scene("Outro", play >> System("mpg123 -q /mnt/flash/live/ns_outro.mp3")),
        ]),
-}

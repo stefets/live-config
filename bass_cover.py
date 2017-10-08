@@ -1,8 +1,3 @@
-#-----------------------------------------------------------------------------------------------------------
-# SCENES SECTION
-#-----------------------------------------------------------------------------------------------------------
-_scenes = {
-    1: Scene("Reset",  reset),
     2: SceneGroup("Bass cover", [
             Scene("Toto - Rossana", play >> System(player + "toto_rossana_no_bass.mp3")),
             Scene("Toto - Africa", play >> System(player + "toto_africa_no_bass.mp3")),
@@ -14,7 +9,7 @@ _scenes = {
             Scene("ZZ Top - Sharp dressed man", play >> System(player + "zz_top_sharp_dressed_man.mp3")),
             Scene("T4F - Head over heels", play >> System(player + "t4f_head_over_heels.mp3")),
             Scene("T4F - Head over heels - Synth", Transpose(-12) >> LatchNotes(False,reset='E2') >> lowsynth2),
-            Scene("Tears for fears - Everybody wants to rule the world", play >> System(player + "t4f_everybody.mp3")),
+            Scene("T4F - Everybody wants to rule the world", play >> System(player + "t4f_everybody.mp3")),
             Scene("Police - Walking on the moon", play >> System(player + "police_walking_moon.mp3")),
             Scene("Police - Message in a bottle", play >> System(player + "police_message_bottle.mp3")),
             Scene("Led Zeppelin - Rock and roll", play >> System(player + "led_zeppelin_rock_and_roll.mp3")),
@@ -22,4 +17,3 @@ _scenes = {
             Scene("Pat Metheny - Letter from home", play >> System(player + "letter_from_home.mp3")),
             Scene("Muse - Uprising", play >> System(player + "uprising.mp3")),
        ]),
-}

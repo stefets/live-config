@@ -1,8 +1,3 @@
-#-----------------------------------------------------------------------------------------------------------
-# SCENES SECTION
-#-----------------------------------------------------------------------------------------------------------
-_scenes = {
-    1: Scene("Reset",  reset),
     2: SceneGroup("Compositions", [    
             Scene("Centurion - no guitar, no synth", play >> System(player + "centurion.mp3")),
             Scene("Centurion - Synth", centurion_patch),
@@ -12,4 +7,3 @@ _scenes = {
             Scene("Shadow - no bass", play >> System(player + "shadow.mp3")),
             Scene("Voleur - no guitar", play >> System(player + "voleur.mp3")),
        ]),   
-}
