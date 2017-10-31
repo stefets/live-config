@@ -13,7 +13,7 @@
             Scene("Intro", play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
             Scene("Explosion", explosion),
        ]),
-    8: Scene("Analog Kid", [ChannelFilter(2) >> analogkid, ChannelFilter(1) >> analogkid_ending ]),
+    8: Scene("Analog Kid", Channel(1) >> analogkid),
     9: Scene("Hemispheres", play >> System("mpg123 -q /mnt/flash/live/hemispheres.mp3")),
     10: Scene("Circumstances", play >> System("mpg123 -q /mnt/flash/live/circumstances.mp3")),
     11: SceneGroup("Natural Science", [
