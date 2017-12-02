@@ -12,6 +12,7 @@ from threading import Timer
 from time import sleep
 from mididings import *
 from mididings.extra import *
+from mididings import engine
 from mididings.engine import *
 from mididings.event import *
 from mididings.extra.inotify import AutoRestart
@@ -23,6 +24,7 @@ config(
     client_name = 'Master',
 
     out_ports = [ 
+        ('D4',  '20:0','.*SD-90 Part A'),
         ('Q49', '20:0','.*SD-90 Part A'),
         ('PK5', '20:0','.*SD-90 Part A'), ],
 
@@ -31,13 +33,36 @@ config(
         ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
         ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
 
-    initial_scene = 1,
+    initial_scene = 2,
 )
 
 hook(
     #MemorizeScene('scene.txt'),
-    AutoRestart(),
+    #AutoRestart(),
 )
+#--------------------------------------------------------------------
+# Class
+class RemoveDuplicates:
+    def __init__(self):
+        self.prev_ev = None
+        self.prev_time = 0
+
+    def __call__(self, ev):
+        if ev.type == NOTEOFF:
+            return ev
+        now = engine.time()
+        offset=now-self.prev_time
+        if offset >= 0.035:
+            if ev.type == NOTEON:
+                print "+ " + str(offset)
+            r = ev 
+        else:
+            if ev.type == NOTEON:
+                print "- " + str(offset)
+            r = None
+        self.prev_ev = ev
+        self.prev_time = now
+        return r
 
 #--------------------------------------------------------------------
 # Test
@@ -109,7 +134,7 @@ _post = Print('output', portnames='out')
 
 # Reset logic
 reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
-#reset=Filter(NOTEON) >> Process(SendSysex)
+reset=Filter(NOTEON) >> Process(SendSysex)
 
 # Controller pour le changement de scene (fcb1010 actual)
 _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
@@ -132,6 +157,8 @@ player="mpg123 -q /mnt/flash/solo/audio/"
 #__INSTRUMENTS__
 
 piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
+#d4= LatchNotes(False,reset='C#3') >> Transpose(0) >> Output('D4', channel=1, program=1, volume=100)
+d4= Output('D4', channel=10, program=1, volume=100)
 
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
