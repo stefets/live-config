@@ -5,8 +5,10 @@
 			#		ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
 			#	]),
     	#Scene("Analog Kid", Channel(1) >> analogkid),
-    	Scene("Pad D4", Process(RemoveDuplicates()) >> d4),
-    	#Scene("Pad D4", d4),
+    	#Scene("Pad D4", Process(RemoveDuplicates()) >> d4),
+    	#Scene("Pad D4", centurion_patch),
+    	#Scene("Pad D4", Process(RemoveDuplicates()) >> closer_patch_d4),
+    	Scene("Pad D4",  Process(RemoveDuplicates()) >> closer_patch_celesta_d4),
        ]),   
 	   
 	   

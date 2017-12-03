@@ -47,18 +47,18 @@ class RemoveDuplicates:
         self.prev_ev = None
         self.prev_time = 0
 
-    def __call__(self, ev):
-        if ev.type == NOTEOFF:
+    def __call__(self, ev): 
+        if ev.channel != 3 or ev.type == NOTEOFF:
             return ev
         now = engine.time()
         offset=now-self.prev_time
         if offset >= 0.035:
-            if ev.type == NOTEON:
-                print "+ " + str(offset)
+            #if ev.type == NOTEON:
+            #    print "+ " + str(offset)
             r = ev 
         else:
-            if ev.type == NOTEON:
-                print "- " + str(offset)
+            #if ev.type == NOTEON:
+            #    print "- " + str(offset)
             r = None
         self.prev_ev = ev
         self.prev_time = now
@@ -157,8 +157,6 @@ player="mpg123 -q /mnt/flash/solo/audio/"
 #__INSTRUMENTS__
 
 piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
-#d4= LatchNotes(False,reset='C#3') >> Transpose(0) >> Output('D4', channel=1, program=1, volume=100)
-d4= Output('D4', channel=10, program=1, volume=100)
 
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
@@ -174,8 +172,8 @@ lowsynth2 = cf >> Velocity(fixed=115) >> Output('PK5', channel=1, program=51, vo
 #--------------------------------------------------------------------
 
 # Patch Closer to the hearth 
-closer_high = Output('Q49', 1, program=((99*128),15), volume=100)
-closer_base = Velocity(fixed=100) >> Output('PK5', 2, program=((99*128),51), volume=100)
+closer_high = Output('Q49', channel=1, program=((99*128),15), volume=100)
+closer_base = Velocity(fixed=100) >> Output('PK5', channel=2, program=((99*128),51), volume=100)
 closer_main = cf >> KeySplit('c3', closer_base, closer_high)
 #--------------------------------------------------------------------
 
@@ -218,14 +216,34 @@ centurion_patch=(cf >> LatchNotes(True,reset='C3') >>
 		(KeyFilter('A3') >> Key('D5'))
 	) >> centurion_synth)
 
-# Test - not working :(
-jumper2=(cf >> KeyFilter('E3:A#3') >>
+# Hack D4 - Closer to the heart
+closer_celesta_d4 = (
 	(
-		(KeyFilter('E3') % (NoteOff('E3'))) // 
-		(KeyFilter('F3') % (Key('D3'))) //
-		(KeyFilter('G3') % (Key('D4'))) //
-		(KeyFilter('A3') % (Key('D5')))
-	) >> centurion_synth)
+		Velocity(fixed=100) >> Output('D4', channel=1, program=((98*128),9), volume=110) //
+		(Velocity(fixed=80) >> Transpose(-72) >> Output('PK5', channel=2, program=((99*128)+1,92), volume=50))
+	))
+
+closer_patch_celesta_d4=(cf >> 
+    (
+		(~KeyFilter(notes=[36,38,40,41,43,45])) //
+    	(KeyFilter('C1') >> Key('A6')) //
+    	(KeyFilter('D1') >> Key('G6')) //
+    	(KeyFilter('E1') >> Key('D7')) //
+    	(KeyFilter('F1') >> Key('F6')) //
+    	(KeyFilter('G1') >> Key('B6')) //
+    	(KeyFilter('A1') >> Key('C#7')) 
+   ) >> closer_celesta_d4)
+
+closer_bell_d4 = Velocity(fixed=100) >> Output('D4', channel=1, program=((99*128),15), volume=100)
+closer_patch_d4=(cf >> 
+    (
+		(~KeyFilter(notes=[36,38,40,41,43,45])) //
+    	(KeyFilter('C1') >> Key('D4')) //
+    	(KeyFilter('D1') >> Key('A3')) //
+    	(KeyFilter('E1') >> Key('G3')) //
+    	(KeyFilter('F1') >> Key('F#3')) 
+   ) >>  KeySplit('c3', closer_base, closer_bell_d4))
+
 
 # Patch debug section ----------------------------------
 #debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
@@ -243,7 +261,7 @@ __SCENES__
 # ---------------------------
 run(
     control=_control,
-    #pre=_pre, 
+    pre=_pre, 
     #post=_post,
     scenes=_scenes, 
 )
