@@ -7,11 +7,8 @@ target=$(mktemp)
 
 function run()
 { 
-	sed -e "/__SCENES__/r $1.py" -e "/__SCENES__/d" $main > $target
-	clear
-    python $target
+	/bin/bash $DIR/execute.sh $1
 }
-
 
 while true
 do
@@ -35,7 +32,7 @@ do
             continue
             ;;
 		5 )
-		    sudo shutdown -h now
+		    sudo shutdown -h now &
 			break
 			;;
         * )
