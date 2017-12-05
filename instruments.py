@@ -33,9 +33,16 @@ tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
 #--------------------------------------------------------------------
 
 # Patch Analog Kid
-#analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((99*128),50), volume=100)
-analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Output('PK5', channel=1, program=((98*128),53), volume=100)
-analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=100)
+analogkid_low= (LatchNotes(False,reset='c#3') >>
+	(
+		(KeyFilter('c3:d#3') >> Transpose(-7) >> Harmonize('c','major',['unison', 'third', 'fifth', 'octave'])) //
+	    (KeyFilter('e3') >> Key('a3')) 
+	) >> Output('PK5',channel=1,program=((98*128),53),volume=100,ctrls={91:75}))
+analogkid_high = Output('PK5', channel=2, program=((98*128),53), volume=100, ctrls={93:75, 91:100})
+analogkid_main = cf >> KeySplit('f3', analogkid_low, analogkid_high)
+
+#analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=100)
+
 #--------------------------------------------------------------------
 
 # Patch Limelight
@@ -65,7 +72,7 @@ centurion_patch=(cf >> LatchNotes(True,reset='C3') >>
 closer_celesta_d4 = (
 	(
 		Velocity(fixed=100) >> Output('D4', channel=1, program=((98*128),9), volume=110) //
-		(Velocity(fixed=80) >> Transpose(-72) >> Output('PK5', channel=2, program=((99*128)+1,92), volume=50))
+		(Velocity(fixed=100) >> Transpose(-72) >> Output('PK5', channel=2, program=((99*128)+1,92), volume=80))
 	))
 
 closer_patch_celesta_d4=(cf >> 

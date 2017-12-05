@@ -1,6 +1,1 @@
-    2: SceneGroup("Minimal instrument", [    
-    	Scene("Test", q49),
-       ]),   
-	   
-	   
-#~CtrlFilter(1) >> 
+    2: Scene("Test", q49),

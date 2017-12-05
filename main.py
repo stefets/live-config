@@ -131,12 +131,13 @@ def NavigateToScene(ev):
 _pre = Print('input', portnames='in')
 _post = Print('output', portnames='out')
 
-# Reset logic
-reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
-reset=Filter(NOTEON) >> Process(SendSysex)
-
+# Reset logic (LIVE MODE)
 # Controller pour le changement de scene (fcb1010 actual)
+reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
 _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
+
+# Reset logic (DEBUG MODE)
+reset=Filter(NOTEOFF) >> Process(SendSysex)
 #_control = ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlValueFilter(0) >> Call(gliss_exec)
 #_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
 #_control = Filter(NOTE) >> Filter(NOTEON) >> Call(arpeggiator_exec)
@@ -144,8 +145,9 @@ _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(Navi
 # Channel 9 filter (my fcb1010 in my case)
 cf=~ChannelFilter(9)
 
-# Shortcut (Play button)
+# Shortcut (Play switch)
 play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
+d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
 player="mpg123 -q /mnt/flash/solo/audio/"
 
 #-----------------------------------------------------------------------------------------------------------
@@ -166,6 +168,6 @@ __SCENES__
 run(
     control=_control,
     pre=_pre, 
-    #post=_post,
+    post=_post,
     scenes=_scenes, 
 )
