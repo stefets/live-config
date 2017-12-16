@@ -10,3 +10,4 @@ sed -e "/__INSTRUMENTS__/r instruments.py" -e "/__INSTRUMENTS__/d" \
 	$main > $target
 clear
 python $target
+#rm $target

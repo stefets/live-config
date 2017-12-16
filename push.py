@@ -13,10 +13,11 @@
             Scene("Intro", play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
             Scene("Explosion", explosion),
        ]),
-    8: Scene("Analog Kid", Channel(1) >> analogkid),
+    8: Scene("Analog Kid", Channel(1) >> analogkid_main),
     9: Scene("Hemispheres", play >> System("mpg123 -q /mnt/flash/live/hemispheres.mp3")),
     10: Scene("Circumstances", play >> System("mpg123 -q /mnt/flash/live/circumstances.mp3")),
     11: SceneGroup("Natural Science", [
             Scene("Intro", play >> System("mpg123 -q /mnt/flash/live/ns_intro.mp3")),
             Scene("Outro", play >> System("mpg123 -q /mnt/flash/live/ns_outro.mp3")),
+    12: Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
        ]),

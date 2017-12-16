@@ -1,7 +1,17 @@
 # Simple output patch for testing equipment
-q49=cf >> Output('D4', channel=1, program=1, volume=100)
+q49=cf >> Output('Q49', channel=1, program=1, volume=100)
 pk5=cf >> Output('PK5', channel=2, program=1, volume=100)
-d4=cf >> Output('Q49', channel=10, program=1, volume=100)
+d4=cf >> Output('D4', channel=10, program=1, volume=100)
+d4_tom=cf >> Output('D4', channel=11, program=((96*128)+1,118), volume=100)
+pod_base=Output('PODHD500', channel=9)
+
+# POD HD500
+POD=OutputTemplate('PODHD500',9)
+pod_init=Output('PODHD500', channel=9, program=1)
+#pod_init=POD(64)
+#pod_init=Init(POD(64))
+#pod_off=Output('PODHD500', channel=9, ctrls={51:127,52:127,53:127,54:127,})
+#pod_on=Output('PODHD500', channel=9, ctrls={51:0,52:0,53:0,54:0,})
 
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
@@ -30,13 +40,20 @@ tss_keyboard_main = cf >> KeySplit('c2', tss_base, tss_high)
 tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=100)
 tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=100)
 tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
+
 #--------------------------------------------------------------------
 
 # Patch Analog Kid
+analog_pod2=(
+	(Filter(NOTEON) >> (KeyFilter('c3') % Ctrl(51,0)) >> Output('PODHD500',9)) //
+	(Filter(NOTEON) >> (KeyFilter('d3') % Ctrl(51,127)) >> Output('PODHD500',9))
+)
+#analog_pod=(Filter(NOTEON) >> (KeyFilter('c3') % Ctrl(51,27)) >> Output('PODHD500',9))
+
 analogkid_low= (LatchNotes(False,reset='c#3') >>
-	(
+	( 
 		(KeyFilter('c3:d#3') >> Transpose(-7) >> Harmonize('c','major',['unison', 'third', 'fifth', 'octave'])) //
-	    (KeyFilter('e3') >> Key('a3')) 
+		(KeyFilter('e3') >> Key('a3')) 
 	) >> Output('PK5',channel=1,program=((98*128),53),volume=100,ctrls={91:75}))
 analogkid_high = Output('PK5', channel=2, program=((98*128),53), volume=100, ctrls={93:75, 91:100})
 analogkid_main = cf >> KeySplit('f3', analogkid_low, analogkid_high)
@@ -68,11 +85,13 @@ centurion_patch=(cf >> LatchNotes(True,reset='C3') >>
 		(KeyFilter('A3') >> Key('D5'))
 	) >> centurion_synth)
 
+# PAD SECTION --------------------------------------------------------------------------------------------------
+
 # Hack D4 - Closer to the heart
 closer_celesta_d4 = (
 	(
-		Velocity(fixed=100) >> Output('D4', channel=1, program=((98*128),9), volume=110) //
-		(Velocity(fixed=100) >> Transpose(-72) >> Output('PK5', channel=2, program=((99*128)+1,92), volume=80))
+		Velocity(fixed=100) >> Output('D4', channel=1, program=((98*128),11), volume=110) //
+		(Velocity(fixed=100) >> Transpose(-72) >> Output('PK5', channel=2, program=((99*128),96), volume=80))
 	))
 
 closer_patch_celesta_d4=(cf >> 
@@ -95,3 +114,31 @@ closer_patch_d4=(cf >>
     	(KeyFilter('E1') >> Key('G3')) //
     	(KeyFilter('F1') >> Key('F#3')) 
    ) >> closer_bell_d4)
+
+# YYZ
+yyz_bell=Output('D4', channel=10, program=1, volume=100)
+yyz=(cf >>
+	(
+		(KeyFilter('F1') >> Key('A4')) //
+		(KeyFilter('D1') >> Key('G#4')) 
+	) >> yyz_bell)
+
+# Time Stand Steel
+# Instruments
+d4_melo_tom=Velocity(fixed=100) >> Output('D4', channel=1, program=((99*128)+1,118), volume=100)
+d4_castanet=Velocity(fixed=100) >> Output('D4', channel=2, program=((99*128)+1,116), volume=100)
+d4_808_tom=Velocity(fixed=100) >> Output('D4', channel=3, program=((99*128)+1,119), volume=100)
+
+# Sons 1 et 2
+tss_d4_melo_tom_A=cf >>KeyFilter('C1') >> Key('C6') >> d4_melo_tom
+
+# Son 3
+tss_d4_castanet=cf >>KeyFilter('E1') >> Key('E6') >> d4_castanet
+
+# Son 4
+tss_d4_melo_tom_B=cf >>KeyFilter('F1') >> Key('F2') >> d4_melo_tom
+
+# Son 5
+tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('A6') >> d4_808_tom
+
+#--------------------------------------------

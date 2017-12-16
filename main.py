@@ -26,7 +26,8 @@ config(
     out_ports = [ 
         ('D4',  '20:0','.*SD-90 Part A'),
         ('Q49', '20:0','.*SD-90 Part A'),
-        ('PK5', '20:0','.*SD-90 Part A'), ],
+        ('PK5', '20:0','.*SD-90 Part A'),
+        ('PODHD500', '20:2','.*SD-90 MIDI 1'), ],
 
     in_ports = [ 
         #('Q49  - MIDI IN 1', '24:0','.*Q49 MIDI 1'), # Alesis Q49 in USB MODE
@@ -43,12 +44,14 @@ hook(
 #--------------------------------------------------------------------
 # Class
 class RemoveDuplicates:
-    def __init__(self):
+    def __init__(self, _wait=0):
+        self.wait = _wait
         self.prev_ev = None
         self.prev_time = 0
 
     def __call__(self, ev): 
         if ev.type == NOTEOFF:
+            sleep(self.wait)
             return ev
         now = engine.time()
         offset=now-self.prev_time
@@ -103,6 +106,9 @@ def SendSysex(ev):
     return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
 
 # Scene navigation
+def MoveNext(ev):
+    switch_scene(current_scene()+1)
+
 def NavigateToScene(ev):
     nb_scenes = len(scenes())    
     if ev.ctrl == 20:
@@ -124,6 +130,11 @@ def NavigateToScene(ev):
         # Reset logic
         subprocess.Popen(['/bin/bash', './kill.sh'])
 
+def show_time(ev):
+    print "toto"
+def init_pod(ev):
+    output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
+    
 #-----------------------------------------------------------------------------------------------------------
 # CONFIGURATION SECTION
 #-----------------------------------------------------------------------------------------------------------
@@ -135,9 +146,10 @@ _post = Print('output', portnames='out')
 # Controller pour le changement de scene (fcb1010 actual)
 reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
 _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
+#_control = Filter(NOTEON) >> KeyFilter(37) >> Process(MoveNext)
 
 # Reset logic (DEBUG MODE)
-reset=Filter(NOTEOFF) >> Process(SendSysex)
+#reset=Filter(NOTEOFF) >> Process(SendSysex)
 #_control = ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlValueFilter(0) >> Call(gliss_exec)
 #_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
 #_control = Filter(NOTE) >> Filter(NOTEON) >> Call(arpeggiator_exec)
@@ -148,7 +160,11 @@ cf=~ChannelFilter(9)
 # Shortcut (Play switch)
 play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
 d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
+
+# Audio and midi players
 player="mpg123 -q /mnt/flash/solo/audio/"
+apm_part_a="aplaymidi -p 20:0 /mnt/flash/solo/midi/"
+apm_part_b="aplaymidi -p 20:1 /mnt/flash/solo/midi/"
 
 #-----------------------------------------------------------------------------------------------------------
 # PATCH SECTION
@@ -167,7 +183,7 @@ __SCENES__
 # ---------------------------
 run(
     control=_control,
-    pre=_pre, 
+    #pre=_pre, 
     post=_post,
     scenes=_scenes, 
 )

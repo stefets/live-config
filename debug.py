@@ -8,9 +8,21 @@
     	#Scene("Pad D4", Process(RemoveDuplicates()) >> d4),
     	#Scene("Pad D4", centurion_patch),
     	#Scene("Pad D4", Process(RemoveDuplicates()) >> closer_patch_d4),
-    	#Scene("Pad D4",  Process(RemoveDuplicates()) >> closer_patch_celesta_d4),
-    	#Scene("Pad D4",  Process(RemoveDuplicates()) >> closer_patch_celesta_d4),
-		Scene("2112", Process(RemoveDuplicates()) >> d4play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
+        #Scene("Pad D4",  Process(RemoveDuplicates()) >> yyz),
+    	Scene("TimeStandSteel.D4",  Process(RemoveDuplicates(0.01)) >> 
+			[
+				(
+				tss_d4_melo_tom_A // 
+				tss_d4_castanet // 
+				tss_d4_melo_tom_B // 
+				tss_d4_808_tom
+				)
+	 		]),
+    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_808_tom_patch),
+    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_808_tom_patch),
+    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_melo_tom_patch),
+    	#Scene("Pad D4",  Process(RemoveDuplicates(0.5)) >> closer_patch_celesta_d4),
+		#Scene("2112", Process(RemoveDuplicates()) >> d4play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
        ]),   
 	   
 	   
