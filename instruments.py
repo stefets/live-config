@@ -1,6 +1,7 @@
 # Simple output patch for testing equipment
 q49=cf >> Output('Q49', channel=1, program=1, volume=100)
 pk5=cf >> Output('PK5', channel=2, program=1, volume=100)
+pk5_drum=cf >> Channel(10) >> Transpose(-24) >> Output('PK5', channel=10, program=1, volume=100)
 d4=cf >> Output('D4', channel=10, program=1, volume=100)
 d4_tom=cf >> Output('D4', channel=11, program=((96*128)+1,118), volume=100)
 pod_base=Output('PODHD500', channel=9)

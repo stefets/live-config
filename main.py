@@ -183,7 +183,7 @@ __SCENES__
 # ---------------------------
 run(
     control=_control,
-    #pre=_pre, 
-    #post=_post,
+    pre=_pre, 
+    post=_post,
     scenes=_scenes, 
 )
