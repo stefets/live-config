@@ -13,7 +13,7 @@ function run()
 while true
 do
 	
-	value=$(dialog --begin 0 0 --no-shadow --stdout --menu "Configuration" 15 20 5 1 push 2 rush_cover 3 bass_cover 4 originales 5 shutdown)
+	value=$(dialog --begin 0 0 --no-shadow --stdout --menu "Configuration" 15 20 6 1 push 2 rush_cover 3 bass_cover 4 originales 5 timeline 6 shutdown)
 	case $value in
 		1 )
 			run push
@@ -32,6 +32,10 @@ do
             continue
             ;;
 		5 )
+			run timeline
+            continue
+            ;;
+		6 )
 		    sudo shutdown -h now &
 			break
 			;;

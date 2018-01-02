@@ -88,57 +88,69 @@ centurion_patch=(cf >> LatchNotes(True,reset='C3') >>
 # PAD SECTION --------------------------------------------------------------------------------------------------
 
 # Hack D4 - Closer to the heart
-closer_celesta_d4 = (
-	(
-		Velocity(fixed=100) >> Output('D4', channel=1, program=((98*128),11), volume=110) //
-		(Velocity(fixed=100) >> Transpose(-72) >> Output('PK5', channel=2, program=((99*128),96), volume=80))
-	))
+closer_celesta_d4 =Velocity(fixed=100) >> Output('D4', channel=1, program=((98*128),11), volume=110)
+#closer_celesta_d4 = (
+#	(
+#		Velocity(fixed=100) >> Output('D4', channel=1, program=((98*128),11), volume=110) //
+#		(Velocity(fixed=100) >> Transpose(-72) >> Output('PK5', channel=2, program=((99*128),96), volume=80))
+#	))
 
 closer_patch_celesta_d4=(cf >> 
     (
 		(~KeyFilter(notes=[36,38,40,41,43,45])) //
-    	(KeyFilter('C1') >> Key('A6')) //
-    	(KeyFilter('D1') >> Key('G6')) //
-    	(KeyFilter('E1') >> Key('D7')) //
-    	(KeyFilter('F1') >> Key('F6')) //
-    	(KeyFilter('G1') >> Key('B6')) //
-    	(KeyFilter('A1') >> Key('C#7')) 
+    	(KeyFilter('C1') >> Key('A5')) //
+    	(KeyFilter('D1') >> Key('B5')) //
+    	(KeyFilter('E1') >> Key('G5')) //
+    	(KeyFilter('F1') >> Key('D6')) //
+    	(KeyFilter('G1') >> Key('F5')) //
+    	(KeyFilter('A1') >> Key('C#6')) 
    ) >> closer_celesta_d4)
+
+#closer_patch_celesta_d4=(cf >> 
+#    (
+#		(~KeyFilter(notes=[36,38,40,41,43,45])) //
+#    	(KeyFilter('C1') >> Key('A5')) //
+#    	(KeyFilter('D1') >> Key('G5')) //
+#    	(KeyFilter('E1') >> Key('D6')) //
+#    	(KeyFilter('F1') >> Key('F5')) //
+#    	(KeyFilter('G1') >> Key('B5')) //
+#    	(KeyFilter('A1') >> Key('C#6')) 
+#   ) >> closer_celesta_d4)
 
 closer_bell_d4 = Velocity(fixed=100) >> Output('D4', channel=1, program=((99*128),15), volume=100)
 closer_patch_d4=(cf >> 
     (
 		(~KeyFilter(notes=[36,38,40,41,43,45])) //
     	(KeyFilter('C1') >> Key('D4')) //
-    	(KeyFilter('D1') >> Key('A3')) //
-    	(KeyFilter('E1') >> Key('G3')) //
-    	(KeyFilter('F1') >> Key('F#3')) 
+    	(KeyFilter('E1') >> Key('A3')) //
+    	(KeyFilter('G1') >> Key('G3')) //
+    	(KeyFilter('D1') >> Key('F#3')) 
    ) >> closer_bell_d4)
 
 # YYZ
 yyz_bell=Output('D4', channel=10, program=1, volume=100)
 yyz=(cf >>
 	(
-		(KeyFilter('F1') >> Key('A4')) //
-		(KeyFilter('D1') >> Key('G#4')) 
+		(KeyFilter('A1') >> Key('A4')) //
+		(KeyFilter('F1') >> Key('G#4')) 
 	) >> yyz_bell)
 
 # Time Stand Steel
 # Instruments
-d4_melo_tom=Velocity(fixed=100) >> Output('D4', channel=1, program=((99*128)+1,118), volume=100)
-d4_castanet=Velocity(fixed=100) >> Output('D4', channel=2, program=((99*128)+1,116), volume=100)
-d4_808_tom=Velocity(fixed=100) >> Output('D4', channel=3, program=((99*128)+1,119), volume=100)
+d4_melo_tom=Velocity(fixed=100) >> Output('D4', channel=11, program=((99*128)+1,118), volume=100)
+d4_castanet=Velocity(fixed=100) >> Output('D4', channel=12, program=((99*128)+1,116), volume=100)
+d4_808_tom=Velocity(fixed=80) >> Output('D4', channel=13, program=((99*128)+1,119), volume=100)
 
 # Sons 1 et 2
-tss_d4_melo_tom_A=cf >>KeyFilter('C1') >> Key('C6') >> d4_melo_tom
+tss_d4_melo_tom_A=cf >>KeyFilter('E1') >> Key('E6') >> d4_melo_tom
 
 # Son 3
-tss_d4_castanet=cf >>KeyFilter('E1') >> Key('E6') >> d4_castanet
+tss_d4_castanet=cf >>KeyFilter('G1') >> Key('a#2') >> d4_castanet
 
 # Son 4
-tss_d4_melo_tom_B=cf >>KeyFilter('F1') >> Key('F2') >> d4_melo_tom
+tss_d4_melo_tom_B=cf >>KeyFilter('F1') >> Key('a4') >> d4_808_tom
 
 # Son 5
-tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('A6') >> d4_808_tom
+tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
 #--------------------------------------------
