@@ -155,3 +155,40 @@ tss_d4_melo_tom_B=cf >>KeyFilter('F1') >> Key('a4') >> d4_808_tom
 tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
 #--------------------------------------------
+# SD-90 # DRUM MAPPING
+#--------------------------------------------
+# Classical Set
+StandardSet=cf>>Output('PK5',channel=10,program=(13312,1))
+RoomSet=cf>>Output('PK5',channel=10,program=(13312,9))
+PowerSet=cf>>Output('PK5',channel=10,program=(13312,17))
+ElectricSet=cf>>Output('PK5',channel=10,program=(13312,25))
+AnalogSet=cf>>Output('PK5',channel=10,program=(13312,26))
+JazzSet=cf>>Output('PK5',channel=10,program=(13312,33))
+BrushSet=cf>>Output('PK5',channel=10,program=(13312,41))
+OrchestraSet=cf>>Output('PK5',channel=10,program=(13312,49))
+SFXSet=cf>>Output('PK5',channel=10,program=(13312,57))
+# Contemporary Set
+StandardSet2=cf>>Output('PK5',channel=10,program=(13440,1))
+RoomSet2=cf>>Output('PK5',channel=10,program=(13440,9))
+PowerSet2=cf>>Output('PK5',channel=10,program=(13440,17))
+DanceSet=cf>>Output('PK5',channel=10,program=(13440,25))
+RaveSet=cf>>Output('PK5',channel=10,program=(13440,26))
+JazzSet2=cf>>Output('PK5',channel=10,program=(13440,33))
+BrushSet2=cf>>Output('PK5',channel=10,program=(13440,41))
+# Solo Set
+St_Standard=cf>>Output('PK5',channel=10,program=(13568,1))
+St_Room=cf>>Output('PK5',channel=10,program=(13568,9))
+St_Power=cf>>Output('PK5',channel=10,program=(13568,17))
+RustSet=cf>>Output('PK5',channel=10,program=(13568,25))
+Analog2Set=cf>>Output('PK5',channel=10,program=(13568,26))
+St_Jazz=cf>>Output('PK5',channel=10,program=(13568,33))
+St_Brush=cf>>Output('PK5',channel=10,program=(13568,41))
+# Enhanced Set
+Amb_Standard=cf>>Output('PK5',channel=10,program=(13696,1))
+Amb_Room=cf>>Output('PK5',channel=10,program=(13696,9))
+GatedPower=cf>>Output('PK5',channel=10,program=(13696,17))
+TechnoSet=cf>>Output('PK5',channel=10,program=(13696,25))
+BullySet=cf>>Output('PK5',channel=10,program=(13696,26))
+Amb_Jazz=cf>>Output('PK5',channel=10,program=(13696,33))
+Amb_Brush=cf>>Output('PK5',channel=10,program=(13696,41))
+#-------------------------------------------------------------------
