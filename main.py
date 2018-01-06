@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-# Reset logic
-# Reset is channel 9, controller 22
-#       Send reset sysex message to SD-90
-#       Kill mpg123 and omxplayer process
-#
-
 import subprocess
 from threading import Timer
 from time import sleep
@@ -20,7 +14,6 @@ from mididings.extra.inotify import AutoRestart
 config(
 
     backend = 'alsa',
-
     client_name = 'Master',
 
     out_ports = [ 
@@ -34,7 +27,7 @@ config(
         ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
         ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
 
-    initial_scene = 1,
+    initial_scene = 2,
 )
 
 hook(
@@ -167,19 +160,20 @@ apm_part_a="aplaymidi -p 20:0 /mnt/flash/solo/midi/"
 apm_part_b="aplaymidi -p 20:1 /mnt/flash/solo/midi/"
 
 #-----------------------------------------------------------------------------------------------------------
-# PATCH SECTION
+# PATCHES (token)
 #-----------------------------------------------------------------------------------------------------------
 __INSTRUMENTS__
 
 #-----------------------------------------------------------------------------------------------------------
-# SCENES SECTION
+# SCENES - (token)
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Reset",  reset),
 __SCENES__
 }
+
 # ---------------------------
-# RUN SECTION 
+# MAIN
 # ---------------------------
 run(
     control=_control,
