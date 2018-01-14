@@ -13,4 +13,6 @@
             Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
             Scene("Freewill ", play >> System(player + "freewill.mp3")),
             Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+	    	Scene("Territories", play >> System(apm_part_a + "territories.mid")),
+	    	Scene("Mission", play >> System(apm_part_a + "mission.mid")),
        ]),

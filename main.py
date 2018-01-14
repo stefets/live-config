@@ -27,7 +27,7 @@ config(
         ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
         ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
 
-    initial_scene = 2,
+    initial_scene = 1,
 )
 
 hook(
@@ -177,7 +177,7 @@ __SCENES__
 # ---------------------------
 run(
     control=_control,
-    pre=_pre, 
-    post=_post,
+    #pre=_pre, 
+    #post=_post,
     scenes=_scenes, 
 )

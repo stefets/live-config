@@ -17,6 +17,7 @@ pod_init=Output('PODHD500', channel=9, program=1)
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
+piano = cf >> Velocity(fixed=80) >> Output('PK5', channel=1, program=((96*128),1), volume=100)
 
 # Patch Synth. generique pour Barchetta, FreeWill, Limelight etc...
 keysynth = cf >> Velocity(fixed=80) >> Output('PK5', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
