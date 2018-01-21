@@ -12,5 +12,6 @@
             Scene("Toto - Hold The Line", play >> System(player + "hold_line.mp3")),
             Scene("Foreigner-That_was_Yesterday", play >> System(player + "foreigner.mp3")),
             Scene("Journey - Don't Stop Believin", play >> System(player + "journey_dsb.mp3")),
+            Scene("Journey - Seperate Ways", play >> System(player + "seperate.mp3")),
             Scene("Sass Jordan_ So hard", play >> System(player + "so_hard.mp3")),
        ]),   
