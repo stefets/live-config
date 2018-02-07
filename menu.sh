@@ -7,16 +7,13 @@ target=$(mktemp)
 
 function run()
 { 
-	sed -e "/__SCENES__/r $1.py" -e "/__SCENES__/d" $main > $target
-	clear
-    python $target
+	/bin/bash $DIR/execute.sh $1
 }
-
 
 while true
 do
 	
-	value=$(dialog --begin 0 0 --no-shadow --stdout --menu "Configuration" 15 20 5 1 push 2 rush_cover 3 bass_cover 4 originales 5 shutdown)
+	value=$(dialog --begin 0 0 --no-shadow --stdout --menu "Configuration" 15 20 7 1 push 2 rush_cover 3 bass_cover 4 originales 5 timeline 6 duo 7 shutdown)
 	case $value in
 		1 )
 			run push
@@ -35,7 +32,15 @@ do
             continue
             ;;
 		5 )
-		    sudo shutdown -h now
+			run timeline
+            continue
+            ;;
+		6 )
+			run duo
+            continue
+            ;;
+		7 )
+		    sudo shutdown -h now &
 			break
 			;;
         * )

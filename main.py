@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-# Reset logic
-# Reset is channel 9, controller 22
-#       Send reset sysex message to SD-90
-#       Kill mpg123 and omxplayer process
-#
-
 import subprocess
 from threading import Timer
 from time import sleep
 from mididings import *
 from mididings.extra import *
+from mididings import engine
 from mididings.engine import *
 from mididings.event import *
 from mididings.extra.inotify import AutoRestart
@@ -19,12 +14,13 @@ from mididings.extra.inotify import AutoRestart
 config(
 
     backend = 'alsa',
-
     client_name = 'Master',
 
     out_ports = [ 
+        ('D4',  '20:0','.*SD-90 Part A'),
         ('Q49', '20:0','.*SD-90 Part A'),
-        ('PK5', '20:0','.*SD-90 Part A'), ],
+        ('PK5', '20:0','.*SD-90 Part A'),
+        ('PODHD500', '20:2','.*SD-90 MIDI 1'), ],
 
     in_ports = [ 
         #('Q49  - MIDI IN 1', '24:0','.*Q49 MIDI 1'), # Alesis Q49 in USB MODE
@@ -36,8 +32,33 @@ config(
 
 hook(
     #MemorizeScene('scene.txt'),
-    AutoRestart(),
+    #AutoRestart(),
 )
+#--------------------------------------------------------------------
+# Class
+class RemoveDuplicates:
+    def __init__(self, _wait=0):
+        self.wait = _wait
+        self.prev_ev = None
+        self.prev_time = 0
+
+    def __call__(self, ev): 
+        if ev.type == NOTEOFF:
+            sleep(self.wait)
+            return ev
+        now = engine.time()
+        offset=now-self.prev_time
+        if offset >= 0.035:
+            #if ev.type == NOTEON:
+            #    print "+ " + str(offset)
+            r = ev 
+        else:
+            #if ev.type == NOTEON:
+            #    print "- " + str(offset)
+            r = None
+        self.prev_ev = ev
+        self.prev_time = now
+        return r
 
 #--------------------------------------------------------------------
 # Test
@@ -78,6 +99,9 @@ def SendSysex(ev):
     return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
 
 # Scene navigation
+def MoveNext(ev):
+    switch_scene(current_scene()+1)
+
 def NavigateToScene(ev):
     nb_scenes = len(scenes())    
     if ev.ctrl == 20:
@@ -99,20 +123,26 @@ def NavigateToScene(ev):
         # Reset logic
         subprocess.Popen(['/bin/bash', './kill.sh'])
 
+def show_time(ev):
+    print "toto"
+def init_pod(ev):
+    output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
+    
 #-----------------------------------------------------------------------------------------------------------
 # CONFIGURATION SECTION
-#
 #-----------------------------------------------------------------------------------------------------------
 
 _pre = Print('input', portnames='in')
 _post = Print('output', portnames='out')
 
-# Reset logic
-reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
-#reset=Filter(NOTEON) >> Process(SendSysex)
-
+# Reset logic (LIVE MODE)
 # Controller pour le changement de scene (fcb1010 actual)
+reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
 _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
+#_control = Filter(NOTEON) >> KeyFilter(37) >> Process(MoveNext)
+
+# Reset logic (DEBUG MODE)
+#reset=Filter(NOTEOFF) >> Process(SendSysex)
 #_control = ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlValueFilter(0) >> Call(gliss_exec)
 #_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
 #_control = Filter(NOTE) >> Filter(NOTEON) >> Call(arpeggiator_exec)
@@ -120,99 +150,30 @@ _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(Navi
 # Channel 9 filter (my fcb1010 in my case)
 cf=~ChannelFilter(9)
 
-# Shortcut (Play button)
+# Shortcut (Play switch)
 play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
+d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
+
+# Audio and midi players
 player="mpg123 -q /mnt/flash/solo/audio/"
+apm_part_a="aplaymidi -p 20:0 /mnt/flash/solo/midi/"
+apm_part_b="aplaymidi -p 20:1 /mnt/flash/solo/midi/"
 
 #-----------------------------------------------------------------------------------------------------------
-# PATCH SECTION
+# PATCHES (token)
 #-----------------------------------------------------------------------------------------------------------
-
-# TODO
-#__INSTRUMENTS__
-
-piano= cf >> Transpose(0) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
-
-# FX Section
-explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
-#--------------------------------------------------------------------
-
-# Patch Synth. generique pour Barchetta, FreeWill, Limelight etc...
-keysynth = cf >> Velocity(fixed=80) >> Output('PK5', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
-#--------------------------------------------------------------------
-
-# Patch Syhth. generique pour lowbase
-lowsynth = cf >> Velocity(fixed=100) >> Output('PK5', channel=1, program=51, volume=100, ctrls={93:75, 91:75})
-lowsynth2 = cf >> Velocity(fixed=115) >> Output('PK5', channel=1, program=51, volume=115, ctrls={93:75, 91:75})
-#--------------------------------------------------------------------
-
-# Patch Closer to the hearth 
-closer_high = Output('Q49', 1, program=((99*128),15), volume=100)
-closer_base = Velocity(fixed=100) >> Output('PK5', 2, program=((99*128),51), volume=100)
-closer_main = cf >> KeySplit('c3', closer_base, closer_high)
-#--------------------------------------------------------------------
-
-# Patch Time Stand Still
-tss_high = Velocity(fixed=90) >> Output('Q49', channel=3, program=((99*128),92), volume=80)
-tss_base = Transpose(12) >> Velocity(fixed=90) >> Output('Q49', channel=3, program=((99*128),92), volume=100)
-tss_keyboard_main = cf >> KeySplit('c2', tss_base, tss_high)
-
-tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=100)
-tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('PK5', channel=2, program=((99*128),103), volume=100)
-tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
-#--------------------------------------------------------------------
-
-# Patch Analog Kid
-#analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((99*128),50), volume=100)
-analogkid = cf >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'third', 'fifth', 'octave']) >> Output('PK5', channel=1, program=((99*128),50), volume=115)
-analogkid_ending = cf >> Key('a1') >> Output('PK5', channel=5, program=((81*128),68), volume=100)
-#--------------------------------------------------------------------
-
-# Patch Limelight
-limelight = cf >> Key('d#6') >> Output('PK5', channel=16, program=((80*128),12), volume=100)
-
-# Patch Centurion
-centurion_synth = (Velocity(fixed=110) >> 
-	(
-		Output('PK5', channel=1, program=((99*128),96), volume=110) // 
-		Output('PK5', channel=2, program=((99*128),82), volume=110)
-	))
-
-# Patch Centurion Video
-centurion_video=( System('./vp.sh /mnt/flash/live/video/centurion_silent.avi') )
-
-# Patch Centurion Hack 
-centurion_patch=(cf >> LatchNotes(True,reset='C3') >>
-	(
-		(KeyFilter('D3') >> Key('D1')) // 
-		(KeyFilter('E3') >> Key('D2')) // 
-		(KeyFilter('F3') >> Key('D3')) //
-		(KeyFilter('G3') >> Key('D4')) //
-		(KeyFilter('A3') >> Key('D5'))
-	) >> centurion_synth)
-
-# Test - not working :(
-jumper2=(cf >> KeyFilter('E3:A#3') >>
-	(
-		(KeyFilter('E3') % (NoteOff('E3'))) // 
-		(KeyFilter('F3') % (Key('D3'))) //
-		(KeyFilter('G3') % (Key('D4'))) //
-		(KeyFilter('A3') % (Key('D5')))
-	) >> centurion_synth)
-
-# Patch debug section ----------------------------------
-#debug = (ChannelFilter(1) >> Output('PK5', channel=1, program=((99*128), 1), volume=100)) // (ChannelFilter(2) >> Output('Q49', channel=3, program=((99*128), 10), volume=101))
-#piano=Harmonize('c', 'major', ['unison','octave']) >> Output('Q49', channel=1, program=((99*128),1), volume=100)
+__INSTRUMENTS__
 
 #-----------------------------------------------------------------------------------------------------------
-# SCENES SECTION
+# SCENES - (token)
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Reset",  reset),
 __SCENES__
 }
+
 # ---------------------------
-# EXECUTE SECTION 
+# MAIN
 # ---------------------------
 run(
     control=_control,
