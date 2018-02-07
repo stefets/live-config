@@ -52,6 +52,8 @@ analog_pod2=(
 )
 #analog_pod=(Filter(NOTEON) >> (KeyFilter('c3') % Ctrl(51,27)) >> Output('PODHD500',9))
 
+mission= LatchNotes(False,reset='c#3')  >> Transpose(-12) >>Harmonize('c','major',['unison', 'third', 'fifth', 'octave']) >> Output('PK5',channel=1,program=((98*128),53),volume=100,ctrls={91:75})
+
 analogkid_low= (LatchNotes(False,reset='c#3') >>
 	( 
 		(KeyFilter('c3:d#3') >> Transpose(-7) >> Harmonize('c','major',['unison', 'third', 'fifth', 'octave'])) //

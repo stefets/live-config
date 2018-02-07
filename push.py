@@ -35,3 +35,4 @@
     	14:Scene("Closer A", Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
     	15:Scene("Closer B", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
         16:Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
+        17:Scene("Mission",  mission),
