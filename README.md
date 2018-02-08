@@ -7,6 +7,7 @@
 * You can call start.sh, menu.sh or execute.sh as an entry point
 * start.sh: it check for flash usb, sound module, etc... If all is correct it call menu.sh 
 * menu.sh : use dialog as UI; It's a mini menu (bash script) made for my Juice SSH Android App when I play live. That's it, I use my phone as a terminal.
+	* ![UI](https://github.com/stefets/live-config/blob/wip/_ui.jpg "Screen Capture")
 	* The menu choice call execute.sh with the filename as parameter (without the .py extension), the filename is a list of scenes.
 * execute.sh: Replace two tokens in main.py: __PATCHES__ and __SCENES__ and create complete python script to a file in /tmp/ and run it.
 * main.py contain config, classes, methods, pre, post, control, patch to external command and two tokens that I replace with the execute.sh.
