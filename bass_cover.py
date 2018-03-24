@@ -16,4 +16,6 @@
             Scene("Bon Jovi - Livin on a prayer", play >> System(player + "bon_jovi_prayer.mp3")),
             Scene("Pat Metheny - Letter from home", play >> System(player + "letter_from_home.mp3")),
             Scene("Muse - Uprising", play >> System(player + "uprising.mp3")),
+            Scene("Rush - The pass", play >> System(player + "pass.mp3")),
+            Scene("Muse - Mission", play >> System(player + "mission.mp3")),
        ]),
