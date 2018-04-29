@@ -14,7 +14,7 @@ function run()
 while true
 do
 	
-	value=$(dialog --begin 0 0 --no-shadow --stdout --menu "Configuration" 15 20 7 1 push 2 rush_cover 3 bass_cover 4 originales 5 timeline 6 duo 7 shutdown)
+	value=$(dialog --begin 0 0 --no-shadow --stdout --menu "Configuration" 15 20 7 1 push 2 rush_cover 3 bass_cover 4 originales 5 timeline 6 solo 7 shutdown)
 	case $value in
 		1 )
 			run push.py
@@ -37,7 +37,7 @@ do
             continue
             ;;
 		6 )
-			run duo.py
+			run solo.py
             continue
             ;;
 		7 )
