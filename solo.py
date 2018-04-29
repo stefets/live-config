@@ -1,0 +1,10 @@
+    2: SceneGroup("Divers", [    
+			Scene("SpectralMornings", play >> System(apm_part_a + "spectral_mornings.mid")),
+			Scene("ELP - KarnEvil9", play >> System(apm_part_a + "karn_evil9_imp1.mid")),
+			Scene("Trou dans les nuages", play >> System(player + "trou_nuage.mp3")),
+            Scene("Muse-Supermassive", play >> System(apm_part_a + "supermassive.mid")),
+            Scene("Sting - if i ever loose", play >> System(apm_part_a + "sting.mid")),
+            Scene("Bobino", play >> System(apm_part_a + "bobino.mid")),
+            Scene("Drums", Amb_Room),
+            Scene("Piano", piano),
+       ]),   
