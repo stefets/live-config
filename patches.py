@@ -1,3 +1,11 @@
+#-----------------------------------------------------------------------------------------------
+# PROGRAM CHANGE SECTION
+#-----------------------------------------------------------------------------------------------
+POD_16A=Program('PODHD500', channel=9, program=61)
+POD_16B=Program('PODHD500', channel=9, program=62)
+POD_16C=Program('PODHD500', channel=9, program=63)
+POD_16D=Program('PODHD500', channel=9, program=64)
+
 # Simple output patch for testing equipment
 q49=cf >> Output('Q49', channel=1, program=1, volume=100)
 pk5=cf >> Output('PK5', channel=2, program=1, volume=100)
@@ -8,16 +16,18 @@ pod_base=Output('PODHD500', channel=9)
 
 # POD HD500
 POD=OutputTemplate('PODHD500',9)
-pod_init=Output('PODHD500', channel=9, program=1)
+#pod_init=Output('PODHD500', channel=9, program=1)
 #pod_init=POD(64)
 #pod_init=Init(POD(64))
-#pod_off=Output('PODHD500', channel=9, ctrls={51:127,52:127,53:127,54:127,})
-#pod_on=Output('PODHD500', channel=9, ctrls={51:0,52:0,53:0,54:0,})
+pod_off=Output('PODHD500', channel=9, ctrls={51:127,52:127,53:127,54:127,})
+pod_on=Output('PODHD500', channel=9, ctrls={51:0,52:0,53:0,54:0,})
 
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
-piano = cf >> Velocity(fixed=80) >> Output('PK5', channel=1, program=((96*128),1), volume=100)
+nf_piano = Output('Q49', channel=1, program=((96*128),2), volume=100)
+piano = cf >> Velocity(fixed=80) >> Output('Q49', channel=1, program=((96*128),1), volume=100)
+piano2 = Output('PK5', channel=2, program=((96*128),2), volume=100)
 
 # Patch Synth. generique pour Barchetta, FreeWill, Limelight etc...
 keysynth = cf >> Velocity(fixed=80) >> Output('PK5', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
@@ -50,7 +60,7 @@ analog_pod2=(
 	(Filter(NOTEON) >> (KeyFilter('c3') % Ctrl(51,0)) >> Output('PODHD500',9)) //
 	(Filter(NOTEON) >> (KeyFilter('d3') % Ctrl(51,127)) >> Output('PODHD500',9))
 )
-#analog_pod=(Filter(NOTEON) >> (KeyFilter('c3') % Ctrl(51,27)) >> Output('PODHD500',9))
+analog_pod=(Filter(NOTEON) >> (KeyFilter('c3') % Ctrl(51,27)) >> Output('PODHD500',9))
 
 mission= LatchNotes(False,reset='c#3')  >> Transpose(-12) >>Harmonize('c','major',['unison', 'third', 'fifth', 'octave']) >> Output('PK5',channel=1,program=((98*128),53),volume=100,ctrls={91:75})
 
