@@ -15,4 +15,4 @@ sed -e "/__PATCHES__/r patches.py" -e "/__PATCHES__/d" \
 
 clear
 python $target
-rm $target
+#rm $target

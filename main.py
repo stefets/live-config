@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
+import os
 import subprocess
 from threading import Timer
 from time import sleep
@@ -125,9 +126,20 @@ def NavigateToScene(ev):
 
 def show_time(ev):
     print "toto"
+
 def init_pod(ev):
     output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
     
+# Audio and midi players
+#apm_part_a="aplaymidi -p 20:0 /mnt/flash/solo/midi/"
+#apm_part_b="aplaymidi -p 20:1 /mnt/flash/solo/midi/"
+def play_file(filename):
+    fname, fext = os.path.splitext(filename)
+    if fext == ".mp3":
+        return "mpg123 -q /home/shared/live/" + filename
+    elif fext == ".mid":
+        return "aplaymidi -p 20:1 /home/shared/solo/midi/" + filename
+    return " "
 #-----------------------------------------------------------------------------------------------------------
 # CONFIGURATION SECTION
 #-----------------------------------------------------------------------------------------------------------
@@ -151,13 +163,10 @@ _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(Navi
 cf=~ChannelFilter(9)
 
 # Shortcut (Play switch)
+PlayButton=Filter(NOTEOFF)
 play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
 d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
 
-# Audio and midi players
-player="mpg123 -q /mnt/flash/solo/audio/"
-apm_part_a="aplaymidi -p 20:0 /mnt/flash/solo/midi/"
-apm_part_b="aplaymidi -p 20:1 /mnt/flash/solo/midi/"
 
 #-----------------------------------------------------------------------------------------------------------
 # PATCHES (token)
