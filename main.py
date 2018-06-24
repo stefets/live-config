@@ -18,15 +18,15 @@ config(
     client_name = 'Master',
 
     out_ports = [ 
-        ('D4',  '20:0','.*SD-90 Part A'),
-        ('Q49', '20:0','.*SD-90 Part A'),
-        ('PK5', '20:0','.*SD-90 Part A'),
-        ('PODHD500', '20:2','.*SD-90 MIDI 1'), ],
+        ('D4',  '20:0',),
+        ('Q49', '20:0',),
+        ('PK5', '20:0',),
+        ('PODHD500', '20:2',), ],
 
     in_ports = [ 
         #('Q49  - MIDI IN 1', '24:0','.*Q49 MIDI 1'), # Alesis Q49 in USB MODE
-        ('SD90 - MIDI IN 1', '20:2','.*SD-90 MIDI 1'),
-        ('SD90 - MIDI IN 2', '20:3','.*SD-90 MIDI 2') ],
+        ('SD90 - MIDI IN 1', '20:2',),
+        ('SD90 - MIDI IN 2', '20:3',) ],
 
     initial_scene = 1,
 )
@@ -139,7 +139,7 @@ def play_file(filename):
         command="mpg123 -q"
     elif fext == ".mid":
         command="aplaymidi -p 20:1"
-    print command + path + filename
+
     return command + path + filename
 
 #-----------------------------------------------------------------------------------------------------------
