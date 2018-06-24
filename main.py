@@ -131,15 +131,17 @@ def init_pod(ev):
     output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
     
 # Audio and midi players
-#apm_part_a="aplaymidi -p 20:0 /mnt/flash/solo/midi/"
-#apm_part_b="aplaymidi -p 20:1 /mnt/flash/solo/midi/"
 def play_file(filename):
     fname, fext = os.path.splitext(filename)
+    path=" /home/shared/soundlib/"
+    command="ls"	# hack
     if fext == ".mp3":
-        return "mpg123 -q /home/shared/live/" + filename
+        command="mpg123 -q"
     elif fext == ".mid":
-        return "aplaymidi -p 20:1 /home/shared/solo/midi/" + filename
-    return " "
+        command="aplaymidi -p 20:1"
+    print command + path + filename
+    return command + path + filename
+
 #-----------------------------------------------------------------------------------------------------------
 # CONFIGURATION SECTION
 #-----------------------------------------------------------------------------------------------------------
