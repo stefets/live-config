@@ -28,7 +28,7 @@ config(
         ('SD90 - MIDI IN 1', '20:2',),
         ('SD90 - MIDI IN 2', '20:3',) ],
 
-    initial_scene = 1,
+    initial_scene = 2,
 )
 
 hook(
@@ -124,23 +124,31 @@ def NavigateToScene(ev):
         # Reset logic
         subprocess.Popen(['/bin/bash', './kill.sh'])
 
-def show_time(ev):
-    print "toto"
 
-def init_pod(ev):
-    output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
+#def init_pod(ev):
+#    output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
     
 # Audio and midi players
 def play_file(filename):
     fname, fext = os.path.splitext(filename)
     path=" /home/shared/soundlib/"
-    command="ls"	# hack
     if fext == ".mp3":
         command="mpg123 -q"
     elif fext == ".mid":
         command="aplaymidi -p 20:1"
 
     return command + path + filename
+
+# Create a pitchbend from a filter logic
+# TODO - Direction UP or DOWN
+def OnPitchbend(ev):
+    if ev.value == 0:
+        return PitchbendEvent(ev.port, ev.channel, 0)
+	elif ev.value <= 126:
+        ev.value = (ev.value + 1) * 64
+    elif ev.value == 127:
+        ev.value = 8191
+    return PitchbendEvent(ev.port, ev.channel, ev.value)
 
 #-----------------------------------------------------------------------------------------------------------
 # CONFIGURATION SECTION
@@ -165,7 +173,7 @@ _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(Navi
 cf=~ChannelFilter(9)
 
 # Shortcut (Play switch)
-PlayButton=Filter(NOTEOFF)
+PlayButton=Filter(NOTEOFF)	# for fast test
 play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
 d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
 
@@ -189,6 +197,6 @@ __SCENES__
 run(
     control=_control,
     #pre=_pre, 
-    #post=_post,
+    post=_post,
     scenes=_scenes, 
 )
