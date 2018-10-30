@@ -2,10 +2,11 @@
 		marathon,
 		# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  NoteOn(2,1, 64, 100) )
 		# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  Pitchbend(2,3, 8192) )
-		(ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >> Channel(3) >> Process(OnPitchbend))
+		(ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >> Channel(3) >> Process(OnPitchbend,direction=1))
 		]),
 
-		#Process(PitchBend))
+# EXPERIMENTATIONS
+
 #    2: SceneGroup("DebugScene", [    
 #		#Scene("Modulation2Volume", 
 #		#	[

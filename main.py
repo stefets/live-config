@@ -17,6 +17,24 @@ config(
     backend = 'alsa',
     client_name = 'Master',
 
+#stefets@rpi2:~/project/live-config$ aconnect -l
+#client 0: 'System' [type=kernel]
+#    0 'Timer           '
+#    1 'Announce        '
+#        Connecting To: 15:0
+#client 14: 'Midi Through' [type=kernel]
+#    0 'Midi Through Port-0'
+#client 15: 'OSS sequencer' [type=kernel]
+#    0 'Receiver        '
+#        Connected From: 0:1
+#client 20: 'SD-90' [type=kernel]
+#    0 'SD-90 Part A    '
+#    1 'SD-90 Part B    '
+#    2 'SD-90 MIDI 1    '
+#    3 'SD-90 MIDI 2    '
+#client 24: 'Q49' [type=kernel]
+#    0 'Q49 MIDI 1      '
+
     out_ports = [ 
         ('D4',  '20:0',),
         ('Q49', '20:0',),
@@ -24,11 +42,11 @@ config(
         ('PODHD500', '20:2',), ],
 
     in_ports = [ 
-        #('Q49  - MIDI IN 1', '24:0','.*Q49 MIDI 1'), # Alesis Q49 in USB MODE
+        ('Q49  - MIDI IN 1', '24:0',), # Alesis Q49 in USB MODE
         ('SD90 - MIDI IN 1', '20:2',),
         ('SD90 - MIDI IN 2', '20:3',) ],
 
-    initial_scene = 2,
+    initial_scene = 1,
 )
 
 hook(
@@ -140,16 +158,17 @@ def play_file(filename):
     return command + path + filename
 
 # Create a pitchbend from a filter logic
-# TODO - Direction UP or DOWN
-def OnPitchbend(ev):
+# Params : direction when 1 bend goes UP, when -1 bend goes down
+#          dont set direction with other values than 1 or -1 dude !
+# NOTES  : On my context, ev.value.min = 0 and ev.value.max = 127
+def OnPitchbend(ev, direction):
     if ev.value == 0:
         return PitchbendEvent(ev.port, ev.channel, 0)
-	elif ev.value <= 126:
+    elif ev.value <= 126:
         ev.value = (ev.value + 1) * 64
     elif ev.value == 127:
-        ev.value = 8191
-    return PitchbendEvent(ev.port, ev.channel, ev.value)
-
+        ev.value = 8191 if direction == 1 else 8192
+    return PitchbendEvent(ev.port, ev.channel, ev.value*direction)
 #-----------------------------------------------------------------------------------------------------------
 # CONFIGURATION SECTION
 #-----------------------------------------------------------------------------------------------------------

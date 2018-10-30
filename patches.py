@@ -30,7 +30,7 @@ piano = cf >> Velocity(fixed=80) >> Output('Q49', channel=1, program=((96*128),1
 piano2 = Output('PK5', channel=2, program=((96*128),2), volume=100)
 
 # Patch Synth. generique pour Barchetta, FreeWill, Limelight etc...
-aeysynth = cf >> Velocity(fixed=80) >> Output('PK5', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
+keysynth = cf >> Velocity(fixed=80) >> Output('PK5', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 marathon = Velocity(fixed=80) >> Output('PK5', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75}) 
 #marathon = (
