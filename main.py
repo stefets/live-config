@@ -162,10 +162,10 @@ def play_file(filename):
 #          dont set direction with other values than 1 or -1 dude !
 # NOTES  : On my context, ev.value.min = 0 and ev.value.max = 127
 def OnPitchbend(ev, direction):
-    if ev.value == 0:
+    if 0 < ev.value <= 126:
+        return PitchbendEvent(ev.port, ev.channel, ((ev.value + 1) * 64)*direction)
+    elif ev.value == 0:
         return PitchbendEvent(ev.port, ev.channel, 0)
-    elif ev.value <= 126:
-        ev.value = (ev.value + 1) * 64
     elif ev.value == 127:
         ev.value = 8191 if direction == 1 else 8192
     return PitchbendEvent(ev.port, ev.channel, ev.value*direction)
