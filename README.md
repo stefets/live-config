@@ -1,8 +1,9 @@
-# Script to dynamically load a list of scenes from DIALOG or the CLI
+# This is my personal and complete MIDIDINGS configuration
+* I use it live and to practice guitar and bass with a FCB1010, Roland PK5A, Alesis Q49, Boss GT10 and POD HD500
 * The WIP branch contains the latest updates (semi-stable)
-* Minimal hardware : A computer and a midi device.
-* My hardware : Raspberry PI (Ubuntu Mate 16.04) and the munster Edirol SD-90 by Roland Corp. as my BRAIN extension, my MIDI gears of course, a router, a cell phone with Juice SSH)
-* Software : MIDIDINGS or nothing, bash (Optionals : mpg123, aplaymidi, your logic, etc...)
+# I use script to dynamically load a list of scenes from DIALOG or the CLI
+* HW : Raspberry PI (Ubuntu Mate 16.04) and the munster Edirol SD-90 by Roland Corp. as my BRAIN extension, my MIDI gears of course, a router, a cell phone with Juice SSH)
+* SW : MIDIDINGS 2015+rbbec99a, using Python 2.7.12, bash (Optionals : mpg123, aplaymidi, your logic, etc...)
 # Call stack
 * You can call start.sh, menu.sh or execute.sh as an entry point
 * start.sh: it check for flash usb, sound module, etc... If all is correct it call menu.sh 
