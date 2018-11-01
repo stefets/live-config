@@ -1,11 +1,32 @@
-	2: Scene("Marathon", [
-		marathon,
-		# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  NoteOn(2,1, 64, 100) )
-		# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  Pitchbend(2,3, 8192) )
-		(ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >> Channel(3) >> Process(OnPitchbend,direction=1))
-		]),
+	2:SceneGroup ("Marathon", [
+        Scene("Marathon-Intro",
+		  [
+        	marathon,
+            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
+            [
+                	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
+                	(CtrlFilter(1)>>CtrlMap(1,7)) 
+            ])
+    	  ]),
+		Scene("TODO", marathon),
+		Scene("TODOO", marathon),
+		Scene("TODOOO", marathon),
+   ]),
+
+#	2: Scene("Marathon", 
+		#[
+			#marathon,
+			#(ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >> 
+			#[
+				#(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
+			#	(CtrlFilter(1)>>CtrlMap(1,7))
+			#])
+		#]),
 
 # EXPERIMENTATIONS
+
+			# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  NoteOn(2,1, 64, 100) )
+			# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  Pitchbend(2,3, 8192) )
 
 #    2: SceneGroup("DebugScene", [    
 #		#Scene("Modulation2Volume", 

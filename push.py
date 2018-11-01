@@ -23,17 +23,33 @@
        ]),
     12:Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
     13:Scene("TimeStandSteel.D4",  
-			[ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
-			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
 			[
-				(
-				tss_d4_melo_tom_A // 
-				tss_d4_castanet // 
-				tss_d4_melo_tom_B // 
-				tss_d4_808_tom
-				)
-	 		]]),
+			ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
+			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
+				[
+					(
+					tss_d4_melo_tom_A // 
+					tss_d4_castanet // 
+					tss_d4_melo_tom_B // 
+					tss_d4_808_tom
+					)
+	 			]]),
     14:Scene("Closer A", Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
     15:Scene("Closer B", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
     16:Scene("YYZ", Process(RemoveDuplicates()) >> yyz),
     17:Scene("Mission",  mission),
+    18:SceneGroup ("Marathon", [
+        Scene("Marathon-Intro",
+          [
+            marathon,
+            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
+            [
+                    (CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
+                    (CtrlFilter(1)>>CtrlMap(1,7))
+            ])
+          ]),
+        Scene("TODO", marathon),
+        Scene("TODOO", marathon),
+        Scene("TODOOO", marathon),
+   ]),
+

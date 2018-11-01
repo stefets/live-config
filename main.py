@@ -112,7 +112,7 @@ def arpeggiator_exec(e):
 
 #-------------------------------------------------------------------------------------------
 
-# Change the HEX string for your sound module
+# Change the HEX string according to your sound module
 # Reset string for Edirol SD-90
 def SendSysex(ev):
     return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
