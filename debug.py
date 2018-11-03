@@ -1,5 +1,4 @@
 	2:SceneGroup ("Marathon", [
-		Scene("Marathon-Bridge", marathon_bridge),
         Scene("Marathon-Intro",
 		  [
         	marathon,
@@ -9,6 +8,18 @@
                 	(CtrlFilter(1)>>CtrlMap(1,7)) 
             ])
     	  ]),
+		Scene("Marathon-Chords", marathon_chords),
+        Scene("Marathon-Middle",
+		  [
+        	marathon,
+            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
+            [
+                	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
+                	(CtrlFilter(1)>>CtrlMap(1,7)) 
+            ])
+    	  ]),
+		Scene("Marathon-Chords", marathon_chords),
+		Scene("Marathon-Bridge", marathon_bridge),
 		Scene("Marathon-Chords", marathon_chords),
 		#Scene("TODOO", marathon),
 		#Scene("TODOOO", marathon),

@@ -34,28 +34,36 @@ keysynth = cf >> Velocity(fixed=80) >> Output('PK5', channel=3, program=((96*128
 #--------------------------------------------------------------------
 
 # Patch Marathon (INTRO) - Accept (B4, B3) and E4 => transformed to a chord 
-marathon=(cf >> LatchNotes(False,reset='b2') >> Velocity(fixed=110) >>
+marathon=(cf >> LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
 	( 
 		(KeyFilter('e4') >> Harmonize('e','major',['unison', 'fifth'])) //
 		(KeyFilter(notes=[71, 83])) 
-	) >> Output('PK5', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
+	) >> Transpose(0) >> Output('PK5', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
-marathon_chords=(cf>>
+marathon_chords=(cf>> LatchNotes(False, reset='b3') >> Velocity(fixed=100) >>
 	(
-		#(KeyFilter('b3') >> Harmonize('b','major',['unison', 'third', 'fifth', 'octave'])) //
-		(KeyFilter('b3') >> Harmonize('b','major',['unison', 'third', 'fifth', 'octave'])) //
-		(KeyFilter('e3') >> Harmonize('e','major',['unison', 'third', 'fifth', 'octave'])) //
-		(KeyFilter('f#3') >> Harmonize('f#','major',['unison', 'third', 'fifth', 'octave']))
-	) >> Transpose(-12)>> Output('PK5', channel=3, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
+
+		# From first to last...
+		(KeyFilter('e3') >> Key('b3') >> Harmonize('b','major',['unison', 'third', 'fifth', 'octave'])) //
+		(KeyFilter('c3') >> Key('e3') >> Harmonize('e','major',['unison', 'third', 'fifth', 'octave'])) //
+		(KeyFilter('d3') >> Key('f#3') >> Harmonize('f#','major',['unison', 'third', 'fifth', 'octave'])) //
+
+		# From first to last 2 frets higher
+		(KeyFilter('a3') >> Key('c#4') >> Harmonize('c#','major',['unison', 'third', 'fifth', 'octave'])) //
+		(KeyFilter('f3') >> Key('f#3') >> Harmonize('f#','major',['unison', 'third', 'fifth', 'octave'])) //
+		(KeyFilter('g3') >> Key('g#3') >> Harmonize('g#','major',['unison', 'third', 'fifth', 'octave']))
+
+	) >> Transpose(-12) >> Output('PK5', channel=3, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
 
 marathon_bridge=(cf >> 
 	( 
-		(KeyFilter('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
-		(KeyFilter('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
-		(KeyFilter('e3') >> Harmonize('e','major',['unison', 'third', 'fifth'])) 
+		(KeyFilter('c3') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
+		(KeyFilter('e3') >> Key('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
+		(KeyFilter('d3') >> Key('e3') >> Harmonize('e','major',['unison', 'third', 'fifth']))  //
+		(KeyFilter('a4'))
 	) >> Output('PK5', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
-#		(KeyFilter('c3:d#3') >> Transpose(-7) >> Harmonize('c','major',['unison', 'third', 'fifth', 'octave'])) //
+marathon_main_out=Output('PK5', channel=3, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
 
 # Patch Syhth. generique pour lowbase
 lowsynth = cf >> Velocity(fixed=100) >> Output('PK5', channel=1, program=51, volume=100, ctrls={93:75, 91:75})
