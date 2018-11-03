@@ -1,4 +1,5 @@
 	2:SceneGroup ("Marathon", [
+		Scene("Marathon-Bridge", marathon_bridge),
         Scene("Marathon-Intro",
 		  [
         	marathon,
@@ -8,9 +9,9 @@
                 	(CtrlFilter(1)>>CtrlMap(1,7)) 
             ])
     	  ]),
-		Scene("TODO", marathon),
-		Scene("TODOO", marathon),
-		Scene("TODOOO", marathon),
+		Scene("Marathon-Chords", marathon_chords),
+		#Scene("TODOO", marathon),
+		#Scene("TODOOO", marathon),
    ]),
 
 #	2: Scene("Marathon", 
