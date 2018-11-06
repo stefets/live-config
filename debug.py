@@ -20,6 +20,7 @@
     	  ]),
 		Scene("Marathon-Chords", marathon_chords),
 		Scene("Marathon-Bridge", marathon_bridge),
+		Scene("Marathon-Solo-Bridge", marathon_bridge2),
 		Scene("Marathon-Chords", marathon_chords),
 		#Scene("TODOO", marathon),
 		#Scene("TODOOO", marathon),

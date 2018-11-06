@@ -63,7 +63,14 @@ marathon_bridge=(cf >>
 		(KeyFilter('a4'))
 	) >> Output('PK5', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
-marathon_main_out=Output('PK5', channel=3, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
+# Solo bridge, lower -12
+marathon_bridge2=(cf >> 
+	( 
+		(KeyFilter('c3') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
+		(KeyFilter('d3') >> Key('e2') >> Harmonize('e','major',['unison', 'third', 'fifth'])) 
+	) >> Transpose(-12) >> Output('PK5', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
+
+#marathon_main_out=Output('PK5', channel=3, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
 
 # Patch Syhth. generique pour lowbase
 lowsynth = cf >> Velocity(fixed=100) >> Output('PK5', channel=1, program=51, volume=100, ctrls={93:75, 91:75})
