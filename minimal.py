@@ -1,4 +1,4 @@
-    2: Scene("Hemispheres", PlayButton >> System(play_file("spectral_mornings.mid"))),
+    #2: Scene("Hemispheres", PlayButton >> System(play_file("spectral_mornings.mid"))),
     #2: Scene(name="Test",  init_patch=q49, patch=(Output('PODHD500', channel=9, program=64)))
     #2: Scene(name="Test",  patch=q49, init_patch=(Output('PODHD500', channel=9, program=64)))
     #2: Scene("Hemispheres", play >> System(play_file("hemispheres.mp3")),

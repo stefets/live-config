@@ -73,7 +73,7 @@ marathon_bridge2=(cf >>
 #marathon_main_out=Output('PK5', channel=3, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
 
 # Patch Syhth. generique pour lowbase
-lowsynth = cf >> Velocity(fixed=100) >> Output('PK5', channel=1, program=51, volume=100, ctrls={93:75, 91:75})
+lowsynth = cf >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
 lowsynth2 = cf >> Velocity(fixed=115) >> Output('PK5', channel=1, program=51, volume=115, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
