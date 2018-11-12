@@ -1,4 +1,7 @@
-	2:Scene("HighWater", lowsynth),
+	#2:Scene("SetPitchBend", patch=piano)
+	2:Scene("ROOT", patch=violon, init_patch=reset),
+	3:Scene("SetPitchBend", patch=violon, init_patch=portamento_up),
+#	2:Scene("HighWater", lowsynth),
 #	3:SceneGroup ("Marathon", [
 #        Scene("Marathon-Intro",
 #		  [

@@ -17,7 +17,7 @@ config(
     backend = 'alsa',
     client_name = 'Master',
 
-#stefets@rpi2:~/project/live-config$ aconnect -l
+#My setup
 #client 0: 'System' [type=kernel]
 #    0 'Timer           '
 #    1 'Announce        '
@@ -36,14 +36,14 @@ config(
 #    0 'Q49 MIDI 1      '
 
     out_ports = [ 
+        ('Q49', '20:0',),					# Edirol SD-90 PART A
+        ('PK5', '20:0',),					# Edirol SD-90 PART B available at 20:1
         ('D4',  '20:0',),
-        ('Q49', '20:0',),
-        ('PK5', '20:0',),
         ('PODHD500', '20:2',), ],
 
     in_ports = [ 
-        ('Q49  - MIDI IN 1', '24:0',), # Alesis Q49 in USB MODE
-        ('SD90 - MIDI IN 1', '20:2',),
+        ('Q49  - MIDI IN 1', '24:0',), 		# Alesis Q49 in USB MODE
+        ('SD90 - MIDI IN 1', '20:2',),		# Edirol SD-90 has 2 MIDI IN 
         ('SD90 - MIDI IN 2', '20:3',) ],
 
     initial_scene = 2,
@@ -183,7 +183,7 @@ _control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(Navi
 #_control = Filter(NOTEON) >> KeyFilter(37) >> Process(MoveNext)
 
 # Reset logic (DEBUG MODE)
-#reset=Filter(NOTEOFF) >> Process(SendSysex)
+reset=Filter(NOTEOFF) >> Process(SendSysex)
 #_control = ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlValueFilter(0) >> Call(gliss_exec)
 #_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
 #_control = Filter(NOTE) >> Filter(NOTEON) >> Call(arpeggiator_exec)

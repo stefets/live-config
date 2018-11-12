@@ -1,6 +1,31 @@
 #-----------------------------------------------------------------------------------------------
 # PROGRAM CHANGE SECTION
 #-----------------------------------------------------------------------------------------------
+
+# Works great in init_patch
+#Chorus=Ctrl(3,1,93,127)
+#Reverb =Ctrl(3,1,93,127)
+
+# PORTAMENTO 
+portamento_base=Ctrl(1,1,5,50)
+portamento_off=Ctrl(1,1,65,0)	# Switch OFF
+portamento_on=Ctrl(1,1,65,127)  # Switch ON
+portamento_up=(portamento_base // portamento_on)
+portamento_off=(portamento_base // portamento_off)
+
+#Pas de resultat encore
+#legato=Ctrl(1,1,120,0)
+
+LSB=Ctrl(1,1,100,0)  #lsb
+MSB=Ctrl(1,1,101,0) #msb
+MSB_LSB=(MSB // LSB)
+
+DataEntryMSB=Ctrl(1,1,6,12) 
+DataEntryLSB=Ctrl(1,1,38,0) 
+SetPitchBend=(DataEntryMSB // DataEntryLSB)
+
+InitPitchBend=(MSB_LSB // SetPitchBend)
+
 POD_16A=Program('PODHD500', channel=9, program=61)
 POD_16B=Program('PODHD500', channel=9, program=62)
 POD_16C=Program('PODHD500', channel=9, program=63)
@@ -17,6 +42,7 @@ pod_base=Output('PODHD500', channel=9)
 # POD HD500
 POD=OutputTemplate('PODHD500',9)
 #pod_init=Output('PODHD500', channel=9, program=1)
+# Set the pitchbend sensitivity parameter for the Roland Edirol SD-90
 #pod_init=POD(64)
 #pod_init=Init(POD(64))
 pod_off=Output('PODHD500', channel=9, ctrls={51:127,52:127,53:127,54:127,})
@@ -25,6 +51,8 @@ pod_on=Output('PODHD500', channel=9, ctrls={51:0,52:0,53:0,54:0,})
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PK5', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
+violon = cf >> Output('Q49', channel=1, program=((96*128),41))
+piano_base = cf >> Velocity(fixed=100) >> Output('Q49', channel=1, program=((96*128),1))
 nf_piano = Output('Q49', channel=1, program=((96*128),2), volume=100)
 piano = cf >> Velocity(fixed=80) >> Output('Q49', channel=1, program=((96*128),1), volume=100)
 piano2 = Output('PK5', channel=2, program=((96*128),2), volume=100)
