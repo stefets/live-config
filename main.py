@@ -17,24 +17,6 @@ config(
     backend = 'alsa',
     client_name = 'Master',
 
-#My setup
-#client 0: 'System' [type=kernel]
-#    0 'Timer           '
-#    1 'Announce        '
-#        Connecting To: 15:0
-#client 14: 'Midi Through' [type=kernel]
-#    0 'Midi Through Port-0'
-#client 15: 'OSS sequencer' [type=kernel]
-#    0 'Receiver        '
-#        Connected From: 0:1
-#client 20: 'SD-90' [type=kernel]
-#    0 'SD-90 Part A    '
-#    1 'SD-90 Part B    '
-#    2 'SD-90 MIDI 1    '
-#    3 'SD-90 MIDI 2    '
-#client 24: 'Q49' [type=kernel]
-#    0 'Q49 MIDI 1      '
-
     out_ports = [ 
         ('Q49', '20:0',),					# Edirol SD-90 PART A
         ('PK5', '20:0',),					# Edirol SD-90 PART B available at 20:1
@@ -46,7 +28,7 @@ config(
         ('SD90 - MIDI IN 1', '20:2',),		# Edirol SD-90 has 2 MIDI IN 
         ('SD90 - MIDI IN 2', '20:3',) ],
 
-    initial_scene = 3,
+    initial_scene = 1,
 )
 
 hook(
@@ -114,8 +96,9 @@ def arpeggiator_exec(e):
 
 # Change the HEX string according to your sound module
 # Reset string for Edirol SD-90
-def SendSysex(ev):
-    return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
+# Obsolete : Use the builin mididings function
+#def SendSysex(ev):
+#   return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
 
 # Scene navigation
 def MoveNext(ev):
@@ -124,32 +107,43 @@ def MoveNext(ev):
 def NavigateToScene(ev):
     # MIDIDINGS does not wrap in the builtin ScenesSwitch but SubSecenesSwitch yes with the wrap parameter
     # With that function, you can wrap trough Scenes AND SubScenes
+    # That function assume that the first SceneNumber is 1
+	#TODO field, values = dict(scenes()).items()[0]
     if ev.ctrl == 20:
         nb_scenes = len(scenes())    
         cs=current_scene()
-        if ev.value == 2:
+		# Scene backward
+        if ev.value == 1:
+            if cs > 1:
+                switch_scene(cs-1)
+		# Scene forward and wrap
+        elif ev.value == 2:
             if cs < nb_scenes:
                 switch_scene(cs+1)
             else:
                 switch_scene(1)
-        elif ev.value == 1:
-            if cs > 1:
-                switch_scene(cs-1)
+		# SubScene backward
         elif ev.value == 3:
+            css=current_subscene()
+            if css > 1:
+                switch_subscene(css-1)
+		# SubScene forward and wrap
+        elif ev.value == 4:
             css=current_subscene()
             nb_subscenes = len(scenes()[cs][1])
             if nb_subscenes > 0 and css < nb_subscenes:
                 switch_subscene(css+1)
             else:
                 switch_subscene(1)
-    elif ev.ctrl == 22:
-        # Reset logic
-        subprocess.Popen(['/bin/bash', './kill.sh'])
+#    elif ev.ctrl == 22:
+#       # Reset logic
+#       subprocess.Popen(['/bin/bash', './kill.sh'])
 
 
-#def init_pod(ev):
-#    output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
-    
+# Stop audio processing
+def AllAudioOff(ev):
+    return "/bin/bash ./kill.sh"
+
 # Audio and midi players suitable for my SD-90
 def play_file(filename):
     fname, fext = os.path.splitext(filename)
@@ -175,18 +169,12 @@ def OnPitchbend(ev, direction):
     return PitchbendEvent(ev.port, ev.channel, ev.value*direction)
 
 #-----------------------------------------------------------------------------------------------------------
-# CONFIGURATION SECTION
+# 											CONFIGURATION SECTION
 #-----------------------------------------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------------------------------------
+# 											CONTROL SECTION
 
-# Reset logic (LIVE MODE)
-reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
-
-# **************** CONTROLLERS **********
-# Channel 9 filter (my fcb1010 in my case)
-cf=~ChannelFilter(9) 	# Don't want Channel 9 interfere with anything
-fcb1010 = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
-keyboard = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
 
 # This control have the same behavior than the NavigateToScene python function above
 # EXCEPT that there is NO wrap parameter for SceneSwitch
@@ -198,7 +186,26 @@ keyboard = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(Navi
 #		(CtrlFilter(20) >> CtrlValueFilter(3) >> SubSceneSwitch(offset=1, wrap=True))
 #	))
 
-# **************** CONTROLLERS
+# Stop the audio and send the reset Sysex to the SD-90
+reset=(System(AllAudioOff) // SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7'))
+
+# Used by patches to exclude anything from channel 9
+# Don't want Channel 9 interfere with anything
+cf=~ChannelFilter(9) 	
+
+# Configuring my controllers
+fcb1010=(ChannelFilter(9) >> Filter(CTRL) >> 
+	(
+		(CtrlFilter(20) >> Process(NavigateToScene)) // 
+		(CtrlFilter(22) >> reset)
+		 
+	))
+
+keyboard = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
+
+# 											CONTROL SECTION
+#-----------------------------------------------------------------------------------------------------------
+
 
 # Reset logic (DEBUG MODE)
 #reset=Filter(NOTEOFF) >> Process(SendSysex)
@@ -212,23 +219,26 @@ PlayButton=Filter(NOTEOFF)	# for fast test
 play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
 d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
 
+initialize=ChannelFilter(1)
+#-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
-# PATCHES (token)
-#-----------------------------------------------------------------------------------------------------------
+# 											PATCHES
 __PATCHES__
+# 											PATCHES
+#-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
-# SCENES - (token)
-#-----------------------------------------------------------------------------------------------------------
+# 											SCENES
 _scenes = {
-    1: Scene("Initialize",  reset),
+    1: Scene("Initialize",  initialize),
 __SCENES__
 }
+# 											SCENES
+#-----------------------------------------------------------------------------------------------------------
 
-# ---------------------------
-# MAIN
-# ---------------------------
+#-----------------------------------------------------------------------------------------------------------
+# 											MAIN
 _pre  = Print('input', portnames='in')
 _post = Print('output', portnames='out')
 run(
@@ -237,3 +247,5 @@ run(
     #pre=_pre, 
     #post=_post,
 )
+# 											MAIN
+#-----------------------------------------------------------------------------------------------------------
