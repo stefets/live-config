@@ -46,7 +46,7 @@ config(
         ('SD90 - MIDI IN 1', '20:2',),		# Edirol SD-90 has 2 MIDI IN 
         ('SD90 - MIDI IN 2', '20:3',) ],
 
-    initial_scene = 2,
+    initial_scene = 3,
 )
 
 hook(

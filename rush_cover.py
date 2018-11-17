@@ -17,7 +17,8 @@
 	    	Scene("Mission", play >> System(play_file("mission.mid"))),
        ]),
    3:SceneGroup ("Marathon", [
-        Scene("Marathon-Intro",
+        Scene("Marathon-Intro", init_patch=InitPitchBend,
+		  patch=
           [
             marathon,
             (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
@@ -38,7 +39,7 @@
           ]),
         Scene("Marathon-Chords", marathon_chords),
         Scene("Marathon-Bridge", marathon_bridge),
-        Scene("Marathon-Solo-Bridge", marathon_bridge2),
+        Scene("Marathon-Solo-Bridge", marathon_bridge_split),
         Scene("Marathon-Chords", marathon_chords),
         #Scene("TODOO", marathon),
         #Scene("TODOOO", marathon),

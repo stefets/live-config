@@ -16,15 +16,15 @@ portamento_off=(portamento_base // portamento_off)
 #Pas de resultat encore
 #legato=Ctrl(1,1,120,0)
 
-LSB=Ctrl(1,1,100,0)  #lsb
-MSB=Ctrl(1,1,101,0) #msb
+LSB=Ctrl(1,3,100,0)  #lsb
+MSB=Ctrl(1,3,101,0) #msb
 MSB_LSB=(MSB // LSB)
 
-DataEntryMSB=Ctrl(1,1,6,12) 
-DataEntryLSB=Ctrl(1,1,38,0) 
-SetPitchBend=(DataEntryMSB // DataEntryLSB)
+DataEntryMSB=Ctrl(1,3,6,12) 
+DataEntryLSB=Ctrl(1,3,38,0) 
+SetDataEntry=(DataEntryMSB // DataEntryLSB)
 
-InitPitchBend=(MSB_LSB // SetPitchBend)
+InitPitchBend=(MSB_LSB // SetDataEntry)
 
 POD_16A=Program('PODHD500', channel=9, program=61)
 POD_16B=Program('PODHD500', channel=9, program=62)
@@ -91,12 +91,16 @@ marathon_bridge=(cf >>
 		(KeyFilter('a4'))
 	) >> Output('PK5', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
+
+
 # Solo bridge, lower -12
-marathon_bridge2=(cf >> 
+marathon_bridge2=(cf >>Velocity(fixed=100) >> 
 	( 
 		(KeyFilter('c3') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('d3') >> Key('e2') >> Harmonize('e','major',['unison', 'third', 'fifth'])) 
-	) >> Transpose(-12) >> Output('PK5', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
+	) >> Transpose(-12) >> Output('PK5', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75}))
+marathon_cascade=(cf >> Transpose(12) >> Velocity(fixed=75) >> Output('Q49', channel=11, program=((99*128),99), volume=80))
+marathon_bridge_split=cf>> KeySplit('f3', marathon_bridge2, marathon_cascade)
 
 #marathon_main_out=Output('PK5', channel=3, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
 
