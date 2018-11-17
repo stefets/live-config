@@ -122,12 +122,16 @@ def MoveNext(ev):
     switch_scene(current_scene()+1)
 
 def NavigateToScene(ev):
-    nb_scenes = len(scenes())    
+    # MIDIDINGS does not wrap in the builtin ScenesSwitch but SubSecenesSwitch yes with the wrap parameter
+    # With that function, you can wrap trough Scenes AND SubScenes
     if ev.ctrl == 20:
+        nb_scenes = len(scenes())    
         cs=current_scene()
         if ev.value == 2:
             if cs < nb_scenes:
                 switch_scene(cs+1)
+            else:
+                switch_scene(1)
         elif ev.value == 1:
             if cs > 1:
                 switch_scene(cs-1)
@@ -146,7 +150,7 @@ def NavigateToScene(ev):
 #def init_pod(ev):
 #    output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
     
-# Audio and midi players
+# Audio and midi players suitable for my SD-90
 def play_file(filename):
     fname, fext = os.path.splitext(filename)
     path=" /home/shared/soundlib/"
@@ -169,27 +173,39 @@ def OnPitchbend(ev, direction):
     elif ev.value == 127:
         ev.value = 8191 if direction == 1 else 8192
     return PitchbendEvent(ev.port, ev.channel, ev.value*direction)
+
 #-----------------------------------------------------------------------------------------------------------
 # CONFIGURATION SECTION
 #-----------------------------------------------------------------------------------------------------------
 
-_pre = Print('input', portnames='in')
-_post = Print('output', portnames='out')
 
 # Reset logic (LIVE MODE)
-# Controller pour le changement de scene (fcb1010 actual)
 reset=Filter(CTRL) >> CtrlFilter(22) >> Process(SendSysex)
-_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
-#_control = Filter(NOTEON) >> KeyFilter(37) >> Process(MoveNext)
+
+# **************** CONTROLLERS **********
+# Channel 9 filter (my fcb1010 in my case)
+cf=~ChannelFilter(9) 	# Don't want Channel 9 interfere with anything
+fcb1010 = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
+keyboard = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
+
+# This control have the same behavior than the NavigateToScene python function above
+# EXCEPT that there is NO wrap parameter for SceneSwitch
+# The NavigateToScene can wrap Scenets
+#_control=(ChannelFilter(9) >> Filter(CTRL) >>
+#	(
+#		(CtrlFilter(20) >> CtrlValueFilter(1) >> SceneSwitch(offset=-1)) //
+#		(CtrlFilter(20) >> CtrlValueFilter(2) >> SceneSwitch(offset=1))  //
+#		(CtrlFilter(20) >> CtrlValueFilter(3) >> SubSceneSwitch(offset=1, wrap=True))
+#	))
+
+# **************** CONTROLLERS
 
 # Reset logic (DEBUG MODE)
-reset=Filter(NOTEOFF) >> Process(SendSysex)
+#reset=Filter(NOTEOFF) >> Process(SendSysex)
 #_control = ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlValueFilter(0) >> Call(gliss_exec)
 #_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
 #_control = Filter(NOTE) >> Filter(NOTEON) >> Call(arpeggiator_exec)
 
-# Channel 9 filter (my fcb1010 in my case)
-cf=~ChannelFilter(9)
 
 # Shortcut (Play switch)
 PlayButton=Filter(NOTEOFF)	# for fast test
@@ -206,16 +222,18 @@ __PATCHES__
 # SCENES - (token)
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Reset",  reset),
+    1: Scene("Initialize",  reset),
 __SCENES__
 }
 
 # ---------------------------
 # MAIN
 # ---------------------------
+_pre  = Print('input', portnames='in')
+_post = Print('output', portnames='out')
 run(
-    control=_control,
+    control=fcb1010,
+    scenes=_scenes, 
     #pre=_pre, 
     #post=_post,
-    scenes=_scenes, 
 )
