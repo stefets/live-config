@@ -16,15 +16,50 @@ portamento_off=(portamento_base // portamento_off)
 #Pas de resultat encore
 #legato=Ctrl(1,1,120,0)
 
-LSB=Ctrl(1,3,100,0)  #lsb
-MSB=Ctrl(1,3,101,0) #msb
-MSB_LSB=(MSB // LSB)
+# Configure PitchBend Sensitivity
+# SD-90 Part A - All Channel
+PbsA01=(Ctrl(1, 1,100,0) // Ctrl(1, 1,101,0) // Ctrl(1,01,6,12) // Ctrl(1, 1,38,0))
+PbsA02=(Ctrl(1, 2,100,0) // Ctrl(1, 2,101,0) // Ctrl(1, 2,6,12) // Ctrl(1, 2,38,0))
+PbsA03=(Ctrl(1, 3,100,0) // Ctrl(1, 3,101,0) // Ctrl(1, 3,6,12) // Ctrl(1, 3,38,0))
+PbsA04=(Ctrl(1, 4,100,0) // Ctrl(1, 4,101,0) // Ctrl(1, 4,6,12) // Ctrl(1, 4,38,0))
+PbsA05=(Ctrl(1, 5,100,0) // Ctrl(1, 5,101,0) // Ctrl(1, 5,6,12) // Ctrl(1, 5,38,0))
+PbsA06=(Ctrl(1, 6,100,0) // Ctrl(1, 6,101,0) // Ctrl(1, 6,6,12) // Ctrl(1, 6,38,0))
+PbsA07=(Ctrl(1, 7,100,0) // Ctrl(1, 7,101,0) // Ctrl(1, 7,6,12) // Ctrl(1, 7,38,0))
+PbsA08=(Ctrl(1, 8,100,0) // Ctrl(1, 8,101,0) // Ctrl(1, 8,6,12) // Ctrl(1, 8,38,0))
+PbsA09=(Ctrl(1, 9,100,0) // Ctrl(1, 9,101,0) // Ctrl(1, 9,6,12) // Ctrl(1, 9,38,0))
+PbsA10=(Ctrl(1,10,100,0) // Ctrl(1,10,101,0) // Ctrl(1,10,6,12) // Ctrl(1,10,38,0))
+PbsA11=(Ctrl(1,11,100,0) // Ctrl(1,11,101,0) // Ctrl(1,11,6,12) // Ctrl(1,11,38,0))
+PbsA12=(Ctrl(1,12,100,0) // Ctrl(1,12,101,0) // Ctrl(1,12,6,12) // Ctrl(1,12,38,0))
+PbsA13=(Ctrl(1,13,100,0) // Ctrl(1,13,101,0) // Ctrl(1,13,6,12) // Ctrl(1,13,38,0))
+PbsA14=(Ctrl(1,14,100,0) // Ctrl(1,14,101,0) // Ctrl(1,14,6,12) // Ctrl(1,14,38,0))
+PbsA15=(Ctrl(1,15,100,0) // Ctrl(1,15,101,0) // Ctrl(1,15,6,12) // Ctrl(1,15,38,0))
+PbsA16=(Ctrl(1,16,100,0) // Ctrl(1,16,101,0) // Ctrl(1,16,6,12) // Ctrl(1,16,38,0))
+# SD-90 Part B - All Channel
+PbsB01=(Ctrl(2, 1,100,0) // Ctrl(2, 1,101,0) // Ctrl(2,01,6,12) // Ctrl(2, 1,38,0))
+PbsB02=(Ctrl(2, 2,100,0) // Ctrl(2, 2,101,0) // Ctrl(2, 2,6,12) // Ctrl(2, 2,38,0))
+PbsB03=(Ctrl(2, 3,100,0) // Ctrl(2, 3,101,0) // Ctrl(2, 3,6,12) // Ctrl(2, 3,38,0))
+PbsB04=(Ctrl(2, 4,100,0) // Ctrl(2, 4,101,0) // Ctrl(2, 4,6,12) // Ctrl(2, 4,38,0))
+PbsB05=(Ctrl(2, 5,100,0) // Ctrl(2, 5,101,0) // Ctrl(2, 5,6,12) // Ctrl(2, 5,38,0))
+PbsB06=(Ctrl(2, 6,100,0) // Ctrl(2, 6,101,0) // Ctrl(2, 6,6,12) // Ctrl(2, 6,38,0))
+PbsB07=(Ctrl(2, 7,100,0) // Ctrl(2, 7,101,0) // Ctrl(2, 7,6,12) // Ctrl(2, 7,38,0))
+PbsB08=(Ctrl(2, 8,100,0) // Ctrl(2, 8,101,0) // Ctrl(2, 8,6,12) // Ctrl(2, 8,38,0))
+PbsB09=(Ctrl(2, 9,100,0) // Ctrl(2, 9,101,0) // Ctrl(2, 9,6,12) // Ctrl(2, 9,38,0))
+PbsB10=(Ctrl(2,10,100,0) // Ctrl(2,10,101,0) // Ctrl(2,10,6,12) // Ctrl(2,10,38,0))
+PbsB11=(Ctrl(2,11,100,0) // Ctrl(2,11,101,0) // Ctrl(2,11,6,12) // Ctrl(2,11,38,0))
+PbsB12=(Ctrl(2,12,100,0) // Ctrl(2,12,101,0) // Ctrl(2,12,6,12) // Ctrl(2,12,38,0))
+PbsB13=(Ctrl(2,13,100,0) // Ctrl(2,13,101,0) // Ctrl(2,13,6,12) // Ctrl(2,13,38,0))
+PbsB14=(Ctrl(2,14,100,0) // Ctrl(2,14,101,0) // Ctrl(2,14,6,12) // Ctrl(2,14,38,0))
+PbsB15=(Ctrl(2,15,100,0) // Ctrl(2,15,101,0) // Ctrl(2,15,6,12) // Ctrl(2,15,38,0))
+PbsB16=(Ctrl(2,16,100,0) // Ctrl(2,16,101,0) // Ctrl(2,16,6,12) // Ctrl(2,16,38,0))
 
-DataEntryMSB=Ctrl(1,3,6,12) 
-DataEntryLSB=Ctrl(1,3,38,0) 
-SetDataEntry=(DataEntryMSB // DataEntryLSB)
+SetPitchBend=(
+		PbsA01 // PbsA02 // PbsA03 // PbsA04 // PbsA05 // PbsA06 // PbsA07 // PbsA08 //
+		PbsA09 // PbsA10 // PbsA11 // PbsA12 // PbsA13 // PbsA14 // PbsA15 // PbsA16 //
+		PbsB01 // PbsB02 // PbsB03 // PbsB04 // PbsB05 // PbsB06 // PbsB07 // PbsB08 //
+		PbsB09 // PbsB10 // PbsB11 // PbsB12 // PbsB13 // PbsB14 // PbsB15 // PbsB16 
+	)
 
-InitPitchBend=(MSB_LSB // SetDataEntry)
+InitializeSoundModule=(SetPitchBend)
 
 POD_16A=Program('PODHD500', channel=9, program=61)
 POD_16B=Program('PODHD500', channel=9, program=62)

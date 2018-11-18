@@ -17,8 +17,7 @@
 	    	Scene("Mission", play >> System(play_file("mission.mid"))),
        ]),
    3:SceneGroup ("Marathon", [
-        Scene("Marathon-Intro", init_patch=InitPitchBend,
-		  patch=
+        Scene("Marathon-Intro", 
           [
             marathon,
             (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>

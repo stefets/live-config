@@ -18,15 +18,19 @@ config(
     client_name = 'Master',
 
     out_ports = [ 
-        ('Q49', '20:0',),					# Edirol SD-90 PART A
-        ('PK5', '20:0',),					# Edirol SD-90 PART B available at 20:1
-        ('D4',  '20:0',),
-        ('PODHD500', '20:2',), ],
+        ('PARTA', '20:0'),					# Edirol SD-90 PART A (Port 1)
+        ('PARTB', '20:1'),					# Edirol SD-90 PART B (Port 2)
+        ('Q49', '20:0',),					# Edirol SD-90 PART A (alias)
+        ('PK5', '20:0',),					# Edirol SD-90 PART A (alias)
+        ('D4',  '20:0',),					# Edirol SD-90 PART A (alias)
+        ('PODHD500', '20:2',), 				# Edirol SD-90 MIDI OUT 1
+	],			
 
     in_ports = [ 
         ('Q49  - MIDI IN 1', '24:0',), 		# Alesis Q49 in USB MODE
-        ('SD90 - MIDI IN 1', '20:2',),		# Edirol SD-90 has 2 MIDI IN 
-        ('SD90 - MIDI IN 2', '20:3',) ],
+        ('SD90 - MIDI IN 1', '20:2',),		# Edirol SD-90 MIDI IN 1
+        ('SD90 - MIDI IN 2', '20:3',) 		# Edirol SD-90 MIDI IN 2
+		],
 
     initial_scene = 1,
 )
@@ -36,7 +40,8 @@ hook(
     #AutoRestart(),
 )
 #--------------------------------------------------------------------
-# Class
+# 								Class
+#--------------------------------------------------------------------
 class RemoveDuplicates:
     def __init__(self, _wait=0):
         self.wait = _wait
@@ -62,7 +67,8 @@ class RemoveDuplicates:
         return r
 
 #--------------------------------------------------------------------
-# Test
+# Generate a chord prototype test
+# Better to use the mididings builtin object Hamonize
 def Chord(ev, trigger_notes=(41, 43), chord_offsets=(0, 4, 7)):
     if ev.type in (NOTEON, NOTEOFF):
         if ev.data1 in trigger_notes:
@@ -72,7 +78,7 @@ def Chord(ev, trigger_notes=(41, 43), chord_offsets=(0, 4, 7)):
     return ev
 #--------------------------------------------------------------------
 
-# Glissando
+# WIP: Glissando
 def gliss_function(note, note_max, port, chan, vel):
     output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
     note += 1
@@ -82,7 +88,7 @@ def gliss_function(note, note_max, port, chan, vel):
 def gliss_exec(e):
     gliss_function(120, 168, e.port, e.channel, 100)
 
-# Arpeggiator
+# WIP : Arpeggiator
 def arpeggiator_function(current, max,note, port, chan, vel):
     output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
     current += 1
@@ -100,10 +106,11 @@ def arpeggiator_exec(e):
 #def SendSysex(ev):
 #   return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
 
-# Scene navigation
-def MoveNext(ev):
-    switch_scene(current_scene()+1)
+# Not used
+#def MoveNext(ev):
+#    switch_scene(current_scene()+1)
 
+# Navigate through secenes and subscenes
 def NavigateToScene(ev):
     # MIDIDINGS does not wrap in the builtin ScenesSwitch but SubSecenesSwitch yes with the wrap parameter
     # With that function, you can wrap trough Scenes AND SubScenes
@@ -135,12 +142,8 @@ def NavigateToScene(ev):
                 switch_subscene(css+1)
             else:
                 switch_subscene(1)
-#    elif ev.ctrl == 22:
-#       # Reset logic
-#       subprocess.Popen(['/bin/bash', './kill.sh'])
 
-
-# Stop audio processing
+# Stop any audio processing
 def AllAudioOff(ev):
     return "/bin/bash ./kill.sh"
 
@@ -175,7 +178,6 @@ def OnPitchbend(ev, direction):
 #-----------------------------------------------------------------------------------------------------------
 # 											CONTROL SECTION
 
-
 # This control have the same behavior than the NavigateToScene python function above
 # EXCEPT that there is NO wrap parameter for SceneSwitch
 # The NavigateToScene can wrap Scenets
@@ -189,52 +191,39 @@ def OnPitchbend(ev, direction):
 # Stop the audio and send the reset Sysex to the SD-90
 reset=(System(AllAudioOff) // SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7'))
 
-# Used by patches to exclude anything from channel 9
+# FCB1010 CONTROLLER ---------------------------------------------------------------------------
 # Don't want Channel 9 interfere with anything
-cf=~ChannelFilter(9) 	
+cf=~ChannelFilter(9) 	# Used by patches to exclude anything from channel 9
 
-# Configuring my controllers
+# The controller itself
 fcb1010=(ChannelFilter(9) >> Filter(CTRL) >> 
 	(
 		(CtrlFilter(20) >> Process(NavigateToScene)) // 
 		(CtrlFilter(22) >> reset)
-		 
 	))
 
-keyboard = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
+# KEYBOARD CONTROLLER -
+# TODO keyboard = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
 
-# 											CONTROL SECTION
-#-----------------------------------------------------------------------------------------------------------
-
-
-# Reset logic (DEBUG MODE)
-#reset=Filter(NOTEOFF) >> Process(SendSysex)
-#_control = ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlValueFilter(0) >> Call(gliss_exec)
-#_control = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter([20,22]) >> Process(Glissando)
-#_control = Filter(NOTE) >> Filter(NOTEON) >> Call(arpeggiator_exec)
-
+# TLMEP
+# TODO Keyboard controller a la maniere de Tout le monde en parle
 
 # Shortcut (Play switch)
-PlayButton=Filter(NOTEOFF)	# for fast test
 play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
 d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
-
-initialize=ChannelFilter(1)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # 											PATCHES
 __PATCHES__
-# 											PATCHES
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # 											SCENES
 _scenes = {
-    1: Scene("Initialize",  initialize),
+    1: Scene("Initialize",  patch=Pass(), init_patch=InitializeSoundModule),
 __SCENES__
 }
-# 											SCENES
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
@@ -247,5 +236,4 @@ run(
     #pre=_pre, 
     #post=_post,
 )
-# 											MAIN
 #-----------------------------------------------------------------------------------------------------------
