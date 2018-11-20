@@ -32,7 +32,7 @@ config(
         ('SD90 - MIDI IN 2', '20:3',) 		# Edirol SD-90 MIDI IN 2
 		],
 
-    initial_scene = 1,
+    initial_scene = 2,
 )
 
 hook(
@@ -42,6 +42,29 @@ hook(
 #--------------------------------------------------------------------
 # 								Class
 #--------------------------------------------------------------------
+#
+# This function control mpg123 in remote mode with a keyboard
+# Kinda like Guy A. Lepage in the 'Tout le monde en parle' TV Show; He start songs with a keyboard
+#
+mpg123=None
+def Mp3PianoPlayer(ev):
+        global mpg123
+        if mpg123 is None:
+           mpg123=subprocess.Popen(['mpg123', '-q', '-R'], stdin=subprocess.PIPE)
+        if ev.type == NOTEON:
+            mpg123.stdin.write('stop\n')
+            mpg123.stdin.write('silence\n')
+            cmd='load /tmp/' + str(ev.data1) + '.mp3\n'
+            mpg123.stdin.write(cmd)
+        if ev.type == CTRL:
+            if ev.data1==7 and ev.data2 <= 100:
+                cmd='volume ' + str(ev.data2) + '\n'
+                mpg123.stdin.write(cmd)
+
+        return ev
+#
+# This class remove duplicate midi message by taking care of an offset logic
+#
 class RemoveDuplicates:
     def __init__(self, _wait=0):
         self.wait = _wait
@@ -203,7 +226,7 @@ fcb1010=(ChannelFilter(9) >> Filter(CTRL) >>
 	))
 
 # KEYBOARD CONTROLLER -
-# TODO keyboard = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(20,22) >> Process(NavigateToScene)
+keyboard = Pass()
 
 # TLMEP
 # TODO Keyboard controller a la maniere de Tout le monde en parle
@@ -231,9 +254,9 @@ __SCENES__
 _pre  = Print('input', portnames='in')
 _post = Print('output', portnames='out')
 run(
-    control=fcb1010,
+    control=keyboard,
     scenes=_scenes, 
-    #pre=_pre, 
-    #post=_post,
+    pre=_pre, 
+    post=_post,
 )
 #-----------------------------------------------------------------------------------------------------------

@@ -14,7 +14,10 @@ function run()
 while true
 do
 	
-	value=$(dialog --begin 0 0 --no-shadow --stdout --menu "Configuration" 15 20 8 1 push 2 rush_cover 3 bass_cover 4 originales 5 timeline 6 solo 7 styx 8 shutdown)
+	value=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 15 20 8 1 push 2 rush_cover 3 bass_cover 4 originales 5 timeline 6 solo 7 styx 8 shutdown)
+	#value=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 15 20 8 push - rush_cover - solo - styx -)
+    #run $value.py
+    #continue
 	case $value in
 		1 )
 			run push.py
@@ -45,7 +48,7 @@ do
             continue
             ;;
 		8 )
-		    sudo shutdown -h now &
+		    sudo poweroff &
 			break
 			;;
         * )
