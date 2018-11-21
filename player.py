@@ -1,1 +1,1 @@
-    2: Scene("Mp3PianoPlayer", phantom >> Process(Mp3PianoPlayer))
+    2: Scene("Mp3PianoPlayer", phantom // Call(Mp3PianoPlayer))

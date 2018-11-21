@@ -20,7 +20,7 @@
         Scene("Marathon-Intro", 
           [
             marathon,
-            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
+            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> Channel(3) >>
             [
                     (CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
                     (CtrlFilter(1)>>CtrlMap(1,7))
@@ -40,6 +40,4 @@
         Scene("Marathon-Bridge", marathon_bridge),
         Scene("Marathon-Solo-Bridge", marathon_bridge_split),
         Scene("Marathon-Chords", marathon_chords),
-        #Scene("TODOO", marathon),
-        #Scene("TODOOO", marathon),
    ]),

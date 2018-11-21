@@ -20,10 +20,10 @@ config(
     out_ports = [ 
         ('PARTA', '20:0'),					# Edirol SD-90 PART A (Port 1)
         ('PARTB', '20:1'),					# Edirol SD-90 PART B (Port 2)
-        ('Q49', '20:0',),					# Edirol SD-90 PART A (alias)
-        ('PK5', '20:0',),					# Edirol SD-90 PART A (alias)
-        ('D4',  '20:0',),					# Edirol SD-90 PART A (alias)
-        ('PODHD500', '20:2',), 				# Edirol SD-90 MIDI OUT 1
+        #('Q49', '20:0',),					# Edirol SD-90 PART A (alias)
+        #('PK5', '20:0',),					# Edirol SD-90 PART A (alias)
+        #('D4',  '20:0',),					# Edirol SD-90 PART A (alias)
+        #('PODHD500', '20:2',), 				# Edirol SD-90 MIDI OUT 1
 	],			
 
     in_ports = [ 
@@ -56,11 +56,11 @@ def Mp3PianoPlayer(ev):
             mpg123.stdin.write('silence\n')
             cmd='load /tmp/' + str(ev.data1) + '.mp3\n'
             mpg123.stdin.write(cmd)
+            ev.data2=0
         if ev.type == CTRL:
             if ev.data1==7 and ev.data2 <= 100:
                 cmd='volume ' + str(ev.data2) + '\n'
                 mpg123.stdin.write(cmd)
-
         return ev
 #
 # This class remove duplicate midi message by taking care of an offset logic
@@ -218,7 +218,7 @@ reset=(System(AllAudioOff) // SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x0
 # Don't want Channel 9 interfere with anything
 cf=~ChannelFilter(9) 	# Used by patches to exclude anything from channel 9
 
-# The controller itself
+# FCB1010 UNO as controller
 fcb1010=(ChannelFilter(9) >> Filter(CTRL) >> 
 	(
 		(CtrlFilter(20) >> Process(NavigateToScene)) // 
@@ -244,7 +244,7 @@ __PATCHES__
 #-----------------------------------------------------------------------------------------------------------
 # 											SCENES
 _scenes = {
-    1: Scene("Initialize",  patch=Pass(), init_patch=InitializeSoundModule),
+    1: Scene("Initialize",  patch=piano_base, init_patch=InitializeSoundModule),
 __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------
@@ -254,7 +254,7 @@ __SCENES__
 _pre  = Print('input', portnames='in')
 _post = Print('output', portnames='out')
 run(
-    control=keyboard,
+    control=fcb1010,
     scenes=_scenes, 
     pre=_pre, 
     post=_post,
