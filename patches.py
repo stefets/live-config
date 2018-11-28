@@ -121,26 +121,26 @@ marathon_chords=(cf>> LatchNotes(False, reset='b3') >> Velocity(fixed=100) >>
 
 	) >> Transpose(-12) >> Output('PARTA', channel=3, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
 
-marathon_bridge=(cf >> 
+marathon_bridge=(cf >> Velocity(fixed=75) >>
 	( 
 		(KeyFilter('c3') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('e3') >> Key('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
-		(KeyFilter('d3') >> Key('e3') >> Harmonize('e','major',['unison', 'third', 'fifth']))  //
-		(KeyFilter('a4'))
+		(KeyFilter('d3') >> Key('e3') >> Harmonize('e','major',['unison', 'third', 'fifth']))  
+		// (KeyFilter('a3') >> Transpose(12))
 	) >> Output('PARTA', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
 # Solo bridge, lower -12
-marathon_bridge_solo=(cf >>Velocity(fixed=100) >> 
+marathon_bridge_lower=(cf >>Velocity(fixed=90) >> 
 	( 
-		(KeyFilter('c3') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
-		(KeyFilter('e3') >> Key('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
-		(KeyFilter('d3') >> Key('e2') >> Harmonize('e','major',['unison', 'third', 'fifth'])) 
-	) >> Transpose(-12) >> Output('PARTA', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75}))
+		(KeyFilter('c2') >> Key('b1') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
+		(KeyFilter('e2') >> Key('f#2') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
+		(KeyFilter('d2') >> Key('e1') >> Harmonize('e','major',['unison', 'third', 'fifth'])) 
+	) >> Output('PARTA', channel=4, program=((96*128),51), volume=75, ctrls={93:75, 91:75}))
 
 # You can take the most
 marathon_cascade=(cf >> Transpose(12) >> Velocity(fixed=75) >> Output('PARTA', channel=11, program=((99*128),99), volume=80))
 
-marathon_bridge_split=cf>> KeySplit('f3', marathon_bridge_solo, marathon_cascade)
+marathon_bridge_split=cf>> KeySplit('f3', marathon_bridge_lower, marathon_cascade)
 
 # Patch Syhth. generique pour lowbase
 lowsynth = cf >> Velocity(fixed=100) >> Output('PARTA', channel=1, program=((96*128),51), volume=100, ctrls={93:75, 91:75})

@@ -10,7 +10,8 @@ from mididings.extra import *
 from mididings import engine
 from mididings.engine import *
 from mididings.event import *
-from mididings.extra.inotify import AutoRestart
+#now useless in dynamic mode :-/ :-(
+#from mididings.extra.inotify import AutoRestart
 
 config(
 
@@ -32,7 +33,7 @@ config(
         ('SD90 - MIDI IN 2', '20:3',) 		# Edirol SD-90 MIDI IN 2
 		],
 
-    initial_scene = 2,
+    initial_scene = 1,
 )
 
 hook(
