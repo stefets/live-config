@@ -19,7 +19,7 @@ portamento_off=(portamento_base // portamento_off)
 
 # Configure PitchBend Sensitivity
 # SD-90 Part A - All Channel
-PbsA01=(Ctrl(1, 1,100,0) // Ctrl(1, 1,101,0) // Ctrl(1,01,6,12) // Ctrl(1, 1,38,0))
+PbsA01=(Ctrl(1, 1,100,0) // Ctrl(1, 1,101,0) // Ctrl(1, 1,6,12) // Ctrl(1, 1,38,0))
 PbsA02=(Ctrl(1, 2,100,0) // Ctrl(1, 2,101,0) // Ctrl(1, 2,6,12) // Ctrl(1, 2,38,0))
 PbsA03=(Ctrl(1, 3,100,0) // Ctrl(1, 3,101,0) // Ctrl(1, 3,6,12) // Ctrl(1, 3,38,0))
 PbsA04=(Ctrl(1, 4,100,0) // Ctrl(1, 4,101,0) // Ctrl(1, 4,6,12) // Ctrl(1, 4,38,0))
@@ -36,7 +36,7 @@ PbsA14=(Ctrl(1,14,100,0) // Ctrl(1,14,101,0) // Ctrl(1,14,6,12) // Ctrl(1,14,38,
 PbsA15=(Ctrl(1,15,100,0) // Ctrl(1,15,101,0) // Ctrl(1,15,6,12) // Ctrl(1,15,38,0))
 PbsA16=(Ctrl(1,16,100,0) // Ctrl(1,16,101,0) // Ctrl(1,16,6,12) // Ctrl(1,16,38,0))
 # SD-90 Part B - All Channel
-PbsB01=(Ctrl(2, 1,100,0) // Ctrl(2, 1,101,0) // Ctrl(2,01,6,12) // Ctrl(2, 1,38,0))
+PbsB01=(Ctrl(2, 1,100,0) // Ctrl(2, 1,101,0) // Ctrl(2, 1,6,12) // Ctrl(2, 1,38,0))
 PbsB02=(Ctrl(2, 2,100,0) // Ctrl(2, 2,101,0) // Ctrl(2, 2,6,12) // Ctrl(2, 2,38,0))
 PbsB03=(Ctrl(2, 3,100,0) // Ctrl(2, 3,101,0) // Ctrl(2, 3,6,12) // Ctrl(2, 3,38,0))
 PbsB04=(Ctrl(2, 4,100,0) // Ctrl(2, 4,101,0) // Ctrl(2, 4,6,12) // Ctrl(2, 4,38,0))
@@ -57,8 +57,7 @@ SetPitchBend=(
 		PbsB01 // PbsB02 // PbsB03 // PbsB04 // PbsB05 // PbsB06 // PbsB07 // PbsB08 //
 		PbsB09 // PbsB10 // PbsB11 // PbsB12 // PbsB13 // PbsB14 // PbsB15 // PbsB16 //
 		PbsA01 // PbsA02 // PbsA03 // PbsA04 // PbsA05 // PbsA06 // PbsA07 // PbsA08 //
-		PbsA09 // PbsA10 // PbsA11 // PbsA12 // PbsA13 // PbsA14 // PbsA15 // PbsA16 
-	)
+		PbsA09 // PbsA10 // PbsA11 // PbsA12 // PbsA13 // PbsA14 // PbsA15 // PbsA16)
 
 InitializeSoundModule=(SetPitchBend)
 
@@ -138,7 +137,7 @@ marathon_bridge_lower=(cf >>Velocity(fixed=90) >>
 	) >> Output('PARTA', channel=4, program=((96*128),51), volume=75, ctrls={93:75, 91:75}))
 
 # You can take the most
-marathon_cascade=(cf >> Transpose(12) >> Velocity(fixed=75) >> Output('PARTA', channel=11, program=((99*128),99), volume=80))
+marathon_cascade=(ChannelFilter(1) >> Transpose(12) >> Velocity(fixed=75) >> Output('PARTA', channel=11, program=((99*128),99), volume=80))
 
 marathon_bridge_split=cf>> KeySplit('f3', marathon_bridge_lower, marathon_cascade)
 
