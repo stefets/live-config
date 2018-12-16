@@ -257,7 +257,7 @@ _post = Print('output', portnames='out')
 run(
     control=fcb1010,
     scenes=_scenes, 
-    pre=_pre, 
-    post=_post,
+    #pre=_pre, 
+    #post=_post,
 )
 #-----------------------------------------------------------------------------------------------------------
