@@ -53,13 +53,13 @@ PbsB14=(Ctrl(2,14,100,0) // Ctrl(2,14,101,0) // Ctrl(2,14,6,12) // Ctrl(2,14,38,
 PbsB15=(Ctrl(2,15,100,0) // Ctrl(2,15,101,0) // Ctrl(2,15,6,12) // Ctrl(2,15,38,0))
 PbsB16=(Ctrl(2,16,100,0) // Ctrl(2,16,101,0) // Ctrl(2,16,6,12) // Ctrl(2,16,38,0))
 
-SetPitchBend=(
+InitializePitchBend=(
 		PbsB01 // PbsB02 // PbsB03 // PbsB04 // PbsB05 // PbsB06 // PbsB07 // PbsB08 //
 		PbsB09 // PbsB10 // PbsB11 // PbsB12 // PbsB13 // PbsB14 // PbsB15 // PbsB16 //
 		PbsA01 // PbsA02 // PbsA03 // PbsA04 // PbsA05 // PbsA06 // PbsA07 // PbsA08 //
 		PbsA09 // PbsA10 // PbsA11 // PbsA12 // PbsA13 // PbsA14 // PbsA15 // PbsA16)
 
-InitializeSoundModule=(SetPitchBend)
+InitializeSoundModule=(InitializePitchBend)
 
 #POD_16A=Program('PODHD500', channel=9, program=61)
 #POD_16B=Program('PODHD500', channel=9, program=62)
@@ -89,23 +89,24 @@ explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PARTA', channel=1, pr
 violon = cf >> Output('PARTA', channel=1, program=((96*128),41))
 piano_base = cf >> Velocity(fixed=100) >> Output('PARTA', channel=1, program=((96*128),1))
 nf_piano = Output('PARTA', channel=1, program=((96*128),2), volume=100)
-piano = cf >> Velocity(fixed=80) >> Output('PARTA', channel=1, program=((96*128),1), volume=100)
+piano = ChannelFilter(1) >> Velocity(fixed=80) >> Output('PARTA', channel=3, program=((96*128),1), volume=100)
 piano2 = Output('PARTA', channel=2, program=((96*128),2), volume=100)
 
-# Patch Synth. generique pour Barchetta, FreeWill, Limelight etc...
+# Patch Synth
 keysynth = cf >> Velocity(fixed=80) >> Output('PARTA', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
-# Patch for Marathon by Rush (INTRO) 
+# Patches for Marathon by Rush
 
 # Accept (B4, B3) and E4 => transformed to a chord 
-marathon=(cf >> LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
+marathon_intro=(cf>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
 	( 
 		(KeyFilter('e4') >> Harmonize('e','major',['unison', 'fifth'])) //
 		(KeyFilter(notes=[71, 83])) 
-	) >> Transpose(0) >> Output('PARTA', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
+	) >> Output('PARTA', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
-marathon_chords=(cf>> LatchNotes(False, reset='b3') >> Velocity(fixed=100) >>
+# Note : ChannelFilter 2 - Enable PK5 message only
+marathon_chords=(ChannelFilter(2) >> LatchNotes(False, reset='c4') >> Velocity(fixed=100) >>
 	(
 
 		# From first to last...
@@ -118,7 +119,7 @@ marathon_chords=(cf>> LatchNotes(False, reset='b3') >> Velocity(fixed=100) >>
 		(KeyFilter('f3') >> Key('f#3') >> Harmonize('f#','major',['unison', 'third', 'fifth', 'octave'])) //
 		(KeyFilter('g3') >> Key('g#3') >> Harmonize('g#','major',['unison', 'third', 'fifth', 'octave']))
 
-	) >> Transpose(-12) >> Output('PARTA', channel=3, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
+	) >> Transpose(-12) >> Output('PARTA', channel=4, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
 
 marathon_bridge=(cf >> Velocity(fixed=75) >>
 	( 

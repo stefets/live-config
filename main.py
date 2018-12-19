@@ -33,7 +33,7 @@ config(
         ('SD90 - MIDI IN 2', '20:3',) 		# Edirol SD-90 MIDI IN 2
 		],
 
-    initial_scene = 3,
+    initial_scene = 1,
 )
 
 hook(
@@ -199,12 +199,27 @@ def OnPitchbend(ev, direction):
 # 											CONFIGURATION SECTION
 #-----------------------------------------------------------------------------------------------------------
 
+# MIDI HARDWARE USED TO BETTER UNDERSTAND MY PATCHES
+#
+# Alesis Q49 configured on midi channel 1
+# Roland PK5 configured on midi channel 2
+# Line6 POD HD500 configured on midi channel 9
+# Behringer FCB1010 with UnO 1.04 configured on MIDI channel 9
+#   - It control scene navigation and my Pod HD500
+# WIP 
+#    BOSS GT-10B to insert
+
+# MIDI CONNECTION CHAIN
+# Q49 -> FCB1010 -> PODHD500 -> PK5 -> SD-90
+#
+# Known bugs : The PODHD500 is unable to merge if placed after the PK5
+
 #-----------------------------------------------------------------------------------------------------------
 # 											CONTROL SECTION
 
 # This control have the same behavior than the NavigateToScene python function above
 # EXCEPT that there is NO wrap parameter for SceneSwitch
-# The NavigateToScene can wrap Scenets
+# The NavigateToScene CAN wrap through Scenes
 #_control=(ChannelFilter(9) >> Filter(CTRL) >>
 #	(
 #		(CtrlFilter(20) >> CtrlValueFilter(1) >> SceneSwitch(offset=-1)) //
@@ -226,7 +241,7 @@ fcb1010=(ChannelFilter(9) >> Filter(CTRL) >>
 		(CtrlFilter(22) >> reset)
 	))
 
-# KEYBOARD CONTROLLER -
+# KEYBOARD CONTROLLER - WIP
 keyboard = Pass()
 
 # TLMEP
@@ -245,7 +260,7 @@ __PATCHES__
 #-----------------------------------------------------------------------------------------------------------
 # 											SCENES
 _scenes = {
-    1: Scene("Initialize",  patch=piano_base, init_patch=InitializeSoundModule),
+    1: Scene("InitializeSoundModule",  patch=piano_base, init_patch=InitializeSoundModule),
 __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------

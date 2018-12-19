@@ -17,27 +17,16 @@
 	    	Scene("Mission", play >> System(play_file("mission.mid"))),
        ]),
    3:SceneGroup ("Marathon", [
-        Scene("Marathon-Intro", 
+        Scene("Marathon-Intro/Chords", 
           [
-            marathon,
+            marathon_intro,
+			marathon_chords,
             (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> Channel(3) >>
             [
-                    (CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-                    (CtrlFilter(1)>>CtrlMap(1,7))
+            	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
+                (CtrlFilter(1)>>CtrlMap(1,7))
             ])
           ]),
-        Scene("Marathon-Chords", marathon_chords),
-        Scene("Marathon-Middle",
-          [
-            marathon,
-            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> Channel(3) >>
-            [
-                    (CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-                    (CtrlFilter(1)>>CtrlMap(1,7))
-            ])
-          ]),
-        Scene("Marathon-Chords", marathon_chords),
-        Scene("Marathon-Bridge", marathon_bridge//marathon_bridge_split),
-        #Scene("Marathon-Solo-Bridge", marathon_bridge_split),
-        Scene("Marathon-Chords", marathon_chords),
+        Scene("Marathon-Bridge/Solo", marathon_bridge // marathon_bridge_split),
+        Scene("Marathon-Chords/Ending", marathon_chords),
    ]),
