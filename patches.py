@@ -59,7 +59,7 @@ InitializePitchBend=(
 		PbsA01 // PbsA02 // PbsA03 // PbsA04 // PbsA05 // PbsA06 // PbsA07 // PbsA08 //
 		PbsA09 // PbsA10 // PbsA11 // PbsA12 // PbsA13 // PbsA14 // PbsA15 // PbsA16)
 
-InitializeSoundModule=(InitializePitchBend)
+InitializeSoundModule=(SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7') >> InitializePitchBend)
 
 #POD_16A=Program('PODHD500', channel=9, program=61)
 #POD_16B=Program('PODHD500', channel=9, program=62)
@@ -99,14 +99,15 @@ keysynth = cf >> Velocity(fixed=80) >> Output('PARTA', channel=3, program=((96*1
 # Patches for Marathon by Rush
 
 # Accept (B4, B3) and E4 => transformed to a chord 
-marathon_intro=(cf>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
+# Q49 only
+marathon_intro=(q49>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
 	( 
 		(KeyFilter('e4') >> Harmonize('e','major',['unison', 'fifth'])) //
 		(KeyFilter(notes=[71, 83])) 
 	) >> Output('PARTA', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
 # Note : ChannelFilter 2 - Enable PK5 message only
-marathon_chords=(ChannelFilter(2) >> LatchNotes(False, reset='c4') >> Velocity(fixed=100) >>
+marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=100) >>
 	(
 
 		# From first to last...
@@ -119,7 +120,7 @@ marathon_chords=(ChannelFilter(2) >> LatchNotes(False, reset='c4') >> Velocity(f
 		(KeyFilter('f3') >> Key('f#3') >> Harmonize('f#','major',['unison', 'third', 'fifth', 'octave'])) //
 		(KeyFilter('g3') >> Key('g#3') >> Harmonize('g#','major',['unison', 'third', 'fifth', 'octave']))
 
-	) >> Transpose(-12) >> Output('PARTA', channel=4, program=((96*128),51), volume=80, ctrls={93:75, 91:75}))
+	) >> Transpose(-24) >> Output('PARTA', channel=4, program=((96*128)+1,51), volume=80, ctrls={93:75, 91:75}))
 
 marathon_bridge=(cf >> Velocity(fixed=75) >>
 	( 

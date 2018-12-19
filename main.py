@@ -15,6 +15,7 @@ from mididings.event import *
 
 config(
 
+    initial_scene = 1,
     backend = 'alsa',
     client_name = 'Master',
 
@@ -33,7 +34,6 @@ config(
         ('SD90 - MIDI IN 2', '20:3',) 		# Edirol SD-90 MIDI IN 2
 		],
 
-    initial_scene = 1,
 )
 
 hook(
@@ -232,6 +232,8 @@ reset=(System(AllAudioOff) // SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x0
 
 # FCB1010 CONTROLLER ---------------------------------------------------------------------------
 # Don't want Channel 9 interfere with anything
+q49=ChannelFilter(1)	# Filter by hardware / channel
+pk5=ChannelFilter(2)    # Filter by hardware & channel
 cf=~ChannelFilter(9) 	# Used by patches to exclude anything from channel 9
 
 # FCB1010 UNO as controller
