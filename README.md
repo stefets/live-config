@@ -17,4 +17,16 @@
 # Help
 * http://www.nortonmusic.com/midi_cc.html
 * http://dsacre.github.io/mididings/doc/
-
+# MIDI HARDWARE USED TO BETTER UNDERSTAND MY PATCHES
+* Alesis Q49 configured on midi channel 1
+* Roland PK5 configured on midi channel 2
+* Line6 POD HD500 configured on midi channel 9
+* Behringer FCB1010 with UnO 1.04 configured on MIDI channel 9
+	* It control scene navigation and my Pod HD500 directly or through mididings
+* WIP
+	* BOSS GT-10B to insert
+# MY CURRENT MIDI CONNECTION CHAIN
+* Q49.out -> in.FCB1010.out -> in.PK5.out -> in1.SD-90.out1 -> in.HD500.out -> in.GT-10B.out -> free
+*                                 PK5.thru (free)
+*
+* Known bugs : The PODHD500 is unable to merge if placed immediatly after the PK5
