@@ -53,18 +53,24 @@ PbsB14=(Ctrl(2,14,100,0) // Ctrl(2,14,101,0) // Ctrl(2,14,6,12) // Ctrl(2,14,38,
 PbsB15=(Ctrl(2,15,100,0) // Ctrl(2,15,101,0) // Ctrl(2,15,6,12) // Ctrl(2,15,38,0))
 PbsB16=(Ctrl(2,16,100,0) // Ctrl(2,16,101,0) // Ctrl(2,16,6,12) // Ctrl(2,16,38,0))
 
-InitializePitchBend=(
+InitPitchBend=(
 		PbsB01 // PbsB02 // PbsB03 // PbsB04 // PbsB05 // PbsB06 // PbsB07 // PbsB08 //
 		PbsB09 // PbsB10 // PbsB11 // PbsB12 // PbsB13 // PbsB14 // PbsB15 // PbsB16 //
 		PbsA01 // PbsA02 // PbsA03 // PbsA04 // PbsA05 // PbsA06 // PbsA07 // PbsA08 //
 		PbsA09 // PbsA10 // PbsA11 // PbsA12 // PbsA13 // PbsA14 // PbsA15 // PbsA16)
 
-InitializeSoundModule=(SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7') >> InitializePitchBend)
+InitSoundModule=(
+	SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7') // 
+	InitPitchBend)
 
-#POD_16A=Program('PODHD500', channel=9, program=61)
-#POD_16B=Program('PODHD500', channel=9, program=62)
-#POD_16C=Program('PODHD500', channel=9, program=63)
-#POD_16D=Program('PODHD500', channel=9, program=64)
+POD_02A=(
+			Program('PODHD500', channel=9, program=5) // Ctrl('PODHD500', 9, 1, 100)
+		)
+
+POD_16A=Program('PODHD500', channel=9, program=61)
+POD_16B=Program('PODHD500', channel=9, program=62)
+POD_16C=Program('PODHD500', channel=9, program=63)
+POD_16D=Program('PODHD500', channel=9, program=64)
 
 # Simple output patch for testing equipment
 #PARTA=cf >> Output('PARTA', channel=1, program=1, volume=100)
@@ -72,16 +78,7 @@ InitializeSoundModule=(SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\x
 #PARTA_drum=cf >> Channel(10) >> Transpose(-24) >> Output('PARTA', channel=10, program=1, volume=100)
 d4=cf >> Output('PARTA', channel=10, program=1, volume=100)
 d4_tom=cf >> Output('PARTA', channel=11, program=((96*128)+1,118), volume=100)
-#pod_base=Output('PODHD500', channel=9)
 
-# POD HD500
-#POD=OutputTemplate('PODHD500',9)
-#pod_init=Output('PODHD500', channel=9, program=1)
-# Set the pitchbend sensitivity parameter for the Roland Edirol SD-90
-#pod_init=POD(64)
-#pod_init=Init(POD(64))
-#pod_off=Output('PODHD500', channel=9, ctrls={51:127,52:127,53:127,54:127,})
-#pod_on=Output('PODHD500', channel=9, ctrls={51:0,52:0,53:0,54:0,})
 
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('PARTA', channel=1, program=((96*128)+3,128), volume=100)
@@ -107,7 +104,7 @@ marathon_intro=(q49>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
 	) >> Output('PARTA', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
 # Note : ChannelFilter 2 - Enable PK5 message only
-marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=100) >>
+marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=80) >>
 	(
 
 		# From first to last...
@@ -120,7 +117,7 @@ marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=100) >>
 		(KeyFilter('f3') >> Key('f#3') >> Harmonize('f#','major',['unison', 'third', 'fifth', 'octave'])) //
 		(KeyFilter('g3') >> Key('g#3') >> Harmonize('g#','major',['unison', 'third', 'fifth', 'octave']))
 
-	) >> Transpose(-24) >> Output('PARTA', channel=4, program=((96*128)+1,51), volume=80, ctrls={93:75, 91:75}))
+	) >> Transpose(-24) >> Output('PARTA', channel=4, program=((96*128)+1,51), volume=100, ctrls={93:75, 91:75}))
 
 marathon_bridge=(cf >> Velocity(fixed=75) >>
 	( 
@@ -139,7 +136,7 @@ marathon_bridge_lower=(cf >>Velocity(fixed=90) >>
 	) >> Output('PARTA', channel=4, program=((96*128),51), volume=75, ctrls={93:75, 91:75}))
 
 # You can take the most
-marathon_cascade=(ChannelFilter(1) >> Transpose(12) >> Velocity(fixed=75) >> Output('PARTA', channel=11, program=((99*128),99), volume=80))
+marathon_cascade=(ChannelFilter(1) >> Transpose(12) >> Velocity(fixed=50) >> Output('PARTA', channel=11, program=((99*128),99), volume=80))
 
 marathon_bridge_split=cf>> KeySplit('f3', marathon_bridge_lower, marathon_cascade)
 

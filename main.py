@@ -22,10 +22,7 @@ config(
     out_ports = [ 
         ('PARTA', '20:0'),					# Edirol SD-90 PART A (Port 1)
         ('PARTB', '20:1'),					# Edirol SD-90 PART B (Port 2)
-        #('Q49', '20:0',),					# Edirol SD-90 PART A (alias)
-        #('PK5', '20:0',),					# Edirol SD-90 PART A (alias)
-        #('D4',  '20:0',),					# Edirol SD-90 PART A (alias)
-        #('PODHD500', '20:2',), 				# Edirol SD-90 MIDI OUT 1
+        ('PODHD500', '20:2',), 			# Edirol SD-90 MIDI OUT 1
 	],			
 
     in_ports = [ 
@@ -262,7 +259,7 @@ __PATCHES__
 #-----------------------------------------------------------------------------------------------------------
 # 											SCENES
 _scenes = {
-    1: Scene("InitializeSoundModule",  patch=piano_base, init_patch=InitializeSoundModule),
+    1: Scene("InitializeSoundModules",  patch=piano_base, init_patch=InitSoundModule),
 __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------
