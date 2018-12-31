@@ -68,3 +68,20 @@ HD500_16A=Program('HD500', channel=9, program=61)
 HD500_16B=Program('HD500', channel=9, program=62)
 HD500_16C=Program('HD500', channel=9, program=63)
 HD500_16D=Program('HD500', channel=9, program=64)
+
+# Port, Channel, CC, Value
+#Footsiwtch
+HD500_FS1=Ctrl(3,9,51,64)
+HD500_FS2=Ctrl(3,9,52,64)
+HD500_FS3=Ctrl(3,9,53,64)
+HD500_FS4=Ctrl(3,9,54,64)
+HD500_FS5=Ctrl(3,9,55,64)
+HD500_FS6=Ctrl(3,9,56,64)
+HD500_FS7=Ctrl(3,9,57,64)
+HD500_FS8=Ctrl(3,9,58,64)
+HD500_TOE=Ctrl(3,9,59,64)
+
+#Pedal - useless
+
+#Looper
+
