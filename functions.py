@@ -1,26 +1,44 @@
 #--------------------------------------------------------------------
-# 								Function and classes
+# Function and classes called by scenes
 #--------------------------------------------------------------------
 #
-# This function control mpg123 in remote mode with a keyboard
-# Kinda like Guy A. Lepage in the 'Tout le monde en parle' TV Show; He starts songs with a keyboard
+# This prototype function control mpg123 in remote mode with a keyboard
+# It's an embedded clone of the 'keyboard song trigger' of the TV Show 'Tout le monde en parle - Canada)
+#TODO Convert to an object 
 #
+
 mpg123=None
+
+def Mp3PlayerInit():
+    global mpg123
+    mpg123=subprocess.Popen(['mpg123', '--quiet', '--remote'], stdin=subprocess.PIPE)
+    mpg123.stdin.write('silence\n')
+  
+def Mp3PianoPlayerController(ev):
+    global mpg123
+    if mpg123 is None:
+        Mp3PlayerInit()
+    if ev.type == NOTEON:
+        if ev.data1==0:
+            mpg123.stdin.write('s\n')
+        elif ev.data1==2: 
+            mpg123.stdin.write('p\n')
+
 def Mp3PianoPlayer(ev):
-        global mpg123
-        if mpg123 is None:
-           mpg123=subprocess.Popen(['mpg123', '--quiet', '--remote'], stdin=subprocess.PIPE)
-        if ev.type == NOTEON:
-            mpg123.stdin.write('stop\n')
-            mpg123.stdin.write('silence\n')
-            cmd='load /tmp/' + str(ev.data1) + '.mp3\n'
+    global mpg123
+    if mpg123 is None:
+        Mp3PlayerInit()
+    if ev.type == NOTEON:
+        cmd='l /tmp/' + str(ev.data1) + '.mp3\n'
+        mpg123.stdin.write(cmd)
+        ev.data2=0 # Force velocity to zero, so we dont hear the note :)
+    elif ev.type == CTRL:
+		# MIDI volume to mpg123 volume hack
+        if ev.data1==7 and ev.data2 <= 100:
+            cmd='v ' + str(ev.data2) + '\n'
             mpg123.stdin.write(cmd)
-            ev.data2=0 # Force velocity to zero
-        elif ev.type == CTRL:
-            if ev.data1==7 and ev.data2 <= 100:
-                cmd='volume ' + str(ev.data2) + '\n'
-                mpg123.stdin.write(cmd)
-        return ev
+
+# ----------------------------------------------------------------------------------------------------
 #
 # This class remove duplicate midi message by taking care of an offset logic
 #
