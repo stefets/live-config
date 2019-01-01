@@ -5,55 +5,69 @@
 #
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-function run()
+# GENERAL PARAMETERS
+soundlib=/home/shared/soundlib
+
+# CONTROLLERS
+# Keyboard to control mpg123 in remote mode from a single mididings scene in mp3_piano_player.py
+# FCB1010 to control mididings normally
+controllers=(KeyboardMPG123 FCB1010)
+
+# MENU
+# options must match name.py if controller is fcb1010 or folder name if controller is keyboard
+menus=(push rush_cover bass_cover originales timeline solo styx)
+
+function process()
 { 
-	filename=$1
-	/bin/bash $DIR/execute.sh $filename
-}
+	ctrl=$1
+	choice=$2
 
+	case $ctrl in
+		0 )
 
-while true
-do
-	
-	value=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 15 20 8 1 push 2 rush_cover 3 bass_cover 4 originales 5 timeline 6 solo 7 styx 8 shutdown)
-	#value=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 15 20 8 push - rush_cover - solo - styx -)
-    #run $value.py
-    #continue
-	case $value in
-		1 )
-			run push.py
-            continue
-            ;;
-		2 )
-			run rush_cover.py
-            continue
-            ;;
-		3 )
-			run bass_cover.py
-            continue
-            ;;
-		4 )
-			run originales.py
-            continue
-            ;;
-		5 )
-			run timeline.py
-            continue
-            ;;
-		6 )
-			run solo.py
-            continue
-            ;;
-		7 )
-			run styx.py
-            continue
-            ;;
-		8 )
-		    sudo poweroff &
+			target="$soundlib/${menus[$choice]}"
+			if [ ! -d $target ]; then
+				clear
+				read -n 1 -s -r -p "$target does not exists - press any key to continue"
+			else
+				/bin/bash $DIR/mklink.sh $target
+				/bin/bash $DIR/execute.sh mp3_piano_player.py
+			fi
 			break
 			;;
-        * )
-            break
-            ;;
+		1 )	
+			/bin/bash $DIR/execute.sh ${menus[$choice]}.py
+			break
+			;;
 	esac
+}
+
+function main()
+{
+
+	ctrl=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Controller" 10 15 2 0 ${controllers[0]} 1 ${controllers[1]})
+	if [ -z "${ctrl}" ]; then
+		break
+	fi
+		
+	while true
+	do
+	
+		choice=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 15 20 8 0 ${menus[0]} 1 ${menus[1]} 2 ${menus[2]} 3 ${menus[3]} 4 ${menus[4]} 5 ${menus[5]} 6 ${menus[6]})
+
+		if [ -z "${choice}" ]; then
+ 			break
+		fi
+
+		# Call mididings here
+		process $ctrl $choice
+
+	done
+
+}
+
+# Let's start here 
+while true
+do
+	main
 done

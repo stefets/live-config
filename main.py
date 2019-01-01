@@ -10,13 +10,14 @@ from mididings.extra import *
 from mididings import engine
 from mididings.engine import *
 from mididings.event import *
+from mididings.extra.osc import *
 #now useless in dynamic mode :-/ :-(
 #from mididings.extra.inotify import AutoRestart
 
 config(
 
 	# Default
-    #initial_scene = 1,
+    initial_scene = 2,
     #backend = 'alsa',
     #client_name = 'mididings',
 
@@ -40,6 +41,8 @@ config(
 hook(
     #MemorizeScene('scene.txt'),
     #AutoRestart(),
+	#OSCInterface(port=56418),
+	OSCInterface(),
 )
 
 #-----------------------------------------------------------------------------------------------------------
@@ -92,15 +95,15 @@ _post = Print('output',portnames='out')
 run(
     control=fcb1010,
     scenes=_scenes, 
-    #pre=_pre, 
-    #post=_post,
+    pre=_pre, 
+    post=_post,
 )
 
 #-----------------------------------------------------------------------------------------------------------
-# Thank you Dominic Sacre for that masterpiece
+# Many thanks to the programmer Dominic Sacre for that masterpiece
 # http://das.nasophon.de/mididings/
 # https://github.com/dsacre
 # --------------------------------------------
 # Stephane Gagnon
-# www.pacificweb.ca
+# pacificweb.ca
 #-----------------------------------------------------------------------------------------------------------

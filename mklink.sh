@@ -1,11 +1,19 @@
 #!/bin/bash
 
 #
-# Create/overwrite a symlink in /tmp for each mp3 file found by find
+# Create/overwrite a symlink in /tmp for each mp3 file found by find in the $target directory
 #
-folder=/home/shared/soundlib
-counter=0
-for file in $(find $folder -name "*.mp3" -type f)
+
+# Clear existing symlink
+rm -f /tmp/*.mp3
+
+target=$1
+
+# counter = note number from the keyboard, adjustable offset
+# Starting at note #12 give me notes 0-11 free :)
+counter=12
+
+for file in $(find $target -name "*.mp3" -type f)
 do
 	ln -fs $file /tmp/$counter.mp3
 	let counter++

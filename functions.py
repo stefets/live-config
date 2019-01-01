@@ -3,20 +3,20 @@
 #--------------------------------------------------------------------
 #
 # This function control mpg123 in remote mode with a keyboard
-# Kinda like Guy A. Lepage in the 'Tout le monde en parle' TV Show; He start songs with a keyboard
+# Kinda like Guy A. Lepage in the 'Tout le monde en parle' TV Show; He starts songs with a keyboard
 #
 mpg123=None
 def Mp3PianoPlayer(ev):
         global mpg123
         if mpg123 is None:
-           mpg123=subprocess.Popen(['mpg123', '-q', '-R'], stdin=subprocess.PIPE)
+           mpg123=subprocess.Popen(['mpg123', '--quiet', '--remote'], stdin=subprocess.PIPE)
         if ev.type == NOTEON:
             mpg123.stdin.write('stop\n')
             mpg123.stdin.write('silence\n')
             cmd='load /tmp/' + str(ev.data1) + '.mp3\n'
             mpg123.stdin.write(cmd)
-            ev.data2=0
-        if ev.type == CTRL:
+            ev.data2=0 # Force velocity to zero
+        elif ev.type == CTRL:
             if ev.data1==7 and ev.data2 <= 100:
                 cmd='volume ' + str(ev.data2) + '\n'
                 mpg123.stdin.write(cmd)
@@ -132,6 +132,7 @@ def AllAudioOff(ev):
 # Audio and midi players suitable for my SD-90
 def play_file(filename):
     fname, fext = os.path.splitext(filename)
+	#TODO __SOUNDLIB__ token
     path=" /home/shared/soundlib/"
     if fext == ".mp3":
         command="mpg123 -q"

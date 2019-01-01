@@ -38,18 +38,3 @@
     15:Scene("Closer B", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
     16:Scene("YYZ", Process(RemoveDuplicates()) >> yyz),
     17:Scene("Mission",  mission),
-    18:SceneGroup ("Marathon", [
-        Scene("Marathon-Intro",
-          [
-            marathon,
-            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
-            [
-                    (CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-                    (CtrlFilter(1)>>CtrlMap(1,7))
-            ])
-          ]),
-        Scene("TODO", marathon),
-        Scene("TODOO", marathon),
-        Scene("TODOOO", marathon),
-   ]),
-

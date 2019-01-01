@@ -2,12 +2,12 @@
 
 # Create the final mididings configuration file and execute it.
 
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 main="main.py"
 target=$(mktemp)
 scenes=$1
-controller=$2
 
 # Replace __TOKEN__ in main.py
 sed \
@@ -28,6 +28,6 @@ sed \
 	$main > $target
 
 clear
+
 # Start the mididings script
 python $target
-#rm $target
