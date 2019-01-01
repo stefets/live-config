@@ -6,7 +6,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # GENERAL PARAMETERS
-soundlib=/home/shared/soundlib
+soundlib=/tmp/soundlib	# symlink to flash
 
 # CONTROLLERS
 # Keyboard to control mpg123 in remote mode from a single mididings scene in mp3_piano_player.py

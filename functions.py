@@ -3,45 +3,54 @@
 #--------------------------------------------------------------------
 #
 # This prototype function control mpg123 in remote mode with a keyboard
-# It's an embedded clone of the 'keyboard song trigger' of the TV Show 'Tout le monde en parle - Canada)
-#TODO Convert to an object 
+# It's an embedded clone of the 'keyboard song trigger' of the Quebec TV Show 'Tout le monde en parle'
 #
 
 mpg123=None
 
 def Mp3PlayerInit():
     global mpg123
-    mpg123=subprocess.Popen(['mpg123', '--quiet', '--remote'], stdin=subprocess.PIPE)
-    mpg123.stdin.write('silence\n')
+    if mpg123 is None:
+        mpg123=subprocess.Popen(['mpg123', '--quiet', '--remote'], stdin=subprocess.PIPE)
+        mpg123.stdin.write('silence\n')
   
-def Mp3PianoPlayerController(ev):
+def Mp3PianoPlayerControl(ev):
     global mpg123
-    if mpg123 is None:
-        Mp3PlayerInit()
-    if ev.type == NOTEON:
-        if ev.data1==0:
-            mpg123.stdin.write('s\n')
-        elif ev.data1==2: 
-            mpg123.stdin.write('p\n')
+    Mp3PlayerInit()
+    cmd='v 0\n'
+    mpg123.stdin.write(cmd)
+    if ev.data1==0:
+        mpg123.stdin.write('s\n')
+    elif ev.data1==2: 
+        mpg123.stdin.write('p\n')
 
-def Mp3PianoPlayer(ev):
+def Mp3PianoPlayerLoadFile(ev):
     global mpg123
-    if mpg123 is None:
-        Mp3PlayerInit()
-    if ev.type == NOTEON:
-        cmd='l /tmp/' + str(ev.data1) + '.mp3\n'
+    Mp3PlayerInit()
+    cmd='v 100\n'
+    mpg123.stdin.write(cmd)
+    cmd='l /tmp/' + str(ev.data1) + '.mp3\n'
+    mpg123.stdin.write(cmd)
+    #ev.data2=0 # Force velocity to zero, so we dont hear the note :)
+
+# Convert CTRL to MPG123 remote command
+def Mp3PianoPlayerHandleCTRL(ev):
+    global mpg123
+    Mp3PlayerInit()
+    # MIDI volume to mpg123 volume
+    if ev.data1==7 and ev.data2 <= 100:
+        cmd='v ' + str(ev.data2) + '\n'
         mpg123.stdin.write(cmd)
-        ev.data2=0 # Force velocity to zero, so we dont hear the note :)
-    elif ev.type == CTRL:
-		# MIDI volume to mpg123 volume hack
-        if ev.data1==7 and ev.data2 <= 100:
-            cmd='v ' + str(ev.data2) + '\n'
-            mpg123.stdin.write(cmd)
+    # MIDI modulation to mpg123 pitch resolution
+    elif ev.data1==1 and ev.data2 <= 100:
+        #print float(ev.data2)/100
+        cmd='pitch ' + str(float(ev.data2)/100) + '\n'
+        mpg123.stdin.write(cmd)
 
 # ----------------------------------------------------------------------------------------------------
 #
 # This class remove duplicate midi message by taking care of an offset logic
-#
+# NOT STABLE SUSPECT OVERFLOW 
 class RemoveDuplicates:
     def __init__(self, _wait=0):
         self.wait = _wait
@@ -150,8 +159,7 @@ def AllAudioOff(ev):
 # Audio and midi players suitable for my SD-90
 def play_file(filename):
     fname, fext = os.path.splitext(filename)
-	#TODO __SOUNDLIB__ token
-    path=" /home/shared/soundlib/"
+    path=" /tmp/soundlib/"
     if fext == ".mp3":
         command="mpg123 -q"
     elif fext == ".mid":
