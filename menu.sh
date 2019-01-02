@@ -6,7 +6,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # GENERAL PARAMETERS
-soundlib=/tmp/soundlib	# symlink to flash
+soundlib=/tmp/soundlib	# symlink set in start.sh
 
 # CONTROLLERS
 # Keyboard to control mpg123 in remote mode from a single mididings scene in mp3_piano_player.py
@@ -15,7 +15,7 @@ controllers=(KeyboardMPG123 FCB1010)
 
 # MENU
 # options must match name.py if controller is fcb1010 or folder name if controller is keyboard
-menus=(push rush_cover bass_cover originales timeline solo styx)
+menus=(bass_cover midi rush styx system tabarnac timeline demon)
 
 function process()
 { 
@@ -53,7 +53,7 @@ function main()
 	while true
 	do
 	
-		choice=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 15 20 8 0 ${menus[0]} 1 ${menus[1]} 2 ${menus[2]} 3 ${menus[3]} 4 ${menus[4]} 5 ${menus[5]} 6 ${menus[6]})
+		choice=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 15 20 8 0 ${menus[0]} 1 ${menus[1]} 2 ${menus[2]} 3 ${menus[3]} 4 ${menus[4]} 5 ${menus[5]} 6 ${menus[6]} 7 ${menus[7]})
 
 		if [ -z "${choice}" ]; then
  			break

@@ -23,6 +23,10 @@ def Mp3PianoPlayerControl(ev):
         mpg123.stdin.write('s\n')
     elif ev.data1==2: 
         mpg123.stdin.write('p\n')
+    elif ev.data1==5: 
+        cmd='v 100\n'
+        mpg123.stdin.write(cmd)
+        mpg123.stdin.write('l /tmp/soundlib/system/tlmep.mp3\n')
 
 def Mp3PianoPlayerLoadFile(ev):
     global mpg123
