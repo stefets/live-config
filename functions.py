@@ -17,14 +17,12 @@ def Mp3PlayerInit():
 def Mp3PianoPlayerControl(ev):
     global mpg123
     Mp3PlayerInit()
-    cmd='v 0\n'
     mpg123.stdin.write(cmd)
     if ev.data1==0:
-        mpg123.stdin.write('s\n')
+        mpg123.stdin.write('s\n')	# STOP
     elif ev.data1==2: 
-        mpg123.stdin.write('p\n')
+        mpg123.stdin.write('p\n')	# PAUSE
     elif ev.data1==5: 
-        cmd='v 100\n'
         mpg123.stdin.write(cmd)
         mpg123.stdin.write('l /tmp/soundlib/system/tlmep.mp3\n')
 
@@ -45,9 +43,8 @@ def Mp3PianoPlayerHandleCTRL(ev):
     if ev.data1==7 and ev.data2 <= 100:
         cmd='v ' + str(ev.data2) + '\n'
         mpg123.stdin.write(cmd)
-    # MIDI modulation to mpg123 pitch resolution
+    # MIDI modulation to mpg123 pitch resolution / SUCK on the RPI - can pitch 3% before hardware limitation reach
     elif ev.data1==1 and ev.data2 <= 100:
-        #print float(ev.data2)/100
         cmd='pitch ' + str(float(ev.data2)/100) + '\n'
         mpg123.stdin.write(cmd)
 
