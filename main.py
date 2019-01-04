@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 
 import os
-import subprocess
+from import subprocess import Popen, PIPE
 from threading import Timer
 from time import sleep
 from mididings import *

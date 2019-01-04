@@ -2,51 +2,60 @@
 # Function and classes called by scenes
 #--------------------------------------------------------------------
 #
-# This prototype function control mpg123 in remote mode with a keyboard
+# This class control mpg123 in remote mode with a keyboard
 # It's an embedded clone of the 'keyboard song trigger' of the Quebec TV Show 'Tout le monde en parle'
 #
+class MPG123():
 
-mpg123=None
+    # CTOR
+    def __init__(self):
 
-def Mp3PlayerInit():
-    global mpg123
-    if mpg123 is None:
-        mpg123=subprocess.Popen(['mpg123', '--quiet', '--remote'], stdin=subprocess.PIPE)
-        mpg123.stdin.write('silence\n')
-  
-def Mp3PianoPlayerControl(ev):
-    global mpg123
-    Mp3PlayerInit()
-    mpg123.stdin.write(cmd)
-    if ev.data1==0:
-        mpg123.stdin.write('s\n')	# STOP
-    elif ev.data1==2: 
-        mpg123.stdin.write('p\n')	# PAUSE
-    elif ev.data1==5: 
-        mpg123.stdin.write(cmd)
-        mpg123.stdin.write('l /tmp/soundlib/system/tlmep.mp3\n')
+        # Expose songs
+        self.songs = list(( '/tmp/soundlib/system/tlmep.mp3' ))
 
-def Mp3PianoPlayerLoadFile(ev):
-    global mpg123
-    Mp3PlayerInit()
-    cmd='v 100\n'
-    mpg123.stdin.write(cmd)
-    cmd='l /tmp/' + str(ev.data1) + '.mp3\n'
-    mpg123.stdin.write(cmd)
-    #ev.data2=0 # Force velocity to zero, so we dont hear the note :)
+        # Expose mpg123 commands
+        self.commands = list(( 's', 'p' ))
 
-# Convert CTRL to MPG123 remote command
-def Mp3PianoPlayerHandleCTRL(ev):
-    global mpg123
-    Mp3PlayerInit()
-    # MIDI volume to mpg123 volume
-    if ev.data1==7 and ev.data2 <= 100:
-        cmd='v ' + str(ev.data2) + '\n'
-        mpg123.stdin.write(cmd)
-    # MIDI modulation to mpg123 pitch resolution / SUCK on the RPI - can pitch 3% before hardware limitation reach
-    elif ev.data1==1 and ev.data2 <= 100:
-        cmd='pitch ' + str(float(ev.data2)/100) + '\n'
-        mpg123.stdin.write(cmd)
+        # Add songs after the commands
+        for song in songs:
+            self.commands.append('l ' + song)
+
+        # Start mgp123 in remote mode
+        self.mpg123=subprocess.Popen(['mpg123', '--quiet', '--remote'], stdin=subprocess.PIPE)
+        rcall('silence')
+
+    # EVENT
+    # TODO Check for delegate
+    def __call__(self, ev):
+        if ev.type == NOTEON:
+            note2remote(ev)
+        elif ev.type == CTRL:
+            cc2remote(ev)
+            
+    # METHODS
+    # Write a command to the mpg123 process
+    def rcall(cmd):
+        self.mpg123.stdin.write(cmd + '\n')
+        self.mpg123.stdin.close()
+        self.mpg123.wait()
+
+    # Note to remote command
+    def note2remote(self, ev):
+        if ev.data1 <= len(self.commands):
+            # Reserved range
+            rcall(self.commands[ev.data1])
+        else:
+            # Try to load the mp3
+            rcall('l /tmp/' + str(data1) + '.mp3')
+
+    # CC to remote command
+    def cc2remote(self, ev):
+        # MIDI volume to mpg123 volume
+        if ev.data1==7 and ev.data2 <= 100:
+            rcall('v ' + str(ev.data2))
+        # MIDI modulation to mpg123 pitch resolution / SUCK on the RPI - can pitch 3% before hardware limitation is reached
+        elif ev.data1==1 and ev.data2 <= 100:
+            rcall('pitch ' + str(float(ev.data2)/100))
 
 # ----------------------------------------------------------------------------------------------------
 #
@@ -109,16 +118,6 @@ def arpeggiator_exec(e):
     arpeggiator_function(0,16, 50,  e.port, e.channel, 100)
 
 #-------------------------------------------------------------------------------------------
-
-# Change the HEX string according to your sound module
-# Reset string for Edirol SD-90
-# Obsolete : Use the builin mididings function
-#def SendSysex(ev):
-#   return SysExEvent(ev.port, '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
-
-# Not used
-#def MoveNext(ev):
-#    switch_scene(current_scene()+1)
 
 # Navigate through secenes and subscenes
 def NavigateToScene(ev):
