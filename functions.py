@@ -2,77 +2,79 @@
 # Function and classes called by scenes
 #--------------------------------------------------------------------
 #
-# This class control mpg123 in remote mode with a keyboard
+# This class control mpg123 in remote mode with a keyboard (or any other midi devices of your choice)
 # It's an embedded clone of the 'keyboard song trigger' of the Quebec TV Show 'Tout le monde en parle'
 #
 class MPG123():
 
     # CTOR
-    def __init__(self):
-
-        # Expose songs
-        self.songs = list(( '/tmp/soundlib/system/tlmep.mp3' ))
+    def __init__(this):
 
         # Expose mpg123 commands
-        self.commands = list(( 's', 'p' ))
+        # Associated with array index and note number 0,1,2 etc..
+        this.commands = [ "s", "p" ]
 
-        # Add songs after the commands
+        # Expose songs
+        # TODO faire mieux
+        songs = [ "/tmp/soundlib/system/tlmep.mp3" ]
+
+        # Add songs after the mpg123 commands
         for song in songs:
-            self.commands.append('l ' + song)
+            this.commands.append('l ' + song)
 
-        # Start mgp123 in remote mode
-        self.mpg123=subprocess.Popen(['mpg123', '--quiet', '--remote'], stdin=subprocess.PIPE)
-        rcall('silence')
+        # Start mpg123
+        this.mpg123=Popen(['mpg123', '--quiet', '--remote'], stdin=PIPE)
+
+        # Shut up mpg132 :)
+        this.rcall('silence')
 
     # EVENT
     # TODO Check for delegate
-    def __call__(self, ev):
+    def __call__(this, ev):
         if ev.type == NOTEON:
-            note2remote(ev)
+            this.note2remote(ev)
         elif ev.type == CTRL:
-            cc2remote(ev)
+            this.cc2remote(ev)
             
     # METHODS
     # Write a command to the mpg123 process
-    def rcall(cmd):
-        self.mpg123.stdin.write(cmd + '\n')
-        self.mpg123.stdin.close()
-        self.mpg123.wait()
+    def rcall(this, cmd):
+        this.mpg123.stdin.write(cmd + '\n')
 
     # Note to remote command
-    def note2remote(self, ev):
-        if ev.data1 <= len(self.commands):
+    def note2remote(this, ev):
+        if ev.data1 <= len(this.commands):
             # Reserved range
-            rcall(self.commands[ev.data1])
+            this.rcall(this.commands[ev.data1])
         else:
             # Try to load the mp3
-            rcall('l /tmp/' + str(data1) + '.mp3')
+            this.rcall('l /tmp/' + str(ev.data1) + '.mp3')
 
     # CC to remote command
-    def cc2remote(self, ev):
+    def cc2remote(this, ev):
         # MIDI volume to mpg123 volume
         if ev.data1==7 and ev.data2 <= 100:
-            rcall('v ' + str(ev.data2))
+            this.rcall('v ' + str(ev.data2))
         # MIDI modulation to mpg123 pitch resolution / SUCK on the RPI - can pitch 3% before hardware limitation is reached
         elif ev.data1==1 and ev.data2 <= 100:
-            rcall('pitch ' + str(float(ev.data2)/100))
+            this.rcall('pitch ' + str(float(ev.data2)/100))
 
 # ----------------------------------------------------------------------------------------------------
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
 class RemoveDuplicates:
-    def __init__(self, _wait=0):
-        self.wait = _wait
-        self.prev_ev = None
-        self.prev_time = 0
+    def __init__(this, _wait=0):
+        this.wait = _wait
+        this.prev_ev = None
+        this.prev_time = 0
 
-    def __call__(self, ev): 
+    def __call__(this, ev): 
         if ev.type == NOTEOFF:
-            sleep(self.wait)
+            sleep(this.wait)
             return ev
         now = engine.time()
-        offset=now-self.prev_time
+        offset=now-this.prev_time
         if offset >= 0.035:
             #if ev.type == NOTEON:
             #    print "+ " + str(offset)
@@ -81,8 +83,8 @@ class RemoveDuplicates:
             #if ev.type == NOTEON:
             #    print "- " + str(offset)
             r = None
-        self.prev_ev = ev
-        self.prev_time = now
+        this.prev_ev = ev
+        this.prev_time = now
         return r
 
 #--------------------------------------------------------------------
