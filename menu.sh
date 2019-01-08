@@ -15,7 +15,7 @@ controllers=(KeyboardMPG123 FCB1010)
 
 # MENU
 # options must match name.py if controller is fcb1010 or folder name if controller is keyboard
-menus=(bass_cover midi rush styx system tabarnac timeline demon rush_cover)
+menus=(bass_cover midi push styx system tabarnac timeline demon rush_cover)
 
 function process()
 { 
@@ -39,6 +39,9 @@ function process()
 			/bin/bash $DIR/execute.sh ${menus[$choice]}.py
 			break
 			;;
+        * )
+            break
+            ;;
 	esac
 }
 

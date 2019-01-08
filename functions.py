@@ -56,8 +56,8 @@ class MPG123():
         if ev.data1==7 and ev.data2 <= 100:
             this.rcall('v ' + str(ev.data2))
         # MIDI modulation to mpg123 pitch resolution / SUCK on the RPI - can pitch 3% before hardware limitation is reached
-        elif ev.data1==1 and ev.data2 <= 100:
-            this.rcall('pitch ' + str(float(ev.data2)/100))
+        #elif ev.data1==1 and ev.data2 <= 100:
+        #    this.rcall('pitch ' + str(float(ev.data2)/100))
 
 # ----------------------------------------------------------------------------------------------------
 #

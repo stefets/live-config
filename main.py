@@ -16,8 +16,9 @@ from mididings.extra.osc import *
 
 config(
 
+    #initial_scene = 1,
 	# Default
-    initial_scene = 2,
+    #initial_scene = 1,
     #backend = 'alsa',
     #client_name = 'mididings',
 
@@ -95,7 +96,7 @@ _post = Print('output',portnames='out')
 run(
     control=fcb1010,
     scenes=_scenes, 
-    pre=_pre, 
+    #pre=_pre, 
     #post=_post,
 )
 
