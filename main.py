@@ -12,7 +12,7 @@ from mididings.engine import *
 from mididings.event import *
 from mididings.extra.osc import *
 #now useless in dynamic mode :-/ :-(
-#from mididings.extra.inotify import AutoRestart
+#from mididings.extra.inotify import *
 
 config(
 
@@ -26,9 +26,11 @@ config(
         ('SD90_PARTA', '20:0'),				# Edirol SD-90 PART A 		(Port number 1)
         ('SD90_PARTB', '20:1'),				# Edirol SD-90 PART B 		(Port number 2)
         ('SD90_MIDI_OUT_1', '20:2',), 		# Edirol SD-90 MIDI OUT 1 	(Port number 3)
-        ('SD90_MIDI_OUT_2', '20:3',), 		# Edirol SD-90 MIDI OUT 1 	(Port number 4)
+        ('SD90_MIDI_OUT_2', '20:3',), 		# Edirol SD-90 MIDI OUT 2 	(Port number 4)
 		# Clones
         ('HD500', '20:2',), 				# MOVABLE
+        # HD500 midi out to gt10b midi , if I output to gt10b, it goes thru pod anyway
+        ('GT10B', '20:2',), 				# MOVABLE
 	],			
 
     in_ports = [ 
@@ -42,7 +44,8 @@ config(
 hook(
     #MemorizeScene('scene.txt'),
     #AutoRestart(),
-	#OSCInterface(port=56418),
+	#OSCInterface(port=56418, notify_ports=[55555]),
+	#OSCInterface(port=56418, notify_ports=56419),
 	OSCInterface(),
 )
 
@@ -73,6 +76,8 @@ __SOUNDMODULE__
 #-----------------------------------------------------------------------------------------------------------
 __HD500__
 
+__GT10B__
+
 #-----------------------------------------------------------------------------------------------------------
 # Patches configuration
 #-----------------------------------------------------------------------------------------------------------
@@ -96,8 +101,8 @@ _post = Print('output',portnames='out')
 run(
     control=fcb1010,
     scenes=_scenes, 
-    #pre=_pre, 
-    #post=_post,
+    pre=_pre, 
+    post=_post,
 )
 
 #-----------------------------------------------------------------------------------------------------------

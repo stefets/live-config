@@ -16,6 +16,7 @@ sed \
     -e "/__CONTROL__/r control.py" \
     -e "/__SOUNDMODULE__/r soundmodule.py" \
 	-e "/__HD500__/r hd500.py" \
+	-e "/__GT10B__/r gt10b.py" \
 	-e "/__PATCHES__/r patches.py" \
     -e "/__SCENES__/r $scenes" \
 	-e "/__FUNCTIONS__/d" \
@@ -23,6 +24,7 @@ sed \
 	-e "/__CONTROL__/d" \
 	-e "/__SOUNDMODULE__/d" \
 	-e "/__HD500__/d" \
+	-e "/__GT10B__/d" \
 	-e "/__PATCHES__/d" \
 	-e "/__SCENES__/d" \
 	$main > $target
