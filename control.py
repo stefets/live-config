@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------
-# 											CONTROL SECTION
+# CONTROL SECTION
 #-----------------------------------------------------------------------------------------------------------
 
 # This control have the same behavior than the NavigateToScene python function above
@@ -21,6 +21,12 @@ clean=(
 		Pass()
 )
 
+root_controller=ChannelSplit({
+    9: _fcb1010,
+    #1: Channel(1),
+    #2: Channel(2),
+})
+
 # FCB1010 UNO as controller
 fcb1010=(ChannelFilter(9) >> Filter(CTRL) >> 
 	(
@@ -28,11 +34,13 @@ fcb1010=(ChannelFilter(9) >> Filter(CTRL) >>
 		(CtrlFilter(22) >> clean)
 	))
 
+_fcb1010=(ChannelFilter(9) >> Filter(CTRL) >> CtrlSplit({
+    20: Process(NagivateToScene),
+    22: clean,
+})
+
 # KEYBOARD CONTROLLER - WIP
 keyboard = Pass()
-
-# TLMEP
-# TODO Keyboard controller a la maniere de Tout le monde en parle
 
 # Shortcut (Play switch)
 play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
