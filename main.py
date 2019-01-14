@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
+#-----------------------------------------------------------------------------------------------------------
+# Many thanks to the programmer Dominic Sacre for that masterpiece
+# http://das.nasophon.de/mididings/
+# https://github.com/dsacre
+# --------------------------------------------
+# Stephane Gagnon
+# pacificweb.ca
+#-----------------------------------------------------------------------------------------------------------
+
 import os
 from subprocess import Popen, PIPE
 from threading import Timer
@@ -16,7 +25,7 @@ from mididings.extra.osc import *
 
 config(
 
-    #initial_scene = 1,
+    initial_scene = 3,
 	# Default
     #initial_scene = 1,
     #backend = 'alsa',
@@ -99,17 +108,8 @@ __SCENES__
 _pre  = Print('input', portnames='in')
 _post = Print('output',portnames='out')
 run(
-    control=fcb1010,
+    control=root_controller,
     scenes=_scenes, 
     pre=_pre, 
     post=_post,
 )
-
-#-----------------------------------------------------------------------------------------------------------
-# Many thanks to the programmer Dominic Sacre for that masterpiece
-# http://das.nasophon.de/mididings/
-# https://github.com/dsacre
-# --------------------------------------------
-# Stephane Gagnon
-# pacificweb.ca
-#-----------------------------------------------------------------------------------------------------------

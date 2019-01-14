@@ -23,7 +23,7 @@
 			marathon_chords,
             (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> Fork([Channel(3),Channel(4)]) >>
             [
-            	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
+            	(CtrlFilter(2)>>Process(OnPitchbend,direction=1)) //
                 (CtrlFilter(1)>>CtrlMap(1,7))
             ])
           ]),

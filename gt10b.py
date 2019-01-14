@@ -12,6 +12,8 @@ gt10b_ch=16
 # port number
 gt10b_port=3
 
+gt10b_volume=(ChannelFilter(9) >> Channel(16) >> CtrlFilter(1) >> CtrlMap(1,7) >> Port(3))
+
 # banks
 gt10b_bank_0=(Ctrl(gt10b_port,gt10b_ch, 0, 0) // Ctrl(gt10b_port,gt10b_ch,32,0))
 gt10b_bank_1=(Ctrl(gt10b_port,gt10b_ch, 0, 1) // Ctrl(gt10b_port,gt10b_ch,32,0))
