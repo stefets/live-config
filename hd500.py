@@ -72,6 +72,18 @@ P16B=Program(hd500_port, channel=hd500_channel, program=62)
 P16C=Program(hd500_port, channel=hd500_channel, program=63)
 P16D=Program(hd500_port, channel=hd500_channel, program=64)
 
+#
+
+#
+# POD-HD-500 to control Fender Super60
+#
+
+# Depend on hd500.py
+S60A=Program(hd500_port, channel=hd500_channel, program=61)
+S60B=Program(hd500_port, channel=hd500_channel, program=62)
+S60C=Program(hd500_port, channel=hd500_channel, program=63)
+S60D=Program(hd500_port, channel=hd500_channel, program=64)
+
 # hd500_port, Channel, CC, Value
 #Footsiwtch
 FS1=Ctrl(hd500_port,hd500_channel,51,64)

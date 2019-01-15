@@ -8,5 +8,8 @@
             Scene("Voleur - no guitar", play >> System(play_file("voleur.mp3"))),
         ]),   
     3: SceneGroup("Super60", [
-            Scene("16A", init_patch=S60A, patch=piano),
+            Scene("S60A", init_patch=S60A, patch=piano),
+            Scene("S60B", init_patch=S60B, patch=piano),
+            Scene("S60C", init_patch=S60C, patch=piano),
+            Scene("S60D", init_patch=S60D, patch=piano),
         ]),

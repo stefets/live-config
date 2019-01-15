@@ -25,7 +25,7 @@ from mididings.extra.osc import *
 
 config(
 
-    initial_scene = 3,
+    #initial_scene = 3,
 	# Default
     #initial_scene = 1,
     #backend = 'alsa',

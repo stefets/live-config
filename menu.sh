@@ -15,7 +15,7 @@ controllers=(KeyboardMPG123 FCB1010)
 
 # MENU
 # options must match name.py if controller is fcb1010 or folder name if controller is keyboard
-menus=(bass_cover midi push styx system tabarnac timeline demon rush_cover)
+menus=(palindrome bass_cover midi push styx system tabarnac timeline demon rush_cover)
 
 function process()
 { 
@@ -28,11 +28,11 @@ function process()
 			target="$soundlib/${menus[$choice]}"
 			if [ ! -d $target ]; then
 				clear
-				read -n 1 -s -r -p "$target does not exists - press any key to continue"
-			else
-				/bin/bash $DIR/mklink.sh $target
-				/bin/bash $DIR/execute.sh mp3_piano_player.py
+				read -n 1 -s -r -p "$target does not exists - press any key to create and continue"
+                mkdir -p $target
 			fi
+			/bin/bash $DIR/mklink.sh $target
+			/bin/bash $DIR/execute.sh mp3_piano_player.py
 			break
 			;;
 		1 )	
@@ -56,7 +56,7 @@ function main()
 	while true
 	do
 	
-		choice=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 20 20 9 0 ${menus[0]} 1 ${menus[1]} 2 ${menus[2]} 3 ${menus[3]} 4 ${menus[4]} 5 ${menus[5]} 6 ${menus[6]} 7 ${menus[7]} 8 ${menus[8]})
+		choice=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 20 20 10 0 ${menus[0]} 1 ${menus[1]} 2 ${menus[2]} 3 ${menus[3]} 4 ${menus[4]} 5 ${menus[5]} 6 ${menus[6]} 7 ${menus[7]} 8 ${menus[8]} 9 ${menus[9]})
 
 		if [ -z "${choice}" ]; then
  			break
