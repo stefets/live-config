@@ -110,6 +110,6 @@ _post = Print('output',portnames='out')
 run(
     control=root_controller,
     scenes=_scenes, 
-    pre=_pre, 
-    post=_post,
+    #pre=_pre, 
+    #post=_post,
 )

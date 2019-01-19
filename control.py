@@ -1,6 +1,12 @@
 #-----------------------------------------------------------------------------------------------------------
 # CONTROL SECTION
 #-----------------------------------------------------------------------------------------------------------
+q49_channel=1
+pk5_channel=2
+fcb_channel=9
+pod_channel=9
+gt10b_channel=16
+
 
 # This control have the same behavior than the NavigateToScene python function above
 # EXCEPT that there is NO wrap parameter for SceneSwitch
