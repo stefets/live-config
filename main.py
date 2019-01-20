@@ -53,9 +53,9 @@ config(
 hook(
     #MemorizeScene('scene.txt'),
     #AutoRestart(),
-	#OSCInterface(port=56418, notify_ports=[55555]),
+	OSCInterface(port=56418, notify_ports=[56419,56420]),
 	#OSCInterface(port=56418, notify_ports=56419),
-	OSCInterface(),
+	#OSCInterface(),
 )
 
 #-----------------------------------------------------------------------------------------------------------
