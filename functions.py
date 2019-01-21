@@ -8,73 +8,98 @@
 class MPG123():
 
     # CTOR
-    def __init__(this):
+    def __init__(self):
 
-        # Expose mpg123 commands
-        # Associated with array index and note number 0,1,2 etc..
-        this.commands = [ "s", "p" ]
+
+        self.mpg123 = None
 
         # Expose songs
         # TODO faire mieux
         songs = [ "/tmp/soundlib/system/tlmep.mp3" ]
 
         # Add songs after the mpg123 commands
-        for song in songs:
-            this.commands.append('l ' + song)
+        #for song in songs:
+        #    self.commands.append('l ' + song)
 
-        # Start mpg123
-        this.mpg123=Popen(['mpg123', '--quiet', '--remote'], stdin=PIPE)
+    # On call...
+    def __call__(self, ev):
+        self.event2remote(ev)
 
-        # Shut up mpg132 :)
-        this.rcall('silence')
+    def event2remote(self, ev):
 
-    # EVENT
-    # TODO Check for delegate
-    def __call__(this, ev):
+        if self.mpg123 == None:
+            self.create()
+
         if ev.type == NOTEON:
-            this.note2remote(ev)
+            self.note2remote(ev)
         elif ev.type == CTRL:
-            this.cc2remote(ev)
-            
+            self.cc2remote(ev)
+                
+	# Start mpg123
+    def create(self):
+        print "Create MPG123 instance"
+        self.mpg123=Popen(['mpg123', '--quiet', '--remote'], stdin=PIPE)
+        self.rcall('silence') # Shut up mpg132 :)
+
     # METHODS
     # Write a command to the mpg123 process
-    def rcall(this, cmd):
-        this.mpg123.stdin.write(cmd + '\n')
+    def rcall(self, cmd):
+        self.mpg123.stdin.write(cmd + '\n')
 
     # Note to remote command
-    def note2remote(this, ev):
-        if ev.data1 <= len(this.commands):
-            # Reserved range
-            this.rcall(this.commands[ev.data1])
+    def note2remote(self, ev):
+
+        if ev.data1 > 11:
+            self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
+        # Reserved 0 to 11
+        elif ev.data1 == 0:
+            switch_scene(current_scene()-1)
+        elif ev.data1 == 1:
+            switch_subscene(current_subscene()-1)
+        elif ev.data1 == 2:
+            self.rcall('p')            
+        elif ev.data1 == 3:
+            switch_subscene(current_subscene()+1)
+        elif ev.data1 == 4:
+            switch_scene(current_scene()+1)
         else:
-            # Try to load the mp3
-            this.rcall('l /tmp/' + str(ev.data1) + '.mp3')
+            self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
+#        if ev.data1 <= len(self.commands):
+#           # Reserved range
+#           self.rcall(self.commands[ev.data1])
+#       else:
+#           # Try to load the mp3
+#           self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
+
+        ev.data2 = 0
+
+        return ev
 
     # CC to remote command
-    def cc2remote(this, ev):
+    def cc2remote(self, ev):
         # MIDI volume to mpg123 volume
         if ev.data1==7 and ev.data2 <= 100:
-            this.rcall('v ' + str(ev.data2))
+            self.rcall('v ' + str(ev.data2))
         # MIDI modulation to mpg123 pitch resolution / SUCK on the RPI - can pitch 3% before hardware limitation is reached
         #elif ev.data1==1 and ev.data2 <= 100:
-        #    this.rcall('pitch ' + str(float(ev.data2)/100))
+        #    self.rcall('pitch ' + str(float(ev.data2)/100))
 
 # ----------------------------------------------------------------------------------------------------
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
 class RemoveDuplicates:
-    def __init__(this, _wait=0):
-        this.wait = _wait
-        this.prev_ev = None
-        this.prev_time = 0
+    def __init__(self, _wait=0):
+        self.wait = _wait
+        self.prev_ev = None
+        self.prev_time = 0
 
-    def __call__(this, ev): 
+    def __call__(self, ev): 
         if ev.type == NOTEOFF:
-            sleep(this.wait)
+            sleep(self.wait)
             return ev
         now = engine.time()
-        offset=now-this.prev_time
+        offset=now-self.prev_time
         if offset >= 0.035:
             #if ev.type == NOTEON:
             #    print "+ " + str(offset)
@@ -83,8 +108,8 @@ class RemoveDuplicates:
             #if ev.type == NOTEON:
             #    print "- " + str(offset)
             r = None
-        this.prev_ev = ev
-        this.prev_time = now
+        self.prev_ev = ev
+        self.prev_time = now
         return r
 
 #--------------------------------------------------------------------

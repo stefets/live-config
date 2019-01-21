@@ -35,17 +35,14 @@ clean=(
 #		(CtrlFilter(22) >> clean)
 #	))
 
-# FCB1010 UNO as controller
+# FCB1010 UNO as controller (same as above different syntaxes)
 _fcb1010_controller=(Filter(CTRL) >> CtrlSplit({
     20: Process(NavigateToScene),
     22: clean,
 }))
 
 # KEYBOARD CONTROLLER - WIP
-_keyboard_controller = (
-    (Filter(NOTEON) >> KeyFilter('c-2:b-2') >> Call(MPG123())) //
-    (Filter(CTRL) >> Pass())
-    )
+_keyboard_controller = (Filter(NOTEON|CTRL) >> Process(MPG123()))
 
 # PK5 as Controller - WIP
 _pk5_controller = Pass()
@@ -57,8 +54,8 @@ d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
 
 # TODO
 # Multiple controller suppported, different logic for each of them WIP
-root_controller=ChannelSplit({
+main_controller=ChannelSplit({
+    1: _keyboard_controller,
     9: _fcb1010_controller,
-    #1: _keyboard_controller,
     #2:_pk5_controller
 })

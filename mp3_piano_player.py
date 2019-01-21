@@ -1,1 +1,1 @@
-    2: Scene("Mp3PianoPlayer", Filter(NOTEON|CTRL) >> Call(MPG123()))
+    2: Scene("Mp3PianoPlayer", Filter(SYSRT_RESET))
