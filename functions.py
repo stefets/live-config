@@ -38,7 +38,8 @@ class MPG123():
 	# Start mpg123
     def create(self):
         print "Create MPG123 instance"
-        self.mpg123=Popen(['mpg123', '--quiet', '--remote'], stdin=PIPE)
+        # TODO TOKEN REPLACE __HW__
+        self.mpg123=Popen(['mpg123', '-a', 'hw:1,0', '--quiet', '--remote'], stdin=PIPE)
         self.rcall('silence') # Shut up mpg132 :)
 
     # METHODS
@@ -88,6 +89,7 @@ class MPG123():
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
+# WIP TODO
 class RemoveDuplicates:
     def __init__(self, _wait=0):
         self.wait = _wait

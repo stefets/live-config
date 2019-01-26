@@ -17,6 +17,7 @@ then
 	exit -1
 fi
 
+
 mididings=/tmp/mididings
 pyliblo=/tmp/pyliblo
 
@@ -25,8 +26,13 @@ apt update
 # Install dialog for the menu
 apt --yes install dialog
 
-# Install ALSA lib 
+# Install mpg123 for mp3 player
+apt --yes install mpg123
+
+# Install ALSA lib and add $callername to audio group for accessing ALSA hardware
 apt --yes install libasound2-dev
+callername=$(who am i |cut -d' ' -f1)
+usermod -G audio -a $callername
 
 # Install Boost
 apt --yes install libboost-all-dev

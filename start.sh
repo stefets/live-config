@@ -17,7 +17,14 @@ fi
 
 #Mount usb flash
 sudo mkdir -m777 -p $flash
-sudo mount /dev/sda1 $flash
+# Check if / is mount in sda*
+count=$(df / | grep -c sda1)
+if [ $count -eq 0 ]
+then
+	sudo mount /dev/sda1 $flash
+else
+	sudo mount /dev/sdb1 $flash
+fi
 
 # TryCreate soundlib
 mkdir -p $audio
