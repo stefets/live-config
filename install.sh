@@ -2,6 +2,7 @@
 
 # Author : Stephane Gagnon
 # This script install mididings and most of its dependecies according my setup
+# It install other tools for my setup
 # Tested on an ubuntu desktop 18.04
 #
 # TODO if I need in the future ::: JACK lib, DBUS, Tkinter, pyinotify and libsmf
@@ -20,6 +21,9 @@ mididings=/tmp/mididings
 pyliblo=/tmp/pyliblo
 
 apt update
+
+# Install dialog for the menu
+apt --yes install dialog
 
 # Install ALSA lib 
 apt --yes install libasound2-dev
@@ -42,10 +46,6 @@ pip install Cython
 
 # Install liblo
 apt --yes install liblo-dev
-
-echo ""
-echo "-------------------------------------------------------------------------------------------------------"
-echo ""
 
 # Install pyliblo
 cd /tmp
