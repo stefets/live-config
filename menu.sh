@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Main menu
+# Main menu, depend on start.sh
 #
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -15,7 +15,8 @@ controllers=(KeyboardMPG123 FCB1010)
 
 # MENU
 # options must match name.py if controller is fcb1010 or folder name if controller is keyboard
-menus=(palindrome bass_cover midi push styx system tabarnac timeline demon rush_cover)
+items=($(find -L /tmp/soundlib ! -path /tmp/soundlib -type d))
+#items=(palindrome bass_cover midi push styx system tabarnac timeline demon rush_cover)
 
 function process()
 { 
@@ -25,18 +26,19 @@ function process()
 	case $ctrl in
 		0 )
 
-			target="$soundlib/${menus[$choice]}"
-			if [ ! -d $target ]; then
-				clear
-				read -n 1 -s -r -p "$target does not exists - press any key to create and continue"
-                mkdir -p $target
-			fi
+			target="${items[$choice]}"
+			#target="$soundlib/${items[$choice]}"
+			#if [ ! -d $target ]; then
+			#	clear
+			#	read -n 1 -s -r -p "$target does not exists - press any key to create and continue"
+            #    mkdir -p $target
+			#fi
 			/bin/bash $DIR/mklink.sh $target
 			/bin/bash $DIR/execute.sh mp3_piano_player.py
 			break
 			;;
 		1 )	
-			/bin/bash $DIR/execute.sh ${menus[$choice]}.py
+			/bin/bash $DIR/execute.sh ${items[$choice]}.py
 			break
 			;;
         * )
@@ -56,7 +58,7 @@ function main()
 	while true
 	do
 	
-		choice=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 20 20 10 0 ${menus[0]} 1 ${menus[1]} 2 ${menus[2]} 3 ${menus[3]} 4 ${menus[4]} 5 ${menus[5]} 6 ${menus[6]} 7 ${menus[7]} 8 ${menus[8]} 9 ${menus[9]})
+		choice=$(dialog --begin 0 0 --no-shadow --output-fd 1 --menu "Configuration" 20 20 10 0 ${items[0]} 1 ${items[1]} 2 ${items[2]} 3 ${items[3]} 4 ${items[4]} 5 ${items[5]} 6 ${items[6]} 7 ${items[7]} 8 ${items[8]} 9 ${items[9]})
 
 		if [ -z "${choice}" ]; then
  			break

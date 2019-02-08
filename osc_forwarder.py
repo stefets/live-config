@@ -1,69 +1,69 @@
 #!/usr/bin/env python3
-
 # -*- coding: utf-8 -*-
-
-import argparse
-import random
-import time
-import sys
 
 """ """
 """ This is an OSC forwarder between mididings and a remote """
 """ Since mididings notify only to localhost (i think) """
 """ Server receives messages from mididings and Client forward the message to a remote """
 
+#import argparse
+#import random
+#import time
+import sys
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import BlockingOSCUDPServer
-from pythonosc import osc_message_builder
+#from pythonosc import osc_message_builder
 from pythonosc import udp_client
 
+
 class DeviceInfo:
-    def __init__(this, _ip, _port):
-        this.ip = _ip
-        this.port = _port
+    def __init__(self, _ip, _port):
+        self.ip = _ip
+        self.port = _port
+
 
 class OscForwarder:
+    def __init__(self, _local, _remote):
 
-    def __init__(this, _local, _remote):
+        self.local = _local
+        self.remote = _remote
 
-        this.local = _local
-        this.remote = _remote
+        # Dispatcher
+        self.dispatcher = Dispatcher()
 
-		# Dispatcher
-        this.dispatcher = Dispatcher()
+        # mididings
+        self.dispatcher.map("/mididings/*", self.mididings_handler)
+        #self.dispatcher.map("/futur/*", futur_handler)
 
-		# mididings
-        this.dispatcher.map("/mididings/*", this.mididings_handler)
-        #this.dispatcher.map("/futur/*", futur_handler)
+        # Fallback
+        self.dispatcher.set_default_handler(self.default_handler)
 
-		# Fallback
-        this.dispatcher.set_default_handler(this.default_handler)
+        # Server listen the client
+        self.server = BlockingOSCUDPServer((self.local.ip, self.local.port), self.dispatcher)
 
-		# Server listen the client
-        this.server = BlockingOSCUDPServer((this.local.ip, this.local.port), this.dispatcher)
+        # Client forward to remote
+        self.client = udp_client.SimpleUDPClient(self.remote.ip, self.remote.port)
 
-		# Client forward to remote
-        this.client = udp_client.SimpleUDPClient(this.remote.ip, this.remote.port)
+    def execute(self):
+        self.server.serve_forever()  # Blocks forever
 
-    def execute(this):
-        this.server.serve_forever()  # Blocks forever
+    # Occurs on osc message from mididings, client forward message to remote server
+    def mididings_handler(self, address, *args):
+        print((address + ":" + "{}".format(args)))
+        #self.client.send_message(address, list(args))
+        self.client.send_message(address, "{}".format(args))
 
-	# Occurs on osc message from mididings, client forward message to remote server
-    def mididings_handler(this, address, *args):
-        print(address + ":" + "{}".format(args))
-        #this.client.send_message(address, list(args))
-        this.client.send_message(address, "{}".format(args))
+    def default_handler(self, address, *args):
+        print(("DEFAULT " + address + ":" + "{}".format(args)))
 
-    def default_handler(this, address, *args):
-        print("DEFAULT " + address + ":" + "{}".format(args))
 
 def main(args=None):
 
-    # Listen mididings 
+    # Listen mididings
     local = DeviceInfo("127.0.0.1", 56419)
 
     # Forward to remote address/port
-    remote = DeviceInfo( "192.168.2.25", 55555)
+    remote = DeviceInfo("192.168.2.25", 55555)
 
     forwarder = OscForwarder(local, remote)
     forwarder.execute()
