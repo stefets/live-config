@@ -63,6 +63,8 @@ class MPG123():
             switch_subscene(current_subscene()+1)
         elif ev.data1 == 4:
             switch_scene(current_scene()+1)
+        elif ev.data1 == 11:
+            Popen(['ls', '-l', '/tmp/*.mp3'])
         else:
             self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
 #        if ev.data1 <= len(self.commands):

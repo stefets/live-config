@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 
 #
 # Main menu, depend on start.sh
@@ -15,8 +15,8 @@ controllers=(KeyboardMPG123 FCB1010)
 
 # MENU
 # options must match name.py if controller is fcb1010 or folder name if controller is keyboard
-items=($(find -L /tmp/soundlib ! -path /tmp/soundlib -type d))
-#items=(palindrome bass_cover midi push styx system tabarnac timeline demon rush_cover)
+#items=($(find -L /tmp/soundlib ! -path /tmp/soundlib -type d -printf '%f\n'))
+items=(palindrome bass_cover midi push styx system tabarnac timeline demon rush_cover)
 
 function process()
 { 
@@ -26,13 +26,13 @@ function process()
 	case $ctrl in
 		0 )
 
-			target="${items[$choice]}"
-			#target="$soundlib/${items[$choice]}"
-			#if [ ! -d $target ]; then
-			#	clear
-			#	read -n 1 -s -r -p "$target does not exists - press any key to create and continue"
-            #    mkdir -p $target
-			#fi
+			#target="${items[$choice]}"
+			target="$soundlib/${items[$choice]}"
+			if [ ! -d $target ]; then
+				clear
+				read -n 1 -s -r -p "$target does not exists - press any key to create and continue"
+                mkdir -p $target
+			fi
 			/bin/bash $DIR/mklink.sh $target
 			/bin/bash $DIR/execute.sh mp3_piano_player.py
 			break

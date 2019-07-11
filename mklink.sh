@@ -13,7 +13,7 @@ target=$1
 # Starting at note #12 give me notes 0-11 free :)
 counter=12
 
-for file in $(find $target -name "*.mp3" -type f)
+for file in $(find $target -name "*.mp3" -type f | sort)
 do
 	ln -fs $file /tmp/$counter.mp3
 	let counter++

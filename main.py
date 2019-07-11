@@ -11,6 +11,7 @@
 #-----------------------------------------------------------------------------------------------------------
 
 import os
+import glob
 from subprocess import Popen, PIPE
 from threading import Timer
 from time import sleep
@@ -110,6 +111,6 @@ _post = Print('output',portnames='out')
 run(
     control=main_controller,
     scenes=_scenes, 
-    pre=_pre, 
-    post=_post,
+    #pre=_pre, 
+    #post=_post,
 )
