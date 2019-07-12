@@ -5,7 +5,8 @@
 # Many thanks to the programmer Dominic Sacre for that masterpiece
 # http://das.nasophon.de/mididings/
 # https://github.com/dsacre
-# --------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+# This is the skeleton of my master mididings script
 # Stephane Gagnon
 # pacificweb.ca
 #-----------------------------------------------------------------------------------------------------------
@@ -21,7 +22,8 @@ from mididings import engine
 from mididings.engine import *
 from mididings.event import *
 from mididings.extra.osc import *
-#now useless in dynamic mode :-/ :-(
+
+#useless for a dynamic script but usefull for a static scipt
 #from mididings.extra.inotify import *
 
 config(
@@ -44,7 +46,7 @@ config(
 	],			
 
     in_ports = [ 
-        ('Q49_MIDI_IN_1', '24:0',), 	# Alesis Q49 in USB MODE
+        #('Q49_MIDI_IN_1', '24:0',), 	# Alesis Q49 in USB MODE
         ('SD90_MIDI_IN_1','20:2',),		# Edirol SD-90 MIDI IN 1
         ('SD90_MIDI_IN_2','20:3',) 		# Edirol SD-90 MIDI IN 2
 	],
@@ -52,9 +54,12 @@ config(
 )
 
 hook(
-    #MemorizeScene('scene.txt'),
-    #AutoRestart(),
-	OSCInterface(port=56418, notify_ports=[56419,56420]),
+
+    #MemorizeScene('memorize-scene.txt'),
+
+    #AutoRestart(), #AutoRestart works with mididings.extra.inotify
+
+	#OSCInterface(port=56418, notify_ports=[56419,56420]),
 	#OSCInterface(port=56418, notify_ports=56419),
 	#OSCInterface(),
 )
@@ -83,18 +88,24 @@ __SOUNDMODULE__
 
 #-----------------------------------------------------------------------------------------------------------
 # HD500 configuration
+# hd500.py
 #-----------------------------------------------------------------------------------------------------------
 __HD500__
 
+#-----------------------------------------------------------------------------------------------------------
+# GT10B configuration
+# gt10b.py
+#-----------------------------------------------------------------------------------------------------------
 __GT10B__
 
 #-----------------------------------------------------------------------------------------------------------
 # Patches configuration
+# patches.py
 #-----------------------------------------------------------------------------------------------------------
 __PATCHES__
 
 #-----------------------------------------------------------------------------------------------------------
-# Scenes configuration
+# Scenes region
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=piano_base),
@@ -102,15 +113,18 @@ __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------
 
-
 #-----------------------------------------------------------------------------------------------------------
-# Run configuration
+# Run region
 #-----------------------------------------------------------------------------------------------------------
 _pre  = Print('input', portnames='in')
 _post = Print('output',portnames='out')
+
+# TODO repenser ce token (fit pas avec le reste)
+__CONTROLLER__
+
 run(
-    control=main_controller,
+    control=_ctrl,
     scenes=_scenes, 
-    #pre=_pre, 
-    #post=_post,
+    pre=_pre, 
+    post=_post,
 )
