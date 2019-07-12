@@ -11,7 +11,7 @@ soundlib=/tmp/soundlib	# symlink set in start.sh
 # CONTROLLERS
 # Keyboard to control mpg123 in remote mode from a single mididings scene in mp3_piano_player.py
 # FCB1010 to control mididings normally
-controllers=(KeyboardMPG123 FCB1010)
+controllers=(keyboard fcb1010)
 
 # MENU
 # options must match name.py if controller is fcb1010 or folder name if controller is keyboard
@@ -22,6 +22,8 @@ function process()
 { 
 	ctrl=$1
 	choice=$2
+
+	echo "_ctrl=${controllers[$ctrl]}" > /tmp/selected_controller
 
 	case $ctrl in
 		0 )
@@ -34,11 +36,11 @@ function process()
                 mkdir -p $target
 			fi
 			/bin/bash $DIR/mklink.sh $target
-			/bin/bash $DIR/execute.sh mp3_piano_player.py
+			/bin/bash $DIR/execute.sh mp3_piano_player.py /tmp/selected_controller
 			break
 			;;
 		1 )	
-			/bin/bash $DIR/execute.sh ${items[$choice]}.py
+			/bin/bash $DIR/execute.sh ${items[$choice]}.py /tmp/selected_controller
 			break
 			;;
         * )

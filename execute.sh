@@ -2,12 +2,13 @@
 
 # Create the final mididings configuration file and execute it.
 
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 main="main.py"
-target=$(mktemp)
+#target=$(mktemp)
+target=/tmp/static.py
 scenes=$1
+ctrl="$2"
 
 # Replace __TOKEN__ in main.py
 sed \
@@ -19,6 +20,7 @@ sed \
 	-e "/__GT10B__/r gt10b.py" \
 	-e "/__PATCHES__/r patches.py" \
     -e "/__SCENES__/r $scenes" \
+    -e "/__CONTROLLER__/r $ctrl" \
 	-e "/__FUNCTIONS__/d" \
 	-e "/__FILTERS__/d" \
 	-e "/__CONTROL__/d" \
@@ -27,9 +29,8 @@ sed \
 	-e "/__GT10B__/d" \
 	-e "/__PATCHES__/d" \
 	-e "/__SCENES__/d" \
+	-e "/__CONTROLLER__/d" \
 	$main > $target
-
-clear
 
 # Start the mididings script
 python $target
