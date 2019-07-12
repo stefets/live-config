@@ -2,26 +2,44 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Start the live music system
-module='Roland Corp. EDIROL SD-90'
-data='/mnt/flash/live'
+#TODO Array of module
+modules='Roland Corp. EDIROL SD-90'
+flash="/mnt/flash"
+audio="$flash/music/soundlib"
+failed=0
 
-#Check sound module
-if [ $(lsusb | grep -c "$module") -eq 0 ]
+#Check modules
+if [ $(lsusb | grep -c "$modules") -eq 0 ]
 then
-	echo "$module not found"
-	exit 1
+	echo "$modules not found"
+	failed=1
 fi
 
-#Mount flash 
-sh $DIR/unmount.sh
-sh $DIR/mount.sh > /dev/null
-if ! [ -d "$data" ]
+#Mount usb flash
+sudo mkdir -m777 -p $flash
+# Check if / is mount in sda*
+count=$(df / | grep -c sda1)
+if [ $count -eq 0 ]
 then
-	echo "$data not found"
-	exit 1
+	sudo mount /dev/sda1 $flash
+else
+	sudo mount /dev/sdb1 $flash
 fi
 
-# OK
-cd $DIR
+# TryCreate soundlib
+mkdir -p $audio
+if  [ ! -d "$audio" ]
+then
+	echo "$audio not found"
+	failed=1
+else
+	# symlink 
+	ln -sf $audio /tmp/soundlib
+fi
+
+if  [ $failed -eq 1 ]
+then
+	read -n 1 -s -r -p "*** WARNING *** - press any key to continue or ctrl-c to abort"
+fi
+
 /bin/bash $DIR/menu.sh
