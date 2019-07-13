@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  {{ super() }}
+{% endblock head %}
+
+{% block body %}
+
+    <h1>Select element</h1>
+    <ul id="navigation">
+    {% for item in elements %}
+        <h3><li><a href="{{ subdir }}{{ item }}">{{ item }}</a></li></h3>
+    {% endfor %}
+    </ul>
+
+    {{ super() }}
+
+ {% endblock body %}
+
