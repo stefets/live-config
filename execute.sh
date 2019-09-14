@@ -32,5 +32,6 @@ sed \
 	-e "/__CONTROLLER__/d" \
 	$main > $target
 
+cp $target output.py
 # Start the mididings script
 python $target

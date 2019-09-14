@@ -125,6 +125,6 @@ __CONTROLLER__
 run(
     control=_ctrl,
     scenes=_scenes, 
-    pre=_pre, 
-    post=_post,
+    #pre=_pre, 
+    #post=_post,
 )
