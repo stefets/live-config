@@ -26,11 +26,11 @@ else
 	sudo mount /dev/sdb1 $flash
 fi
 
-# TryCreate soundlib
+# Audio directory
 mkdir -p $audio
 if  [ ! -d "$audio" ]
 then
-	echo "$audio not found"
+	echo "$audio directory not found"
 	failed=1
 else
 	# symlink 
@@ -42,4 +42,4 @@ then
 	read -n 1 -s -r -p "*** WARNING *** - press any key to continue or ctrl-c to abort"
 fi
 
-/bin/bash $DIR/menu.sh
+/bin/bash $DIR/bin/menu.sh

@@ -6,9 +6,8 @@
 # http://das.nasophon.de/mididings/
 # https://github.com/dsacre
 #-----------------------------------------------------------------------------------------------------------
-# This is the skeleton of my master mididings script
+# My personal mididings script
 # Stephane Gagnon
-# pacificweb.ca
 #-----------------------------------------------------------------------------------------------------------
 
 import os
@@ -28,8 +27,7 @@ from mididings.extra.osc import *
 
 config(
 
-    #initial_scene = 3,
-	# Default
+	# Defaults
     #initial_scene = 1,
     #backend = 'alsa',
     #client_name = 'mididings',
@@ -46,7 +44,7 @@ config(
 	],			
 
     in_ports = [ 
-        #('Q49_MIDI_IN_1', '24:0',), 	# Alesis Q49 in USB MODE
+        ('Q49_MIDI_IN_1', '24:0',), 	# Alesis Q49 in USB MODE
         ('SD90_MIDI_IN_1','20:2',),		# Edirol SD-90 MIDI IN 1
         ('SD90_MIDI_IN_2','20:3',) 		# Edirol SD-90 MIDI IN 2
 	],

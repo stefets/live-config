@@ -2,7 +2,7 @@
 
 # Create the final mididings configuration file and execute it.
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 main="main.py"
 #target=$(mktemp)

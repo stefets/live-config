@@ -4,6 +4,8 @@
 # Main menu, depend on start.sh
 #
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo $DIR 
+sleep 3
 
 # GENERAL PARAMETERS
 soundlib=/tmp/soundlib	# symlink set in start.sh
