@@ -2,11 +2,13 @@
 
 # Create the final mididings configuration file and execute it.
 
-#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Hack for the ../run symlink
+cd $DIR
 
 main="main.py"
-#target=$(mktemp)
-target=/tmp/static.py
+target=$DIR/static.py
 scenes=$1
 ctrl="$2"
 
@@ -32,6 +34,8 @@ sed \
 	-e "/__CONTROLLER__/d" \
 	$main > $target
 
-cp $target output.py
+# tmp version for debug purpose
+cp $target /tmp/output.py
+
 # Start the mididings script
 python $target
