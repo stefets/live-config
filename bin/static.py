@@ -1136,7 +1136,10 @@ d4=cf >> Output('SD90_PARTA', channel=10, program=1, volume=100)
 d4_tom=cf >> Output('SD90_PARTA', channel=11, program=((96*128)+1,118), volume=100)
 
 ### SD-90 Full Patch implementation
-#TODO
+
+BrushingSaw=cf >> Output('SD90_PARTA', channel=1, program=((80*128),2))
+
+### End SD-90 Patch list
 
 
 # FX Section
@@ -1379,9 +1382,80 @@ Amb_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13696,41))
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=piano_base),
-    # No impact filter to break all events
-    2: Scene("Mp3PianoPlayer", Filter(SYSRT_RESET))
-    #2: Scene("Mp3PianoPlayer", Pass())
+	2:Scene("ROOT", patch=BrushingSaw),
+	3:Scene("SetPitchBend", patch=violon, init_patch=portamento_up),
+#	2:Scene("HighWater", lowsynth),
+#	3:SceneGroup ("Marathon", [
+#        Scene("Marathon-Intro",
+#		  [
+#        	marathon,
+#            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
+#            [
+#                	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
+#                	(CtrlFilter(1)>>CtrlMap(1,7)) 
+#            ])
+#    	  ]),
+#		Scene("Marathon-Chords", marathon_chords),
+#        Scene("Marathon-Middle",
+#		  [
+#        	marathon,
+#            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
+#            [
+#                	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
+#                	(CtrlFilter(1)>>CtrlMap(1,7)) 
+#            ])
+#    	  ]),
+#		Scene("Marathon-Chords", marathon_chords),
+#		Scene("Marathon-Bridge", marathon_bridge),
+#		Scene("Marathon-Solo-Bridge", marathon_bridge2),
+#		Scene("Marathon-Chords", marathon_chords),
+#   ]),
+#
+##	2: Scene("Marathon", 
+#		#[
+#			#marathon,
+#			#(ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >> 
+#			#[
+#				#(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
+#			#	(CtrlFilter(1)>>CtrlMap(1,7))
+#			#])
+#		#]),
+#
+## EXPERIMENTATIONS
+#
+#			# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  NoteOn(2,1, 64, 100) )
+#			# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  Pitchbend(2,3, 8192) )
+#
+##    2: SceneGroup("DebugScene", [    
+##		#Scene("Modulation2Volume", 
+##		#	[
+##		#		[ChannelFilter(1) >> tss_keyboard_main // ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlMap(1,7) >> Channel(2)] ,
+##		#		ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
+##		#	]),
+##    	#Scene("Analog Kid", analogkid_main),
+##    	#Scene("Pad D4", centurion_patch),
+##    	Scene("TimeStandSteel.D4",  
+##			[ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
+##			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
+##			[
+##				(
+##				tss_d4_melo_tom_A // 
+##				tss_d4_castanet // 
+##				tss_d4_melo_tom_B // 
+##				tss_d4_808_tom
+##				)
+##	 		]]),
+##		Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+##    	Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
+##		Scene("2112", Process(RemoveDuplicates()) >> d4play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
+##        Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
+##    	Scene("Closer.D4", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
+##		Scene("2112", Process(RemoveDuplicates()) >> d4play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
+##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_808_tom_patch),
+##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_808_tom_patch),
+##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_melo_tom_patch),
+##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.5)) >> closer_patch_celesta_d4),
+##       ]),   
 }
 #-----------------------------------------------------------------------------------------------------------
 

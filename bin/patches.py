@@ -25,7 +25,10 @@ d4=cf >> Output('SD90_PARTA', channel=10, program=1, volume=100)
 d4_tom=cf >> Output('SD90_PARTA', channel=11, program=((96*128)+1,118), volume=100)
 
 ### SD-90 Full Patch implementation
-#TODO
+
+BrushingSaw=cf >> Output('SD90_PARTA', channel=1, program=((80*128),2))
+
+### End SD-90 Patch list
 
 
 # FX Section

@@ -42,4 +42,4 @@ then
 	read -n 1 -s -r -p "*** WARNING *** - press any key to continue or ctrl-c to abort"
 fi
 
-/bin/bash $DIR/bin/menu.sh
+/bin/bash $DIR/menu.sh
