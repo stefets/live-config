@@ -24,6 +24,9 @@ portamento_off=(portamento_base // portamento_off)
 d4=cf >> Output('SD90_PARTA', channel=10, program=1, volume=100)
 d4_tom=cf >> Output('SD90_PARTA', channel=11, program=((96*128)+1,118), volume=100)
 
+### SD-90 Full Patch implementation
+#TODO
+
 
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('SD90_PARTA', channel=1, program=((96*128)+3,128), volume=100)
