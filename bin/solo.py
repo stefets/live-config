@@ -1,4 +1,5 @@
     2: SceneGroup("Divers", [    
+            Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
 			Scene("SpectralMornings", play >> System(play_file("spectral_mornings.mid"))),
 			Scene("ELP - KarnEvil9", play >> System(play_file("karn_evil9_imp1.mid"))),
 			Scene("Trou dans les nuages", play >> System(play_file("trou_nuage.mp3"))),

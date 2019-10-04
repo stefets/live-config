@@ -257,10 +257,11 @@ def AllAudioOff(ev):
 # Audio and midi players suitable for my SD-90
 def play_file(filename):
     fname, fext = os.path.splitext(filename)
-    path=" /tmp/soundlib/"
     if fext == ".mp3":
+        path=" /tmp/soundlib/mp3/"
         command="mpg123 -q"
     elif fext == ".mid":
+        path=" /tmp/soundlib/midi/"
         command="aplaymidi -p 20:1"
 
     return command + path + filename
@@ -1382,80 +1383,43 @@ Amb_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13696,41))
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=piano_base),
-	2:Scene("ROOT", patch=BrushingSaw),
-	3:Scene("SetPitchBend", patch=violon, init_patch=portamento_up),
-#	2:Scene("HighWater", lowsynth),
-#	3:SceneGroup ("Marathon", [
-#        Scene("Marathon-Intro",
-#		  [
-#        	marathon,
-#            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
-#            [
-#                	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-#                	(CtrlFilter(1)>>CtrlMap(1,7)) 
-#            ])
-#    	  ]),
-#		Scene("Marathon-Chords", marathon_chords),
-#        Scene("Marathon-Middle",
-#		  [
-#        	marathon,
-#            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
-#            [
-#                	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-#                	(CtrlFilter(1)>>CtrlMap(1,7)) 
-#            ])
-#    	  ]),
-#		Scene("Marathon-Chords", marathon_chords),
-#		Scene("Marathon-Bridge", marathon_bridge),
-#		Scene("Marathon-Solo-Bridge", marathon_bridge2),
-#		Scene("Marathon-Chords", marathon_chords),
-#   ]),
-#
-##	2: Scene("Marathon", 
-#		#[
-#			#marathon,
-#			#(ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >> 
-#			#[
-#				#(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-#			#	(CtrlFilter(1)>>CtrlMap(1,7))
-#			#])
-#		#]),
-#
-## EXPERIMENTATIONS
-#
-#			# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  NoteOn(2,1, 64, 100) )
-#			# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  Pitchbend(2,3, 8192) )
-#
-##    2: SceneGroup("DebugScene", [    
-##		#Scene("Modulation2Volume", 
-##		#	[
-##		#		[ChannelFilter(1) >> tss_keyboard_main // ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlMap(1,7) >> Channel(2)] ,
-##		#		ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
-##		#	]),
-##    	#Scene("Analog Kid", analogkid_main),
-##    	#Scene("Pad D4", centurion_patch),
-##    	Scene("TimeStandSteel.D4",  
-##			[ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
-##			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
-##			[
-##				(
-##				tss_d4_melo_tom_A // 
-##				tss_d4_castanet // 
-##				tss_d4_melo_tom_B // 
-##				tss_d4_808_tom
-##				)
-##	 		]]),
-##		Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
-##    	Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
-##		Scene("2112", Process(RemoveDuplicates()) >> d4play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
-##        Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
-##    	Scene("Closer.D4", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
-##		Scene("2112", Process(RemoveDuplicates()) >> d4play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_808_tom_patch),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_808_tom_patch),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_melo_tom_patch),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.5)) >> closer_patch_celesta_d4),
-##       ]),   
+    2: SceneGroup("Rush cover", [    
+            Scene("Mission", play >> System(play_file("mission.mp3"))),
+            Scene("Limelight", play >> System(play_file("limelight.mp3"))),
+            Scene("RedBarchetta", play >> System(play_file("barchetta.mp3"))),
+            Scene("FlyByNight", play >> System(play_file("fly_by_night.mp3"))),
+            Scene("Spirit of Radio", play >> System(play_file("spirit_of_radio.mp3"))),
+            Scene("AnalogKid", play >> System(play_file("analogkid.mp3"))),
+            Scene("Analog Kid Keyboard", analogkid_main),
+            #Scene("Analog Kid Keyboard", [ChannelFilter(2) >> analogkid_main, ChannelFilter(1) >> analogkid_ending ]),
+            Scene("TimeStandSteel", play >> System(play_file("time_stand_steel.mp3"))),
+            Scene("Time Stand Still Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+            Scene("KidGloves", play >> System(play_file("kid_gloves.mp3"))),
+            Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+            Scene("Freewill", play >> System(play_file("freewill.mp3"))),
+            Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+	    	Scene("Territories", play >> System(play_file("territories.mid"))),
+	    	Scene("Mission", play >> System(play_file("mission.mid"))),
+       ]),
+   3:SceneGroup ("Marathon", [
+        Scene("Marathon-Intro/Chords", Port(1) >> (
+          [
+            ChannelSplit({
+                q49_channel : marathon_intro,
+                pk5_channel : marathon_chords,
+            }),
+            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> Fork([Channel(3),Channel(4)]) >>
+            [
+            	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
+                (CtrlFilter(1)>>CtrlMap(1,7))
+            ])
+          ])),
+        Scene("Marathon-Bridge/Solo/Ending", 
+            ChannelSplit({
+                1 : (marathon_bridge // marathon_bridge_split),
+                2 : marathon_chords,
+            })),
+   ]),
 }
 #-----------------------------------------------------------------------------------------------------------
 
@@ -1466,7 +1430,7 @@ _pre  = Print('input', portnames='in')
 _post = Print('output',portnames='out')
 
 # TODO repenser ce token (fit pas avec le reste)
-_ctrl=keyboard
+_ctrl=fcb1010
 
 run(
     control=_ctrl,

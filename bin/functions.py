@@ -190,10 +190,11 @@ def AllAudioOff(ev):
 # Audio and midi players suitable for my SD-90
 def play_file(filename):
     fname, fext = os.path.splitext(filename)
-    path=" /tmp/soundlib/"
     if fext == ".mp3":
+        path=" /tmp/soundlib/mp3/"
         command="mpg123 -q"
     elif fext == ".mid":
+        path=" /tmp/soundlib/midi/"
         command="aplaymidi -p 20:1"
 
     return command + path + filename

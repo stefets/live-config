@@ -17,7 +17,7 @@
 	    	Scene("Mission", play >> System(play_file("mission.mid"))),
        ]),
    3:SceneGroup ("Marathon", [
-        Scene("Marathon-Intro/Chords", 
+        Scene("Marathon-Intro/Chords", Port(1) >> (
           [
             ChannelSplit({
                 q49_channel : marathon_intro,
@@ -28,7 +28,7 @@
             	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
                 (CtrlFilter(1)>>CtrlMap(1,7))
             ])
-          ]),
+          ])),
         Scene("Marathon-Bridge/Solo/Ending", 
             ChannelSplit({
                 1 : (marathon_bridge // marathon_bridge_split),
