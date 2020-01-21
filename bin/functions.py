@@ -3,13 +3,12 @@
 #--------------------------------------------------------------------
 #
 # This class control mpg123 in remote mode with a keyboard (or any other midi devices of your choice)
-# It's an embedded clone of the 'keyboard song trigger' of the Quebec TV Show 'Tout le monde en parle'
+# It's inspired of the 'song trigger keyboard' of the Quebec TV Show 'Tout le monde en parle'
 #
 class MPG123():
 
     # CTOR
     def __init__(self):
-
 
         self.mpg123 = None
 
@@ -34,13 +33,16 @@ class MPG123():
             self.note2remote(ev)
         elif ev.type == CTRL:
             self.cc2remote(ev)
-                
+
 	# Start mpg123
     def create(self):
         print "Create MPG123 instance"
         # TODO TOKEN REPLACE __HW__
         self.mpg123=Popen(['mpg123', '-a', 'hw:1,0', '--quiet', '--remote'], stdin=PIPE)
-        self.rcall('silence') # Shut up mpg132 :)
+        self.rcall('silence')
+
+        # TODO AWK script to format listing
+        self.listing = 'cd /tmp; clear; ls -l *.mp3|cut -d" " -f9-11'
 
     # METHODS
     # Write a command to the mpg123 process
@@ -52,27 +54,23 @@ class MPG123():
 
         if ev.data1 > 11:
             self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
+            Popen([self.listing], shell=True)
         # Reserved 0 to 11
         elif ev.data1 == 0:
             switch_scene(current_scene()-1)
         elif ev.data1 == 1:
             switch_subscene(current_subscene()-1)
         elif ev.data1 == 2:
-            self.rcall('p')            
+            self.rcall('p')
         elif ev.data1 == 3:
             switch_subscene(current_subscene()+1)
         elif ev.data1 == 4:
             switch_scene(current_scene()+1)
         elif ev.data1 == 11:
-            Popen(['ls', '-l', '/tmp/*.mp3'])
+            Popen([self.listing], shell=True)
         else:
+            # Try to load the mp3
             self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
-#        if ev.data1 <= len(self.commands):
-#           # Reserved range
-#           self.rcall(self.commands[ev.data1])
-#       else:
-#           # Try to load the mp3
-#           self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
 
         ev.data2 = 0
 

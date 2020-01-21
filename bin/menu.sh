@@ -35,7 +35,7 @@ function process()
 				read -n 1 -s -r -p "$target does not exists - press any key to create and continue"
                 mkdir -p $target
 			fi
-			/bin/bash $DIR/mklink.sh $target
+			/bin/bash $DIR/mklink.sh $target $soundlib
 			/bin/bash $DIR/execute.sh mp3_piano_player.py /tmp/selected_controller
 			break
 			;;
