@@ -58,8 +58,8 @@ hook(
     #AutoRestart(), #AutoRestart works with mididings.extra.inotify
 
     #OSCInterface(port=56418, notify_ports=[56419,56420]),
-    #OSCInterface(port=56418, notify_ports=56419),
-    OSCInterface(),
+    OSCInterface(port=56418, notify_ports=56419),
+    #OSCInterface(),
 )
 
 #-----------------------------------------------------------------------------------------------------------
