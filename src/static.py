@@ -74,9 +74,20 @@ hook(
 #
 class MPG123():
 
+    # CTOR
     def __init__(self):
+
         self.mpg123 = None
 
+        # Expose songs
+        # TODO faire mieux
+        songs = [ "/tmp/soundlib/system/tlmep.mp3" ]
+
+        # Add songs after the mpg123 commands
+        #for song in songs:
+        #    self.commands.append('l ' + song)
+
+    # On call...
     def __call__(self, ev):
         self.event2remote(ev)
 
@@ -95,38 +106,38 @@ class MPG123():
         print "Create MPG123 instance"
         # TODO TOKEN REPLACE __HW__
         self.mpg123=Popen(['mpg123', '-a', 'hw:1,0', '--quiet', '--remote'], stdin=PIPE)
-        self.remote_call('silence')
+        self.rcall('silence')
 
         # TODO AWK script to format listing
-        self.listing = 'clear; ls -l /tmp/*.mp3'
+        self.listing = 'cd /tmp; clear; ls -l *.mp3|cut -d" " -f9-11'
 
     # METHODS
     # Write a command to the mpg123 process
-    def remote_call(self, cmd):
+    def rcall(self, cmd):
         self.mpg123.stdin.write(cmd + '\n')
 
     # Note to remote command
     def note2remote(self, ev):
 
         if ev.data1 > 11:
-            self.remote_call('l /tmp/' + str(ev.data1) + '.mp3')
-            #Popen([self.listing], shell=True)
+            self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
+            Popen([self.listing], shell=True)
         # Reserved 0 to 11
         elif ev.data1 == 0:
             switch_scene(current_scene()-1)
         elif ev.data1 == 1:
             switch_subscene(current_subscene()-1)
         elif ev.data1 == 2:
-            self.remote_call('p') # Pause mpg123
+            self.rcall('p')
         elif ev.data1 == 3:
             switch_subscene(current_subscene()+1)
         elif ev.data1 == 4:
             switch_scene(current_scene()+1)
         elif ev.data1 == 11:
-            Popen([self.listing], shell=True)  # ls -l
+            Popen([self.listing], shell=True)
         else:
-            # Fallback
-            self.remote_call('l /tmp/' + str(ev.data1) + '.mp3')
+            # Try to load the mp3
+            self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
 
         ev.data2 = 0
 
@@ -136,17 +147,16 @@ class MPG123():
     def cc2remote(self, ev):
         # MIDI volume to mpg123 volume
         if ev.data1==7 and ev.data2 <= 100:
-            self.remote_call('v ' + str(ev.data2))
-        # MIDI modulation to mpg123 pitch resolution 
-        # TODO Check hardware to set maximum pitch
-        # On RPI, I can pitch 3% before hardware limitation is reached
+            self.rcall('v ' + str(ev.data2))
+        # MIDI modulation to mpg123 pitch resolution / SUCK on the RPI - can pitch 3% before hardware limitation is reached
         #elif ev.data1==1 and ev.data2 <= 100:
-        #    self.remote_call('pitch ' + str(float(ev.data2)/100))
+        #    self.rcall('pitch ' + str(float(ev.data2)/100))
 
 # ----------------------------------------------------------------------------------------------------
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
+# WIP TODO
 class RemoveDuplicates:
     def __init__(self, _wait=0):
         self.wait = _wait
@@ -212,7 +222,7 @@ def NavigateToScene(ev):
     # That function assume that the first SceneNumber is 1
 	#TODO field, values = dict(scenes()).items()[0]
     if ev.ctrl == 20:
-        nb_scenes = len(scenes())
+        nb_scenes = len(scenes())    
         cs=current_scene()
 		# Scene backward
         if ev.value == 1:
@@ -266,6 +276,7 @@ def OnPitchbend(ev, direction):
     elif ev.value == 127:
         ev.value = 8191 if direction == 1 else 8192
     return PitchbendEvent(ev.port, ev.channel, ev.value*direction)
+
 
 #---------------------------------------------------------------------------------------------------------
 
@@ -1370,9 +1381,46 @@ Amb_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13696,41))
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=piano_base),
-    # No impact filter to break all events
-    2: Scene("Mp3PianoPlayer", Filter(SYSRT_RESET))
-    #2: Scene("Mp3PianoPlayer", Pass())
+    2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
+    5: SceneGroup("The Trees", [
+            Scene("Bridge",  play >> System(play_file("trees_full.mp3"))),
+            Scene("Synth", Transpose(-29) >> LatchNotes(False,reset='G0') >> lowsynth),
+       ]),
+    6: SceneGroup("Time Stand Still", [
+			Scene("TSS-Intro", play >> System(play_file("tss.mp3"))),
+			Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+	   ]),
+    7: SceneGroup("2112", [
+		    Scene("2112-MP3 via D4", Process(RemoveDuplicates()) >> d4play >> System(play_file("2112.mp3"))),
+		    Scene("2112-MP3 via FCB1010", play >> System(play_file("2112.mp3"))),
+            Scene("Explosion", explosion),
+       ]),
+    8: Scene("Analog Kid", Channel(1) >> analogkid_main),
+    9: Scene("Hemispheres", play >> System(play_file("hemispheres.mp3"))),
+    10: Scene("Circumstances", play >> System(play_file("circumstances.mp3"))),
+    11: SceneGroup("Natural Science", [
+            Scene("Intro", play >> System(play_file("ns_intro.mp3"))),
+            Scene("Outro", play >> System(play_file("ns_outro.mp3"))),
+       ]),
+    12:Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
+    13:Scene("TimeStandSteel.D4",  
+			[
+			ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
+			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
+				[
+					(
+					tss_d4_melo_tom_A // 
+					tss_d4_castanet // 
+					tss_d4_melo_tom_B // 
+					tss_d4_808_tom
+					)
+	 			]]),
+    14:Scene("Closer A", Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
+    15:Scene("Closer B", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
+    16:Scene("YYZ", Process(RemoveDuplicates()) >> yyz),
+    17:Scene("Mission",  mission),
 }
 #-----------------------------------------------------------------------------------------------------------
 
@@ -1383,7 +1431,7 @@ _pre  = Print('input', portnames='in')
 _post = Print('output',portnames='out')
 
 # TODO repenser ce token (fit pas avec le reste)
-_ctrl=keyboard
+_ctrl=fcb1010
 
 run(
     control=_ctrl,

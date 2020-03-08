@@ -7,20 +7,9 @@
 #
 class MPG123():
 
-    # CTOR
     def __init__(self):
-
         self.mpg123 = None
 
-        # Expose songs
-        # TODO faire mieux
-        songs = [ "/tmp/soundlib/system/tlmep.mp3" ]
-
-        # Add songs after the mpg123 commands
-        #for song in songs:
-        #    self.commands.append('l ' + song)
-
-    # On call...
     def __call__(self, ev):
         self.event2remote(ev)
 
@@ -39,38 +28,38 @@ class MPG123():
         print "Create MPG123 instance"
         # TODO TOKEN REPLACE __HW__
         self.mpg123=Popen(['mpg123', '-a', 'hw:1,0', '--quiet', '--remote'], stdin=PIPE)
-        self.rcall('silence')
+        self.remote_call('silence')
 
         # TODO AWK script to format listing
-        self.listing = 'cd /tmp; clear; ls -l *.mp3|cut -d" " -f9-11'
+        self.listing = 'clear; ls -l /tmp/*.mp3'
 
     # METHODS
     # Write a command to the mpg123 process
-    def rcall(self, cmd):
+    def remote_call(self, cmd):
         self.mpg123.stdin.write(cmd + '\n')
 
     # Note to remote command
     def note2remote(self, ev):
 
         if ev.data1 > 11:
-            self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
-            Popen([self.listing], shell=True)
+            self.remote_call('l /tmp/' + str(ev.data1) + '.mp3')
+            #Popen([self.listing], shell=True)
         # Reserved 0 to 11
         elif ev.data1 == 0:
             switch_scene(current_scene()-1)
         elif ev.data1 == 1:
             switch_subscene(current_subscene()-1)
         elif ev.data1 == 2:
-            self.rcall('p')
+            self.remote_call('p') # Pause mpg123
         elif ev.data1 == 3:
             switch_subscene(current_subscene()+1)
         elif ev.data1 == 4:
             switch_scene(current_scene()+1)
         elif ev.data1 == 11:
-            Popen([self.listing], shell=True)
+            Popen([self.listing], shell=True)  # ls -l
         else:
-            # Try to load the mp3
-            self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
+            # Fallback
+            self.remote_call('l /tmp/' + str(ev.data1) + '.mp3')
 
         ev.data2 = 0
 
@@ -80,16 +69,17 @@ class MPG123():
     def cc2remote(self, ev):
         # MIDI volume to mpg123 volume
         if ev.data1==7 and ev.data2 <= 100:
-            self.rcall('v ' + str(ev.data2))
-        # MIDI modulation to mpg123 pitch resolution / SUCK on the RPI - can pitch 3% before hardware limitation is reached
+            self.remote_call('v ' + str(ev.data2))
+        # MIDI modulation to mpg123 pitch resolution 
+        # TODO Check hardware to set maximum pitch
+        # On RPI, I can pitch 3% before hardware limitation is reached
         #elif ev.data1==1 and ev.data2 <= 100:
-        #    self.rcall('pitch ' + str(float(ev.data2)/100))
+        #    self.remote_call('pitch ' + str(float(ev.data2)/100))
 
 # ----------------------------------------------------------------------------------------------------
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
-# WIP TODO
 class RemoveDuplicates:
     def __init__(self, _wait=0):
         self.wait = _wait
@@ -155,7 +145,7 @@ def NavigateToScene(ev):
     # That function assume that the first SceneNumber is 1
 	#TODO field, values = dict(scenes()).items()[0]
     if ev.ctrl == 20:
-        nb_scenes = len(scenes())    
+        nb_scenes = len(scenes())
         cs=current_scene()
 		# Scene backward
         if ev.value == 1:
@@ -209,6 +199,5 @@ def OnPitchbend(ev, direction):
     elif ev.value == 127:
         ev.value = 8191 if direction == 1 else 8192
     return PitchbendEvent(ev.port, ev.channel, ev.value*direction)
-
 
 #---------------------------------------------------------------------------------------------------------
