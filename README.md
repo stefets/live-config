@@ -11,5 +11,5 @@
 * Script entry point is /bin/start.sh
 * Check bin/static.py for the final script after replacing tokens with subscripts
 
-# Help
+# Mididings documentation
 * http://dsacre.github.io/mididings/doc/

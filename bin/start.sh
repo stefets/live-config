@@ -1,4 +1,5 @@
 #!/bin/bash
+# TODO Config file
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -9,6 +10,7 @@ audio="$flash/music/soundlib"
 failed=0
 
 #Check modules
+# TODO Regex
 if [ $(lsusb | grep -c "$modules") -eq 0 ]
 then
 	echo "$modules not found"
@@ -18,6 +20,7 @@ fi
 #Mount usb flash
 sudo mkdir -m777 -p $flash
 # Check if / is mount in sda*
+# TODO Arracher ça
 count=$(df / | grep -c sda1)
 if [ $count -eq 0 ]
 then

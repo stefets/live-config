@@ -4,10 +4,8 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Hack for the ../run symlink
-cd $DIR
-
 cd ../src/.
+
 main="main.py"
 target=$DIR/static.py
 scenes=$1
