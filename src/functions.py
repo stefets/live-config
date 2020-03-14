@@ -38,23 +38,34 @@ class MPG123():
     def remote_call(self, cmd):
         self.mpg123.stdin.write(cmd + '\n')
 
+    #
     # Note to remote command
+    # Convert note number to switch scene or send a remote command to mpg123
+    #
     def note2remote(self, ev):
 
         if ev.data1 > 11:
-            self.remote_call('l /tmp/' + str(ev.data1) + '.mp3')
+            self.remote_call('l /tmp/{}.mp3'.format(ev.data1))
             #Popen([self.listing], shell=True)
         # Reserved 0 to 11
         elif ev.data1 == 0:
             switch_scene(current_scene()-1)
         elif ev.data1 == 1:
             switch_subscene(current_subscene()-1)
+        # TODO Free
         elif ev.data1 == 2:
-            self.remote_call('p') # Pause mpg123
+            pass
         elif ev.data1 == 3:
             switch_subscene(current_subscene()+1)
         elif ev.data1 == 4:
             switch_scene(current_scene()+1)
+        # TODO Do better
+        elif ev.data1 == 5:
+            self.remote_call('j -5 s')
+        elif ev.data1 == 6:
+            self.remote_call('p') # Pause mpg123
+        elif ev.data1 == 7:
+            self.remote_call('j +5 s')
         elif ev.data1 == 11:
             Popen([self.listing], shell=True)  # ls -l
         else:
