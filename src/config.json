@@ -3,5 +3,17 @@
   "mp3" : "/mnt/flash/music/soundlib/mp3/",
   "midi" : "/mnt/flash/music/soundlib/midi/",
   "symlinks" : "/tmp/",
-  "listing" : "clear; ls -l /tmp/*.mp3"
+  "listing" : "clear; ls -l /tmp/*.mp3",
+  "GT10B" : {
+    "channel" : 16
+    },
+  "SD90" : {
+    "todo" : 16
+    },
+  "HD500" : {
+    "channel" : 9
+    },
+  "FCB1010" : {
+    "channel" : 9
+    }
 }
