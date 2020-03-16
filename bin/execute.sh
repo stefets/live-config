@@ -9,7 +9,7 @@ cd ../src/.
 
 template="main.py"
 target="render.py"
-scenes=$1
+sceneFileName="./scenes/$1"
 ctrl="$2"
 
 # Replace __TOKEN__ in template file
@@ -21,7 +21,7 @@ sed \
 	-e "/__HD500__/r ./hardware/hd500.py" \
 	-e "/__GT10B__/r ./hardware/gt10b.py" \
 	-e "/__PATCHES__/r patches.py" \
-    -e "/__SCENES__/r $scenes" \
+    -e "/__SCENES__/r $sceneFileName" \
     -e "/__CONTROLLER__/r $ctrl" \
 	-e "/__FUNCTIONS__/d" \
 	-e "/__FILTERS__/d" \
