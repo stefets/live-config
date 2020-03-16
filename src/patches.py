@@ -24,13 +24,6 @@ portamento_off=(portamento_base // portamento_off)
 d4=cf >> Output('SD90_PARTA', channel=10, program=1, volume=100)
 d4_tom=cf >> Output('SD90_PARTA', channel=11, program=((96*128)+1,118), volume=100)
 
-### SD-90 Full Patch implementation
-
-BrushingSaw=cf >> Output('SD90_PARTA', channel=1, program=((80*128),2))
-
-### End SD-90 Patch list
-
-
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('SD90_PARTA', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
@@ -73,8 +66,8 @@ marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=80) >>
 
 	) >> Transpose(-24) >> Output('SD90_PARTA', channel=4, program=((96*128)+1,51), volume=100, ctrls={93:75, 91:75}))
 
-marathon_bridge=(q49 >> 
-	( 
+marathon_bridge=(q49 >>
+	(
 		(KeyFilter('c2') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('e2') >> Key('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
 		(KeyFilter('d2') >> Key('e3') >> Harmonize('e','major',['unison', 'third', 'fifth']))  
@@ -82,7 +75,7 @@ marathon_bridge=(q49 >>
 
 # Solo bridge, lower -12
 marathon_bridge_lower=(q49 >>
-	( 
+	(
 		(KeyFilter('c1') >> Key('b1') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('d1') >> Key('e1') >> Harmonize('e','major',['third', 'fifth'])) //
 		(KeyFilter('e1') >> Key('f#2') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ]))
@@ -140,20 +133,21 @@ analogkid_main = cf >> KeySplit('f3', analogkid_low, analogkid_high)
 limelight = cf >> Key('d#6') >> Output('SD90_PARTA', channel=16, program=((80*128),12), volume=100)
 
 # Patch Centurion
-centurion_synth = (Velocity(fixed=110) >> 
+centurion_synth = (Velocity(fixed=110) >>
 	(
 		Output('SD90_PARTA', channel=1, program=((99*128),96), volume=110) // 
 		Output('SD90_PARTA', channel=2, program=((99*128),82), volume=110)
 	))
 
 # Patch Centurion Video
+# TODO Ajouter vp.sh dans la configuration json
 centurion_video=( System('./vp.sh /mnt/flash/live/video/centurion_silent.avi') )
 
 # Patch Centurion Hack 
 centurion_patch=(cf >> LatchNotes(True,reset='C3') >>
 	(
-		(KeyFilter('D3') >> Key('D1')) // 
-		(KeyFilter('E3') >> Key('D2')) // 
+		(KeyFilter('D3') >> Key('D1')) //
+		(KeyFilter('E3') >> Key('D2')) //
 		(KeyFilter('F3') >> Key('D3')) //
 		(KeyFilter('G3') >> Key('D4')) //
 		(KeyFilter('A3') >> Key('D5'))
@@ -169,15 +163,15 @@ closer_celesta_d4 =Velocity(fixed=100) >> Output('SD90_PARTA', channel=1, progra
 #		(Velocity(fixed=100) >> Transpose(-72) >> Output('SD90_PARTA', channel=2, program=((99*128),96), volume=80))
 #	))
 
-closer_patch_celesta_d4=(cf >> 
+closer_patch_celesta_d4=(cf >>
     (
 		(~KeyFilter(notes=[36,38,40,41,43,45])) //
-    	(KeyFilter('C1') >> Key('A5')) //
-    	(KeyFilter('D1') >> Key('B5')) //
-    	(KeyFilter('E1') >> Key('G5')) //
-    	(KeyFilter('F1') >> Key('D6')) //
-    	(KeyFilter('G1') >> Key('F5')) //
-    	(KeyFilter('A1') >> Key('C#6')) 
+        (KeyFilter('C1') >> Key('A5')) //
+        (KeyFilter('D1') >> Key('B5')) //
+        (KeyFilter('E1') >> Key('G5')) //
+        (KeyFilter('F1') >> Key('D6')) //
+        (KeyFilter('G1') >> Key('F5')) //
+        (KeyFilter('A1') >> Key('C#6'))
    ) >> closer_celesta_d4)
 
 #closer_patch_celesta_d4=(cf >> 
@@ -192,13 +186,13 @@ closer_patch_celesta_d4=(cf >>
 #   ) >> closer_celesta_d4)
 
 closer_bell_d4 = Velocity(fixed=100) >> Output('SD90_PARTA', channel=1, program=((99*128),15), volume=100)
-closer_patch_d4=(cf >> 
+closer_patch_d4=(cf >>
     (
 		(~KeyFilter(notes=[36,38,40,41,43,45])) //
-    	(KeyFilter('C1') >> Key('D4')) //
-    	(KeyFilter('E1') >> Key('A3')) //
-    	(KeyFilter('G1') >> Key('G3')) //
-    	(KeyFilter('D1') >> Key('F#3')) 
+        (KeyFilter('C1') >> Key('D4')) //
+        (KeyFilter('E1') >> Key('A3')) //
+        (KeyFilter('G1') >> Key('G3')) //
+        (KeyFilter('D1') >> Key('F#3'))
    ) >> closer_bell_d4)
 
 # YYZ
@@ -226,42 +220,3 @@ tss_d4_melo_tom_B=cf >>KeyFilter('F1') >> Key('a4') >> d4_808_tom
 
 # Son 5
 tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('f#5') >> d4_808_tom
-
-#--------------------------------------------
-# SD-90 # DRUM MAPPING
-#--------------------------------------------
-# Classical Set
-StandardSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,1))
-RoomSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,9))
-PowerSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,17))
-ElectricSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,25))
-AnalogSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,26))
-JazzSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,33))
-BrushSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,41))
-OrchestraSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,49))
-SFXSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,57))
-# Contemporary Set
-StandardSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,1))
-RoomSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,9))
-PowerSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,17))
-DanceSet=cf>>Output('SD90_PARTA',channel=10,program=(13440,25))
-RaveSet=cf>>Output('SD90_PARTA',channel=10,program=(13440,26))
-JazzSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,33))
-BrushSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,41))
-# Solo Set
-St_Standard=cf>>Output('SD90_PARTA',channel=10,program=(13568,1))
-St_Room=cf>>Output('SD90_PARTA',channel=10,program=(13568,9))
-St_Power=cf>>Output('SD90_PARTA',channel=10,program=(13568,17))
-RustSet=cf>>Output('SD90_PARTA',channel=10,program=(13568,25))
-Analog2Set=cf>>Output('SD90_PARTA',channel=10,program=(13568,26))
-St_Jazz=cf>>Output('SD90_PARTA',channel=10,program=(13568,33))
-St_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13568,41))
-# Enhanced Set
-Amb_Standard=cf>>Output('SD90_PARTA',channel=10,program=(13696,1))
-Amb_Room=cf>>Output('SD90_PARTA',channel=10,program=(13696,9))
-GatedPower=cf>>Output('SD90_PARTA',channel=10,program=(13696,17))
-TechnoSet=cf>>Output('SD90_PARTA',channel=10,program=(13696,25))
-BullySet=cf>>Output('SD90_PARTA',channel=10,program=(13696,26))
-Amb_Jazz=cf>>Output('SD90_PARTA',channel=10,program=(13696,33))
-Amb_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13696,41))
-#-------------------------------------------------------------------

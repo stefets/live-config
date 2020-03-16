@@ -4,14 +4,15 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# TODO Repenser
 cd ../src/.
 
-main="main.py"
-target=$DIR/static.py
+template="main.py"
+target="render.py"
 scenes=$1
 ctrl="$2"
 
-# Replace __TOKEN__ in main.py
+# Replace __TOKEN__ in template file
 sed \
     -e "/__FUNCTIONS__/r functions.py" \
     -e "/__FILTERS__/r filters.py" \
@@ -31,10 +32,7 @@ sed \
 	-e "/__PATCHES__/d" \
 	-e "/__SCENES__/d" \
 	-e "/__CONTROLLER__/d" \
-	$main > $target
-
-# tmp version for debug purpose
-cp $target /tmp/output.py
+	$template > $target
 
 # Start the mididings script
 python $target

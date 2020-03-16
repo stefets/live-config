@@ -12,6 +12,7 @@
 
 import os
 import glob
+import json
 from subprocess import Popen, PIPE
 from threading import Timer
 from time import sleep
@@ -24,6 +25,10 @@ from mididings.extra.osc import *
 
 #useless for a dynamic script but usefull for a static scipt
 #from mididings.extra.inotify import *
+
+# Global configuration file
+with open('config.json') as json_file:
+    configuration = json.load(json_file)
 
 config(
 
@@ -63,8 +68,160 @@ hook(
 )
 
 #-----------------------------------------------------------------------------------------------------------
+# Filters Section
+# filters.py
+#-----------------------------------------------------------------------------------------------------------
+# ALLOWED FILTERS : Available for patches, meaning, allow only for instance
+q49=ChannelFilter(1)    # Filter by hardware / channel
+pk5=ChannelFilter(2)    # Filter by hardware & channel
+fcb=ChannelFilter(9)
+hd500=ChannelFilter(9)
+gt10b=ChannelFilter(16)
+
+# By name
+ch1=ChannelFilter(1)
+ch2=ChannelFilter(2)
+ch3=ChannelFilter(3)
+ch4=ChannelFilter(4)
+ch5=ChannelFilter(5)
+ch6=ChannelFilter(6)
+ch7=ChannelFilter(7)
+ch8=ChannelFilter(8)
+ch9=ChannelFilter(9)
+ch10=ChannelFilter(10)
+ch11=ChannelFilter(11)
+ch12=ChannelFilter(12)
+ch13=ChannelFilter(13)
+ch14=ChannelFilter(14)
+ch15=ChannelFilter(15)
+ch16=ChannelFilter(16)
+
+noch1=~ChannelFilter(1)
+noch2=~ChannelFilter(2)
+noch3=~ChannelFilter(3)
+noch4=~ChannelFilter(4)
+noch5=~ChannelFilter(5)
+noch6=~ChannelFilter(6)
+noch7=~ChannelFilter(7)
+noch8=~ChannelFilter(8)
+noch9=~ChannelFilter(9)
+noch10=~ChannelFilter(10)
+noch11=~ChannelFilter(11)
+noch12=~ChannelFilter(12)
+noch13=~ChannelFilter(13)
+noch14=~ChannelFilter(14)
+noch15=~ChannelFilter(15)
+noch16=~ChannelFilter(16)
+
+# Control Filter Channel (cf)
+cf=~ChannelFilter(9)
+
+
+#-----------------------------------------------------------------------------------------------------------
+# Sound module configuration 
+#-----------------------------------------------------------------------------------------------------------
+#
+# This is the patches specific for the sound modules configuration
+#
+# EDIROL SD-90
+#
+# Reset string
+ResetSD90=SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
+
+# Configure PitchBend Sensitivity
+# SD-90 Part A - All Channel
+#      * RPN MSB/LSB 0 = PitchBendSens ****  //  ****** DataEntry 12 tone *******
+PB_A01=(Ctrl(1, 1,100,0) // Ctrl(1, 1,101,0) // Ctrl(1, 1,6,12) // Ctrl(1, 1,38,0))
+PB_A02=(Ctrl(1, 2,100,0) // Ctrl(1, 2,101,0) // Ctrl(1, 2,6,12) // Ctrl(1, 2,38,0))
+PB_A03=(Ctrl(1, 3,100,0) // Ctrl(1, 3,101,0) // Ctrl(1, 3,6,12) // Ctrl(1, 3,38,0))
+PB_A04=(Ctrl(1, 4,100,0) // Ctrl(1, 4,101,0) // Ctrl(1, 4,6,12) // Ctrl(1, 4,38,0))
+PB_A05=(Ctrl(1, 5,100,0) // Ctrl(1, 5,101,0) // Ctrl(1, 5,6,12) // Ctrl(1, 5,38,0))
+PB_A06=(Ctrl(1, 6,100,0) // Ctrl(1, 6,101,0) // Ctrl(1, 6,6,12) // Ctrl(1, 6,38,0))
+PB_A07=(Ctrl(1, 7,100,0) // Ctrl(1, 7,101,0) // Ctrl(1, 7,6,12) // Ctrl(1, 7,38,0))
+PB_A08=(Ctrl(1, 8,100,0) // Ctrl(1, 8,101,0) // Ctrl(1, 8,6,12) // Ctrl(1, 8,38,0))
+PB_A09=(Ctrl(1, 9,100,0) // Ctrl(1, 9,101,0) // Ctrl(1, 9,6,12) // Ctrl(1, 9,38,0))
+PB_A10=(Ctrl(1,10,100,0) // Ctrl(1,10,101,0) // Ctrl(1,10,6,12) // Ctrl(1,10,38,0))
+PB_A11=(Ctrl(1,11,100,0) // Ctrl(1,11,101,0) // Ctrl(1,11,6,12) // Ctrl(1,11,38,0))
+PB_A12=(Ctrl(1,12,100,0) // Ctrl(1,12,101,0) // Ctrl(1,12,6,12) // Ctrl(1,12,38,0))
+PB_A13=(Ctrl(1,13,100,0) // Ctrl(1,13,101,0) // Ctrl(1,13,6,12) // Ctrl(1,13,38,0))
+PB_A14=(Ctrl(1,14,100,0) // Ctrl(1,14,101,0) // Ctrl(1,14,6,12) // Ctrl(1,14,38,0))
+PB_A15=(Ctrl(1,15,100,0) // Ctrl(1,15,101,0) // Ctrl(1,15,6,12) // Ctrl(1,15,38,0))
+PB_A16=(Ctrl(1,16,100,0) // Ctrl(1,16,101,0) // Ctrl(1,16,6,12) // Ctrl(1,16,38,0))
+# SD-90 Part B - All Channel
+PB_B01=(Ctrl(2, 1,100,0) // Ctrl(2, 1,101,0) // Ctrl(2, 1,6,12) // Ctrl(2, 1,38,0))
+PB_B02=(Ctrl(2, 2,100,0) // Ctrl(2, 2,101,0) // Ctrl(2, 2,6,12) // Ctrl(2, 2,38,0))
+PB_B03=(Ctrl(2, 3,100,0) // Ctrl(2, 3,101,0) // Ctrl(2, 3,6,12) // Ctrl(2, 3,38,0))
+PB_B04=(Ctrl(2, 4,100,0) // Ctrl(2, 4,101,0) // Ctrl(2, 4,6,12) // Ctrl(2, 4,38,0))
+PB_B05=(Ctrl(2, 5,100,0) // Ctrl(2, 5,101,0) // Ctrl(2, 5,6,12) // Ctrl(2, 5,38,0))
+PB_B06=(Ctrl(2, 6,100,0) // Ctrl(2, 6,101,0) // Ctrl(2, 6,6,12) // Ctrl(2, 6,38,0))
+PB_B07=(Ctrl(2, 7,100,0) // Ctrl(2, 7,101,0) // Ctrl(2, 7,6,12) // Ctrl(2, 7,38,0))
+PB_B08=(Ctrl(2, 8,100,0) // Ctrl(2, 8,101,0) // Ctrl(2, 8,6,12) // Ctrl(2, 8,38,0))
+PB_B09=(Ctrl(2, 9,100,0) // Ctrl(2, 9,101,0) // Ctrl(2, 9,6,12) // Ctrl(2, 9,38,0))
+PB_B10=(Ctrl(2,10,100,0) // Ctrl(2,10,101,0) // Ctrl(2,10,6,12) // Ctrl(2,10,38,0))
+PB_B11=(Ctrl(2,11,100,0) // Ctrl(2,11,101,0) // Ctrl(2,11,6,12) // Ctrl(2,11,38,0))
+PB_B12=(Ctrl(2,12,100,0) // Ctrl(2,12,101,0) // Ctrl(2,12,6,12) // Ctrl(2,12,38,0))
+PB_B13=(Ctrl(2,13,100,0) // Ctrl(2,13,101,0) // Ctrl(2,13,6,12) // Ctrl(2,13,38,0))
+PB_B14=(Ctrl(2,14,100,0) // Ctrl(2,14,101,0) // Ctrl(2,14,6,12) // Ctrl(2,14,38,0))
+PB_B15=(Ctrl(2,15,100,0) // Ctrl(2,15,101,0) // Ctrl(2,15,6,12) // Ctrl(2,15,38,0))
+PB_B16=(Ctrl(2,16,100,0) // Ctrl(2,16,101,0) // Ctrl(2,16,6,12) // Ctrl(2,16,38,0))
+
+InitPitchBend=(
+		PB_B01 // PB_B02 // PB_B03 // PB_B04 // PB_B05 // PB_B06 // PB_B07 // PB_B08 //
+		PB_B09 // PB_B10 // PB_B11 // PB_B12 // PB_B13 // PB_B14 // PB_B15 // PB_B16 //
+		PB_A01 // PB_A02 // PB_A03 // PB_A04 // PB_A05 // PB_A06 // PB_A07 // PB_A08 //
+		PB_A09 // PB_A10 // PB_A11 // PB_A12 // PB_A13 // PB_A14 // PB_A15 // PB_A16)
+
+#--------------------------------------------
+# SD-90 # DRUM MAPPING
+#--------------------------------------------
+# Classical Set
+StandardSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,1))
+RoomSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,9))
+PowerSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,17))
+ElectricSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,25))
+AnalogSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,26))
+JazzSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,33))
+BrushSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,41))
+OrchestraSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,49))
+SFXSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,57))
+# Contemporary Set
+StandardSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,1))
+RoomSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,9))
+PowerSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,17))
+DanceSet=cf>>Output('SD90_PARTA',channel=10,program=(13440,25))
+RaveSet=cf>>Output('SD90_PARTA',channel=10,program=(13440,26))
+JazzSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,33))
+BrushSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,41))
+# Solo Set
+St_Standard=cf>>Output('SD90_PARTA',channel=10,program=(13568,1))
+St_Room=cf>>Output('SD90_PARTA',channel=10,program=(13568,9))
+St_Power=cf>>Output('SD90_PARTA',channel=10,program=(13568,17))
+RustSet=cf>>Output('SD90_PARTA',channel=10,program=(13568,25))
+Analog2Set=cf>>Output('SD90_PARTA',channel=10,program=(13568,26))
+St_Jazz=cf>>Output('SD90_PARTA',channel=10,program=(13568,33))
+St_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13568,41))
+# Enhanced Set
+Amb_Standard=cf>>Output('SD90_PARTA',channel=10,program=(13696,1))
+Amb_Room=cf>>Output('SD90_PARTA',channel=10,program=(13696,9))
+GatedPower=cf>>Output('SD90_PARTA',channel=10,program=(13696,17))
+TechnoSet=cf>>Output('SD90_PARTA',channel=10,program=(13696,25))
+BullySet=cf>>Output('SD90_PARTA',channel=10,program=(13696,26))
+Amb_Jazz=cf>>Output('SD90_PARTA',channel=10,program=(13696,33))
+Amb_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13696,41))
+
+### SD-90 Full Patch implementation 
+# TODO 
+BrushingSaw=cf >> Output('SD90_PARTA', channel=1, program=((80*128),2))
+# TODO 
+### End SD-90 Patch list
+#-------------------------------------------------------------------
+
+InitSoundModule=(ResetSD90 // InitPitchBend)
+
+#-----------------------------------------------------------------------------------------------------------
 # Functions section 
 # functions.py
+# ----------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------
 # Function and classes called by scenes
 #--------------------------------------------------------------------
@@ -76,6 +233,7 @@ class MPG123():
 
     def __init__(self):
         self.mpg123 = None
+        self.listing = configuration['listing']
 
     def __call__(self, ev):
         self.event2remote(ev)
@@ -93,16 +251,13 @@ class MPG123():
 	# Start mpg123
     def create(self):
         print "Create MPG123 instance"
-        # TODO TOKEN REPLACE __HW__
-        self.mpg123=Popen(['mpg123', '-a', 'hw:1,0', '--quiet', '--remote'], stdin=PIPE)
-        self.remote_call('silence')
+        self.mpg123 = Popen(['mpg123', '-a', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
+        self.remote('silence')
 
-        # TODO AWK script to format listing
-        self.listing = 'clear; ls -l /tmp/*.mp3'
 
     # METHODS
     # Write a command to the mpg123 process
-    def remote_call(self, cmd):
+    def remote(self, cmd):
         self.mpg123.stdin.write(cmd + '\n')
 
     #
@@ -112,7 +267,7 @@ class MPG123():
     def note2remote(self, ev):
 
         if ev.data1 > 11:
-            self.remote_call('l /tmp/{}.mp3'.format(ev.data1))
+            self.remote('l {}{}.mp3'.format(configuration['symlinks'],ev.data1))
             #Popen([self.listing], shell=True)
         # Reserved 0 to 11
         elif ev.data1 == 0:
@@ -128,33 +283,31 @@ class MPG123():
             switch_scene(current_scene()+1)
         # TODO Do better
         elif ev.data1 == 5:
-            self.remote_call('j -5 s')
+            self.remote('j -5 s')
         elif ev.data1 == 6:
-            self.remote_call('p') # Pause mpg123
+            self.remote('p') # Pause mpg123
         elif ev.data1 == 7:
-            self.remote_call('j +5 s')
+            self.remote('j +5 s')
         elif ev.data1 == 11:
             Popen([self.listing], shell=True)  # ls -l
         else:
             # Fallback
-            self.remote_call('l /tmp/' + str(ev.data1) + '.mp3')
+            self.remote('l /tmp/' + str(ev.data1) + '.mp3')
 
         ev.data2 = 0
 
         return ev
 
-    # CC to remote command
+    # Convert a MIDI CC to a remote command
     def cc2remote(self, ev):
-        # MIDI volume to mpg123 volume
+        # MIDI volume to MPG123 volume
         if ev.data1==7 and ev.data2 <= 100:
-            self.remote_call('v ' + str(ev.data2))
+            self.remote('v ' + str(ev.data2))
         # MIDI modulation to mpg123 pitch resolution 
         # TODO Check hardware to set maximum pitch
         # On RPI, I can pitch 3% before hardware limitation is reached
         #elif ev.data1==1 and ev.data2 <= 100:
-        #    self.remote_call('pitch ' + str(float(ev.data2)/100))
-
-# ----------------------------------------------------------------------------------------------------
+        #    self.remote('pitch ' + str(float(ev.data2)/100))
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
@@ -164,7 +317,7 @@ class RemoveDuplicates:
         self.prev_ev = None
         self.prev_time = 0
 
-    def __call__(self, ev): 
+    def __call__(self, ev):
         if ev.type == NOTEOFF:
             sleep(self.wait)
             return ev
@@ -173,7 +326,7 @@ class RemoveDuplicates:
         if offset >= 0.035:
             #if ev.type == NOTEON:
             #    print "+ " + str(offset)
-            r = ev 
+            r = ev
         else:
             #if ev.type == NOTEON:
             #    print "- " + str(offset)
@@ -281,56 +434,6 @@ def OnPitchbend(ev, direction):
 #---------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
-# Filters Section
-# filters.py
-#-----------------------------------------------------------------------------------------------------------
-# ALLOWED FILTERS : Available for patches, meaning, allow only for instance
-q49=ChannelFilter(1)    # Filter by hardware / channel
-pk5=ChannelFilter(2)    # Filter by hardware & channel
-fcb=ChannelFilter(9)
-hd500=ChannelFilter(9)
-gt10b=ChannelFilter(16)
-
-# By name
-ch1=ChannelFilter(1)
-ch2=ChannelFilter(2)
-ch3=ChannelFilter(3)
-ch4=ChannelFilter(4)
-ch5=ChannelFilter(5)
-ch6=ChannelFilter(6)
-ch7=ChannelFilter(7)
-ch8=ChannelFilter(8)
-ch9=ChannelFilter(9)
-ch10=ChannelFilter(10)
-ch11=ChannelFilter(11)
-ch12=ChannelFilter(12)
-ch13=ChannelFilter(13)
-ch14=ChannelFilter(14)
-ch15=ChannelFilter(15)
-ch16=ChannelFilter(16)
-
-noch1=~ChannelFilter(1)
-noch2=~ChannelFilter(2)
-noch3=~ChannelFilter(3)
-noch4=~ChannelFilter(4)
-noch5=~ChannelFilter(5)
-noch6=~ChannelFilter(6)
-noch7=~ChannelFilter(7)
-noch8=~ChannelFilter(8)
-noch9=~ChannelFilter(9)
-noch10=~ChannelFilter(10)
-noch11=~ChannelFilter(11)
-noch12=~ChannelFilter(12)
-noch13=~ChannelFilter(13)
-noch14=~ChannelFilter(14)
-noch15=~ChannelFilter(15)
-noch16=~ChannelFilter(16)
-
-# Control Filter Channel (cf)
-cf=~ChannelFilter(9)
-
-
-#-----------------------------------------------------------------------------------------------------------
 # Control section
 # control.py
 #-----------------------------------------------------------------------------------------------------------
@@ -356,8 +459,8 @@ gt10b_channel=16
 
 # Reset all
 reset=(
-	System(AllAudioOff) // Pass() // 
-	SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7') // Pass()
+	System(AllAudioOff) // Pass() //
+	ResetSD90 // Pass()
 )
 
 
@@ -393,62 +496,6 @@ d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
     #2:_pk5_controller
 #})
 #-----------------------------------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------------------
-# Sound module configuration 
-#-----------------------------------------------------------------------------------------------------------
-
-# This is the patches specific for the sound modules configuration
-
-#
-# EDIROL SD-90
-#
-# Configure PitchBend Sensitivity
-# SD-90 Part A - All Channel
-#      * RPN MSB/LSB 0 = PitchBendSens ****  //  ****** DataEntry 12 tone *******
-PB_A01=(Ctrl(1, 1,100,0) // Ctrl(1, 1,101,0) // Ctrl(1, 1,6,12) // Ctrl(1, 1,38,0))
-PB_A02=(Ctrl(1, 2,100,0) // Ctrl(1, 2,101,0) // Ctrl(1, 2,6,12) // Ctrl(1, 2,38,0))
-PB_A03=(Ctrl(1, 3,100,0) // Ctrl(1, 3,101,0) // Ctrl(1, 3,6,12) // Ctrl(1, 3,38,0))
-PB_A04=(Ctrl(1, 4,100,0) // Ctrl(1, 4,101,0) // Ctrl(1, 4,6,12) // Ctrl(1, 4,38,0))
-PB_A05=(Ctrl(1, 5,100,0) // Ctrl(1, 5,101,0) // Ctrl(1, 5,6,12) // Ctrl(1, 5,38,0))
-PB_A06=(Ctrl(1, 6,100,0) // Ctrl(1, 6,101,0) // Ctrl(1, 6,6,12) // Ctrl(1, 6,38,0))
-PB_A07=(Ctrl(1, 7,100,0) // Ctrl(1, 7,101,0) // Ctrl(1, 7,6,12) // Ctrl(1, 7,38,0))
-PB_A08=(Ctrl(1, 8,100,0) // Ctrl(1, 8,101,0) // Ctrl(1, 8,6,12) // Ctrl(1, 8,38,0))
-PB_A09=(Ctrl(1, 9,100,0) // Ctrl(1, 9,101,0) // Ctrl(1, 9,6,12) // Ctrl(1, 9,38,0))
-PB_A10=(Ctrl(1,10,100,0) // Ctrl(1,10,101,0) // Ctrl(1,10,6,12) // Ctrl(1,10,38,0))
-PB_A11=(Ctrl(1,11,100,0) // Ctrl(1,11,101,0) // Ctrl(1,11,6,12) // Ctrl(1,11,38,0))
-PB_A12=(Ctrl(1,12,100,0) // Ctrl(1,12,101,0) // Ctrl(1,12,6,12) // Ctrl(1,12,38,0))
-PB_A13=(Ctrl(1,13,100,0) // Ctrl(1,13,101,0) // Ctrl(1,13,6,12) // Ctrl(1,13,38,0))
-PB_A14=(Ctrl(1,14,100,0) // Ctrl(1,14,101,0) // Ctrl(1,14,6,12) // Ctrl(1,14,38,0))
-PB_A15=(Ctrl(1,15,100,0) // Ctrl(1,15,101,0) // Ctrl(1,15,6,12) // Ctrl(1,15,38,0))
-PB_A16=(Ctrl(1,16,100,0) // Ctrl(1,16,101,0) // Ctrl(1,16,6,12) // Ctrl(1,16,38,0))
-# SD-90 Part B - All Channel
-PB_B01=(Ctrl(2, 1,100,0) // Ctrl(2, 1,101,0) // Ctrl(2, 1,6,12) // Ctrl(2, 1,38,0))
-PB_B02=(Ctrl(2, 2,100,0) // Ctrl(2, 2,101,0) // Ctrl(2, 2,6,12) // Ctrl(2, 2,38,0))
-PB_B03=(Ctrl(2, 3,100,0) // Ctrl(2, 3,101,0) // Ctrl(2, 3,6,12) // Ctrl(2, 3,38,0))
-PB_B04=(Ctrl(2, 4,100,0) // Ctrl(2, 4,101,0) // Ctrl(2, 4,6,12) // Ctrl(2, 4,38,0))
-PB_B05=(Ctrl(2, 5,100,0) // Ctrl(2, 5,101,0) // Ctrl(2, 5,6,12) // Ctrl(2, 5,38,0))
-PB_B06=(Ctrl(2, 6,100,0) // Ctrl(2, 6,101,0) // Ctrl(2, 6,6,12) // Ctrl(2, 6,38,0))
-PB_B07=(Ctrl(2, 7,100,0) // Ctrl(2, 7,101,0) // Ctrl(2, 7,6,12) // Ctrl(2, 7,38,0))
-PB_B08=(Ctrl(2, 8,100,0) // Ctrl(2, 8,101,0) // Ctrl(2, 8,6,12) // Ctrl(2, 8,38,0))
-PB_B09=(Ctrl(2, 9,100,0) // Ctrl(2, 9,101,0) // Ctrl(2, 9,6,12) // Ctrl(2, 9,38,0))
-PB_B10=(Ctrl(2,10,100,0) // Ctrl(2,10,101,0) // Ctrl(2,10,6,12) // Ctrl(2,10,38,0))
-PB_B11=(Ctrl(2,11,100,0) // Ctrl(2,11,101,0) // Ctrl(2,11,6,12) // Ctrl(2,11,38,0))
-PB_B12=(Ctrl(2,12,100,0) // Ctrl(2,12,101,0) // Ctrl(2,12,6,12) // Ctrl(2,12,38,0))
-PB_B13=(Ctrl(2,13,100,0) // Ctrl(2,13,101,0) // Ctrl(2,13,6,12) // Ctrl(2,13,38,0))
-PB_B14=(Ctrl(2,14,100,0) // Ctrl(2,14,101,0) // Ctrl(2,14,6,12) // Ctrl(2,14,38,0))
-PB_B15=(Ctrl(2,15,100,0) // Ctrl(2,15,101,0) // Ctrl(2,15,6,12) // Ctrl(2,15,38,0))
-PB_B16=(Ctrl(2,16,100,0) // Ctrl(2,16,101,0) // Ctrl(2,16,6,12) // Ctrl(2,16,38,0))
-
-InitPitchBend=(
-		PB_B01 // PB_B02 // PB_B03 // PB_B04 // PB_B05 // PB_B06 // PB_B07 // PB_B08 //
-		PB_B09 // PB_B10 // PB_B11 // PB_B12 // PB_B13 // PB_B14 // PB_B15 // PB_B16 //
-		PB_A01 // PB_A02 // PB_A03 // PB_A04 // PB_A05 // PB_A06 // PB_A07 // PB_A08 //
-		PB_A09 // PB_A10 // PB_A11 // PB_A12 // PB_A13 // PB_A14 // PB_A15 // PB_A16)
-
-InitSoundModule=(
-	SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7') // 
-	InitPitchBend)
 
 #-----------------------------------------------------------------------------------------------------------
 # HD500 configuration
@@ -1134,13 +1181,6 @@ portamento_off=(portamento_base // portamento_off)
 d4=cf >> Output('SD90_PARTA', channel=10, program=1, volume=100)
 d4_tom=cf >> Output('SD90_PARTA', channel=11, program=((96*128)+1,118), volume=100)
 
-### SD-90 Full Patch implementation
-
-BrushingSaw=cf >> Output('SD90_PARTA', channel=1, program=((80*128),2))
-
-### End SD-90 Patch list
-
-
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('SD90_PARTA', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
@@ -1183,8 +1223,8 @@ marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=80) >>
 
 	) >> Transpose(-24) >> Output('SD90_PARTA', channel=4, program=((96*128)+1,51), volume=100, ctrls={93:75, 91:75}))
 
-marathon_bridge=(q49 >> 
-	( 
+marathon_bridge=(q49 >>
+	(
 		(KeyFilter('c2') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('e2') >> Key('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
 		(KeyFilter('d2') >> Key('e3') >> Harmonize('e','major',['unison', 'third', 'fifth']))  
@@ -1192,7 +1232,7 @@ marathon_bridge=(q49 >>
 
 # Solo bridge, lower -12
 marathon_bridge_lower=(q49 >>
-	( 
+	(
 		(KeyFilter('c1') >> Key('b1') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('d1') >> Key('e1') >> Harmonize('e','major',['third', 'fifth'])) //
 		(KeyFilter('e1') >> Key('f#2') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ]))
@@ -1250,20 +1290,21 @@ analogkid_main = cf >> KeySplit('f3', analogkid_low, analogkid_high)
 limelight = cf >> Key('d#6') >> Output('SD90_PARTA', channel=16, program=((80*128),12), volume=100)
 
 # Patch Centurion
-centurion_synth = (Velocity(fixed=110) >> 
+centurion_synth = (Velocity(fixed=110) >>
 	(
 		Output('SD90_PARTA', channel=1, program=((99*128),96), volume=110) // 
 		Output('SD90_PARTA', channel=2, program=((99*128),82), volume=110)
 	))
 
 # Patch Centurion Video
+# TODO Ajouter vp.sh dans la configuration json
 centurion_video=( System('./vp.sh /mnt/flash/live/video/centurion_silent.avi') )
 
 # Patch Centurion Hack 
 centurion_patch=(cf >> LatchNotes(True,reset='C3') >>
 	(
-		(KeyFilter('D3') >> Key('D1')) // 
-		(KeyFilter('E3') >> Key('D2')) // 
+		(KeyFilter('D3') >> Key('D1')) //
+		(KeyFilter('E3') >> Key('D2')) //
 		(KeyFilter('F3') >> Key('D3')) //
 		(KeyFilter('G3') >> Key('D4')) //
 		(KeyFilter('A3') >> Key('D5'))
@@ -1279,15 +1320,15 @@ closer_celesta_d4 =Velocity(fixed=100) >> Output('SD90_PARTA', channel=1, progra
 #		(Velocity(fixed=100) >> Transpose(-72) >> Output('SD90_PARTA', channel=2, program=((99*128),96), volume=80))
 #	))
 
-closer_patch_celesta_d4=(cf >> 
+closer_patch_celesta_d4=(cf >>
     (
 		(~KeyFilter(notes=[36,38,40,41,43,45])) //
-    	(KeyFilter('C1') >> Key('A5')) //
-    	(KeyFilter('D1') >> Key('B5')) //
-    	(KeyFilter('E1') >> Key('G5')) //
-    	(KeyFilter('F1') >> Key('D6')) //
-    	(KeyFilter('G1') >> Key('F5')) //
-    	(KeyFilter('A1') >> Key('C#6')) 
+        (KeyFilter('C1') >> Key('A5')) //
+        (KeyFilter('D1') >> Key('B5')) //
+        (KeyFilter('E1') >> Key('G5')) //
+        (KeyFilter('F1') >> Key('D6')) //
+        (KeyFilter('G1') >> Key('F5')) //
+        (KeyFilter('A1') >> Key('C#6'))
    ) >> closer_celesta_d4)
 
 #closer_patch_celesta_d4=(cf >> 
@@ -1302,13 +1343,13 @@ closer_patch_celesta_d4=(cf >>
 #   ) >> closer_celesta_d4)
 
 closer_bell_d4 = Velocity(fixed=100) >> Output('SD90_PARTA', channel=1, program=((99*128),15), volume=100)
-closer_patch_d4=(cf >> 
+closer_patch_d4=(cf >>
     (
 		(~KeyFilter(notes=[36,38,40,41,43,45])) //
-    	(KeyFilter('C1') >> Key('D4')) //
-    	(KeyFilter('E1') >> Key('A3')) //
-    	(KeyFilter('G1') >> Key('G3')) //
-    	(KeyFilter('D1') >> Key('F#3')) 
+        (KeyFilter('C1') >> Key('D4')) //
+        (KeyFilter('E1') >> Key('A3')) //
+        (KeyFilter('G1') >> Key('G3')) //
+        (KeyFilter('D1') >> Key('F#3'))
    ) >> closer_bell_d4)
 
 # YYZ
@@ -1337,53 +1378,11 @@ tss_d4_melo_tom_B=cf >>KeyFilter('F1') >> Key('a4') >> d4_808_tom
 # Son 5
 tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
-#--------------------------------------------
-# SD-90 # DRUM MAPPING
-#--------------------------------------------
-# Classical Set
-StandardSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,1))
-RoomSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,9))
-PowerSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,17))
-ElectricSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,25))
-AnalogSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,26))
-JazzSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,33))
-BrushSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,41))
-OrchestraSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,49))
-SFXSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,57))
-# Contemporary Set
-StandardSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,1))
-RoomSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,9))
-PowerSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,17))
-DanceSet=cf>>Output('SD90_PARTA',channel=10,program=(13440,25))
-RaveSet=cf>>Output('SD90_PARTA',channel=10,program=(13440,26))
-JazzSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,33))
-BrushSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,41))
-# Solo Set
-St_Standard=cf>>Output('SD90_PARTA',channel=10,program=(13568,1))
-St_Room=cf>>Output('SD90_PARTA',channel=10,program=(13568,9))
-St_Power=cf>>Output('SD90_PARTA',channel=10,program=(13568,17))
-RustSet=cf>>Output('SD90_PARTA',channel=10,program=(13568,25))
-Analog2Set=cf>>Output('SD90_PARTA',channel=10,program=(13568,26))
-St_Jazz=cf>>Output('SD90_PARTA',channel=10,program=(13568,33))
-St_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13568,41))
-# Enhanced Set
-Amb_Standard=cf>>Output('SD90_PARTA',channel=10,program=(13696,1))
-Amb_Room=cf>>Output('SD90_PARTA',channel=10,program=(13696,9))
-GatedPower=cf>>Output('SD90_PARTA',channel=10,program=(13696,17))
-TechnoSet=cf>>Output('SD90_PARTA',channel=10,program=(13696,25))
-BullySet=cf>>Output('SD90_PARTA',channel=10,program=(13696,26))
-Amb_Jazz=cf>>Output('SD90_PARTA',channel=10,program=(13696,33))
-Amb_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13696,41))
-#-------------------------------------------------------------------
-
 #-----------------------------------------------------------------------------------------------------------
 # Scenes region
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=InitSoundModule, patch=piano_base),
-    # No impact filter to break all events
-    2: Scene("Mp3PianoPlayer", Filter(SYSRT_RESET))
-    #2: Scene("Mp3PianoPlayer", Pass())
+    1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
 }
 #-----------------------------------------------------------------------------------------------------------
 

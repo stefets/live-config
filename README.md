@@ -9,7 +9,7 @@
 
 # Notes
 * Script entry point is /bin/start.sh
-* Check bin/static.py for the final script after replacing tokens with subscripts
+* Check src/render.py for the final script after replacing tokens with subscripts
 
 # Mididings documentation
 * http://dsacre.github.io/mididings/doc/

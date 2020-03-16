@@ -36,7 +36,7 @@ function process()
                 mkdir -p $target
 			fi
 			/bin/bash $DIR/mklink.sh $target $soundlib
-			/bin/bash $DIR/execute.sh mp3_piano_player.py /tmp/selected_controller
+			/bin/bash $DIR/execute.sh empty.py /tmp/selected_controller
 			break
 			;;
 		1 )	

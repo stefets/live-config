@@ -21,8 +21,8 @@ gt10b_channel=16
 
 # Reset all
 reset=(
-	System(AllAudioOff) // Pass() // 
-	SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7') // Pass()
+	System(AllAudioOff) // Pass() //
+	ResetSD90 // Pass()
 )
 
 

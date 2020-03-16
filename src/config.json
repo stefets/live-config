@@ -2,5 +2,6 @@
   "hw" : "hw:1,0",
   "mp3" : "/mnt/flash/music/soundlib/mp3/",
   "midi" : "/mnt/flash/music/soundlib/midi/",
-  "symlinks" : "/tmp/"
+  "symlinks" : "/tmp/",
+  "listing" : "clear; ls -l /tmp/*.mp3"
 }

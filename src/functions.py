@@ -1,3 +1,4 @@
+# ----------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------
 # Function and classes called by scenes
 #--------------------------------------------------------------------
@@ -9,6 +10,7 @@ class MPG123():
 
     def __init__(self):
         self.mpg123 = None
+        self.listing = configuration['listing']
 
     def __call__(self, ev):
         self.event2remote(ev)
@@ -26,16 +28,13 @@ class MPG123():
 	# Start mpg123
     def create(self):
         print "Create MPG123 instance"
-        # TODO TOKEN REPLACE __HW__
-        self.mpg123=Popen(['mpg123', '-a', 'hw:1,0', '--quiet', '--remote'], stdin=PIPE)
-        self.remote_call('silence')
+        self.mpg123 = Popen(['mpg123', '-a', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
+        self.remote('silence')
 
-        # TODO AWK script to format listing
-        self.listing = 'clear; ls -l /tmp/*.mp3'
 
     # METHODS
     # Write a command to the mpg123 process
-    def remote_call(self, cmd):
+    def remote(self, cmd):
         self.mpg123.stdin.write(cmd + '\n')
 
     #
@@ -45,7 +44,7 @@ class MPG123():
     def note2remote(self, ev):
 
         if ev.data1 > 11:
-            self.remote_call('l /tmp/{}.mp3'.format(ev.data1))
+            self.remote('l {}{}.mp3'.format(configuration['symlinks'],ev.data1))
             #Popen([self.listing], shell=True)
         # Reserved 0 to 11
         elif ev.data1 == 0:
@@ -61,33 +60,31 @@ class MPG123():
             switch_scene(current_scene()+1)
         # TODO Do better
         elif ev.data1 == 5:
-            self.remote_call('j -5 s')
+            self.remote('j -5 s')
         elif ev.data1 == 6:
-            self.remote_call('p') # Pause mpg123
+            self.remote('p') # Pause mpg123
         elif ev.data1 == 7:
-            self.remote_call('j +5 s')
+            self.remote('j +5 s')
         elif ev.data1 == 11:
             Popen([self.listing], shell=True)  # ls -l
         else:
             # Fallback
-            self.remote_call('l /tmp/' + str(ev.data1) + '.mp3')
+            self.remote('l /tmp/' + str(ev.data1) + '.mp3')
 
         ev.data2 = 0
 
         return ev
 
-    # CC to remote command
+    # Convert a MIDI CC to a remote command
     def cc2remote(self, ev):
-        # MIDI volume to mpg123 volume
+        # MIDI volume to MPG123 volume
         if ev.data1==7 and ev.data2 <= 100:
-            self.remote_call('v ' + str(ev.data2))
+            self.remote('v ' + str(ev.data2))
         # MIDI modulation to mpg123 pitch resolution 
         # TODO Check hardware to set maximum pitch
         # On RPI, I can pitch 3% before hardware limitation is reached
         #elif ev.data1==1 and ev.data2 <= 100:
-        #    self.remote_call('pitch ' + str(float(ev.data2)/100))
-
-# ----------------------------------------------------------------------------------------------------
+        #    self.remote('pitch ' + str(float(ev.data2)/100))
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
@@ -97,7 +94,7 @@ class RemoveDuplicates:
         self.prev_ev = None
         self.prev_time = 0
 
-    def __call__(self, ev): 
+    def __call__(self, ev):
         if ev.type == NOTEOFF:
             sleep(self.wait)
             return ev
@@ -106,7 +103,7 @@ class RemoveDuplicates:
         if offset >= 0.035:
             #if ev.type == NOTEON:
             #    print "+ " + str(offset)
-            r = ev 
+            r = ev
         else:
             #if ev.type == NOTEON:
             #    print "- " + str(offset)
