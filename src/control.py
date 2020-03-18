@@ -40,8 +40,11 @@ fcb1010=(Filter(CTRL) >> CtrlSplit({
 }))
 
 # KEYBOARD CONTROLLER - Alesis Q49 
-# Transpose -36 to work from note 0 49
-keyboard=(Filter(NOTEON|CTRL) >> Transpose(-36) >> Process(MPG123()))
+# Accept Volume and Note on
+keyboard=(
+            (CtrlFilter(7) >> CtrlValueFilter(0,101)) //
+            (Filter(NOTEON) >> Transpose(-36))
+        ) >> Call(MPG123())
 
 # PK5 as Controller - WIP
 _pk5_controller = Pass()

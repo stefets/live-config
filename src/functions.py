@@ -4,21 +4,37 @@
 #--------------------------------------------------------------------
 #
 # This class control mpg123 in remote mode with a keyboard (or any other midi devices of your choice)
-# when NOTON or CTRL event is received in the __call__ function
+# when (actually) NOTEON or CTRL event type is received in the __call__ function
 #
 # It's inspired of the 'song trigger keyboard' of the Quebec TV Show 'Tout le monde en parle'
 #
 class MPG123():
     def __init__(self):
-        self.mpg123 = Popen(['mpg123', '-a', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
+        self.mpg123 = Popen(['mpg123', '--audiodevice', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
         self.write('silence')
-        self.listing = configuration['listing']
+        self.ctrl_mapping = {
+            7 : self.volume,
+        }
+        self.note_mapping = {
+            0 : self.prev_scene,
+            1 : self.prev_subscene,
+            2 : self.free,
+            3 : self.next_subscene,
+            4 : self.next_scene,
+            5 : self.rewind,
+            6 : self.pause,
+            7 : self.forward,
+            8 : self.free,
+            9 : self.free,
+            10 : self.free,
+            11 : self.list_files,
+        }
 
     def __del__(self):
         self.mpg123.terminate()
 
     def __call__(self, ev):
-        self.handle_note(ev) if ev.type == NOTEON else self.handle_control_change(ev)
+        self.handle_control_change(ev) if ev.type == CTRL else self.handle_note(ev)
 
     # 
     # Write a command to the mpg123 process
@@ -27,52 +43,44 @@ class MPG123():
         self.mpg123.stdin.write(cmd + '\n')
 
     #
-    # Note to remote command
-    # Convert note number to switch scene or send a remote command to mpg123
+    # Play a file or invoke a method defined in a dict
     #
     def handle_note(self, ev):
+        self.play(ev.data1) if ev.data1 >= 12 else self.note_mapping[ev.data1]()
 
-        if ev.data1 >= 12:
-            self.write('l {}{}.mp3'.format(configuration['symlinks'],ev.data1))
-        # Reserved 0 to 11
-        elif ev.data1 == 0:
-            switch_scene(current_scene()-1)
-        elif ev.data1 == 1:
-            switch_subscene(current_subscene()-1)
-        # TODO Free
-        elif ev.data1 == 2:
-            pass
-        elif ev.data1 == 3:
-            switch_subscene(current_subscene()+1)
-        elif ev.data1 == 4:
-            switch_scene(current_scene()+1)
-        # TODO Do better
-        elif ev.data1 == 5:
-            self.write('j -5 s')
-        elif ev.data1 == 6:
-            self.write('p') # Pause mpg123
-        elif ev.data1 == 7:
-            self.write('j +5 s')
-        elif ev.data1 == 11:
-            Popen([self.listing], shell=True)  # ls -l
-        else:
-            # Fallback
-            self.write('l /tmp/' + str(ev.data1) + '.mp3')
-
-        ev.data2 = 0
-
-        return ev
-
-    # Convert a MIDI CC to a remote command
+    #
+    # Convert a MIDI CC to a remote command defined in a dict
+    #
     def handle_control_change(self, ev):
-        # MIDI volume to MPG123 volume
-        if ev.data1==7 and ev.data2 <= 100:
-            self.write('v ' + str(ev.data2))
-        # MIDI modulation to mpg123 pitch resolution 
-        # TODO Check hardware to set maximum pitch
-        # On RPI, I can pitch 3% before hardware limitation is reached
-        #elif ev.data1==1 and ev.data2 <= 100:
-        #    self.write('pitch ' + str(float(ev.data2)/100))
+        self.ctrl_mapping[ev.data1](ev.data2)
+
+    #
+    # dict values command functions
+    #
+    def free(self):
+        pass
+    def next_scene(self):
+        switch_scene(current_scene()+1)
+    def prev_scene(self):
+        switch_scene(current_scene()-1)
+    def next_subscene(self):
+        switch_subscene(current_subscene()+1)
+    def prev_subscene(self):
+        switch_subscene(current_subscene()-1)
+    def play(self, id):
+        self.write('l {}{}.mp3'.format(configuration['symlinks'],id))
+    def pause(self):
+        self.write('p') # Pause mpg123
+    def forward(self):
+        self.jump('+5 s')
+    def rewind(self):
+        self.jump('-5 s')
+    def jump(self, offset):
+        self.write('j ' + offset)
+    def volume(self, value):
+        self.write('v {}'.format(value))
+    def list_files(self):
+        Popen([configuration['listing']], shell=True)  # ls -l
 
 # END MPG123() CLASS
 
