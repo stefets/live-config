@@ -39,8 +39,9 @@ fcb1010=(Filter(CTRL) >> CtrlSplit({
     22: reset,
 }))
 
-# KEYBOARD CONTROLLER - WIP
-keyboard=(Filter(NOTEON|CTRL) >> Process(MPG123()))
+# KEYBOARD CONTROLLER - Alesis Q49 
+# Transpose -36 to work from note 0 49
+keyboard=(Filter(NOTEON|CTRL) >> Transpose(-36) >> Process(MPG123()))
 
 # PK5 as Controller - WIP
 _pk5_controller = Pass()

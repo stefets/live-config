@@ -50,7 +50,7 @@ config(
  ],
 
     in_ports = [
-        ('Q49_MIDI_IN_1', '20:0',),  # Alesis Q49 in USB MODE
+        ('Q49_MIDI_IN_1', '24:0',),  # Alesis Q49 in USB MODE
         ('SD90_MIDI_IN_1','20:2',),  # Edirol SD-90 MIDI IN 1
         ('SD90_MIDI_IN_2','20:3',)   # Edirol SD-90 MIDI IN 2
  ],
@@ -76,48 +76,36 @@ hook(
 #--------------------------------------------------------------------
 #
 # This class control mpg123 in remote mode with a keyboard (or any other midi devices of your choice)
+# when NOTON or CTRL event is received in the __call__ function
+#
 # It's inspired of the 'song trigger keyboard' of the Quebec TV Show 'Tout le monde en parle'
 #
 class MPG123():
-
     def __init__(self):
-        self.mpg123 = None
+        self.mpg123 = Popen(['mpg123', '-a', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
+        self.write('silence')
         self.listing = configuration['listing']
 
+    def __del__(self):
+        self.mpg123.terminate()
+
     def __call__(self, ev):
-        self.event2remote(ev)
+        self.handle_note(ev) if ev.type == NOTEON else self.handle_control_change(ev)
 
-    def event2remote(self, ev):
-
-        if self.mpg123 == None:
-            self.create()
-
-        if ev.type == NOTEON:
-            self.note2remote(ev)
-        elif ev.type == CTRL:
-            self.cc2remote(ev)
-
-	# Start mpg123
-    def create(self):
-        print "Create MPG123 instance"
-        self.mpg123 = Popen(['mpg123', '-a', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
-        self.remote('silence')
-
-
-    # METHODS
+    # 
     # Write a command to the mpg123 process
-    def remote(self, cmd):
+    #
+    def write(self, cmd):
         self.mpg123.stdin.write(cmd + '\n')
 
     #
     # Note to remote command
     # Convert note number to switch scene or send a remote command to mpg123
     #
-    def note2remote(self, ev):
+    def handle_note(self, ev):
 
         if ev.data1 > 11:
-            self.remote('l {}{}.mp3'.format(configuration['symlinks'],ev.data1))
-            #Popen([self.listing], shell=True)
+            self.write('l {}{}.mp3'.format(configuration['symlinks'],ev.data1))
         # Reserved 0 to 11
         elif ev.data1 == 0:
             switch_scene(current_scene()-1)
@@ -132,31 +120,34 @@ class MPG123():
             switch_scene(current_scene()+1)
         # TODO Do better
         elif ev.data1 == 5:
-            self.remote('j -5 s')
+            self.write('j -5 s')
         elif ev.data1 == 6:
-            self.remote('p') # Pause mpg123
+            self.write('p') # Pause mpg123
         elif ev.data1 == 7:
-            self.remote('j +5 s')
+            self.write('j +5 s')
         elif ev.data1 == 11:
             Popen([self.listing], shell=True)  # ls -l
         else:
             # Fallback
-            self.remote('l /tmp/' + str(ev.data1) + '.mp3')
+            self.write('l /tmp/' + str(ev.data1) + '.mp3')
 
         ev.data2 = 0
 
         return ev
 
     # Convert a MIDI CC to a remote command
-    def cc2remote(self, ev):
+    def handle_control_change(self, ev):
         # MIDI volume to MPG123 volume
         if ev.data1==7 and ev.data2 <= 100:
-            self.remote('v ' + str(ev.data2))
+            self.write('v ' + str(ev.data2))
         # MIDI modulation to mpg123 pitch resolution 
         # TODO Check hardware to set maximum pitch
         # On RPI, I can pitch 3% before hardware limitation is reached
         #elif ev.data1==1 and ev.data2 <= 100:
-        #    self.remote('pitch ' + str(float(ev.data2)/100))
+        #    self.write('pitch ' + str(float(ev.data2)/100))
+
+# END MPG123() CLASS
+
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
@@ -1126,8 +1117,9 @@ fcb1010=(Filter(CTRL) >> CtrlSplit({
     22: reset,
 }))
 
-# KEYBOARD CONTROLLER - WIP
-keyboard=(Filter(NOTEON|CTRL) >> Process(MPG123()))
+# KEYBOARD CONTROLLER - Alesis Q49 
+# Transpose -36 to work from note 0 49
+keyboard=(Filter(NOTEON|CTRL) >> Transpose(-36) >> Process(MPG123()))
 
 # PK5 as Controller - WIP
 _pk5_controller = Pass()
