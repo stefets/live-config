@@ -13,7 +13,7 @@
 import os
 import glob
 import json
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, check_call
 from threading import Timer
 from time import sleep
 from mididings import *
@@ -63,7 +63,7 @@ hook(
     #AutoRestart(), #AutoRestart works with mididings.extra.inotify
 
     #OSCInterface(port=56418, notify_ports=[56419,56420]),
-    OSCInterface(port=56418, notify_ports=56419),
+    #OSCInterface(port=56418, notify_ports=56419),
     #OSCInterface(),
 )
 

@@ -13,7 +13,7 @@
 import os
 import glob
 import json
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, check_call
 from threading import Timer
 from time import sleep
 from mididings import *
@@ -63,7 +63,7 @@ hook(
     #AutoRestart(), #AutoRestart works with mididings.extra.inotify
 
     #OSCInterface(port=56418, notify_ports=[56419,56420]),
-    OSCInterface(port=56418, notify_ports=56419),
+    #OSCInterface(port=56418, notify_ports=56419),
     #OSCInterface(),
 )
 
@@ -131,16 +131,26 @@ class MPG123():
     #
     def free(self):
         pass
+
+    # Scenes navigation
     def next_scene(self):
-        switch_scene(current_scene()+1)
+        ns = current_scene()+1
+        switch_scene(ns)
+        source = configuration['albums'] + scenes()[ns][0]
+        target = configuration['symlink-target']
+        check_call(['./create-symlinks.sh', source, target]) 
+
     def prev_scene(self):
         switch_scene(current_scene()-1)
+
     def next_subscene(self):
         switch_subscene(current_subscene()+1)
     def prev_subscene(self):
         switch_subscene(current_subscene()-1)
+
+    # Mpg 123 remote call
     def play(self, id):
-        self.write('l {}{}.mp3'.format(configuration['symlinks'],id))
+        self.write('l {}{}.mp3'.format(configuration['symlink-target'],id))
     def pause(self):
         self.write('p') # Pause mpg123
     def forward(self):
@@ -151,6 +161,8 @@ class MPG123():
         self.write('j ' + offset)
     def volume(self, value):
         self.write('v {}'.format(value))
+
+    # Tools
     def list_files(self):
         Popen([configuration['listing']], shell=True)  # ls -l
 
@@ -1381,6 +1393,13 @@ tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
+    2: Scene("bass_cover", patch=Discard()),
+    3: Scene("demon", patch=Discard()),
+    4: Scene("styx", patch=Discard()),
+    5: Scene("tabarnac", patch=Discard()),
+    6: Scene("timeline", patch=Discard()),
+    7: Scene("system", patch=Discard()),
+    8: Scene("rush_cover", patch=Discard()),
 }
 #-----------------------------------------------------------------------------------------------------------
 

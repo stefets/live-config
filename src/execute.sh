@@ -4,9 +4,6 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# TODO Repenser
-cd ../src/.
-
 template="main.py"
 target="render.py"
 sceneFileName="./scenes/$1"

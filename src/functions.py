@@ -59,16 +59,26 @@ class MPG123():
     #
     def free(self):
         pass
+
+    # Scenes navigation
     def next_scene(self):
-        switch_scene(current_scene()+1)
+        ns = current_scene()+1
+        switch_scene(ns)
+        source = configuration['albums'] + scenes()[ns][0]
+        target = configuration['symlink-target']
+        check_call(['./create-symlinks.sh', source, target]) 
+
     def prev_scene(self):
         switch_scene(current_scene()-1)
+
     def next_subscene(self):
         switch_subscene(current_subscene()+1)
     def prev_subscene(self):
         switch_subscene(current_subscene()-1)
+
+    # Mpg 123 remote call
     def play(self, id):
-        self.write('l {}{}.mp3'.format(configuration['symlinks'],id))
+        self.write('l {}{}.mp3'.format(configuration['symlink-target'],id))
     def pause(self):
         self.write('p') # Pause mpg123
     def forward(self):
@@ -79,6 +89,8 @@ class MPG123():
         self.write('j ' + offset)
     def volume(self, value):
         self.write('v {}'.format(value))
+
+    # Tools
     def list_files(self):
         Popen([configuration['listing']], shell=True)  # ls -l
 
