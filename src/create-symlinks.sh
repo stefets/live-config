@@ -2,9 +2,9 @@
 #
 # Create/overwrite a symlink in $target directory for each mp3 file found by find in the $origin directory
 #
-
 origin=$1
 target=$2
+rm $target/*.mp3
 
 # Optional album theme reserved at note 12
 theme=$origin/theme.mp3
