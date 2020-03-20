@@ -8,7 +8,7 @@
 * FCB1010 with UNO Chip to control either Mididings, POD or GT10
 
 # Notes
-* Script entry point is /bin/start.sh
+* Script entry point is /src/start.sh
 * Check src/render.py for the final script after replacing tokens with subscripts
 
 # Mididings documentation
