@@ -1,9 +1,11 @@
-
+#
 # This is the patches specific for the sound modules configuration
-
 #
 # EDIROL SD-90
 #
+# Reset string
+ResetSD90=SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
+
 # Configure PitchBend Sensitivity
 # SD-90 Part A - All Channel
 #      * RPN MSB/LSB 0 = PitchBendSens ****  //  ****** DataEntry 12 tone *******
@@ -47,6 +49,49 @@ InitPitchBend=(
 		PB_A01 // PB_A02 // PB_A03 // PB_A04 // PB_A05 // PB_A06 // PB_A07 // PB_A08 //
 		PB_A09 // PB_A10 // PB_A11 // PB_A12 // PB_A13 // PB_A14 // PB_A15 // PB_A16)
 
-InitSoundModule=(
-	SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7') // 
-	InitPitchBend)
+#--------------------------------------------
+# SD-90 # DRUM MAPPING
+#--------------------------------------------
+# Classical Set
+StandardSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,1))
+RoomSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,9))
+PowerSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,17))
+ElectricSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,25))
+AnalogSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,26))
+JazzSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,33))
+BrushSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,41))
+OrchestraSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,49))
+SFXSet=cf>>Output('SD90_PARTA',channel=10,program=(13312,57))
+# Contemporary Set
+StandardSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,1))
+RoomSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,9))
+PowerSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,17))
+DanceSet=cf>>Output('SD90_PARTA',channel=10,program=(13440,25))
+RaveSet=cf>>Output('SD90_PARTA',channel=10,program=(13440,26))
+JazzSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,33))
+BrushSet2=cf>>Output('SD90_PARTA',channel=10,program=(13440,41))
+# Solo Set
+St_Standard=cf>>Output('SD90_PARTA',channel=10,program=(13568,1))
+St_Room=cf>>Output('SD90_PARTA',channel=10,program=(13568,9))
+St_Power=cf>>Output('SD90_PARTA',channel=10,program=(13568,17))
+RustSet=cf>>Output('SD90_PARTA',channel=10,program=(13568,25))
+Analog2Set=cf>>Output('SD90_PARTA',channel=10,program=(13568,26))
+St_Jazz=cf>>Output('SD90_PARTA',channel=10,program=(13568,33))
+St_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13568,41))
+# Enhanced Set
+Amb_Standard=cf>>Output('SD90_PARTA',channel=10,program=(13696,1))
+Amb_Room=cf>>Output('SD90_PARTA',channel=10,program=(13696,9))
+GatedPower=cf>>Output('SD90_PARTA',channel=10,program=(13696,17))
+TechnoSet=cf>>Output('SD90_PARTA',channel=10,program=(13696,25))
+BullySet=cf>>Output('SD90_PARTA',channel=10,program=(13696,26))
+Amb_Jazz=cf>>Output('SD90_PARTA',channel=10,program=(13696,33))
+Amb_Brush=cf>>Output('SD90_PARTA',channel=10,program=(13696,41))
+
+### SD-90 Full Patch implementation 
+# TODO 
+BrushingSaw=cf >> Output('SD90_PARTA', channel=1, program=((80*128),2))
+# TODO 
+### End SD-90 Patch list
+#-------------------------------------------------------------------
+
+InitSoundModule=(ResetSD90 // InitPitchBend)

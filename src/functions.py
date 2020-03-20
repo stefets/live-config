@@ -1,104 +1,115 @@
+# ----------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------
 # Function and classes called by scenes
 #--------------------------------------------------------------------
 #
 # This class control mpg123 in remote mode with a keyboard (or any other midi devices of your choice)
-# It's an embedded clone of the 'keyboard song trigger' of the Quebec TV Show 'Tout le monde en parle'
+# when (actually) NOTEON or CTRL event type is received in the __call__ function
+#
+# It's inspired of the 'song trigger keyboard' of the Quebec TV Show 'Tout le monde en parle'
 #
 class MPG123():
-
-    # CTOR
     def __init__(self):
+        self.mpg123 = Popen(['mpg123', '--audiodevice', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
+        self.write('silence')
+        self.ctrl_mapping = {
+            7 : self.volume,
+        }
+        self.note_mapping = {
+            0 : self.prev_scene,
+            1 : self.prev_subscene,
+            2 : self.free,
+            3 : self.next_subscene,
+            4 : self.next_scene,
+            5 : self.rewind,
+            6 : self.pause,
+            7 : self.forward,
+            8 : self.free,
+            9 : self.free,
+            10 : self.free,
+            11 : self.list_files,
+        }
 
+    def __del__(self):
+        self.mpg123.terminate()
 
-        self.mpg123 = None
-
-        # Expose songs
-        # TODO faire mieux
-        songs = [ "/tmp/soundlib/system/tlmep.mp3" ]
-
-        # Add songs after the mpg123 commands
-        #for song in songs:
-        #    self.commands.append('l ' + song)
-
-    # On call...
     def __call__(self, ev):
-        self.event2remote(ev)
+        self.handle_control_change(ev) if ev.type == CTRL else self.handle_note(ev)
 
-    def event2remote(self, ev):
-
-        if self.mpg123 == None:
-            self.create()
-
-        if ev.type == NOTEON:
-            self.note2remote(ev)
-        elif ev.type == CTRL:
-            self.cc2remote(ev)
-                
-	# Start mpg123
-    def create(self):
-        print "Create MPG123 instance"
-        # TODO TOKEN REPLACE __HW__
-        self.mpg123=Popen(['mpg123', '-a', 'hw:1,0', '--quiet', '--remote'], stdin=PIPE)
-        self.rcall('silence') # Shut up mpg132 :)
-
-    # METHODS
+    # 
     # Write a command to the mpg123 process
-    def rcall(self, cmd):
+    #
+    def write(self, cmd):
         self.mpg123.stdin.write(cmd + '\n')
 
-    # Note to remote command
-    def note2remote(self, ev):
+    #
+    # Play a file or invoke a method defined in a dict
+    #
+    def handle_note(self, ev):
+        self.play(ev.data1) if ev.data1 >= 12 else self.note_mapping[ev.data1]()
 
-        if ev.data1 > 11:
-            self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
-        # Reserved 0 to 11
-        elif ev.data1 == 0:
-            switch_scene(current_scene()-1)
-        elif ev.data1 == 1:
-            switch_subscene(current_subscene()-1)
-        elif ev.data1 == 2:
-            self.rcall('p')            
-        elif ev.data1 == 3:
-            switch_subscene(current_subscene()+1)
-        elif ev.data1 == 4:
-            switch_scene(current_scene()+1)
-        elif ev.data1 == 11:
-            Popen(['ls', '-l', '/tmp/*.mp3'])
-        else:
-            self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
-#        if ev.data1 <= len(self.commands):
-#           # Reserved range
-#           self.rcall(self.commands[ev.data1])
-#       else:
-#           # Try to load the mp3
-#           self.rcall('l /tmp/' + str(ev.data1) + '.mp3')
+    #
+    # Convert a MIDI CC to a remote command defined in a dict
+    #
+    def handle_control_change(self, ev):
+        self.ctrl_mapping[ev.data1](ev.data2)
 
-        ev.data2 = 0
+    #
+    # dict values command functions
+    #
+    def free(self):
+        pass
 
-        return ev
+    # Scenes navigation
+    def next_scene(self):
+        self.on_switch_scene(1)
 
-    # CC to remote command
-    def cc2remote(self, ev):
-        # MIDI volume to mpg123 volume
-        if ev.data1==7 and ev.data2 <= 100:
-            self.rcall('v ' + str(ev.data2))
-        # MIDI modulation to mpg123 pitch resolution / SUCK on the RPI - can pitch 3% before hardware limitation is reached
-        #elif ev.data1==1 and ev.data2 <= 100:
-        #    self.rcall('pitch ' + str(float(ev.data2)/100))
+    def prev_scene(self):
+        self.on_switch_scene(-1)
 
-# ----------------------------------------------------------------------------------------------------
+    def on_switch_scene(self, direction):
+        index = current_scene() + direction
+        switch_scene(index)
+        source = configuration['albums'] + scenes()[index][0]
+        target = configuration['symlink-target']
+        check_call(['./create-symlinks.sh', source, target])
+        self.write('l {}/{}.mp3'.format(source,'theme'))
+
+    def next_subscene(self):
+        switch_subscene(current_subscene()+1)
+    def prev_subscene(self):
+        switch_subscene(current_subscene()-1)
+
+    # Mpg 123 remote call
+    def play(self, id):
+        self.write('l {}{}.mp3'.format(configuration['symlink-target'],id))
+    def pause(self):
+        self.write('p') # Pause mpg123
+    def forward(self):
+        self.jump('+5 s')
+    def rewind(self):
+        self.jump('-5 s')
+    def jump(self, offset):
+        self.write('j ' + offset)
+    def volume(self, value):
+        self.write('v {}'.format(value))
+
+    # Tools
+    def list_files(self):
+        Popen([configuration['listing']], shell=True)  # ls -l
+
+# END MPG123() CLASS
+
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
-# WIP TODO
 class RemoveDuplicates:
     def __init__(self, _wait=0):
         self.wait = _wait
         self.prev_ev = None
         self.prev_time = 0
 
-    def __call__(self, ev): 
+    def __call__(self, ev):
         if ev.type == NOTEOFF:
             sleep(self.wait)
             return ev
@@ -107,7 +118,7 @@ class RemoveDuplicates:
         if offset >= 0.035:
             #if ev.type == NOTEON:
             #    print "+ " + str(offset)
-            r = ev 
+            r = ev
         else:
             #if ev.type == NOTEON:
             #    print "- " + str(offset)
@@ -157,7 +168,7 @@ def NavigateToScene(ev):
     # That function assume that the first SceneNumber is 1
 	#TODO field, values = dict(scenes()).items()[0]
     if ev.ctrl == 20:
-        nb_scenes = len(scenes())    
+        nb_scenes = len(scenes())
         cs=current_scene()
 		# Scene backward
         if ev.value == 1:
@@ -190,10 +201,11 @@ def AllAudioOff(ev):
 # Audio and midi players suitable for my SD-90
 def play_file(filename):
     fname, fext = os.path.splitext(filename)
-    path=" /tmp/soundlib/"
     if fext == ".mp3":
+        path=" /tmp/soundlib/mp3/"
         command="mpg123 -q"
     elif fext == ".mid":
+        path=" /tmp/soundlib/midi/"
         command="aplaymidi -p 20:1"
 
     return command + path + filename
@@ -210,6 +222,5 @@ def OnPitchbend(ev, direction):
     elif ev.value == 127:
         ev.value = 8191 if direction == 1 else 8192
     return PitchbendEvent(ev.port, ev.channel, ev.value*direction)
-
 
 #---------------------------------------------------------------------------------------------------------

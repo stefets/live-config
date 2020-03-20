@@ -1,5 +1,6 @@
-	2:Scene("ROOT", patch=violon),
-	3:Scene("SetPitchBend", patch=violon, init_patch=portamento_up),
+	2:Scene("StandardSet",Transpose(-24) >> StandardSet),
+	3:Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
+	4:Scene("SetPitchBend", patch=violon, init_patch=portamento_up),
 #	2:Scene("HighWater", lowsynth),
 #	3:SceneGroup ("Marathon", [
 #        Scene("Marathon-Intro",
@@ -72,3 +73,12 @@
 ##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_melo_tom_patch),
 ##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.5)) >> closer_patch_celesta_d4),
 ##       ]),   
+    3: Scene("test", patch=marathon_chords),
+    #2: Scene("test", patch=(gt10b_volume // piano), init_patch=U01_A),
+    2: Scene("test", patch=piano, init_patch=U26_D)
+    #2: Scene("OSC", System('sendosc 192.168.2.25 55555 /stefets i 123'))
+    #2: Scene("Hemispheres", PlayButton >> System(play_file("spectral_mornings.mid"))),
+    #2: Scene("Hemispheres", play >> System(play_file("hemispheres.mp3")),
+	#2: SceneGroup("Group1", [ 
+		#Scene("Test",Pass(),Call(show_time)),
+		#]) 

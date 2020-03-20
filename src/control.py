@@ -21,8 +21,8 @@ gt10b_channel=16
 
 # Reset all
 reset=(
-	System(AllAudioOff) // Pass() // 
-	SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7') // Pass()
+	System(AllAudioOff) // Pass() //
+	ResetSD90 // Pass()
 )
 
 
@@ -39,8 +39,12 @@ fcb1010=(Filter(CTRL) >> CtrlSplit({
     22: reset,
 }))
 
-# KEYBOARD CONTROLLER - WIP
-keyboard=(Filter(NOTEON|CTRL) >> Process(MPG123()))
+# KEYBOARD CONTROLLER - Alesis Q49 
+# Accept Volume and Note on
+keyboard=(
+            (CtrlFilter(7) >> CtrlValueFilter(0,101)) //
+            (Filter(NOTEON) >> Transpose(-36))
+        ) >> Call(MPG123())
 
 # PK5 as Controller - WIP
 _pk5_controller = Pass()
