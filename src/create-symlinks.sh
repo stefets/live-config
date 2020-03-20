@@ -6,9 +6,12 @@ origin=$1
 target=$2
 rm $target/*.mp3
 
-# Optional album theme reserved at note 12
-theme=$origin/theme.mp3
-ln -fs $theme $target/12.mp3
+# Application theme reserved at note 12
+theme="$target/soundlib/theme.mp3"
+if [ -e $theme ]
+then
+    ln -fs $theme $target/12.mp3
+fi
 
 # Note number from the keyboard, adjustable offset
 note_number=13

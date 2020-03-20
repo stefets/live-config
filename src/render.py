@@ -134,14 +134,18 @@ class MPG123():
 
     # Scenes navigation
     def next_scene(self):
-        ns = current_scene()+1
+        self.on_switch_scene(1)
+
+    def prev_scene(self):
+        self.on_switch_scene(-1)
+
+    def on_switch_scene(self, offset):
+        ns = current_scene()+offset
         switch_scene(ns)
         source = configuration['albums'] + scenes()[ns][0]
         target = configuration['symlink-target']
-        check_call(['./create-symlinks.sh', source, target]) 
-
-    def prev_scene(self):
-        switch_scene(current_scene()-1)
+        check_call(['./create-symlinks.sh', source, target])
+        self.write('l {}/{}.mp3'.format(source,'theme'))
 
     def next_subscene(self):
         switch_subscene(current_subscene()+1)
