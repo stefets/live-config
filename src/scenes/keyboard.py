@@ -3,5 +3,3 @@
     4: Scene("styx", patch=Discard()),
     5: Scene("tabarnac", patch=Discard()),
     6: Scene("timeline", patch=Discard()),
-    7: Scene("system", patch=Discard()),
-    8: Scene("rush_cover", patch=Discard()),
