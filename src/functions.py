@@ -12,24 +12,33 @@ class MPG123():
     def __init__(self):
         self.mpg123 = Popen(['mpg123', '--audiodevice', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
         self.write('silence')
+        self.note_range = [i+1 for i in range(35)]
         self.ctrl_mapping = {
             7 : self.volume,
         }
         self.note_mapping = {
+
+             0 : self.pause,
             36 : self.prev_scene,
             37 : self.prev_subscene,
-            38 : self.free,
+            38 : self.home_scene,
             39 : self.next_subscene,
             40 : self.next_scene,
+
+            # White keys
             41 : self.rewind,
-            42 : self.pause,
-            43 : self.forward,
-            44 : self.free,
-            45 : self.free,
-            46 : self.free,
-            47 : self.list_files,
-            48 : self.free,
+            43 : self.rewind,
+            45 : self.forward,
+            47 : self.forward,
+            48 : self.list_files,
+
+            # Black keys
+            42 : self.prev_entry,
+            44 : self.pause,
+            46 : self.next_entry,
         }
+        self.current_entry = 0
+        print self.note_range
 
     def __del__(self):
         self.mpg123.terminate()
@@ -46,8 +55,9 @@ class MPG123():
     #
     # Play a file or invoke a method defined in a dict
     #
+    # TODO Do better
     def handle_note(self, ev):
-        self.play(ev.data1) if 0 <= ev.data1 <= 35 else self.note_mapping[ev.data1]()
+        self.play(ev.data1) if ev.data1 in self.note_range else self.note_mapping[ev.data1]()
 
     #
     # Convert a MIDI CC to a remote command defined in a dict
@@ -62,6 +72,10 @@ class MPG123():
         pass
 
     # Scenes navigation
+    # TODO Do better
+    def home_scene(self):
+        switch_scene(0)
+
     def next_scene(self):
         self.on_switch_scene(1)
 
@@ -73,7 +87,7 @@ class MPG123():
         switch_scene(index)
         source = configuration['albums'] + scenes()[index][0]
         target = configuration['symlink-target']
-        check_call(['./create-symlinks.sh', source, target])
+        check_call([configuration['symlink-builder'], source, target])
 
     def next_subscene(self):
         switch_subscene(current_subscene()+1)
@@ -81,8 +95,9 @@ class MPG123():
         switch_subscene(current_subscene()-1)
 
     # Mpg 123 remote call
-    def play(self, id):
-        self.write('ll {} {}/playlist'.format(id, configuration['symlink-target']))
+    def play(self, index):
+        self.write('ll {} {}/playlist'.format(index, configuration['symlink-target']))
+        self.current_entry = index
 
     def pause(self):
         self.write('p')
@@ -95,6 +110,13 @@ class MPG123():
 
     def jump(self, offset):
         self.write('j ' + offset)
+
+    def next_entry(self):
+        self.play(self.current_entry+1)
+
+    def prev_entry(self):
+        if self.current_entry > 1:
+            self.play(self.current_entry-1)
 
     def volume(self, value):
         self.write('v {}'.format(value))
