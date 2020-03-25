@@ -4,6 +4,7 @@
   "mp3" : "/mnt/flash/music/soundlib/mp3/",
   "midi" : "/mnt/flash/music/soundlib/midi/",
   "symlink-target" : "/tmp/",
+  "symlink-builder" : "./create-symlinks.sh",
   "listing" : "clear; ls -l /tmp/*.mp3",
   "GT10B" : {
     "channel" : 16

@@ -10,8 +10,8 @@ target=$2
 cd $target
 
 # Build symlinks in $target
-rm *.mp3
-for file in $(find $origin -name "*.mp3" -type f | sort)
+rm -f *.mp3 # Wipe out current mp3 symlinks
+for file in $(find $origin -type f ! -iname theme.mp3 -iname "*.mp3" | sort)
 do
     filename="${file##*/}"
 	ln -fs $file $filename
