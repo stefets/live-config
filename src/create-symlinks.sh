@@ -17,3 +17,10 @@ do
 	ln -fs $file $filename
 done
 ls *.mp3 > playlist
+
+# Create theme symlink for note zero
+theme=$(find /mnt/flash/music/soundlib -type f -iname main-theme.mp3)
+if [ ! -z $theme ] 
+then
+    ln -fs $theme 0.mp3
+fi
