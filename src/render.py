@@ -90,7 +90,7 @@ class MPG123():
         }
         self.note_mapping = {
 
-             0 : self.pause,
+             0 : self.play_theme,
             36 : self.prev_scene,
             37 : self.prev_subscene,
             38 : self.home_scene,
@@ -110,7 +110,6 @@ class MPG123():
             46 : self.next_entry,
         }
         self.current_entry = 0
-        print self.note_range
 
     def __del__(self):
         self.mpg123.terminate()
@@ -167,6 +166,9 @@ class MPG123():
         switch_subscene(current_subscene()-1)
 
     # Mpg 123 remote call
+    def play_theme(self):
+        self.write('l {}/0.mp3'.format(configuration['symlink-target']))
+
     def play(self, index):
         self.write('ll {} {}/playlist'.format(index, configuration['symlink-target']))
         self.current_entry = index
