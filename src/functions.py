@@ -56,7 +56,7 @@ class MPG123():
     #
     # TODO Do better
     def handle_note(self, ev):
-        self.play(ev.data1) if ev.data1 in self.note_range else self.note_mapping[ev.data1]()
+        self.play(ev.data1) if ev.data1 in self.note_range else self.note_mapping[ev.data1](ev)
 
     #
     # Convert a MIDI CC to a remote command defined in a dict
@@ -67,18 +67,18 @@ class MPG123():
     #
     # dict values command functions
     #
-    def free(self):
+    def free(self, ev):
         pass
 
     # Scenes navigation
     # TODO Do better
-    def home_scene(self):
+    def home_scene(self, ev):
         switch_scene(0)
 
-    def next_scene(self):
+    def next_scene(self, ev):
         self.on_switch_scene(1)
 
-    def prev_scene(self):
+    def prev_scene(self, ev):
         self.on_switch_scene(-1)
 
     def on_switch_scene(self, direction):
@@ -88,35 +88,35 @@ class MPG123():
         target = configuration['symlink-target']
         check_call([configuration['symlink-builder'], source, target])
 
-    def next_subscene(self):
+    def next_subscene(self, ev):
         switch_subscene(current_subscene()+1)
-    def prev_subscene(self):
+    def prev_subscene(self, ev):
         switch_subscene(current_subscene()-1)
 
     # Mpg 123 remote call
-    def play_theme(self):
+    def play_theme(self, ev):
         self.write('l {}/0.mp3'.format(configuration['symlink-target']))
 
     def play(self, index):
         self.write('ll {} {}/playlist'.format(index, configuration['symlink-target']))
         self.current_entry = index
 
-    def pause(self):
+    def pause(self, ev):
         self.write('p')
 
-    def forward(self):
+    def forward(self, ev):
         self.jump('+5 s')
 
-    def rewind(self):
+    def rewind(self, ev):
         self.jump('-5 s')
 
     def jump(self, offset):
         self.write('j ' + offset)
 
-    def next_entry(self):
+    def next_entry(self, ev):
         self.play(self.current_entry+1)
 
-    def prev_entry(self):
+    def prev_entry(self, ev):
         if self.current_entry > 1:
             self.play(self.current_entry-1)
 
@@ -124,7 +124,7 @@ class MPG123():
         self.write('v {}'.format(value))
 
     # Misc
-    def list_files(self):
+    def list_files(self, ev):
         self.write('ll {} {}/playlist'.format(-1, configuration['symlink-target']))
 
 # END MPG123() CLASS
