@@ -172,7 +172,6 @@ class RangeKeyDict:
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
-'''
 class RemoveDuplicates:
     def __init__(self, _wait=0):
         self.wait = _wait
@@ -197,6 +196,7 @@ class RemoveDuplicates:
         self.prev_time = now
         return r
 
+'''
 #--------------------------------------------------------------------
 # Generate a chord prototype test
 # Better to use the mididings builtin object Hamonize
