@@ -9,7 +9,10 @@
 
 # Notes
 * Script entry point is /src/start.sh
-* Check src/render.py for the final script after replacing tokens with subscripts
+
+# Build
+* Check the pages on how I build Mididings and MPG123 for the Raspberry PI
+* https://github.com/stefets/live-config/wiki
 
 # Build
 * Check the pages on how I build Mididings and MPG123 for the Raspberry PI

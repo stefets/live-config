@@ -5,6 +5,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #Vars
 flash="/mnt/flash"
 audio="$flash/music/soundlib"
+menu="$DIR/menu.sh"
 
 #Mount usb flash
 sudo mkdir -m777 -p $flash
@@ -16,4 +17,5 @@ fi
 
 ln -sf $audio /tmp/soundlib
 
-/bin/bash $DIR/menu.sh
+chmod 755 $menu
+$menu
