@@ -63,34 +63,44 @@ hook(
     #AutoRestart(), #AutoRestart works with mididings.extra.inotify
 
     #OSCInterface(port=56418, notify_ports=[56419,56420]),
-    #OSCInterface(port=56418, notify_ports=56419),
-    #OSCInterface(),
+    OSCInterface(),
 )
 
 #-----------------------------------------------------------------------------------------------------------
 # Functions section 
 # functions.py
-# ----------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------
 # Function and classes called by scenes
 #--------------------------------------------------------------------
+
+# Class MPG123 
 #
 # This class control mpg123 in remote mode with a keyboard (or any other midi devices of your choice)
 # when (actually) NOTEON or CTRL event type is received in the __call__ function
 #
 # It's inspired of the 'song trigger keyboard' of the Quebec TV Show 'Tout le monde en parle'
 #
+# Limitations :
+# - Can't get the number of entry in playlist
 class MPG123():
     def __init__(self):
+
+        # MPG123 process
         self.mpg123 = Popen(['mpg123', '--audiodevice', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
         self.write('silence')
-        self.note_range = [i+1 for i in range(35)]
-        self.ctrl_mapping = {
-            7 : self.volume,
-        }
+
+        # Accepted range | Range array over the note_mapping array
+        # Upper bound is exclusive
+        self.note_range_mapping = RangeKeyDict({
+            (0, 1): self.not_implemented,
+            (1, 36): self.play,
+            (36, 48): self.invoke,
+            (48,49): self.list_files,
+        })
+
+        # NoteOn mapping
         self.note_mapping = {
 
-             0 : self.play_theme,
             36 : self.prev_scene,
             37 : self.prev_subscene,
             38 : self.home_scene,
@@ -102,55 +112,52 @@ class MPG123():
             43 : self.rewind,
             45 : self.forward,
             47 : self.forward,
-            48 : self.list_files,
 
             # Black keys
             42 : self.prev_entry,
             44 : self.pause,
             46 : self.next_entry,
+
         }
+
+        # Control change mapping
+        self.ctrl_mapping = {
+            1 : self.cc_modulation,
+            7 : self.cc_volume,
+        }
+
         self.current_entry = 0
 
     def __del__(self):
         self.mpg123.terminate()
 
     def __call__(self, ev):
-        self.handle_control_change(ev) if ev.type == CTRL else self.handle_note(ev)
+        self.ctrl_mapping[ev.data1](ev) if ev.type == CTRL else self.note_range_mapping[ev.data1](ev)
 
-    # 
     # Write a command to the mpg123 process
-    #
     def write(self, cmd):
         self.mpg123.stdin.write(cmd + '\n')
 
     #
-    # Play a file or invoke a method defined in a dict
+    # Call the method defined in the note_mapping dict
     #
-    # TODO Do better
-    def handle_note(self, ev):
-        self.play(ev.data1) if ev.data1 in self.note_range else self.note_mapping[ev.data1]()
-
-    #
-    # Convert a MIDI CC to a remote command defined in a dict
-    #
-    def handle_control_change(self, ev):
-        self.ctrl_mapping[ev.data1](ev.data2)
+    def invoke(self, ev):
+        self.note_mapping[ev.data1](ev)
 
     #
     # dict values command functions
     #
-    def free(self):
+    def not_implemented(self, ev):
         pass
 
     # Scenes navigation
-    # TODO Do better
-    def home_scene(self):
+    def home_scene(self, ev):
         switch_scene(0)
 
-    def next_scene(self):
+    def next_scene(self, ev):
         self.on_switch_scene(1)
 
-    def prev_scene(self):
+    def prev_scene(self, ev):
         self.on_switch_scene(-1)
 
     def on_switch_scene(self, direction):
@@ -160,47 +167,79 @@ class MPG123():
         target = configuration['symlink-target']
         check_call([configuration['symlink-builder'], source, target])
 
-    def next_subscene(self):
+    def next_subscene(self, ev):
         switch_subscene(current_subscene()+1)
-    def prev_subscene(self):
+    def prev_subscene(self, ev):
         switch_subscene(current_subscene()-1)
 
-    # Mpg 123 remote call
-    def play_theme(self):
-        self.write('l {}/0.mp3'.format(configuration['symlink-target']))
+    # MPG123 remote call ------------------------
+    def play(self, ev):
+        self.write('ll {} {}/playlist'.format(ev.data1, configuration['symlink-target']))
+        self.current_entry = ev.data1
 
-    def play(self, index):
-        self.write('ll {} {}/playlist'.format(index, configuration['symlink-target']))
-        self.current_entry = index
-
-    def pause(self):
+    def pause(self, ev):
         self.write('p')
 
-    def forward(self):
-        self.jump('+5 s')
+    def forward(self, ev):
+        self.jump('+5 s') if ev.data1 == 45 else self.jump('+30 s')
 
-    def rewind(self):
-        self.jump('-5 s')
+    def rewind(self, ev):
+        self.jump('-5 s') if ev.data1 == 43 else self.jump('-30 s')
 
     def jump(self, offset):
         self.write('j ' + offset)
 
-    def next_entry(self):
-        self.play(self.current_entry+1)
+    def next_entry(self, ev):
+        ev.data1 = self.current_entry + 1
+        self.play(ev)
 
-    def prev_entry(self):
+    def prev_entry(self, ev):
         if self.current_entry > 1:
-            self.play(self.current_entry-1)
+            ev.data1 = self.current_entry - 1
+            self.play(ev)
 
-    def volume(self, value):
-        self.write('v {}'.format(value))
+    def cc_volume(self, ev):
+        self.write('v {}'.format(ev.data2))
 
-    # Misc
-    def list_files(self):
+    def cc_modulation(self, ev):
+        pass
+
+    def list_files(self, ev):
         self.write('ll {} {}/playlist'.format(-1, configuration['symlink-target']))
 
 # END MPG123() CLASS
 
+#
+# Borrowed here : https://github.com/albertmenglongli/range-key-dict/blob/master/range_key_dict/range_key_dict.py
+# 
+class RangeKeyDict:
+    def __init__(self, my_dict):
+        # !any(!A or !B) is faster than all(A and B)
+        assert not any(map(lambda x: not isinstance(x, tuple) or len(x) != 2 or x[0] > x[1], my_dict))
+
+        def lte(bound):
+            return lambda x: bound <= x
+
+        def gt(bound):
+            return lambda x: x < bound
+
+        # generate the inner dict with tuple key like (lambda x: 0 <= x, lambda x: x < 100)
+        self._my_dict = {(lte(k[0]), gt(k[1])): v for k, v in my_dict.items()}
+
+    def __getitem__(self, number):
+        from functools import reduce
+        _my_dict = self._my_dict
+        try:
+            result = next((_my_dict[key] for key in _my_dict if list(reduce(lambda s, f: filter(f, s), key, [number]))))
+        except StopIteration:
+            raise KeyError(number)
+        return result
+
+    def get(self, number, default=None):
+        try:
+            return self.__getitem__(number)
+        except KeyError:
+            return default
 #
 # This class remove duplicate midi message by taking care of an offset logic
 # NOT STABLE SUSPECT OVERFLOW 
@@ -228,6 +267,7 @@ class RemoveDuplicates:
         self.prev_time = now
         return r
 
+'''
 #--------------------------------------------------------------------
 # Generate a chord prototype test
 # Better to use the mididings builtin object Hamonize
@@ -260,6 +300,7 @@ def arpeggiator_function(current, max,note, port, chan, vel):
 def arpeggiator_exec(e):
     arpeggiator_function(0,16, 50,  e.port, e.channel, 100)
 
+'''
 #-------------------------------------------------------------------------------------------
 
 # Navigate through secenes and subscenes
@@ -485,7 +526,7 @@ InitSoundModule=(ResetSD90 // InitPitchBend)
 # POD-HD-500
 #
 
-hd500_channel=9
+hd500_channel=configuration['HD500']['channel']
 hd500_port=3
 
 P01A=Program(hd500_port, channel=hd500_channel, program=1)
@@ -1132,12 +1173,6 @@ P50_D=(GT10B_bank_3 // GT10B_pgrm_100)
 #-----------------------------------------------------------------------------------------------------------
 # CONTROL SECTION
 #-----------------------------------------------------------------------------------------------------------
-q49_channel=1
-pk5_channel=2
-fcb_channel=9
-pod_channel=9
-gt10b_channel=16
-
 
 # This control have the same behavior than the NavigateToScene python function above
 # EXCEPT that there is NO wrap parameter for SceneSwitch
@@ -1157,41 +1192,22 @@ reset=(
 )
 
 
-# FCB1010 UNO as controller
-#fcb1010=(ChannelFilter(9) >> Filter(CTRL) >> 
-#	(
-#		(CtrlFilter(20) >> Process(NavigateToScene)) // 
-#		(CtrlFilter(22) >> reset)
-#	))
-
 # FCB1010 UNO as controller (same as above different syntaxes)
 fcb1010=(Filter(CTRL) >> CtrlSplit({
-    20: Process(NavigateToScene),
+    20: Call(NavigateToScene),
     22: reset,
 }))
 
-# KEYBOARD CONTROLLER - Alesis Q49 
-# Accept Volume and Note on
+# MIDI KEYBOARD CONTROLLER TO CONTROL MPG123 
 keyboard=(
-            (CtrlFilter(7) >> CtrlValueFilter(0,101)) //
+            (CtrlFilter(1,7) >> CtrlValueFilter(0,101)) //
             (Filter(NOTEON) >> Transpose(-36))
-        ) >> Call(MPG123())
-
-# PK5 as Controller - WIP
-_pk5_controller = Pass()
+         ) >> Call(MPG123())
 
 # Shortcut (Play switch)
 play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
 d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
 #-----------------------------------------------------------------------------------------------------------
-
-# TODO (*** not sure until real need ***)
-# Multiple controllers , different logic for each of them WIP
-#main_controller=ChannelSplit({
-    #1: _keyboard_controller,
-    #9: _fcb1010_controller,
-    #2:_pk5_controller
-#})
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
@@ -1431,6 +1447,10 @@ _scenes = {
     4: Scene("styx", patch=Discard()),
     5: Scene("tabarnac", patch=Discard()),
     6: Scene("timeline", patch=Discard()),
+    #7: SceneGroup("rush", [
+    #       Scene("power-windows", patch = Discard()),
+    #       Scene("grace-under-pressure", patch = Discard())
+    #   ])
 }
 #-----------------------------------------------------------------------------------------------------------
 

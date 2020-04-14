@@ -17,15 +17,6 @@ class MPG123():
         # MPG123 process
         self.mpg123 = Popen(['mpg123', '--audiodevice', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
         self.write('silence')
-<<<<<<< HEAD
-        self.note_range = [i+1 for i in range(35)]
-        self.ctrl_mapping = {
-            7 : self.volume,
-        }
-        self.note_mapping = {
-
-             0 : self.play_theme,
-=======
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
@@ -39,7 +30,6 @@ class MPG123():
         # NoteOn mapping
         self.note_mapping = {
 
->>>>>>> 906b44751bc43bcca9a775ae5126c3e21fa081b4
             36 : self.prev_scene,
             37 : self.prev_subscene,
             38 : self.home_scene,
@@ -51,17 +41,11 @@ class MPG123():
             43 : self.rewind,
             45 : self.forward,
             47 : self.forward,
-<<<<<<< HEAD
-            48 : self.list_files,
-=======
->>>>>>> 906b44751bc43bcca9a775ae5126c3e21fa081b4
 
             # Black keys
             42 : self.prev_entry,
             44 : self.pause,
             46 : self.next_entry,
-<<<<<<< HEAD
-=======
 
         }
 
@@ -69,9 +53,7 @@ class MPG123():
         self.ctrl_mapping = {
             1 : self.cc_modulation,
             7 : self.cc_volume,
->>>>>>> 906b44751bc43bcca9a775ae5126c3e21fa081b4
         }
-        self.current_entry = 0
 
         self.current_entry = 0
 
@@ -86,18 +68,7 @@ class MPG123():
         self.mpg123.stdin.write(cmd + '\n')
 
     #
-<<<<<<< HEAD
-    # Play a file or invoke a method defined in a dict
-    #
-    # TODO Do better
-    def handle_note(self, ev):
-        self.play(ev.data1) if ev.data1 in self.note_range else self.note_mapping[ev.data1]()
-
-    #
-    # Convert a MIDI CC to a remote command defined in a dict
-=======
     # Call the method defined in the note_mapping dict
->>>>>>> 906b44751bc43bcca9a775ae5126c3e21fa081b4
     #
     def invoke(self, ev):
         self.note_mapping[ev.data1](ev)
@@ -109,18 +80,10 @@ class MPG123():
         pass
 
     # Scenes navigation
-<<<<<<< HEAD
-    # TODO Do better
-    def home_scene(self):
-        switch_scene(0)
-
-    def next_scene(self):
-=======
     def home_scene(self, ev):
         switch_scene(0)
 
     def next_scene(self, ev):
->>>>>>> 906b44751bc43bcca9a775ae5126c3e21fa081b4
         self.on_switch_scene(1)
 
     def prev_scene(self, ev):
@@ -138,40 +101,6 @@ class MPG123():
     def prev_subscene(self, ev):
         switch_subscene(current_subscene()-1)
 
-<<<<<<< HEAD
-    # Mpg 123 remote call
-    def play_theme(self):
-        self.write('l {}/0.mp3'.format(configuration['symlink-target']))
-
-    def play(self, index):
-        self.write('ll {} {}/playlist'.format(index, configuration['symlink-target']))
-        self.current_entry = index
-
-    def pause(self):
-        self.write('p')
-
-    def forward(self):
-        self.jump('+5 s')
-
-    def rewind(self):
-        self.jump('-5 s')
-
-    def jump(self, offset):
-        self.write('j ' + offset)
-
-    def next_entry(self):
-        self.play(self.current_entry+1)
-
-    def prev_entry(self):
-        if self.current_entry > 1:
-            self.play(self.current_entry-1)
-
-    def volume(self, value):
-        self.write('v {}'.format(value))
-
-    # Misc
-    def list_files(self):
-=======
     # MPG123 remote call ------------------------
     def play(self, ev):
         self.write('ll {} {}/playlist'.format(ev.data1, configuration['symlink-target']))
@@ -205,7 +134,6 @@ class MPG123():
         pass
 
     def list_files(self, ev):
->>>>>>> 906b44751bc43bcca9a775ae5126c3e21fa081b4
         self.write('ll {} {}/playlist'.format(-1, configuration['symlink-target']))
 
 # END MPG123() CLASS
