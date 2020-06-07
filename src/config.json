@@ -1,8 +1,4 @@
 {
-  "hw" : "hw:1,0",
-  "albums" : "/mnt/flash/music/soundlib/",
-  "symlink-target" : "/tmp/",
-  "symlink-builder" : "./manage-symlinks.sh",
   "GT10B" : {
     "channel" : 16
     },

@@ -1,0 +1,15 @@
+{
+  "hw" : "hw:3,0",
+  "albums" : "/mnt/flash/music/soundlib/",
+  "symlink-target" : "/tmp/",
+  "symlink-builder" : "./manage-symlinks.sh",
+  "GT10B" : {
+    "channel" : 16
+    },
+  "HD500" : {
+    "channel" : 9
+    },
+  "FCB1010" : {
+    "channel" : 9
+    }
+}

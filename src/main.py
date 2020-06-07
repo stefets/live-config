@@ -9,8 +9,9 @@
 # My personal mididings script
 # Stephane Gagnon
 #-----------------------------------------------------------------------------------------------------------
-
 import os
+import sys
+sys.path.append(os.path.realpath('.'))
 import glob
 import json
 from subprocess import Popen, PIPE, check_call
@@ -22,9 +23,9 @@ from mididings import engine
 from mididings.engine import *
 from mididings.event import *
 from mididings.extra.osc import *
-
-#useless for a dynamic script but usefull for a static scipt
 #from mididings.extra.inotify import *
+#from core.RangeKeyDict import  import ra
+from plugins.mpg123 import *
 
 # Global configuration file
 with open('config.json') as json_file:
