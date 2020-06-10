@@ -11,21 +11,13 @@
 #-----------------------------------------------------------------------------------------------------------
 import os
 import sys
-sys.path.append(os.path.realpath('.'))
-import glob
 import json
-from subprocess import Popen, PIPE, check_call
-from threading import Timer
-from time import sleep
-from mididings import *
+sys.path.append(os.path.realpath('.'))
 from mididings.extra import *
-from mididings import engine
-from mididings.engine import *
-from mididings.event import *
 from mididings.extra.osc import *
 #from mididings.extra.inotify import *
 #from core.RangeKeyDict import  import ra
-from plugins.mpg123 import *
+from plugins.mpg123.wrapper import *
 
 # Global configuration file
 with open('config.json') as json_file:
@@ -51,7 +43,7 @@ config(
  ],
 
     in_ports = [
-        ('Q49_MIDI_IN_1', '24:0',),  # Alesis Q49 in USB MODE
+        ('Q49_MIDI_IN_1', '20:0',),  # Alesis Q49 in USB MODE
         ('SD90_MIDI_IN_1','20:2',),  # Edirol SD-90 MIDI IN 1
         ('SD90_MIDI_IN_2','20:3',)   # Edirol SD-90 MIDI IN 2
  ],
@@ -976,14 +968,14 @@ P50_D=(GT10B_bank_3 // GT10B_pgrm_100)
 #-----------------------------------------------------------------------------------------------------------
 # Control section
 # control.py
-#-----------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------
 # CONTROL SECTION
-#-----------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------
 
 # This control have the same behavior than the NavigateToScene python function above
 # EXCEPT that there is NO wrap parameter for SceneSwitch
 # The NavigateToScene CAN wrap through Scenes
-#_control=(ChannelFilter(9) >> Filter(CTRL) >>
+#_ control=(ChannelFilter(9) >> Filter(CTRL) >>
 #	(
 #		(CtrlFilter(20) >> CtrlValueFilter(1) >> SceneSwitch(offset=-1)) //
 #		(CtrlFilter(20) >> CtrlValueFilter(2) >> SceneSwitch(offset=1))  //

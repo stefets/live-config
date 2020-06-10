@@ -1,11 +1,11 @@
-#-----------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------
 # CONTROL SECTION
-#-----------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------
 
 # This control have the same behavior than the NavigateToScene python function above
 # EXCEPT that there is NO wrap parameter for SceneSwitch
 # The NavigateToScene CAN wrap through Scenes
-#_control=(ChannelFilter(9) >> Filter(CTRL) >>
+#_ control=(ChannelFilter(9) >> Filter(CTRL) >>
 #	(
 #		(CtrlFilter(20) >> CtrlValueFilter(1) >> SceneSwitch(offset=-1)) //
 #		(CtrlFilter(20) >> CtrlValueFilter(2) >> SceneSwitch(offset=1))  //

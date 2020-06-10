@@ -1,0 +1,17 @@
+{
+  "PC1": {
+    "hw": "hw:3,0",
+    "device": "/dev/sdb1"
+  },
+  "RPI3": {
+    "hw": "hw:1,0",
+    "device": "/dev/sda1"
+  },
+    "RPI2": {
+    "hw": "hw:1,0",
+    "device": "/dev/sda1"
+  },
+  "albums": "/mnt/flash/music/soundlib/",
+  "symlink-target": "/tmp/",
+  "symlink-builder": "./manage-symlinks.sh"
+}

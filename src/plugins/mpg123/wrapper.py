@@ -18,12 +18,13 @@ from mididings.engine import *
 
 class MPG123:
     def __init__(self):
-        file = os. getcwd() + '/plugins/mpg123.json'
+        hostname = os.uname()[1]
+        file = os.getcwd() + '/plugins/mpg123/config.json'
         with open(file) as json_file:
             self.configuration = json.load(json_file)
 
         # MPG123 process
-        self.mpg123 = Popen(['mpg123', '--audiodevice', self.configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
+        self.process = Popen(['mpg123', '--audiodevice', self.configuration[hostname]['hw'], '--quiet', '--remote'], stdin=PIPE)
         self.write('silence')
 
         # Accepted range | Range array over the note_mapping array
@@ -66,14 +67,14 @@ class MPG123:
         self.current_entry = 0
 
     def __del__(self):
-        self.mpg123.terminate()
+        self.process.terminate()
 
     def __call__(self, ev):
         self.ctrl_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
 
     # Write a command to the mpg123 process
     def write(self, cmd):
-        self.mpg123.stdin.write(cmd + '\n')
+        self.process.stdin.write(cmd + '\n')
 
     #
     # Call the method defined in the note_mapping dict
@@ -106,6 +107,7 @@ class MPG123:
 
     def next_subscene(self, ev):
         switch_subscene(current_subscene()+1)
+
     def prev_subscene(self, ev):
         switch_subscene(current_subscene()-1)
 
