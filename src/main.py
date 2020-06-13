@@ -15,6 +15,7 @@ import json
 sys.path.append(os.path.realpath('.'))
 from mididings.extra import *
 from mididings.extra.osc import *
+from mididings import engine
 #from mididings.extra.inotify import *
 #from core.RangeKeyDict import  import ra
 from plugins.mpg123.wrapper import *

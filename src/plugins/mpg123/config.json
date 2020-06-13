@@ -3,7 +3,7 @@
     "hw": "hw:3,0",
     "device": "/dev/sdb1"
   },
-  "RPI3": {
+  "rpi3": {
     "hw": "hw:1,0",
     "device": "/dev/sda1"
   },
