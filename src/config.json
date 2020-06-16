@@ -1,16 +1,6 @@
 {
-  "hw" : "hw:1,0",
-  "albums" : "/mnt/flash/music/soundlib/",
-  "mp3" : "/mnt/flash/music/soundlib/mp3/",
-  "midi" : "/mnt/flash/music/soundlib/midi/",
-  "symlink-target" : "/tmp/",
-  "symlink-builder" : "./create-symlinks.sh",
-  "listing" : "clear; ls -l /tmp/*.mp3",
   "GT10B" : {
     "channel" : 16
-    },
-  "SD90" : {
-    "todo" : 16
     },
   "HD500" : {
     "channel" : 9

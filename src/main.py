@@ -9,22 +9,16 @@
 # My personal mididings script
 # Stephane Gagnon
 #-----------------------------------------------------------------------------------------------------------
-
 import os
-import glob
+import sys
 import json
-from subprocess import Popen, PIPE, check_call
-from threading import Timer
-from time import sleep
-from mididings import *
+sys.path.append(os.path.realpath('.'))
 from mididings.extra import *
-from mididings import engine
-from mididings.engine import *
-from mididings.event import *
 from mididings.extra.osc import *
-
-#useless for a dynamic script but usefull for a static scipt
+from mididings import engine
 #from mididings.extra.inotify import *
+#from core.RangeKeyDict import  import ra
+from plugins.mpg123.wrapper import *
 
 # Global configuration file
 with open('config.json') as json_file:
@@ -50,7 +44,7 @@ config(
  ],
 
     in_ports = [
-        ('Q49_MIDI_IN_1', '24:0',),  # Alesis Q49 in USB MODE
+        ('Q49_MIDI_IN_1', '20:0',),  # Alesis Q49 in USB MODE
         ('SD90_MIDI_IN_1','20:2',),  # Edirol SD-90 MIDI IN 1
         ('SD90_MIDI_IN_2','20:3',)   # Edirol SD-90 MIDI IN 2
  ],
@@ -63,8 +57,7 @@ hook(
     #AutoRestart(), #AutoRestart works with mididings.extra.inotify
 
     #OSCInterface(port=56418, notify_ports=[56419,56420]),
-    #OSCInterface(port=56418, notify_ports=56419),
-    #OSCInterface(),
+    OSCInterface(),
 )
 
 #-----------------------------------------------------------------------------------------------------------

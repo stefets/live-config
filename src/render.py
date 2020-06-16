@@ -9,22 +9,16 @@
 # My personal mididings script
 # Stephane Gagnon
 #-----------------------------------------------------------------------------------------------------------
-
 import os
-import glob
+import sys
 import json
-from subprocess import Popen, PIPE, check_call
-from threading import Timer
-from time import sleep
-from mididings import *
+sys.path.append(os.path.realpath('.'))
 from mididings.extra import *
-from mididings import engine
-from mididings.engine import *
-from mididings.event import *
 from mididings.extra.osc import *
-
-#useless for a dynamic script but usefull for a static scipt
+from mididings import engine
 #from mididings.extra.inotify import *
+#from core.RangeKeyDict import  import ra
+from plugins.mpg123.wrapper import *
 
 # Global configuration file
 with open('config.json') as json_file:
@@ -50,7 +44,7 @@ config(
  ],
 
     in_ports = [
-        ('Q49_MIDI_IN_1', '24:0',),  # Alesis Q49 in USB MODE
+        ('Q49_MIDI_IN_1', '20:0',),  # Alesis Q49 in USB MODE
         ('SD90_MIDI_IN_1','20:2',),  # Edirol SD-90 MIDI IN 1
         ('SD90_MIDI_IN_2','20:3',)   # Edirol SD-90 MIDI IN 2
  ],
@@ -63,143 +57,15 @@ hook(
     #AutoRestart(), #AutoRestart works with mididings.extra.inotify
 
     #OSCInterface(port=56418, notify_ports=[56419,56420]),
-    #OSCInterface(port=56418, notify_ports=56419),
-    #OSCInterface(),
+    OSCInterface(),
 )
 
 #-----------------------------------------------------------------------------------------------------------
 # Functions section 
 # functions.py
-# ----------------------------------------------------------------------------------------------------
-#--------------------------------------------------------------------
+# --------------------------------------------------------------------
 # Function and classes called by scenes
-#--------------------------------------------------------------------
-#
-# This class control mpg123 in remote mode with a keyboard (or any other midi devices of your choice)
-# when (actually) NOTEON or CTRL event type is received in the __call__ function
-#
-# It's inspired of the 'song trigger keyboard' of the Quebec TV Show 'Tout le monde en parle'
-#
-class MPG123():
-    def __init__(self):
-        self.mpg123 = Popen(['mpg123', '--audiodevice', configuration['hw'], '--quiet', '--remote'], stdin=PIPE)
-        self.write('silence')
-        self.note_range = [i+1 for i in range(35)]
-        self.ctrl_mapping = {
-            7 : self.volume,
-        }
-        self.note_mapping = {
-
-             0 : self.play_theme,
-            36 : self.prev_scene,
-            37 : self.prev_subscene,
-            38 : self.home_scene,
-            39 : self.next_subscene,
-            40 : self.next_scene,
-
-            # White keys
-            41 : self.rewind,
-            43 : self.rewind,
-            45 : self.forward,
-            47 : self.forward,
-            48 : self.list_files,
-
-            # Black keys
-            42 : self.prev_entry,
-            44 : self.pause,
-            46 : self.next_entry,
-        }
-        self.current_entry = 0
-
-    def __del__(self):
-        self.mpg123.terminate()
-
-    def __call__(self, ev):
-        self.handle_control_change(ev) if ev.type == CTRL else self.handle_note(ev)
-
-    # 
-    # Write a command to the mpg123 process
-    #
-    def write(self, cmd):
-        self.mpg123.stdin.write(cmd + '\n')
-
-    #
-    # Play a file or invoke a method defined in a dict
-    #
-    # TODO Do better
-    def handle_note(self, ev):
-        self.play(ev.data1) if ev.data1 in self.note_range else self.note_mapping[ev.data1]()
-
-    #
-    # Convert a MIDI CC to a remote command defined in a dict
-    #
-    def handle_control_change(self, ev):
-        self.ctrl_mapping[ev.data1](ev.data2)
-
-    #
-    # dict values command functions
-    #
-    def free(self):
-        pass
-
-    # Scenes navigation
-    # TODO Do better
-    def home_scene(self):
-        switch_scene(0)
-
-    def next_scene(self):
-        self.on_switch_scene(1)
-
-    def prev_scene(self):
-        self.on_switch_scene(-1)
-
-    def on_switch_scene(self, direction):
-        index = current_scene() + direction
-        switch_scene(index)
-        source = configuration['albums'] + scenes()[index][0]
-        target = configuration['symlink-target']
-        check_call([configuration['symlink-builder'], source, target])
-
-    def next_subscene(self):
-        switch_subscene(current_subscene()+1)
-    def prev_subscene(self):
-        switch_subscene(current_subscene()-1)
-
-    # Mpg 123 remote call
-    def play_theme(self):
-        self.write('l {}/0.mp3'.format(configuration['symlink-target']))
-
-    def play(self, index):
-        self.write('ll {} {}/playlist'.format(index, configuration['symlink-target']))
-        self.current_entry = index
-
-    def pause(self):
-        self.write('p')
-
-    def forward(self):
-        self.jump('+5 s')
-
-    def rewind(self):
-        self.jump('-5 s')
-
-    def jump(self, offset):
-        self.write('j ' + offset)
-
-    def next_entry(self):
-        self.play(self.current_entry+1)
-
-    def prev_entry(self):
-        if self.current_entry > 1:
-            self.play(self.current_entry-1)
-
-    def volume(self, value):
-        self.write('v {}'.format(value))
-
-    # Misc
-    def list_files(self):
-        self.write('ll {} {}/playlist'.format(-1, configuration['symlink-target']))
-
-# END MPG123() CLASS
+# --------------------------------------------------------------------
 
 #
 # This class remove duplicate midi message by taking care of an offset logic
@@ -215,19 +81,21 @@ class RemoveDuplicates:
             sleep(self.wait)
             return ev
         now = engine.time()
-        offset=now-self.prev_time
+        offset = now - self.prev_time
         if offset >= 0.035:
-            #if ev.type == NOTEON:
+            # if ev.type == NOTEON:
             #    print "+ " + str(offset)
             r = ev
         else:
-            #if ev.type == NOTEON:
+            # if ev.type == NOTEON:
             #    print "- " + str(offset)
             r = None
         self.prev_ev = ev
         self.prev_time = now
         return r
 
+
+'''
 #--------------------------------------------------------------------
 # Generate a chord prototype test
 # Better to use the mididings builtin object Hamonize
@@ -260,56 +128,63 @@ def arpeggiator_function(current, max,note, port, chan, vel):
 def arpeggiator_exec(e):
     arpeggiator_function(0,16, 50,  e.port, e.channel, 100)
 
-#-------------------------------------------------------------------------------------------
+'''
+
+
+# -------------------------------------------------------------------------------------------
+
 
 # Navigate through secenes and subscenes
 def NavigateToScene(ev):
     # MIDIDINGS does not wrap in the builtin ScenesSwitch but SubSecenesSwitch yes with the wrap parameter
     # With that function, you can wrap trough Scenes AND SubScenes
     # That function assume that the first SceneNumber is 1
-	#TODO field, values = dict(scenes()).items()[0]
+    # TODO field, values = dict(scenes()).items()[0]
     if ev.ctrl == 20:
         nb_scenes = len(scenes())
-        cs=current_scene()
-		# Scene backward
+        cs = current_scene()
+        # Scene backward
         if ev.value == 1:
             if cs > 1:
-                switch_scene(cs-1)
-		# Scene forward and wrap
+                switch_scene(cs - 1)
+            # Scene forward and wrap
         elif ev.value == 2:
             if cs < nb_scenes:
-                switch_scene(cs+1)
+                switch_scene(cs + 1)
             else:
                 switch_scene(1)
-		# SubScene backward
+            # SubScene backward
         elif ev.value == 3:
-            css=current_subscene()
+            css = current_subscene()
             if css > 1:
-                switch_subscene(css-1)
-		# SubScene forward and wrap
+                switch_subscene(css - 1)
+            # SubScene forward and wrap
         elif ev.value == 4:
-            css=current_subscene()
+            css = current_subscene()
             nb_subscenes = len(scenes()[cs][1])
             if nb_subscenes > 0 and css < nb_subscenes:
-                switch_subscene(css+1)
+                switch_subscene(css + 1)
             else:
                 switch_subscene(1)
+
 
 # Stop any audio processing, managed by a simple bash script
 def AllAudioOff(ev):
     return "/bin/bash ./kill.sh"
 
+
 # Audio and midi players suitable for my SD-90
 def play_file(filename):
     fname, fext = os.path.splitext(filename)
     if fext == ".mp3":
-        path=" /tmp/soundlib/mp3/"
-        command="mpg123 -q"
+        path = " /tmp/soundlib/mp3/"
+        command = "mpg123 -q"
     elif fext == ".mid":
-        path=" /tmp/soundlib/midi/"
-        command="aplaymidi -p 20:1"
+        path = " /tmp/soundlib/midi/"
+        command = "aplaymidi -p 20:1"
 
     return command + path + filename
+
 
 # Create a pitchbend from a filter logic
 # Params : direction when 1 bend goes UP, when -1 bend goes down
@@ -317,60 +192,25 @@ def play_file(filename):
 # NOTES  : On my context, ev.value.min = 0 and ev.value.max = 127
 def OnPitchbend(ev, direction):
     if 0 < ev.value <= 126:
-        return PitchbendEvent(ev.port, ev.channel, ((ev.value + 1) * 64)*direction)
+        return PitchbendEvent(ev.port, ev.channel, ((ev.value + 1) * 64) * direction)
     elif ev.value == 0:
         return PitchbendEvent(ev.port, ev.channel, 0)
     elif ev.value == 127:
         ev.value = 8191 if direction == 1 else 8192
-    return PitchbendEvent(ev.port, ev.channel, ev.value*direction)
+    return PitchbendEvent(ev.port, ev.channel, ev.value * direction)
 
-#---------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # Filters Section
 # filters.py
 #-----------------------------------------------------------------------------------------------------------
-# ALLOWED FILTERS : Available for patches, meaning, allow only for instance
+# # ALLOWED FILTERS : Available for patches, meaning, allow only for instance
 q49=ChannelFilter(1)    # Filter by hardware / channel
 pk5=ChannelFilter(2)    # Filter by hardware & channel
-fcb=ChannelFilter(9)
-hd500=ChannelFilter(9)
-gt10b=ChannelFilter(16)
-
-# By name
-ch1=ChannelFilter(1)
-ch2=ChannelFilter(2)
-ch3=ChannelFilter(3)
-ch4=ChannelFilter(4)
-ch5=ChannelFilter(5)
-ch6=ChannelFilter(6)
-ch7=ChannelFilter(7)
-ch8=ChannelFilter(8)
-ch9=ChannelFilter(9)
-ch10=ChannelFilter(10)
-ch11=ChannelFilter(11)
-ch12=ChannelFilter(12)
-ch13=ChannelFilter(13)
-ch14=ChannelFilter(14)
-ch15=ChannelFilter(15)
-ch16=ChannelFilter(16)
-
-noch1=~ChannelFilter(1)
-noch2=~ChannelFilter(2)
-noch3=~ChannelFilter(3)
-noch4=~ChannelFilter(4)
-noch5=~ChannelFilter(5)
-noch6=~ChannelFilter(6)
-noch7=~ChannelFilter(7)
-noch8=~ChannelFilter(8)
-noch9=~ChannelFilter(9)
-noch10=~ChannelFilter(10)
-noch11=~ChannelFilter(11)
-noch12=~ChannelFilter(12)
-noch13=~ChannelFilter(13)
-noch14=~ChannelFilter(14)
-noch15=~ChannelFilter(15)
-noch16=~ChannelFilter(16)
+# fcb=ChannelFilter(9)
+# hd500=ChannelFilter(9)
+# # gt10b=ChannelFilter(16)
 
 # Control Filter Channel (cf)
 cf=~ChannelFilter(9)
@@ -485,7 +325,7 @@ InitSoundModule=(ResetSD90 // InitPitchBend)
 # POD-HD-500
 #
 
-hd500_channel=9
+hd500_channel=configuration['HD500']['channel']
 hd500_port=3
 
 P01A=Program(hd500_port, channel=hd500_channel, program=1)
@@ -1129,20 +969,14 @@ P50_D=(GT10B_bank_3 // GT10B_pgrm_100)
 #-----------------------------------------------------------------------------------------------------------
 # Control section
 # control.py
-#-----------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------
 # CONTROL SECTION
-#-----------------------------------------------------------------------------------------------------------
-q49_channel=1
-pk5_channel=2
-fcb_channel=9
-pod_channel=9
-gt10b_channel=16
-
+# -----------------------------------------------------------------------------------------------------------
 
 # This control have the same behavior than the NavigateToScene python function above
 # EXCEPT that there is NO wrap parameter for SceneSwitch
 # The NavigateToScene CAN wrap through Scenes
-#_control=(ChannelFilter(9) >> Filter(CTRL) >>
+#_ control=(ChannelFilter(9) >> Filter(CTRL) >>
 #	(
 #		(CtrlFilter(20) >> CtrlValueFilter(1) >> SceneSwitch(offset=-1)) //
 #		(CtrlFilter(20) >> CtrlValueFilter(2) >> SceneSwitch(offset=1))  //
@@ -1157,41 +991,22 @@ reset=(
 )
 
 
-# FCB1010 UNO as controller
-#fcb1010=(ChannelFilter(9) >> Filter(CTRL) >> 
-#	(
-#		(CtrlFilter(20) >> Process(NavigateToScene)) // 
-#		(CtrlFilter(22) >> reset)
-#	))
-
 # FCB1010 UNO as controller (same as above different syntaxes)
 fcb1010=(Filter(CTRL) >> CtrlSplit({
-    20: Process(NavigateToScene),
+    20: Call(NavigateToScene),
     22: reset,
 }))
 
-# KEYBOARD CONTROLLER - Alesis Q49 
-# Accept Volume and Note on
+# MIDI KEYBOARD CONTROLLER TO CONTROL MPG123 
 keyboard=(
-            (CtrlFilter(7) >> CtrlValueFilter(0,101)) //
+            (CtrlFilter(1,7) >> CtrlValueFilter(0,101)) //
             (Filter(NOTEON) >> Transpose(-36))
-        ) >> Call(MPG123())
-
-# PK5 as Controller - WIP
-_pk5_controller = Pass()
+         ) >> Call(MPG123())
 
 # Shortcut (Play switch)
 play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
 d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
 #-----------------------------------------------------------------------------------------------------------
-
-# TODO (*** not sure until real need ***)
-# Multiple controllers , different logic for each of them WIP
-#main_controller=ChannelSplit({
-    #1: _keyboard_controller,
-    #9: _fcb1010_controller,
-    #2:_pk5_controller
-#})
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
@@ -1426,11 +1241,46 @@ tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-    2: Scene("bass_cover", patch=Discard()),
-    3: Scene("demon", patch=Discard()),
-    4: Scene("styx", patch=Discard()),
-    5: Scene("tabarnac", patch=Discard()),
-    6: Scene("timeline", patch=Discard()),
+    2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
+    5: SceneGroup("The Trees", [
+            Scene("Bridge",  play >> System(play_file("trees_full.mp3"))),
+            Scene("Synth", Transpose(-29) >> LatchNotes(False,reset='G0') >> lowsynth),
+       ]),
+    6: SceneGroup("Time Stand Still", [
+			Scene("TSS-Intro", play >> System(play_file("tss.mp3"))),
+			Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+	   ]),
+    7: SceneGroup("2112", [
+		    Scene("2112-MP3 via D4", Process(RemoveDuplicates()) >> d4play >> System(play_file("2112.mp3"))),
+		    Scene("2112-MP3 via FCB1010", play >> System(play_file("2112.mp3"))),
+            Scene("Explosion", explosion),
+       ]),
+    8: Scene("Analog Kid", Channel(1) >> analogkid_main),
+    9: Scene("Hemispheres", play >> System(play_file("hemispheres.mp3"))),
+    10: Scene("Circumstances", play >> System(play_file("circumstances.mp3"))),
+    11: SceneGroup("Natural Science", [
+            Scene("Intro", play >> System(play_file("ns_intro.mp3"))),
+            Scene("Outro", play >> System(play_file("ns_outro.mp3"))),
+       ]),
+    12:Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
+    13:Scene("TimeStandSteel.D4",  
+			[
+			ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
+			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
+				[
+					(
+					tss_d4_melo_tom_A // 
+					tss_d4_castanet // 
+					tss_d4_melo_tom_B // 
+					tss_d4_808_tom
+					)
+	 			]]),
+    14:Scene("Closer A", Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
+    15:Scene("Closer B", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
+    16:Scene("YYZ", Process(RemoveDuplicates()) >> yyz),
+    17:Scene("Mission",  mission),
 }
 #-----------------------------------------------------------------------------------------------------------
 
@@ -1441,7 +1291,7 @@ _pre  = Print('input', portnames='in')
 _post = Print('output',portnames='out')
 
 # TODO repenser ce token (fit pas avec le reste)
-_ctrl=keyboard
+_ctrl=fcb1010
 
 run(
     control=_ctrl,
