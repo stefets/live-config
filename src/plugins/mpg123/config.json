@@ -7,7 +7,7 @@
     "hw": "hw:1,0",
     "device": "/dev/sda1"
   },
-    "RPI2": {
+    "rpi2": {
     "hw": "hw:1,0",
     "device": "/dev/sda1"
   },
