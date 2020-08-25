@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 from subprocess import Popen, PIPE, check_call
 
 import mididings.constants as _constants
@@ -67,6 +68,7 @@ class MPG123:
         }
 
         self.current_entry = 0
+        self.entry_count = 0
 
     def __del__(self):
         self.process.terminate()
@@ -113,6 +115,8 @@ class MPG123:
         target = self.configuration['symlink-target']
         check_call([self.configuration['symlink-builder'], source, target])
 
+        self.entry_count = subprocess.call('exit $(cat /tmp/playlist|wc -l)', shell=True)
+
     def next_subscene(self, ev):
         switch_subscene(current_subscene() + 1)
 
@@ -137,8 +141,9 @@ class MPG123:
         self.write('j ' + offset)
 
     def next_entry(self, ev):
-        ev.data1 = self.current_entry + 1
-        self.play(ev)
+        if self.entry_count >= self.current_entry + 1:
+            ev.data1 = self.current_entry + 1
+            self.play(ev)
 
     def prev_entry(self, ev):
         if self.current_entry > 1:
