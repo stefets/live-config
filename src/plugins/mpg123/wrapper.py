@@ -102,7 +102,13 @@ class MPG123:
 
     def on_switch_scene(self, direction):
         index = current_scene() + direction
+        if index > len(scenes()):
+            index = 2
         switch_scene(index)
+        # Patch 1 is Initialize, nothing below
+        if index <= 1:
+            return
+
         source = self.configuration['albums'] + scenes()[index][0]
         target = self.configuration['symlink-target']
         check_call([self.configuration['symlink-builder'], source, target])
