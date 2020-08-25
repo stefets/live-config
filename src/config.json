@@ -1,11 +1,11 @@
 {
-  "GT10B" : {
-    "channel" : 16
-    },
-  "HD500" : {
-    "channel" : 9
-    },
-  "FCB1010" : {
-    "channel" : 9
-    }
+  "GT10B": {
+    "channel": 16
+  },
+  "HD500": {
+    "channel": 9
+  },
+  "FCB1010": {
+    "channel": 9
+  }
 }
