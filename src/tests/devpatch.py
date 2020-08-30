@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# SCRIPT TO DEVELOP A PATCH
+# Script to develop patches
 #
 
 from mididings import *
@@ -12,26 +12,28 @@ from mididings.engine import *
 from mididings.event import *
 
 config(
-    client_name='SD-90',
-    backend='alsa',
-    in_ports=[
-        ('IN0', '20:0'), ('IN1', '20:1'), ('IN2', '20:2'), ('IN3', '20:3'),  # ('Q49', '24:0'),
-    ],
-    out_ports=[('OUT', '20:0'), ],  # MIDI OUTPUT
+     in_ports=[
+         ('PART-A', '20:0'),
+         ('PART-B', '20:1'),
+         ('IN-1', '20:2'),
+         ('IN-2', '20:3'),
+         # ('Q49', '24:0'),
+     ],
+     out_ports=[
+         ('PART-A', '20:0'),
+         ('PART-B', '20:1'),
+         ('THRU-1', '20:2'),
+     ],
 )
 
-target = Output('OUT', channel=1, program=((96 * 128), 1))
-big_country = (
-        (
-            (
-                    CtrlFilter(80) >>
-                    (
-                            Ctrl(51, 64) //
-                            Ctrl(52, 64) //
-                            Ctrl(53, 64)
-                    )
-            )
-        ) >> target)
+#target = Output('OUT', channel=9, program=((96 * 128), 1))
+#target = Output('OUT', channel=9, program=(53, 1))
+big_country = (CtrlFilter(20) >> (
+                                    Ctrl(51, 64) //
+                                    Ctrl(52, 64) //
+                                    Ctrl(54, 64)
+                                  )
+               ) 
 
 _scenes = {
     1: Scene("BigCountry", big_country)
