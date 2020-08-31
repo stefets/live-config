@@ -23,17 +23,18 @@ config(
          ('PART-A', '20:0'),
          ('PART-B', '20:1'),
          ('THRU-1', '20:2'),
+         ('OUT-2', '20:3'),
      ],
 )
 
 #target = Output('OUT', channel=9, program=((96 * 128), 1))
 #target = Output('OUT', channel=9, program=(53, 1))
-big_country = (CtrlFilter(20) >> (
+big_country = ((CtrlFilter(20) >> (
                                     Ctrl(51, 64) //
                                     Ctrl(52, 64) //
                                     Ctrl(54, 64)
                                   )
-               ) 
+               ) >> Port('THRU-1'))
 
 _scenes = {
     1: Scene("BigCountry", big_country)

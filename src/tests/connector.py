@@ -26,7 +26,7 @@ config(
 
 )
 
-piano = Output('PART-A', channel=1, program=((96 * 128), 1))
+piano = Output('PART-A', channel=1, program=((96 * 128), 100))
 _scenes = {
     1: Scene("Piano", piano),
     2: Scene("Piano2", piano)
