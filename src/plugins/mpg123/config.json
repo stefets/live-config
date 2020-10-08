@@ -1,13 +1,13 @@
 {
   "PC1": {
-    "hw": "hw:3,0",
+    "hw": "hw:1,0",
     "device": "/dev/sdb1"
   },
   "rpi3": {
     "hw": "hw:1,0",
     "device": "/dev/sda1"
   },
-    "rpi2": {
+  "rpi2": {
     "hw": "hw:1,0",
     "device": "/dev/sda1"
   },

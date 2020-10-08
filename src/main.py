@@ -33,10 +33,13 @@ config(
 
     out_ports = [
         # DAW
-        ('SD90_PARTA', '20:0'),         # Edirol SD-90 PART A       (Port number 1)
-        ('SD90_PARTB', '20:1'),         # Edirol SD-90 PART B       (Port number 2)
-        ('SD90_MIDI_OUT_1', '20:2',),   # Edirol SD-90 MIDI OUT 1   (Port number 3)
-        ('SD90_MIDI_OUT_2', '20:3',),   # Edirol SD-90 MIDI OUT 2   (Port number 4)
+        ('SD90-PART-A', '20:0'),         # Edirol SD-90 PART A       (Port number 1)
+        ('SD90-PART-B', '20:1'),         # Edirol SD-90 PART B       (Port number 2)
+        ('SD90-MIDI-OUT-1', '20:2',),   # Edirol SD-90 MIDI OUT 1   (Port number 3)
+        ('SD90-MIDI-OUT-2', '20:3',),   # Edirol SD-90 MIDI OUT 2   (Port number 4)
+        ('UM2-MIDI-OUT-1', '24:0',),  # Edirol UM-2eX MIDI OUT 1   (Port number 4)
+        ('UM2-MIDI-OUT-2', '24:1',),  # Edirol UM-2eX MIDI OUT 2   (Port number 4)
+
         # Clones
         ('HD500', '20:2',),     # MOVABLE
         # HD500 midi out to gt10b midi , if I output to gt10b, it goes thru pod anyway
@@ -45,8 +48,10 @@ config(
 
     in_ports = [
         ('Q49_MIDI_IN_1', '20:0',),  # Alesis Q49 in USB MODE
-        ('SD90_MIDI_IN_1','20:2',),  # Edirol SD-90 MIDI IN 1
-        ('SD90_MIDI_IN_2','20:3',)   # Edirol SD-90 MIDI IN 2
+        ('UM2-MIDI-IN-1', '24:0',),  # Alesis Q49 in USB MODE
+
+        ('SD90-MIDI-IN-1','20:2',),  # Edirol SD-90 MIDI IN 1
+        ('SD90-MIDI-IN-2','20:3',)   # Edirol SD-90 MIDI IN 2
  ],
 
 )

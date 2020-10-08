@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 #
 # SCRIPT TO SETUP THE IN/OUT PORTS ONLY
@@ -12,31 +12,28 @@ from mididings.engine import *
 from mididings.event import *
 
 config(
-
-    client_name = 'SD-90',
-    backend = 'alsa',
-
-    in_ports = [
-        ('IN0', '20:0'),
-        ('IN1', '20:1'),
-        ('IN2', '20:2'),
-        ('IN3', '20:3'),
-        #('Q49', '24:0'),
+    in_ports=[
+        ('PART-A', '20:0'),
+        ('PART-B', '20:1'),
+        ('IN-1', '20:2'),
+        ('IN-2', '20:3'),
+        # ('Q49', '24:0'),
     ],
-
-    out_ports = [ ('OUT', '20:0'), ],   # MIDI OUTPUT
+    out_ports=[
+        ('PART-A', '20:0'),
+        ('PART-B', '20:1'),
+    ],
 
 )
 
-piano = Output('OUT', channel=1, program=((96*128),1))
+piano = Output('PART-A', channel=1, program=((96 * 128), 100))
 _scenes = {
-    1:Scene("Piano", piano),
-    2:Scene("Piano2", piano) 
+    1: Scene("Piano", piano),
+    2: Scene("Piano2", piano)
 }
 
-
-_pre  = Print('input', portnames='in')
-_post = Print('output',portnames='out')
+_pre = Print('input', portnames='in')
+_post = Print('output', portnames='out')
 
 run(
     scenes=_scenes,
