@@ -20,7 +20,7 @@ reset = (
 )
 
 # FCB1010 UNO as controller (same as above different syntaxes)
-fcb1010 = (Filter(CTRL) >> CtrlSplit({
+fcb1010 = (ChannelFilter(9) >> CtrlFilter(20,22) >> CtrlSplit({
     20: Call(NavigateToScene),
     22: reset,
 }))

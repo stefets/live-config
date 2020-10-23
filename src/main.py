@@ -113,6 +113,7 @@ __SCENES__
 # Run region
 #-----------------------------------------------------------------------------------------------------------
 _pre  = Print('input', portnames='in')
+_pre  = ~ChannelFilter(9)
 _post = Print('output',portnames='out')
 
 # TODO repenser ce token (fit pas avec le reste)

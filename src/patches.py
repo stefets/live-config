@@ -27,7 +27,7 @@ d4_tom=cf >> Output('SD90-PART-A', channel=11, program=((96*128)+1,118), volume=
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
-violon = cf >> Output('SD90-PART-A', channel=1, program=((96*128),41))
+violon = Output('SD90-PART-A', channel=1, program=((96*128),41))
 piano_base = cf >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128),1))
 nf_piano = Output('SD90-PART-A', channel=1, program=((96*128),2), volume=100)
 piano = ChannelFilter(1) >> Velocity(fixed=80) >> Output('SD90-PART-A', channel=3, program=((96*128),1), volume=100)
@@ -220,3 +220,8 @@ tss_d4_melo_tom_B=cf >>KeyFilter('F1') >> Key('a4') >> d4_808_tom
 
 # Son 5
 tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('f#5') >> d4_808_tom
+
+# Toggle Compressor + Harmonizer
+big_country_pipe = ((
+    CtrlFilter(21) >>
+            (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))

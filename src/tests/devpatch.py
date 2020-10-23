@@ -10,6 +10,7 @@ from mididings.extra import *
 from mididings import engine
 from mididings.engine import *
 from mididings.event import *
+from mididings.extra.inotify import *
 
 config(
      in_ports=[
@@ -27,17 +28,20 @@ config(
      ],
 )
 
+hook(
+    AutoRestart(),
+)
+
 #target = Output('OUT', channel=9, program=((96 * 128), 1))
 #target = Output('OUT', channel=9, program=(53, 1))
-big_country = ((CtrlFilter(20) >> (
-                                    Ctrl(51, 64) //
-                                    Ctrl(52, 64) //
-                                    Ctrl(54, 64)
-                                  )
-               ) >> Port('THRU-1'))
+
+# Toggle Compressor + Harmonizer
+big_country_pipe = ((
+    CtrlFilter(21) >>
+        (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('THRU-1'))
 
 _scenes = {
-    1: Scene("BigCountry", big_country)
+    1: Scene("BigCountry", big_country_pipe)
 }
 
 _pre = Print('input', portnames='in')
