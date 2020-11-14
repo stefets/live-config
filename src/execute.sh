@@ -7,7 +7,6 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 template="main.py"
 target="render.py"
 sceneFileName="./scenes/$1"
-ctrl="$2"
 
 # Replace __TOKEN__ in template file
 sed \
@@ -30,4 +29,4 @@ sed \
 	$template > $target
 
 # Start the mididings script
-python $target
+mididings -f $target
