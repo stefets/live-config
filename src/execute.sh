@@ -19,7 +19,6 @@ sed \
 	-e "/__GT10B__/r ./hardware/gt10b.py" \
 	-e "/__PATCHES__/r patches.py" \
     -e "/__SCENES__/r $sceneFileName" \
-    -e "/__CONTROLLER__/r $ctrl" \
 	-e "/__FUNCTIONS__/d" \
 	-e "/__FILTERS__/d" \
 	-e "/__CONTROL__/d" \
@@ -28,7 +27,6 @@ sed \
 	-e "/__GT10B__/d" \
 	-e "/__PATCHES__/d" \
 	-e "/__SCENES__/d" \
-	-e "/__CONTROLLER__/d" \
 	$template > $target
 
 # Start the mididings script

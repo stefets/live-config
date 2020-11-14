@@ -116,11 +116,8 @@ _pre  = Print('input', portnames='in')
 _pre  = ~ChannelFilter(9)
 _post = Print('output',portnames='out')
 
-# TODO repenser ce token (fit pas avec le reste)
-__CONTROLLER__
-
 run(
-    control=_ctrl,
+    control=_control,
     scenes=_scenes,
     #pre=_pre,
     #post=_post,

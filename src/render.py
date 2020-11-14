@@ -972,43 +972,40 @@ P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 #-----------------------------------------------------------------------------------------------------------
 # Control section
 # control.py
-# -----------------------------------------------------------------------------------------------------------
-# CONTROL SECTION
-# -----------------------------------------------------------------------------------------------------------
+# CONTROL SECTION -------------------------------------------------------------
 
-# This control have the same behavior than the NavigateToScene python function above
-# EXCEPT that there is NO wrap parameter for SceneSwitch
-# The NavigateToScene CAN wrap through Scenes
-# _ control=(ChannelFilter(9) >> Filter(CTRL) >>
-#	(
-#		(CtrlFilter(20) >> CtrlValueFilter(1) >> SceneSwitch(offset=-1)) //
-#		(CtrlFilter(20) >> CtrlValueFilter(2) >> SceneSwitch(offset=1))  //
-#		(CtrlFilter(20) >> CtrlValueFilter(3) >> SubSceneSwitch(offset=1, wrap=True))
-#	))
+# TODO - Move wipe all ailleur
 
-
-# Reset all
-reset = (
-        System(AllAudioOff) // Pass() //
-        ResetSD90 // Pass()
+# Wipe all
+_wipe = (
+    System(AllAudioOff) // Pass() //
+    ResetSD90 // Pass()
 )
 
-# FCB1010 UNO as controller (same as above different syntaxes)
-fcb1010 = (ChannelFilter(9) >> CtrlFilter(20,22) >> CtrlSplit({
-    20: Call(NavigateToScene),
-    22: reset,
-}))
+# FCB1010 & UNO Chip
+_fcb1010 = (
+    CtrlFilter(20,22) >>
+    CtrlSplit({
+        20: Call(NavigateToScene),
+        22: _wipe,
+    })
+)
 
-# MIDI KEYBOARD CONTROLLER TO CONTROL MPG123 
-keyboard = (
-                   (CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
-                   (Filter(NOTEON) >> Transpose(-36))
-           ) >> Call(MPG123())
+# Control MPG123 process
+# See MPG123 class to understand how it works
+_mpg123 = (
+	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
+	(Filter(NOTEON) >> Transpose(-36))
+) >> Call(MPG123())
 
-# Shortcut (Play switch)
-play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
-d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
-# -----------------------------------------------------------------------------------------------------------
+_control = (
+	ChannelFilter(8,9) >>
+	ChannelSplit({
+		8: _mpg123,
+		9: _fcb1010,
+	})
+)
+# ------------------------------- -----------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
@@ -1267,11 +1264,8 @@ _pre  = Print('input', portnames='in')
 _pre  = ~ChannelFilter(9)
 _post = Print('output',portnames='out')
 
-# TODO repenser ce token (fit pas avec le reste)
-_ctrl=keyboard
-
 run(
-    control=_ctrl,
+    control=_control,
     scenes=_scenes,
     #pre=_pre,
     #post=_post,
