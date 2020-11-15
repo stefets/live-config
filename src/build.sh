@@ -1,32 +1,32 @@
 #!/bin/bash
 
-# Create the final mididings configuration file and execute it.
+# Build the final mididings configuration file and execute it.
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 template="main.py"
-target="render.py"
+output="render.py"
 sceneFileName="./scenes/$1"
+
+# Merge devices
+devices=$(mktemp)
+cat $DIR/devices/*.py > $devices
 
 # Replace __TOKEN__ in template file
 sed \
     -e "/__FUNCTIONS__/r functions.py" \
     -e "/__FILTERS__/r filters.py" \
     -e "/__CONTROL__/r control.py" \
-    -e "/__SD90__/r ./hardware/sd90.py" \
-	-e "/__HD500__/r ./hardware/hd500.py" \
-	-e "/__GT10B__/r ./hardware/gt10b.py" \
 	-e "/__PATCHES__/r patches.py" \
+    -e "/__DEVICES__/r $devices" \
     -e "/__SCENES__/r $sceneFileName" \
 	-e "/__FUNCTIONS__/d" \
 	-e "/__FILTERS__/d" \
 	-e "/__CONTROL__/d" \
-	-e "/__SD90__/d" \
-	-e "/__HD500__/d" \
-	-e "/__GT10B__/d" \
+	-e "/__DEVICES__/d" \
 	-e "/__PATCHES__/d" \
 	-e "/__SCENES__/d" \
-	$template > $target
+	$template > $output
 
 # Start the mididings script
-mididings -f $target
+mididings -f $output

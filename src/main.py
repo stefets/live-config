@@ -77,16 +77,18 @@ __FUNCTIONS__
 __FILTERS__
 
 #-----------------------------------------------------------------------------------------------------------
-# Hardware Section defined in /hardware/ directory
+# Devices Section defined in /devices/ directory
 #-----------------------------------------------------------------------------------------------------------
 # Edirol SD-90 Studio Canvas
-__SD90__
-
+#__SD90__
 # HD500 configuration
-__HD500__
+#__HD500__
 
 # GT10B configuration
-__GT10B__
+#__GT10B__
+
+# All devices
+__DEVICES__
 
 #-----------------------------------------------------------------------------------------------------------
 # Control section
