@@ -30,7 +30,7 @@ explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel
 violon = Output('SD90-PART-A', channel=1, program=((96*128),41))
 piano_base = cf >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128),1))
 nf_piano = Output('SD90-PART-A', channel=1, program=((96*128),2), volume=100)
-piano = ChannelFilter(1) >> Velocity(fixed=80) >> Output('SD90-PART-A', channel=3, program=((96*128),1), volume=100)
+piano =  Output('SD90-PART-A', channel=3, program=((96*128),1), volume=100)
 piano2 = Output('SD90-PART-A', channel=2, program=((96*128),2), volume=100)
 
 # Patch Synth
