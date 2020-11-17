@@ -12,15 +12,14 @@
 import os
 import sys
 import json
-sys.path.append(os.path.realpath('.'))
 from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
-#from mididings.extra.inotify import *
-#from core.RangeKeyDict import  import ra
+from mididings.extra.inotify import *
 from plugins.mpg123.wrapper import *
 
 # Global configuration file
+sys.path.append(os.path.realpath('.'))
 with open('config.json') as json_file:
     configuration = json.load(json_file)
 
@@ -32,41 +31,35 @@ config(
     # client_name = 'mididings',
 
     out_ports = [
-        # DAW
-        ('SD90-PART-A', '20:0'),         # Edirol SD-90 PART A       (Port number 1)
-        ('SD90-PART-B', '20:1'),         # Edirol SD-90 PART B       (Port number 2)
-        ('SD90-MIDI-OUT-1', '20:2',),   # Edirol SD-90 MIDI OUT 1   (Port number 3)
-        ('SD90-MIDI-OUT-2', '20:3',),   # Edirol SD-90 MIDI OUT 2   (Port number 4)
-        ('UM2-MIDI-OUT-1', '24:0',),  # Edirol UM-2eX MIDI OUT 1   (Port number 4)
-        ('UM2-MIDI-OUT-2', '24:1',),  # Edirol UM-2eX MIDI OUT 2   (Port number 4)
+        # DeviceName                    # Description               # Mididings corresponding port
+        ('SD90-PART-A', '20:0'),        # Edirol SD-90 PART A       Port(1)
+        ('SD90-PART-B', '20:1'),        # Edirol SD-90 PART B       Port(2)
+        ('SD90-MIDI-OUT-1', '20:2',),   # Edirol SD-90 MIDI OUT 1   Port(3)
+        ('SD90-MIDI-OUT-2', '20:3',),   # Edirol SD-90 MIDI OUT 2   Port(4)
 
-        # Clones
-        ('HD500', '20:2',),     # MOVABLE
-        # HD500 midi out to gt10b midi , if I output to gt10b, it goes thru pod anyway
-        ('GT10B', '20:2',),     # MOVABLE
- ],
+        ('UM2-MIDI-OUT-1', '24:0',),    # Edirol UM-2eX MIDI OUT 1  Port(5)
+        ('UM2-MIDI-OUT-2', '24:1',),    # Edirol UM-2eX MIDI OUT 2  Port(6)
+    ],
 
     in_ports = [
-        ('Q49_MIDI_IN_1', '20:0',),  # Alesis Q49 in USB MODE
-        ('UM2-MIDI-IN-1', '24:0',),  # Alesis Q49 in USB MODE
+        # DeviceName                    # Description               #
+        ('Q49_MIDI_IN_1', '20:0',),     # Alesis Q49 USB MODE
 
-        ('SD90-MIDI-IN-1','20:2',),  # Edirol SD-90 MIDI IN 1
-        ('SD90-MIDI-IN-2','20:3',)   # Edirol SD-90 MIDI IN 2
- ],
+        ('UM2-MIDI-IN-1', '24:0',),     # Edirol UM-2eX MIDI IN-1
+
+        ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
+        ('SD90-MIDI-IN-2','20:3',)      # Edirol SD-90 MIDI IN 2
+    ],
 
 )
 
 hook(
-
-    #MemorizeScene('memorize-scene.txt'),
-    #AutoRestart(), #AutoRestart works with mididings.extra.inotify
-
-    #OSCInterface(port=56418, notify_ports=[56419,56420]),
+    AutoRestart(),
     OSCInterface(),
 )
 
 #-----------------------------------------------------------------------------------------------------------
-# Functions section 
+# Class and function body
 # functions.py
 # --------------------------------------------------------------------
 # Function and classes called by scenes
@@ -207,7 +200,7 @@ def OnPitchbend(ev, direction):
 # ---------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
-# Filters Section
+# Filters body
 # filters.py
 #-----------------------------------------------------------------------------------------------------------
 # # ALLOWED FILTERS : Available for patches, meaning, allow only for instance
@@ -221,40 +214,29 @@ pk5 = ChannelFilter(2)  # Filter by hardware & channel
 cf = ~ChannelFilter(9)
 
 #-----------------------------------------------------------------------------------------------------------
-# Devices Section defined in /devices/ directory
-#-----------------------------------------------------------------------------------------------------------
-# Edirol SD-90 Studio Canvas
-#__SD90__
-# HD500 configuration
-#__HD500__
-
-# GT10B configuration
-#__GT10B__
-
-# All devices
+# Devices body
 #
-# This is the patches specific for a certain device
-#
-# SD-90 CONFIGURATION TO CONTROL THE BOSS GT_10B
-# 
+# DEVICE
+# Boss GT-10B
+# This device has 4 banks, each bank contains 100 programs 
+# TODO : Create a device builder
 
-# CONFIG
-
-# Channel defined in the GT10B
+# Midi channel defined in config.json
 GT10BChannel = configuration['GT10B']['channel']
 
-# port number of the D
+# Output port to use, specified in main.py
 GT10BPort = 3
 
-GT10B_volume = (ChannelFilter(9) >> Channel(16) >> CtrlFilter(1) >> CtrlMap(1, 7) >> Port(3))
+# TODO : Rework that sucks
+#GT10B_volume = (ChannelFilter(9) >> Channel(16) >> CtrlFilter(1) >> CtrlMap(1, 7) >> Port(3))
 
-# banks
+# Banks
 GT10B_bank_0 = (Ctrl(GT10BPort, GT10BChannel, 0, 0) // Ctrl(GT10BPort, GT10BChannel, 32, 0))
 GT10B_bank_1 = (Ctrl(GT10BPort, GT10BChannel, 0, 1) // Ctrl(GT10BPort, GT10BChannel, 32, 0))
 GT10B_bank_2 = (Ctrl(GT10BPort, GT10BChannel, 0, 2) // Ctrl(GT10BPort, GT10BChannel, 32, 0))
 GT10B_bank_3 = (Ctrl(GT10BPort, GT10BChannel, 0, 3) // Ctrl(GT10BPort, GT10BChannel, 32, 0))
 
-# program (same for the 4 banks)
+# Program (same for the 4 banks)
 GT10B_pgrm_1 = Program(GT10BPort, channel=GT10BChannel, program=1)
 GT10B_pgrm_2 = Program(GT10BPort, channel=GT10BChannel, program=2)
 GT10B_pgrm_3 = Program(GT10BPort, channel=GT10BChannel, program=3)
@@ -763,6 +745,7 @@ P50_B = (GT10B_bank_3 // GT10B_pgrm_98)
 P50_C = (GT10B_bank_3 // GT10B_pgrm_99)
 P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 
+# TODO : Rework 
 # PortU, _Channel, CC, Value
 # FootsUiw_tch
 # GT10BU_F_S1=Ctrl(3,9,51,64)
@@ -974,13 +957,10 @@ BrushingSaw = cf >> Output('SD90-PART-A', channel=1, program=((80 * 128), 2))
 InitSoundModule = (ResetSD90 // InitPitchBend)
 
 #-----------------------------------------------------------------------------------------------------------
-# Control section
+# Control body
 # control.py
-# CONTROL SECTION -------------------------------------------------------------
-
-# TODO - Move wipe all ailleur
-
 # Wipe all
+# TODO - Move _wipe ailleur
 _wipe = (
     System(AllAudioOff) // Pass() //
     ResetSD90 // Pass()
@@ -1009,11 +989,10 @@ _control = (
 		9: _fcb1010,
 	})
 )
-# ------------------------------- -----------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
-# Patches configuration
+# Patches body
 # patches.py
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------
@@ -1245,32 +1224,47 @@ big_country_pipe = ((
             (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))
 
 #-----------------------------------------------------------------------------------------------------------
-# Scenes region
+# Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-    2: Scene("bass_cover", patch=piano),
-    3: Scene("demon", patch=Discard()),
-    4: Scene("styx", patch=Discard()),
-    5: Scene("tabarnac", patch=Discard()),
-    6: Scene("timeline", patch=Discard()),
-    #7: SceneGroup("rush", [
-    #       Scene("power-windows", patch = Discard()),
-    #       Scene("grace-under-pressure", patch = Discard())
-    #   ])
+    2: SceneGroup("bass_cover",
+        [
+            Scene("Default", patch=Discard()),
+        ]),
+    3: SceneGroup("styx",
+        [
+            Scene("Default", init_patch=U01_A, patch=Discard()),
+        ]),
+    4: SceneGroup("tabarnac",
+        [
+            Scene("Default", patch=Discard()),
+        ]),
+    5: SceneGroup("palindrome",
+        [
+            Scene("Centurion - guitar/synth cover", patch=centurion_patch),
+        ]),
+    6: SceneGroup("rush_cover",
+        [
+            Scene("Default", patch=Discard()),
+        ]),
 }
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # Run region
 #-----------------------------------------------------------------------------------------------------------
-_pre  = Print('input', portnames='in')
-_pre  = ~ChannelFilter(9)
-_post = Print('output',portnames='out')
+# PROD
+_pre  = ~ChannelFilter(8,9)
+_post = Pass()
+
+# DEBUG
+#_pre  = Print('input', portnames='in')
+#_post = Print('output',portnames='out')
 
 run(
     control=_control,
     scenes=_scenes,
-    #pre=_pre,
-    #post=_post,
+    pre=_pre,
+    post=_post,
 )
