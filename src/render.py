@@ -221,211 +221,17 @@ pk5 = ChannelFilter(2)  # Filter by hardware & channel
 cf = ~ChannelFilter(9)
 
 #-----------------------------------------------------------------------------------------------------------
-# Hardware Section defined in /hardware/ directory
+# Devices Section defined in /devices/ directory
 #-----------------------------------------------------------------------------------------------------------
 # Edirol SD-90 Studio Canvas
-#
-# This is the patches specific for the sound modules configuration
-#
-# EDIROL SD-90
-#
-# Reset string
-ResetSD90 = SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
-
-# Configure PitchBend Sensitivity
-# SD-90 Part A - All Channel
-#      * RPN MSB/LSB 0 = PitchBendSens ****  //  ****** DataEntry 12 tone *******
-PB_A01 = (Ctrl(1, 1, 100, 0) // Ctrl(1, 1, 101, 0) // Ctrl(1, 1, 6, 12) // Ctrl(1, 1, 38, 0))
-PB_A02 = (Ctrl(1, 2, 100, 0) // Ctrl(1, 2, 101, 0) // Ctrl(1, 2, 6, 12) // Ctrl(1, 2, 38, 0))
-PB_A03 = (Ctrl(1, 3, 100, 0) // Ctrl(1, 3, 101, 0) // Ctrl(1, 3, 6, 12) // Ctrl(1, 3, 38, 0))
-PB_A04 = (Ctrl(1, 4, 100, 0) // Ctrl(1, 4, 101, 0) // Ctrl(1, 4, 6, 12) // Ctrl(1, 4, 38, 0))
-PB_A05 = (Ctrl(1, 5, 100, 0) // Ctrl(1, 5, 101, 0) // Ctrl(1, 5, 6, 12) // Ctrl(1, 5, 38, 0))
-PB_A06 = (Ctrl(1, 6, 100, 0) // Ctrl(1, 6, 101, 0) // Ctrl(1, 6, 6, 12) // Ctrl(1, 6, 38, 0))
-PB_A07 = (Ctrl(1, 7, 100, 0) // Ctrl(1, 7, 101, 0) // Ctrl(1, 7, 6, 12) // Ctrl(1, 7, 38, 0))
-PB_A08 = (Ctrl(1, 8, 100, 0) // Ctrl(1, 8, 101, 0) // Ctrl(1, 8, 6, 12) // Ctrl(1, 8, 38, 0))
-PB_A09 = (Ctrl(1, 9, 100, 0) // Ctrl(1, 9, 101, 0) // Ctrl(1, 9, 6, 12) // Ctrl(1, 9, 38, 0))
-PB_A10 = (Ctrl(1, 10, 100, 0) // Ctrl(1, 10, 101, 0) // Ctrl(1, 10, 6, 12) // Ctrl(1, 10, 38, 0))
-PB_A11 = (Ctrl(1, 11, 100, 0) // Ctrl(1, 11, 101, 0) // Ctrl(1, 11, 6, 12) // Ctrl(1, 11, 38, 0))
-PB_A12 = (Ctrl(1, 12, 100, 0) // Ctrl(1, 12, 101, 0) // Ctrl(1, 12, 6, 12) // Ctrl(1, 12, 38, 0))
-PB_A13 = (Ctrl(1, 13, 100, 0) // Ctrl(1, 13, 101, 0) // Ctrl(1, 13, 6, 12) // Ctrl(1, 13, 38, 0))
-PB_A14 = (Ctrl(1, 14, 100, 0) // Ctrl(1, 14, 101, 0) // Ctrl(1, 14, 6, 12) // Ctrl(1, 14, 38, 0))
-PB_A15 = (Ctrl(1, 15, 100, 0) // Ctrl(1, 15, 101, 0) // Ctrl(1, 15, 6, 12) // Ctrl(1, 15, 38, 0))
-PB_A16 = (Ctrl(1, 16, 100, 0) // Ctrl(1, 16, 101, 0) // Ctrl(1, 16, 6, 12) // Ctrl(1, 16, 38, 0))
-# SD-90 Part B - All Channel
-PB_B01 = (Ctrl(2, 1, 100, 0) // Ctrl(2, 1, 101, 0) // Ctrl(2, 1, 6, 12) // Ctrl(2, 1, 38, 0))
-PB_B02 = (Ctrl(2, 2, 100, 0) // Ctrl(2, 2, 101, 0) // Ctrl(2, 2, 6, 12) // Ctrl(2, 2, 38, 0))
-PB_B03 = (Ctrl(2, 3, 100, 0) // Ctrl(2, 3, 101, 0) // Ctrl(2, 3, 6, 12) // Ctrl(2, 3, 38, 0))
-PB_B04 = (Ctrl(2, 4, 100, 0) // Ctrl(2, 4, 101, 0) // Ctrl(2, 4, 6, 12) // Ctrl(2, 4, 38, 0))
-PB_B05 = (Ctrl(2, 5, 100, 0) // Ctrl(2, 5, 101, 0) // Ctrl(2, 5, 6, 12) // Ctrl(2, 5, 38, 0))
-PB_B06 = (Ctrl(2, 6, 100, 0) // Ctrl(2, 6, 101, 0) // Ctrl(2, 6, 6, 12) // Ctrl(2, 6, 38, 0))
-PB_B07 = (Ctrl(2, 7, 100, 0) // Ctrl(2, 7, 101, 0) // Ctrl(2, 7, 6, 12) // Ctrl(2, 7, 38, 0))
-PB_B08 = (Ctrl(2, 8, 100, 0) // Ctrl(2, 8, 101, 0) // Ctrl(2, 8, 6, 12) // Ctrl(2, 8, 38, 0))
-PB_B09 = (Ctrl(2, 9, 100, 0) // Ctrl(2, 9, 101, 0) // Ctrl(2, 9, 6, 12) // Ctrl(2, 9, 38, 0))
-PB_B10 = (Ctrl(2, 10, 100, 0) // Ctrl(2, 10, 101, 0) // Ctrl(2, 10, 6, 12) // Ctrl(2, 10, 38, 0))
-PB_B11 = (Ctrl(2, 11, 100, 0) // Ctrl(2, 11, 101, 0) // Ctrl(2, 11, 6, 12) // Ctrl(2, 11, 38, 0))
-PB_B12 = (Ctrl(2, 12, 100, 0) // Ctrl(2, 12, 101, 0) // Ctrl(2, 12, 6, 12) // Ctrl(2, 12, 38, 0))
-PB_B13 = (Ctrl(2, 13, 100, 0) // Ctrl(2, 13, 101, 0) // Ctrl(2, 13, 6, 12) // Ctrl(2, 13, 38, 0))
-PB_B14 = (Ctrl(2, 14, 100, 0) // Ctrl(2, 14, 101, 0) // Ctrl(2, 14, 6, 12) // Ctrl(2, 14, 38, 0))
-PB_B15 = (Ctrl(2, 15, 100, 0) // Ctrl(2, 15, 101, 0) // Ctrl(2, 15, 6, 12) // Ctrl(2, 15, 38, 0))
-PB_B16 = (Ctrl(2, 16, 100, 0) // Ctrl(2, 16, 101, 0) // Ctrl(2, 16, 6, 12) // Ctrl(2, 16, 38, 0))
-
-InitPitchBend = (
-        PB_B01 // PB_B02 // PB_B03 // PB_B04 // PB_B05 // PB_B06 // PB_B07 // PB_B08 //
-        PB_B09 // PB_B10 // PB_B11 // PB_B12 // PB_B13 // PB_B14 // PB_B15 // PB_B16 //
-        PB_A01 // PB_A02 // PB_A03 // PB_A04 // PB_A05 // PB_A06 // PB_A07 // PB_A08 //
-        PB_A09 // PB_A10 // PB_A11 // PB_A12 // PB_A13 // PB_A14 // PB_A15 // PB_A16)
-
-# --------------------------------------------
-# SD-90 # DRUM MAPPING
-# --------------------------------------------
-# Classical Set
-StandardSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 1))
-RoomSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 9))
-PowerSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 17))
-ElectricSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 25))
-AnalogSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 26))
-JazzSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 33))
-BrushSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 41))
-OrchestraSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 49))
-SFXSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 57))
-# Contemporary Set
-StandardSet2 = cf >> Output('SD90-PART-A', channel=10, program=(13440, 1))
-RoomSet2 = cf >> Output('SD90-PART-A', channel=10, program=(13440, 9))
-PowerSet2 = cf >> Output('SD90-PART-A', channel=10, program=(13440, 17))
-DanceSet = cf >> Output('SD90-PART-A', channel=10, program=(13440, 25))
-RaveSet = cf >> Output('SD90-PART-A', channel=10, program=(13440, 26))
-JazzSet2 = cf >> Output('SD90-PART-A', channel=10, program=(13440, 33))
-BrushSet2 = cf >> Output('SD90-PART-A', channel=10, program=(13440, 41))
-# Solo Set
-St_Standard = cf >> Output('SD90-PART-A', channel=10, program=(13568, 1))
-St_Room = cf >> Output('SD90-PART-A', channel=10, program=(13568, 9))
-St_Power = cf >> Output('SD90-PART-A', channel=10, program=(13568, 17))
-RustSet = cf >> Output('SD90-PART-A', channel=10, program=(13568, 25))
-Analog2Set = cf >> Output('SD90-PART-A', channel=10, program=(13568, 26))
-St_Jazz = cf >> Output('SD90-PART-A', channel=10, program=(13568, 33))
-St_Brush = cf >> Output('SD90-PART-A', channel=10, program=(13568, 41))
-# Enhanced Set
-Amb_Standard = cf >> Output('SD90-PART-A', channel=10, program=(13696, 1))
-Amb_Room = cf >> Output('SD90-PART-A', channel=10, program=(13696, 9))
-GatedPower = cf >> Output('SD90-PART-A', channel=10, program=(13696, 17))
-TechnoSet = cf >> Output('SD90-PART-A', channel=10, program=(13696, 25))
-BullySet = cf >> Output('SD90-PART-A', channel=10, program=(13696, 26))
-Amb_Jazz = cf >> Output('SD90-PART-A', channel=10, program=(13696, 33))
-Amb_Brush = cf >> Output('SD90-PART-A', channel=10, program=(13696, 41))
-
-### SD-90 Full Patch implementation 
-# TODO 
-BrushingSaw = cf >> Output('SD90-PART-A', channel=1, program=((80 * 128), 2))
-# TODO 
-### End SD-90 Patch list
-# -------------------------------------------------------------------
-
-InitSoundModule = (ResetSD90 // InitPitchBend)
-
+#__SD90__
 # HD500 configuration
-#
-# This is the patches specific for a certain device
-#
-# POD-HD-500
-#
-
-hd500_channel = configuration['HD500']['channel']
-hd500_port = 3
-
-P01A = Program(hd500_port, channel=hd500_channel, program=1)
-P01B = Program(hd500_port, channel=hd500_channel, program=2)
-P01C = Program(hd500_port, channel=hd500_channel, program=3)
-P01D = Program(hd500_port, channel=hd500_channel, program=4)
-P02A = Program(hd500_port, channel=hd500_channel, program=5)
-P02B = Program(hd500_port, channel=hd500_channel, program=6)
-P02C = Program(hd500_port, channel=hd500_channel, program=7)
-P02D = Program(hd500_port, channel=hd500_channel, program=8)
-P03A = Program(hd500_port, channel=hd500_channel, program=9)
-P03B = Program(hd500_port, channel=hd500_channel, program=10)
-P03C = Program(hd500_port, channel=hd500_channel, program=11)
-P03D = Program(hd500_port, channel=hd500_channel, program=12)
-P04A = Program(hd500_port, channel=hd500_channel, program=13)
-P04B = Program(hd500_port, channel=hd500_channel, program=14)
-P04C = Program(hd500_port, channel=hd500_channel, program=15)
-P04D = Program(hd500_port, channel=hd500_channel, program=16)
-P05A = Program(hd500_port, channel=hd500_channel, program=17)
-P05B = Program(hd500_port, channel=hd500_channel, program=18)
-P05C = Program(hd500_port, channel=hd500_channel, program=19)
-P05D = Program(hd500_port, channel=hd500_channel, program=20)
-P06A = Program(hd500_port, channel=hd500_channel, program=21)
-P06B = Program(hd500_port, channel=hd500_channel, program=22)
-P06C = Program(hd500_port, channel=hd500_channel, program=23)
-P06D = Program(hd500_port, channel=hd500_channel, program=24)
-P07A = Program(hd500_port, channel=hd500_channel, program=25)
-P07B = Program(hd500_port, channel=hd500_channel, program=26)
-P07C = Program(hd500_port, channel=hd500_channel, program=27)
-P07D = Program(hd500_port, channel=hd500_channel, program=28)
-P08A = Program(hd500_port, channel=hd500_channel, program=29)
-P08B = Program(hd500_port, channel=hd500_channel, program=30)
-P08C = Program(hd500_port, channel=hd500_channel, program=31)
-P08D = Program(hd500_port, channel=hd500_channel, program=32)
-P09A = Program(hd500_port, channel=hd500_channel, program=33)
-P09B = Program(hd500_port, channel=hd500_channel, program=34)
-P09C = Program(hd500_port, channel=hd500_channel, program=35)
-P09D = Program(hd500_port, channel=hd500_channel, program=36)
-P10A = Program(hd500_port, channel=hd500_channel, program=37)
-P10B = Program(hd500_port, channel=hd500_channel, program=38)
-P10C = Program(hd500_port, channel=hd500_channel, program=39)
-P10D = Program(hd500_port, channel=hd500_channel, program=40)
-P11A = Program(hd500_port, channel=hd500_channel, program=41)
-P11B = Program(hd500_port, channel=hd500_channel, program=42)
-P11C = Program(hd500_port, channel=hd500_channel, program=43)
-P11D = Program(hd500_port, channel=hd500_channel, program=44)
-P12A = Program(hd500_port, channel=hd500_channel, program=45)
-P12B = Program(hd500_port, channel=hd500_channel, program=46)
-P12C = Program(hd500_port, channel=hd500_channel, program=47)
-P12D = Program(hd500_port, channel=hd500_channel, program=48)
-P13A = Program(hd500_port, channel=hd500_channel, program=49)
-P13B = Program(hd500_port, channel=hd500_channel, program=50)
-P13C = Program(hd500_port, channel=hd500_channel, program=51)
-P13D = Program(hd500_port, channel=hd500_channel, program=52)
-P14A = Program(hd500_port, channel=hd500_channel, program=53)
-P14B = Program(hd500_port, channel=hd500_channel, program=54)
-P14C = Program(hd500_port, channel=hd500_channel, program=55)
-P14D = Program(hd500_port, channel=hd500_channel, program=56)
-P15A = Program(hd500_port, channel=hd500_channel, program=57)
-P15B = Program(hd500_port, channel=hd500_channel, program=58)
-P15C = Program(hd500_port, channel=hd500_channel, program=59)
-P15D = Program(hd500_port, channel=hd500_channel, program=60)
-P16A = Program(hd500_port, channel=hd500_channel, program=61)
-P16B = Program(hd500_port, channel=hd500_channel, program=62)
-P16C = Program(hd500_port, channel=hd500_channel, program=63)
-P16D = Program(hd500_port, channel=hd500_channel, program=64)
-
-#
-
-#
-# POD-HD-500 to control Fender Super60
-#
-
-# Depend on hd500.py
-S60A = Program(hd500_port, channel=hd500_channel, program=61)
-S60B = Program(hd500_port, channel=hd500_channel, program=62)
-S60C = Program(hd500_port, channel=hd500_channel, program=63)
-S60D = Program(hd500_port, channel=hd500_channel, program=64)
-
-# hd500_port, Channel, CC, Value
-# Footsiwtch
-FS1 = Ctrl(hd500_port, hd500_channel, 51, 64)
-FS2 = Ctrl(hd500_port, hd500_channel, 52, 64)
-FS3 = Ctrl(hd500_port, hd500_channel, 53, 64)
-FS4 = Ctrl(hd500_port, hd500_channel, 54, 64)
-FS5 = Ctrl(hd500_port, hd500_channel, 55, 64)
-FS6 = Ctrl(hd500_port, hd500_channel, 56, 64)
-FS7 = Ctrl(hd500_port, hd500_channel, 57, 64)
-FS8 = Ctrl(hd500_port, hd500_channel, 58, 64)
-TOE = Ctrl(hd500_port, hd500_channel, 59, 64)
-
-# Pedal - useless
-
-# Looper
+#__HD500__
 
 # GT10B configuration
+#__GT10B__
+
+# All devices
 #
 # This is the patches specific for a certain device
 #
@@ -968,47 +774,242 @@ P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 # GT10BU_F_S7=Ctrl(3,9,57,64)
 # GT10BU_F_S8=Ctrl(3,9,58,64)
 # GT10BU_T_OE=Ctrl(3,9,59,64)
+#
+# This is the patches specific for a certain device
+#
+# POD-HD-500
+#
+
+hd500_channel = configuration['HD500']['channel']
+hd500_port = 3
+
+P01A = Program(hd500_port, channel=hd500_channel, program=1)
+P01B = Program(hd500_port, channel=hd500_channel, program=2)
+P01C = Program(hd500_port, channel=hd500_channel, program=3)
+P01D = Program(hd500_port, channel=hd500_channel, program=4)
+P02A = Program(hd500_port, channel=hd500_channel, program=5)
+P02B = Program(hd500_port, channel=hd500_channel, program=6)
+P02C = Program(hd500_port, channel=hd500_channel, program=7)
+P02D = Program(hd500_port, channel=hd500_channel, program=8)
+P03A = Program(hd500_port, channel=hd500_channel, program=9)
+P03B = Program(hd500_port, channel=hd500_channel, program=10)
+P03C = Program(hd500_port, channel=hd500_channel, program=11)
+P03D = Program(hd500_port, channel=hd500_channel, program=12)
+P04A = Program(hd500_port, channel=hd500_channel, program=13)
+P04B = Program(hd500_port, channel=hd500_channel, program=14)
+P04C = Program(hd500_port, channel=hd500_channel, program=15)
+P04D = Program(hd500_port, channel=hd500_channel, program=16)
+P05A = Program(hd500_port, channel=hd500_channel, program=17)
+P05B = Program(hd500_port, channel=hd500_channel, program=18)
+P05C = Program(hd500_port, channel=hd500_channel, program=19)
+P05D = Program(hd500_port, channel=hd500_channel, program=20)
+P06A = Program(hd500_port, channel=hd500_channel, program=21)
+P06B = Program(hd500_port, channel=hd500_channel, program=22)
+P06C = Program(hd500_port, channel=hd500_channel, program=23)
+P06D = Program(hd500_port, channel=hd500_channel, program=24)
+P07A = Program(hd500_port, channel=hd500_channel, program=25)
+P07B = Program(hd500_port, channel=hd500_channel, program=26)
+P07C = Program(hd500_port, channel=hd500_channel, program=27)
+P07D = Program(hd500_port, channel=hd500_channel, program=28)
+P08A = Program(hd500_port, channel=hd500_channel, program=29)
+P08B = Program(hd500_port, channel=hd500_channel, program=30)
+P08C = Program(hd500_port, channel=hd500_channel, program=31)
+P08D = Program(hd500_port, channel=hd500_channel, program=32)
+P09A = Program(hd500_port, channel=hd500_channel, program=33)
+P09B = Program(hd500_port, channel=hd500_channel, program=34)
+P09C = Program(hd500_port, channel=hd500_channel, program=35)
+P09D = Program(hd500_port, channel=hd500_channel, program=36)
+P10A = Program(hd500_port, channel=hd500_channel, program=37)
+P10B = Program(hd500_port, channel=hd500_channel, program=38)
+P10C = Program(hd500_port, channel=hd500_channel, program=39)
+P10D = Program(hd500_port, channel=hd500_channel, program=40)
+P11A = Program(hd500_port, channel=hd500_channel, program=41)
+P11B = Program(hd500_port, channel=hd500_channel, program=42)
+P11C = Program(hd500_port, channel=hd500_channel, program=43)
+P11D = Program(hd500_port, channel=hd500_channel, program=44)
+P12A = Program(hd500_port, channel=hd500_channel, program=45)
+P12B = Program(hd500_port, channel=hd500_channel, program=46)
+P12C = Program(hd500_port, channel=hd500_channel, program=47)
+P12D = Program(hd500_port, channel=hd500_channel, program=48)
+P13A = Program(hd500_port, channel=hd500_channel, program=49)
+P13B = Program(hd500_port, channel=hd500_channel, program=50)
+P13C = Program(hd500_port, channel=hd500_channel, program=51)
+P13D = Program(hd500_port, channel=hd500_channel, program=52)
+P14A = Program(hd500_port, channel=hd500_channel, program=53)
+P14B = Program(hd500_port, channel=hd500_channel, program=54)
+P14C = Program(hd500_port, channel=hd500_channel, program=55)
+P14D = Program(hd500_port, channel=hd500_channel, program=56)
+P15A = Program(hd500_port, channel=hd500_channel, program=57)
+P15B = Program(hd500_port, channel=hd500_channel, program=58)
+P15C = Program(hd500_port, channel=hd500_channel, program=59)
+P15D = Program(hd500_port, channel=hd500_channel, program=60)
+P16A = Program(hd500_port, channel=hd500_channel, program=61)
+P16B = Program(hd500_port, channel=hd500_channel, program=62)
+P16C = Program(hd500_port, channel=hd500_channel, program=63)
+P16D = Program(hd500_port, channel=hd500_channel, program=64)
+
+#
+
+#
+# POD-HD-500 to control Fender Super60
+#
+
+# Depend on hd500.py
+S60A = Program(hd500_port, channel=hd500_channel, program=61)
+S60B = Program(hd500_port, channel=hd500_channel, program=62)
+S60C = Program(hd500_port, channel=hd500_channel, program=63)
+S60D = Program(hd500_port, channel=hd500_channel, program=64)
+
+# hd500_port, Channel, CC, Value
+# Footsiwtch
+FS1 = Ctrl(hd500_port, hd500_channel, 51, 64)
+FS2 = Ctrl(hd500_port, hd500_channel, 52, 64)
+FS3 = Ctrl(hd500_port, hd500_channel, 53, 64)
+FS4 = Ctrl(hd500_port, hd500_channel, 54, 64)
+FS5 = Ctrl(hd500_port, hd500_channel, 55, 64)
+FS6 = Ctrl(hd500_port, hd500_channel, 56, 64)
+FS7 = Ctrl(hd500_port, hd500_channel, 57, 64)
+FS8 = Ctrl(hd500_port, hd500_channel, 58, 64)
+TOE = Ctrl(hd500_port, hd500_channel, 59, 64)
+
+# Pedal - useless
+
+# Looper
+#
+# This is the patches specific for the sound modules configuration
+#
+# EDIROL SD-90
+#
+# Reset string
+ResetSD90 = SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
+
+# Configure PitchBend Sensitivity
+# SD-90 Part A - All Channel
+#      * RPN MSB/LSB 0 = PitchBendSens ****  //  ****** DataEntry 12 tone *******
+PB_A01 = (Ctrl(1, 1, 100, 0) // Ctrl(1, 1, 101, 0) // Ctrl(1, 1, 6, 12) // Ctrl(1, 1, 38, 0))
+PB_A02 = (Ctrl(1, 2, 100, 0) // Ctrl(1, 2, 101, 0) // Ctrl(1, 2, 6, 12) // Ctrl(1, 2, 38, 0))
+PB_A03 = (Ctrl(1, 3, 100, 0) // Ctrl(1, 3, 101, 0) // Ctrl(1, 3, 6, 12) // Ctrl(1, 3, 38, 0))
+PB_A04 = (Ctrl(1, 4, 100, 0) // Ctrl(1, 4, 101, 0) // Ctrl(1, 4, 6, 12) // Ctrl(1, 4, 38, 0))
+PB_A05 = (Ctrl(1, 5, 100, 0) // Ctrl(1, 5, 101, 0) // Ctrl(1, 5, 6, 12) // Ctrl(1, 5, 38, 0))
+PB_A06 = (Ctrl(1, 6, 100, 0) // Ctrl(1, 6, 101, 0) // Ctrl(1, 6, 6, 12) // Ctrl(1, 6, 38, 0))
+PB_A07 = (Ctrl(1, 7, 100, 0) // Ctrl(1, 7, 101, 0) // Ctrl(1, 7, 6, 12) // Ctrl(1, 7, 38, 0))
+PB_A08 = (Ctrl(1, 8, 100, 0) // Ctrl(1, 8, 101, 0) // Ctrl(1, 8, 6, 12) // Ctrl(1, 8, 38, 0))
+PB_A09 = (Ctrl(1, 9, 100, 0) // Ctrl(1, 9, 101, 0) // Ctrl(1, 9, 6, 12) // Ctrl(1, 9, 38, 0))
+PB_A10 = (Ctrl(1, 10, 100, 0) // Ctrl(1, 10, 101, 0) // Ctrl(1, 10, 6, 12) // Ctrl(1, 10, 38, 0))
+PB_A11 = (Ctrl(1, 11, 100, 0) // Ctrl(1, 11, 101, 0) // Ctrl(1, 11, 6, 12) // Ctrl(1, 11, 38, 0))
+PB_A12 = (Ctrl(1, 12, 100, 0) // Ctrl(1, 12, 101, 0) // Ctrl(1, 12, 6, 12) // Ctrl(1, 12, 38, 0))
+PB_A13 = (Ctrl(1, 13, 100, 0) // Ctrl(1, 13, 101, 0) // Ctrl(1, 13, 6, 12) // Ctrl(1, 13, 38, 0))
+PB_A14 = (Ctrl(1, 14, 100, 0) // Ctrl(1, 14, 101, 0) // Ctrl(1, 14, 6, 12) // Ctrl(1, 14, 38, 0))
+PB_A15 = (Ctrl(1, 15, 100, 0) // Ctrl(1, 15, 101, 0) // Ctrl(1, 15, 6, 12) // Ctrl(1, 15, 38, 0))
+PB_A16 = (Ctrl(1, 16, 100, 0) // Ctrl(1, 16, 101, 0) // Ctrl(1, 16, 6, 12) // Ctrl(1, 16, 38, 0))
+# SD-90 Part B - All Channel
+PB_B01 = (Ctrl(2, 1, 100, 0) // Ctrl(2, 1, 101, 0) // Ctrl(2, 1, 6, 12) // Ctrl(2, 1, 38, 0))
+PB_B02 = (Ctrl(2, 2, 100, 0) // Ctrl(2, 2, 101, 0) // Ctrl(2, 2, 6, 12) // Ctrl(2, 2, 38, 0))
+PB_B03 = (Ctrl(2, 3, 100, 0) // Ctrl(2, 3, 101, 0) // Ctrl(2, 3, 6, 12) // Ctrl(2, 3, 38, 0))
+PB_B04 = (Ctrl(2, 4, 100, 0) // Ctrl(2, 4, 101, 0) // Ctrl(2, 4, 6, 12) // Ctrl(2, 4, 38, 0))
+PB_B05 = (Ctrl(2, 5, 100, 0) // Ctrl(2, 5, 101, 0) // Ctrl(2, 5, 6, 12) // Ctrl(2, 5, 38, 0))
+PB_B06 = (Ctrl(2, 6, 100, 0) // Ctrl(2, 6, 101, 0) // Ctrl(2, 6, 6, 12) // Ctrl(2, 6, 38, 0))
+PB_B07 = (Ctrl(2, 7, 100, 0) // Ctrl(2, 7, 101, 0) // Ctrl(2, 7, 6, 12) // Ctrl(2, 7, 38, 0))
+PB_B08 = (Ctrl(2, 8, 100, 0) // Ctrl(2, 8, 101, 0) // Ctrl(2, 8, 6, 12) // Ctrl(2, 8, 38, 0))
+PB_B09 = (Ctrl(2, 9, 100, 0) // Ctrl(2, 9, 101, 0) // Ctrl(2, 9, 6, 12) // Ctrl(2, 9, 38, 0))
+PB_B10 = (Ctrl(2, 10, 100, 0) // Ctrl(2, 10, 101, 0) // Ctrl(2, 10, 6, 12) // Ctrl(2, 10, 38, 0))
+PB_B11 = (Ctrl(2, 11, 100, 0) // Ctrl(2, 11, 101, 0) // Ctrl(2, 11, 6, 12) // Ctrl(2, 11, 38, 0))
+PB_B12 = (Ctrl(2, 12, 100, 0) // Ctrl(2, 12, 101, 0) // Ctrl(2, 12, 6, 12) // Ctrl(2, 12, 38, 0))
+PB_B13 = (Ctrl(2, 13, 100, 0) // Ctrl(2, 13, 101, 0) // Ctrl(2, 13, 6, 12) // Ctrl(2, 13, 38, 0))
+PB_B14 = (Ctrl(2, 14, 100, 0) // Ctrl(2, 14, 101, 0) // Ctrl(2, 14, 6, 12) // Ctrl(2, 14, 38, 0))
+PB_B15 = (Ctrl(2, 15, 100, 0) // Ctrl(2, 15, 101, 0) // Ctrl(2, 15, 6, 12) // Ctrl(2, 15, 38, 0))
+PB_B16 = (Ctrl(2, 16, 100, 0) // Ctrl(2, 16, 101, 0) // Ctrl(2, 16, 6, 12) // Ctrl(2, 16, 38, 0))
+
+InitPitchBend = (
+        PB_B01 // PB_B02 // PB_B03 // PB_B04 // PB_B05 // PB_B06 // PB_B07 // PB_B08 //
+        PB_B09 // PB_B10 // PB_B11 // PB_B12 // PB_B13 // PB_B14 // PB_B15 // PB_B16 //
+        PB_A01 // PB_A02 // PB_A03 // PB_A04 // PB_A05 // PB_A06 // PB_A07 // PB_A08 //
+        PB_A09 // PB_A10 // PB_A11 // PB_A12 // PB_A13 // PB_A14 // PB_A15 // PB_A16)
+
+# --------------------------------------------
+# SD-90 # DRUM MAPPING
+# --------------------------------------------
+# Classical Set
+StandardSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 1))
+RoomSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 9))
+PowerSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 17))
+ElectricSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 25))
+AnalogSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 26))
+JazzSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 33))
+BrushSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 41))
+OrchestraSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 49))
+SFXSet = cf >> Output('SD90-PART-A', channel=10, program=(13312, 57))
+# Contemporary Set
+StandardSet2 = cf >> Output('SD90-PART-A', channel=10, program=(13440, 1))
+RoomSet2 = cf >> Output('SD90-PART-A', channel=10, program=(13440, 9))
+PowerSet2 = cf >> Output('SD90-PART-A', channel=10, program=(13440, 17))
+DanceSet = cf >> Output('SD90-PART-A', channel=10, program=(13440, 25))
+RaveSet = cf >> Output('SD90-PART-A', channel=10, program=(13440, 26))
+JazzSet2 = cf >> Output('SD90-PART-A', channel=10, program=(13440, 33))
+BrushSet2 = cf >> Output('SD90-PART-A', channel=10, program=(13440, 41))
+# Solo Set
+St_Standard = cf >> Output('SD90-PART-A', channel=10, program=(13568, 1))
+St_Room = cf >> Output('SD90-PART-A', channel=10, program=(13568, 9))
+St_Power = cf >> Output('SD90-PART-A', channel=10, program=(13568, 17))
+RustSet = cf >> Output('SD90-PART-A', channel=10, program=(13568, 25))
+Analog2Set = cf >> Output('SD90-PART-A', channel=10, program=(13568, 26))
+St_Jazz = cf >> Output('SD90-PART-A', channel=10, program=(13568, 33))
+St_Brush = cf >> Output('SD90-PART-A', channel=10, program=(13568, 41))
+# Enhanced Set
+Amb_Standard = cf >> Output('SD90-PART-A', channel=10, program=(13696, 1))
+Amb_Room = cf >> Output('SD90-PART-A', channel=10, program=(13696, 9))
+GatedPower = cf >> Output('SD90-PART-A', channel=10, program=(13696, 17))
+TechnoSet = cf >> Output('SD90-PART-A', channel=10, program=(13696, 25))
+BullySet = cf >> Output('SD90-PART-A', channel=10, program=(13696, 26))
+Amb_Jazz = cf >> Output('SD90-PART-A', channel=10, program=(13696, 33))
+Amb_Brush = cf >> Output('SD90-PART-A', channel=10, program=(13696, 41))
+
+### SD-90 Full Patch implementation 
+# TODO 
+BrushingSaw = cf >> Output('SD90-PART-A', channel=1, program=((80 * 128), 2))
+# TODO 
+### End SD-90 Patch list
+# -------------------------------------------------------------------
+
+InitSoundModule = (ResetSD90 // InitPitchBend)
 
 #-----------------------------------------------------------------------------------------------------------
 # Control section
 # control.py
-# -----------------------------------------------------------------------------------------------------------
-# CONTROL SECTION
-# -----------------------------------------------------------------------------------------------------------
+# CONTROL SECTION -------------------------------------------------------------
 
-# This control have the same behavior than the NavigateToScene python function above
-# EXCEPT that there is NO wrap parameter for SceneSwitch
-# The NavigateToScene CAN wrap through Scenes
-# _ control=(ChannelFilter(9) >> Filter(CTRL) >>
-#	(
-#		(CtrlFilter(20) >> CtrlValueFilter(1) >> SceneSwitch(offset=-1)) //
-#		(CtrlFilter(20) >> CtrlValueFilter(2) >> SceneSwitch(offset=1))  //
-#		(CtrlFilter(20) >> CtrlValueFilter(3) >> SubSceneSwitch(offset=1, wrap=True))
-#	))
+# TODO - Move wipe all ailleur
 
-
-# Reset all
-reset = (
-        System(AllAudioOff) // Pass() //
-        ResetSD90 // Pass()
+# Wipe all
+_wipe = (
+    System(AllAudioOff) // Pass() //
+    ResetSD90 // Pass()
 )
 
-# FCB1010 UNO as controller (same as above different syntaxes)
-fcb1010 = (Filter(CTRL) >> CtrlSplit({
-    20: Call(NavigateToScene),
-    22: reset,
-}))
+# FCB1010 & UNO Chip
+_fcb1010 = (
+    CtrlFilter(20,22) >>
+    CtrlSplit({
+        20: Call(NavigateToScene),
+        22: _wipe,
+    })
+)
 
-# MIDI KEYBOARD CONTROLLER TO CONTROL MPG123 
-keyboard = (
-                   (CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
-                   (Filter(NOTEON) >> Transpose(-36))
-           ) >> Call(MPG123())
+# Control MPG123 process
+# See MPG123 class to understand how it works
+_mpg123 = (
+	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
+	(Filter(NOTEON) >> Transpose(-36))
+) >> Call(MPG123())
 
-# Shortcut (Play switch)
-play = ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(21)
-d4play = ChannelFilter(3) >> KeyFilter(45) >> Filter(NOTEON) >> NoteOff(45)
-# -----------------------------------------------------------------------------------------------------------
+_control = (
+	ChannelFilter(8,9) >>
+	ChannelSplit({
+		8: _mpg123,
+		9: _fcb1010,
+	})
+)
+# ------------------------------- -----------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
@@ -1044,10 +1045,10 @@ d4_tom=cf >> Output('SD90-PART-A', channel=11, program=((96*128)+1,118), volume=
 # FX Section
 explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
-violon = cf >> Output('SD90-PART-A', channel=1, program=((96*128),41))
+violon = Output('SD90-PART-A', channel=1, program=((96*128),41))
 piano_base = cf >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128),1))
 nf_piano = Output('SD90-PART-A', channel=1, program=((96*128),2), volume=100)
-piano = ChannelFilter(1) >> Velocity(fixed=80) >> Output('SD90-PART-A', channel=3, program=((96*128),1), volume=100)
+piano =  Output('SD90-PART-A', channel=3, program=((96*128),1), volume=100)
 piano2 = Output('SD90-PART-A', channel=2, program=((96*128),2), volume=100)
 
 # Patch Synth
@@ -1238,51 +1239,25 @@ tss_d4_melo_tom_B=cf >>KeyFilter('F1') >> Key('a4') >> d4_808_tom
 # Son 5
 tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
+# Toggle Compressor + Harmonizer
+big_country_pipe = ((
+    CtrlFilter(21) >>
+            (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))
+
 #-----------------------------------------------------------------------------------------------------------
 # Scenes region
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-    2: Scene("RedBarchetta", LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
-    3: Scene("FreeWill", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
-    4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, ChannelFilter(2) >> Transpose(-24) >> closer_base]),
-    5: SceneGroup("The Trees", [
-            Scene("Bridge",  play >> System(play_file("trees_full.mp3"))),
-            Scene("Synth", Transpose(-29) >> LatchNotes(False,reset='G0') >> lowsynth),
-       ]),
-    6: SceneGroup("Time Stand Still", [
-			Scene("TSS-Intro", play >> System(play_file("tss.mp3"))),
-			Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
-	   ]),
-    7: SceneGroup("2112", [
-		    Scene("2112-MP3 via D4", Process(RemoveDuplicates()) >> d4play >> System(play_file("2112.mp3"))),
-		    Scene("2112-MP3 via FCB1010", play >> System(play_file("2112.mp3"))),
-            Scene("Explosion", explosion),
-       ]),
-    8: Scene("Analog Kid", Channel(1) >> analogkid_main),
-    9: Scene("Hemispheres", play >> System(play_file("hemispheres.mp3"))),
-    10: Scene("Circumstances", play >> System(play_file("circumstances.mp3"))),
-    11: SceneGroup("Natural Science", [
-            Scene("Intro", play >> System(play_file("ns_intro.mp3"))),
-            Scene("Outro", play >> System(play_file("ns_outro.mp3"))),
-       ]),
-    12:Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
-    13:Scene("TimeStandSteel.D4",  
-			[
-			ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
-			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
-				[
-					(
-					tss_d4_melo_tom_A // 
-					tss_d4_castanet // 
-					tss_d4_melo_tom_B // 
-					tss_d4_808_tom
-					)
-	 			]]),
-    14:Scene("Closer A", Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
-    15:Scene("Closer B", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
-    16:Scene("YYZ", Process(RemoveDuplicates()) >> yyz),
-    17:Scene("Mission",  mission),
+    2: Scene("bass_cover", patch=piano),
+    3: Scene("demon", patch=Discard()),
+    4: Scene("styx", patch=Discard()),
+    5: Scene("tabarnac", patch=Discard()),
+    6: Scene("timeline", patch=Discard()),
+    #7: SceneGroup("rush", [
+    #       Scene("power-windows", patch = Discard()),
+    #       Scene("grace-under-pressure", patch = Discard())
+    #   ])
 }
 #-----------------------------------------------------------------------------------------------------------
 
@@ -1290,13 +1265,11 @@ _scenes = {
 # Run region
 #-----------------------------------------------------------------------------------------------------------
 _pre  = Print('input', portnames='in')
+_pre  = ~ChannelFilter(9)
 _post = Print('output',portnames='out')
 
-# TODO repenser ce token (fit pas avec le reste)
-_ctrl=fcb1010
-
 run(
-    control=_ctrl,
+    control=_control,
     scenes=_scenes,
     #pre=_pre,
     #post=_post,

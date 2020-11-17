@@ -10,6 +10,7 @@ from mididings.extra import *
 from mididings import engine
 from mididings.engine import *
 from mididings.event import *
+from mididings.extra.inotify import *
 
 config(
     in_ports=[
@@ -24,6 +25,10 @@ config(
         ('PART-B', '20:1'),
     ],
 
+
+)
+hook(
+    AutoRestart()
 )
 
 piano = Output('PART-A', channel=1, program=((96 * 128), 100))
@@ -38,5 +43,5 @@ _post = Print('output', portnames='out')
 run(
     scenes=_scenes,
     pre=_pre,
-    post=_post
+    post=_post,
 )
