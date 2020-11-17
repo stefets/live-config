@@ -1,8 +1,5 @@
-# CONTROL SECTION -------------------------------------------------------------
-
-# TODO - Move wipe all ailleur
-
 # Wipe all
+# TODO - Move _wipe ailleur
 _wipe = (
     System(AllAudioOff) // Pass() //
     ResetSD90 // Pass()
@@ -31,4 +28,3 @@ _control = (
 		9: _fcb1010,
 	})
 )
-# ------------------------------- -----------------------------------------------
