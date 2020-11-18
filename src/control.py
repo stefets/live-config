@@ -7,9 +7,10 @@ _wipe = (
 
 # FCB1010 & UNO Chip
 _fcb1010 = (
-    CtrlFilter(20,22) >>
+    CtrlFilter(20,21,22) >>
     CtrlSplit({
         20: Call(NavigateToScene),
+        21: ((Ctrl(51, 64) // Ctrl(52, 64)) >> Port('SD90-MIDI-OUT-1')),
         22: _wipe,
     })
 )
