@@ -1,6 +1,7 @@
-    2: SceneGroup("bass_cover",
+    2: SceneGroup("solo-mode",
         [
-            Scene("Default", patch=Discard()),
+            Scene("Rush", init_patch=P02A, patch=Discard()),
+            Scene("BigCountry", init_patch=P14A, patch=Discard()),
         ]),
     3: SceneGroup("styx",
         [
@@ -16,5 +17,5 @@
         ]),
     6: SceneGroup("rush_cover",
         [
-            Scene("Default", patch=Discard()),
+            Scene("Default", init_patch=P02A, patch=Discard()),
         ]),
