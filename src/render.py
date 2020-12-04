@@ -1247,6 +1247,10 @@ _scenes = {
         [
             Scene("Default", init_patch=P02A, patch=Discard()),
         ]),
+    7: SceneGroup("bass_cover",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
 }
 #-----------------------------------------------------------------------------------------------------------
 
