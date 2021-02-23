@@ -18,23 +18,23 @@ portamento_off=(portamento_base // portamento_off)
 #legato=Ctrl(1,1,120,0)
 
 # Simple output patch for testing equipment
-#SD90-PART-A=cf >> Output('SD90-PART-A', channel=1, program=1, volume=100)
-#SD90-PART-A=cf >> Output('SD90-PART-A', channel=2, program=1, volume=100)
-#SD90-PART-A_drum=cf >> Channel(10) >> Transpose(-24) >> Output('SD90-PART-A', channel=10, program=1, volume=100)
-d4=cf >> Output('SD90-PART-A', channel=10, program=1, volume=100)
-d4_tom=cf >> Output('SD90-PART-A', channel=11, program=((96*128)+1,118), volume=100)
+#SD90-PART-A= Output('SD90-PART-A', channel=1, program=1, volume=100)
+#SD90-PART-A= Output('SD90-PART-A', channel=2, program=1, volume=100)
+#SD90-PART-A_drum= Channel(10) >> Transpose(-24) >> Output('SD90-PART-A', channel=10, program=1, volume=100)
+d4= Output('SD90-PART-A', channel=10, program=1, volume=100)
+d4_tom= Output('SD90-PART-A', channel=11, program=((96*128)+1,118), volume=100)
 
 # FX Section
-explosion = cf >> Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128)+3,128), volume=100)
+explosion =  Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
 violon = Output('SD90-PART-A', channel=1, program=((96*128),41))
-piano_base = cf >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128),1))
+piano_base =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128),1))
 nf_piano = Output('SD90-PART-A', channel=1, program=((96*128),2), volume=100)
 piano =  Output('SD90-PART-A', channel=3, program=((96*128),1), volume=100)
 piano2 = Output('SD90-PART-A', channel=2, program=((96*128),2), volume=100)
 
 # Patch Synth
-keysynth = cf >> Velocity(fixed=80) >> Output('SD90-PART-A', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
+keysynth =  Velocity(fixed=80) >> Output('SD90-PART-A', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
 # Patches for Marathon by Rush
@@ -84,27 +84,27 @@ marathon_bridge_lower=(q49 >>
 # You can take the most
 marathon_cascade=(q49 >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output('SD90-PART-B', channel=11, program=((99*128),99), volume=80))
 
-marathon_bridge_split=cf>> KeySplit('f3', marathon_bridge_lower, marathon_cascade)
+marathon_bridge_split= KeySplit('f3', marathon_bridge_lower, marathon_cascade)
 
 # Patch Syhth. generique pour lowbase
-lowsynth = cf >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
-lowsynth2 = cf >> Velocity(fixed=115) >> Output('SD90-PART-A', channel=1, program=51, volume=115, ctrls={93:75, 91:75})
+lowsynth =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
+lowsynth2 =  Velocity(fixed=115) >> Output('SD90-PART-A', channel=1, program=51, volume=115, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
 # Patch Closer to the hearth 
 closer_high = Output('SD90-PART-A', channel=1, program=((99*128),15), volume=100)
 closer_base = Velocity(fixed=100) >> Output('SD90-PART-A', channel=2, program=((99*128),51), volume=100)
-closer_main = cf >> KeySplit('c3', closer_base, closer_high)
+closer_main =  KeySplit('c3', closer_base, closer_high)
 #--------------------------------------------------------------------
 
 # Patch Time Stand Still
 tss_high = Velocity(fixed=90) >> Output('SD90-PART-A', channel=3, program=((99*128),92), volume=80)
 tss_base = Transpose(12) >> Velocity(fixed=90) >> Output('SD90-PART-A', channel=3, program=((99*128),92), volume=100)
-tss_keyboard_main = cf >> KeySplit('c2', tss_base, tss_high)
+tss_keyboard_main =  KeySplit('c2', tss_base, tss_high)
 
 tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=2, program=((99*128),103), volume=100)
 tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=2, program=((99*128),103), volume=100)
-tss_foot_main = cf >> KeySplit('d#3', tss_foot_left, tss_foot_right)
+tss_foot_main =  KeySplit('d#3', tss_foot_left, tss_foot_right)
 
 #--------------------------------------------------------------------
 
@@ -123,14 +123,14 @@ analogkid_low= (LatchNotes(False,reset='c#3') >>
 		(KeyFilter('e3') >> Key('a3')) 
 	) >> Output('SD90-PART-A',channel=1,program=((98*128),53),volume=100,ctrls={91:75}))
 analogkid_high = Output('SD90-PART-A', channel=2, program=((98*128),53), volume=100, ctrls={93:75, 91:100})
-analogkid_main = cf >> KeySplit('f3', analogkid_low, analogkid_high)
+analogkid_main =  KeySplit('f3', analogkid_low, analogkid_high)
 
-#analogkid_ending = cf >> Key('a1') >> Output('SD90-PART-A', channel=5, program=((81*128),68), volume=100)
+#analogkid_ending =  Key('a1') >> Output('SD90-PART-A', channel=5, program=((81*128),68), volume=100)
 
 #--------------------------------------------------------------------
 
 # Patch Limelight
-limelight = cf >> Key('d#6') >> Output('SD90-PART-A', channel=16, program=((80*128),12), volume=100)
+limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=((80*128),12), volume=100)
 
 # Patch Centurion
 centurion_synth = (Velocity(fixed=110) >>
@@ -144,7 +144,7 @@ centurion_synth = (Velocity(fixed=110) >>
 centurion_video=( System('./vp.sh /mnt/flash/live/video/centurion_silent.avi') )
 
 # Patch Centurion Hack 
-centurion_patch=(cf >> LatchNotes(True,reset='C3') >>
+centurion_patch=( LatchNotes(True,reset='C3') >>
 	(
 		(KeyFilter('D3') >> Key('D1')) //
 		(KeyFilter('E3') >> Key('D2')) //
@@ -163,7 +163,7 @@ closer_celesta_d4 =Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, progr
 #		(Velocity(fixed=100) >> Transpose(-72) >> Output('SD90-PART-A', channel=2, program=((99*128),96), volume=80))
 #	))
 
-closer_patch_celesta_d4=(cf >>
+closer_patch_celesta_d4=(
     (
 		(~KeyFilter(notes=[36,38,40,41,43,45])) //
         (KeyFilter('C1') >> Key('A5')) //
@@ -174,7 +174,7 @@ closer_patch_celesta_d4=(cf >>
         (KeyFilter('A1') >> Key('C#6'))
    ) >> closer_celesta_d4)
 
-#closer_patch_celesta_d4=(cf >> 
+#closer_patch_celesta_d4=( 
 #    (
 #		(~KeyFilter(notes=[36,38,40,41,43,45])) //
 #    	(KeyFilter('C1') >> Key('A5')) //
@@ -186,7 +186,7 @@ closer_patch_celesta_d4=(cf >>
 #   ) >> closer_celesta_d4)
 
 closer_bell_d4 = Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((99*128),15), volume=100)
-closer_patch_d4=(cf >>
+closer_patch_d4=(
     (
 		(~KeyFilter(notes=[36,38,40,41,43,45])) //
         (KeyFilter('C1') >> Key('D4')) //
@@ -197,7 +197,7 @@ closer_patch_d4=(cf >>
 
 # YYZ
 yyz_bell=Output('SD90-PART-A', channel=10, program=1, volume=100)
-yyz=(cf >>
+yyz=(
 	(
 		(KeyFilter('A1') >> Key('A4')) //
 		(KeyFilter('F1') >> Key('G#4')) 
@@ -210,18 +210,21 @@ d4_castanet=Velocity(fixed=100) >> Output('SD90-PART-A', channel=12, program=((9
 d4_808_tom=Velocity(fixed=80) >> Output('SD90-PART-A', channel=13, program=((99*128)+1,119), volume=100)
 
 # Sons 1 et 2
-tss_d4_melo_tom_A=cf >>KeyFilter('E1') >> Key('E6') >> d4_melo_tom
+tss_d4_melo_tom_A=KeyFilter('E1') >> Key('E6') >> d4_melo_tom
 
 # Son 3
-tss_d4_castanet=cf >>KeyFilter('G1') >> Key('a#2') >> d4_castanet
+tss_d4_castanet=KeyFilter('G1') >> Key('a#2') >> d4_castanet
 
 # Son 4
-tss_d4_melo_tom_B=cf >>KeyFilter('F1') >> Key('a4') >> d4_808_tom
+tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 
 # Son 5
-tss_d4_808_tom=cf >>KeyFilter('A1') >> Key('f#5') >> d4_808_tom
+tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
-# Toggle Compressor + Harmonizer
-big_country_pipe = ((
-    CtrlFilter(21) >>
-            (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))
+# Toggle FS1 + FS2 on POD HD500
+#big_country_harmonizer = ((
+#    CtrlFilter(21) >>
+#            (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))
+
+# Subdivision
+subdivisions=pk5>>Filter(NOTEON)>>Transpose(-71)>>Call(MPG123())
