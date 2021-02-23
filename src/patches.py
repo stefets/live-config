@@ -222,6 +222,9 @@ tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
 # Toggle FS1 + FS2 on POD HD500
-big_country_harmonizer = ((
-    CtrlFilter(21) >>
-            (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))
+#big_country_harmonizer = ((
+#    CtrlFilter(21) >>
+#            (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))
+
+# Subdivision
+subdivisions=pk5>>Filter(NOTEON)>>Transpose(-71)>>Call(MPG123())

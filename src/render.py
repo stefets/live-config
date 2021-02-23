@@ -967,10 +967,9 @@ _wipe = (
 
 # FCB1010 & UNO Chip
 _fcb1010 = (
-    CtrlFilter(20,21,22) >>
+    CtrlFilter(20, 21, 22) >>
     CtrlSplit({
         20: Call(NavigateToScene),
-        21: ((Ctrl(51, 64) // Ctrl(52, 64)) >> Port('SD90-MIDI-OUT-1')),
         22: _wipe,
     })
 )
@@ -981,6 +980,7 @@ _mpg123 = (
 	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
 	(Filter(NOTEON) >> Transpose(-36))
 ) >> Call(MPG123())
+
 
 _control = (
 	ChannelFilter(8,9) >>
@@ -1219,29 +1219,40 @@ tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
 # Toggle FS1 + FS2 on POD HD500
-big_country_harmonizer = ((
-    CtrlFilter(21) >>
-            (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))
+#big_country_harmonizer = ((
+#    CtrlFilter(21) >>
+#            (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))
+
+# Subdivision
+subdivisions=pk5>>Filter(NOTEON)>>Transpose(-71)>>Call(MPG123())
 
 #-----------------------------------------------------------------------------------------------------------
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-    2: SceneGroup("Rush",
+    2: SceneGroup("subdivisions",
         [
-        Scene("Default", init_patch=P02A, patch=Discard()),
+            Scene("Init", init_patch=P02A, patch=subdivisions),
+        ]),
+    3: SceneGroup("rush",
+        [
+        Scene("Init", init_patch=P02A, patch=Discard()),
         Scene("Analog Kid Keyboard", analogkid_main),
         #Scene("Analog Kid Keyboard", [ChannelFilter(2) >> analogkid_main, ChannelFilter(1) >> analogkid_ending ]),
-        Scene("Time Stand Still Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
-        Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
-        Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+        Scene("Time Stand Still Keyboard",
+        [
+            ChannelFilter(1) >> tss_keyboard_main,
+            ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main
+        ]),
+        Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3') >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+        Scene("FreeWill Keyboards", Transpose(0) >> LatchNotes(False,reset='E3') >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),
-    3: SceneGroup("Closer",
+    4: SceneGroup("Closer",
         [
             Scene("Default", init_patch=Discard(), patch=closer_main),
         ]),
-    4:SceneGroup ("Marathon", [
+    5:SceneGroup ("Marathon", [
         Scene("Marathon-Intro/Chords", Port(1) >> (
           [
             ChannelSplit({

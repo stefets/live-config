@@ -1,17 +1,25 @@
-    2: SceneGroup("Rush",
+    2: SceneGroup("subdivisions",
         [
-        Scene("Default", init_patch=P02A, patch=Discard()),
+            Scene("Init", init_patch=P02A, patch=subdivisions),
+        ]),
+    3: SceneGroup("rush",
+        [
+        Scene("Init", init_patch=P02A, patch=Discard()),
         Scene("Analog Kid Keyboard", analogkid_main),
         #Scene("Analog Kid Keyboard", [ChannelFilter(2) >> analogkid_main, ChannelFilter(1) >> analogkid_ending ]),
-        Scene("Time Stand Still Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
-        Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
-        Scene("FreeWill Keyboard", Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+        Scene("Time Stand Still Keyboard",
+        [
+            ChannelFilter(1) >> tss_keyboard_main,
+            ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main
+        ]),
+        Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3') >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+        Scene("FreeWill Keyboards", Transpose(0) >> LatchNotes(False,reset='E3') >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),
-    3: SceneGroup("Closer",
+    4: SceneGroup("Closer",
         [
             Scene("Default", init_patch=Discard(), patch=closer_main),
         ]),
-    4:SceneGroup ("Marathon", [
+    5:SceneGroup ("Marathon", [
         Scene("Marathon-Intro/Chords", Port(1) >> (
           [
             ChannelSplit({
