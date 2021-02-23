@@ -7,7 +7,7 @@ _wipe = (
 
 # FCB1010 & UNO Chip
 _fcb1010 = (
-    CtrlFilter(20,22) >>
+    CtrlFilter(20, 21, 22) >>
     CtrlSplit({
         20: Call(NavigateToScene),
         22: _wipe,
@@ -20,6 +20,7 @@ _mpg123 = (
 	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
 	(Filter(NOTEON) >> Transpose(-36))
 ) >> Call(MPG123())
+
 
 _control = (
 	ChannelFilter(8,9) >>

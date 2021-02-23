@@ -37,14 +37,14 @@ hook(
 
 # Toggle Compressor + Harmonizer
 big_country_pipe = ((
-    CtrlFilter(21) >>
+    KeyFilter(notes=[60]) >> Channel(9) >>
         (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('THRU-1'))
 
 _scenes = {
     1: Scene("BigCountry", big_country_pipe)
 }
 
-_pre = Print('input', portnames='in')
+_pre = ~ChannelFilter(9)
 _post = Print('output', portnames='out')
 
 run(
