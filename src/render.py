@@ -1218,59 +1218,49 @@ tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 # Son 5
 tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
-# Toggle FS1 + FS2 on POD HD500
-#big_country_harmonizer = ((
-#    CtrlFilter(21) >>
-#            (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))
-
-# Subdivision
+# Rush Subdivisions
 subdivisions=pk5>>Filter(NOTEON)>>Transpose(-71)>>Call(MPG123())
+
+# Big Country
+# Helper patch, je ne peux pas envoyer 3 Control Change avec le FCB1010
+i_big_country = P14A // Ctrl(hd500_port,hd500_channel, 1, 40)
+p_big_country = (pk5 >> Filter(NOTEON) >>
+         (
+             (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,100))) //
+             (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,127)))
+         ) >> Port('SD90-MIDI-OUT-1'))
+
 
 #-----------------------------------------------------------------------------------------------------------
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-    2: SceneGroup("subdivisions",
+    2: SceneGroup("solo-mode",
         [
-            Scene("Init", init_patch=P02A, patch=subdivisions),
+            Scene("Rush", init_patch=P02A, patch=Discard()),
+            Scene("BigCountry", init_patch=i_big_country, patch=p_big_country),
         ]),
-    3: SceneGroup("rush",
+    3: SceneGroup("styx",
         [
-        Scene("Init", init_patch=P02A, patch=Discard()),
-        Scene("Analog Kid Keyboard", analogkid_main),
-        #Scene("Analog Kid Keyboard", [ChannelFilter(2) >> analogkid_main, ChannelFilter(1) >> analogkid_ending ]),
-        Scene("Time Stand Still Keyboard",
-        [
-            ChannelFilter(1) >> tss_keyboard_main,
-            ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main
+            Scene("Default", init_patch=U01_A, patch=Discard()),
         ]),
-        Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3') >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
-        Scene("FreeWill Keyboards", Transpose(0) >> LatchNotes(False,reset='E3') >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
-       ]),
-    4: SceneGroup("Closer",
+    4: SceneGroup("tabarnac",
         [
-            Scene("Default", init_patch=Discard(), patch=closer_main),
+            Scene("Default", patch=Discard()),
         ]),
-    5:SceneGroup ("Marathon", [
-        Scene("Marathon-Intro/Chords", Port(1) >> (
-          [
-            ChannelSplit({
-                keyboard_channel : marathon_intro,
-                pk5_channel : marathon_chords,
-            }),
-            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> Fork([Channel(3),Channel(4)]) >>
-            [
-             (CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-                (CtrlFilter(1)>>CtrlMap(1,7))
-            ])
-          ])),
-        Scene("Marathon-Bridge/Solo/Ending", 
-            ChannelSplit({
-                1 : (marathon_bridge // marathon_bridge_split),
-                2 : marathon_chords,
-            })),
-   ]),
+    5: SceneGroup("palindrome",
+        [
+            Scene("Centurion - guitar/synth cover", patch=centurion_patch),
+        ]),
+    6: SceneGroup("rush_cover",
+        [
+            Scene("Default", init_patch=P02A, patch=Discard()),
+        ]),
+    7: SceneGroup("bass_cover",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
 }
 #-----------------------------------------------------------------------------------------------------------
 

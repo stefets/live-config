@@ -35,17 +35,26 @@ hook(
 #target = Output('OUT', channel=9, program=((96 * 128), 1))
 #target = Output('OUT', channel=9, program=(53, 1))
 
-# Toggle Compressor + Harmonizer
-big_country_pipe = ((
-    KeyFilter(notes=[60]) >> Channel(9) >>
-        (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('THRU-1'))
+piano=~ChannelFilter(9) >> Output('PART-A', channel=3, program=((96*128),1), volume=100)
+
+# Big Country
+init = Program(3, channel=9, program=53) // Ctrl(3,9,1,40) // Ctrl(3,9,2,100) // Ctrl(3,9,53,100) // Ctrl(3,9,54,100)
+
+big_country = (Filter(NOTEON) >>
+        (
+            (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,127))) //
+            (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,100)))
+        ) >> Port('THRU-1'))
+
 
 _scenes = {
-    1: Scene("BigCountry", big_country_pipe)
+    1: Scene("BigCountry", init_patch=init, patch=big_country)
 }
 
-_pre = ~ChannelFilter(9)
-_post = Print('output', portnames='out')
+#_pre = ~ChannelFilter(9)
+_pre  = Print('input', portnames='in')
+_post = Print('output',portnames='out')
+
 
 run(
     scenes=_scenes,

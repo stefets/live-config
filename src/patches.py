@@ -221,10 +221,15 @@ tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 # Son 5
 tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
-# Toggle FS1 + FS2 on POD HD500
-#big_country_harmonizer = ((
-#    CtrlFilter(21) >>
-#            (Ctrl(51, 64) // Ctrl(52, 64))) >> Port('SD90-MIDI-OUT-1'))
-
-# Subdivision
+# Rush Subdivisions
 subdivisions=pk5>>Filter(NOTEON)>>Transpose(-71)>>Call(MPG123())
+
+# Big Country
+# Helper patch, je ne peux pas envoyer 3 Control Change avec le FCB1010
+i_big_country = P14A // Ctrl(hd500_port,hd500_channel, 1, 40)
+p_big_country = (pk5 >> Filter(NOTEON) >>
+         (
+             (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,100))) //
+             (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,127)))
+         ) >> Port('SD90-MIDI-OUT-1'))
+

@@ -1,7 +1,7 @@
     2: SceneGroup("solo-mode",
         [
             Scene("Rush", init_patch=P02A, patch=Discard()),
-            Scene("BigCountry", init_patch=P14A, patch=Discard()),
+            Scene("BigCountry", init_patch=i_big_country, patch=p_big_country),
         ]),
     3: SceneGroup("styx",
         [
