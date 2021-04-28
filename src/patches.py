@@ -229,6 +229,7 @@ subdivisions=pk5>>Filter(NOTEON)>>Transpose(-71)>>Call(MPG123())
 i_big_country = P14A // Ctrl(hd500_port,hd500_channel, 1, 40)
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
+             (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
              (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,100))) //
              (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,127)))
          ) >> Port('SD90-MIDI-OUT-1'))
