@@ -225,11 +225,19 @@ tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 subdivisions=pk5>>Filter(NOTEON)>>Transpose(-71)>>Call(MPG123())
 
 # Big Country
-# Helper patch, je ne peux pas envoyer 3 Control Change avec le FCB1010
 i_big_country = P14A // Ctrl(hd500_port,hd500_channel, 1, 40)
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
+             (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
              (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,100))) //
              (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,127)))
          ) >> Port('SD90-MIDI-OUT-1'))
 
+# Rush
+i_closer = P02A // Ctrl(hd500_port,hd500_channel, 1, 40)
+p_closer = (pk5 >> Filter(NOTEON) >>
+         (
+             (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
+             (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,54, 64) // Ctrl(3,9,2,100))) //
+             (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,54, 64) // Ctrl(3,9,2,120)))
+         ) >> Port('SD90-MIDI-OUT-1'))
