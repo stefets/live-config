@@ -222,7 +222,7 @@ tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
 # Rush Subdivisions
-subdivisions=pk5>>Filter(NOTEON)>>Transpose(-71)>>Call(MPG123())
+#subdivisions=pk5>>Filter(NOTEON)>>Transpose(-71)>>Call(MPG123())
 
 # Big Country
 i_big_country = P14A // Ctrl(hd500_port,hd500_channel, 1, 40)

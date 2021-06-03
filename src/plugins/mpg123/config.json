@@ -5,13 +5,9 @@
   },
   "rpi3": {
     "hw": "hw:1,0",
-    "device": "/dev/sda1"
+    "device": "/dev/sdb1"
   },
-  "rpi2": {
-    "hw": "hw:1,0",
-    "device": "/dev/sda1"
-  },
-  "albums": "/mnt/flash/music/soundlib/",
+  "albums": "/media/soundlib/",
   "symlink-target": "/tmp/",
   "symlink-builder": "./manage-symlinks.sh"
 }
