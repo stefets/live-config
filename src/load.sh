@@ -9,6 +9,7 @@ source $DIR/../.venv/bin/activate
 audio="/media/soundlib"
 app="$DIR/build.sh"
 
+rm -f /tmp/soundlib
 ln -sf $audio /tmp/soundlib
 
 chmod +x $app
