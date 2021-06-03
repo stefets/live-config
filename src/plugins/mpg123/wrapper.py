@@ -20,7 +20,6 @@ from mididings.engine import *
 
 class MPG123:
     def __init__(self):
-        print("yo")
         hostname = os.uname()[1]
         file = os.getcwd() + '/plugins/mpg123/config.json'
         with open(file) as json_file:
