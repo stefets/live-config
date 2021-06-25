@@ -16,7 +16,7 @@ from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
-from plugins.mpg123.wrapper import *
+from plugins.mp3player.wrapper import *
 
 # Global configuration file
 sys.path.append(os.path.realpath('.'))
@@ -54,7 +54,7 @@ config(
 )
 
 hook(
-    AutoRestart(),
+    #AutoRestart(),
     OSCInterface(),
 )
 
@@ -976,16 +976,16 @@ _fcb1010 = (
 
 # Control MPG123 process
 # See MPG123 class to understand how it works
-_mpg123 = (
+_mp3_player = (
 	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
 	(Filter(NOTEON) >> Transpose(-36))
-) >> Call(MPG123())
+) >> Call(Mp3Player())
 
 
 _control = (
 	ChannelFilter(8,9) >>
 	ChannelSplit({
-		8: _mpg123,
+		8: _mp3_player,
 		9: _fcb1010,
 	})
 )
@@ -1217,9 +1217,6 @@ tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 
 # Son 5
 tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
-
-# Rush Subdivisions
-#subdivisions=pk5>>Filter(NOTEON)>>Transpose(-71)>>Call(MPG123())
 
 # Big Country
 i_big_country = P14A // Ctrl(hd500_port,hd500_channel, 1, 40)

@@ -1,46 +1,38 @@
 import json
 import os
-from mpyg321.mpyg321 import MPyg321Player
-#import subprocess
-#from subprocess import Popen, PIPE, check_call
+
+from mpyg321.mpyg321 import MPyg321Player, PlayerStatus
+
+import subprocess
+from subprocess import check_call
 
 import mididings.constants as _constants
 from mididings.engine import *
+
 from range_key_dict import RangeKeyDict
 
 
-# Class MPG123
+# Class Mp3Player
 #
-# This class control mpg123 in remote mode with a keyboard (or any other midi devices of your choice)
+# This class play mp3 files with the mpyg321.mpyg321 lib
 # when (actually) NOTEON or CTRL event type is received in the __call__ function
 #
 # It's inspired of the 'song trigger keyboard' of the Quebec TV Show 'Tout le monde en parle'
 #
-# Limitations :
-# - Can't get the number of entry in playlist
 
 
-class MPG123:
+class Mp3Player:
     def __init__(self):
         hostname = os.uname()[1]
-        file = os.getcwd() + '/plugins/mpg123/config.json'
+        file = os.getcwd() + '/plugins/mp3player/config.json'
         with open(file) as json_file:
             self.configuration = json.load(json_file)
 
+        self.playlist = self.configuration['symlink-target'] + "playlist"
+
         # MPG123 process        
-        # TODO / pass the audiodevice in the constructor
-        # Popen(['mpg123', '--audiodevice', 'hw:1,0', '--remote']
-        # self.instance = MPyg321Player("audiodevice=)
-        #def mpg123(**params):
-        #ad = ""
-        #if 'audiodevice' in params:
-        #ad = "--audiodevice " + params["audiodevice"]
-        #print("mpg123 -R " + ad)
-        #mpg123(audiodevice='hw:1,0')
-        
-        self.instance = MPyg321Player()
-        # TODO player.silence()        
-        self.write('silence')
+        self.player = MPyg321Player(audiodevice='hw:1,0')
+        self.player.silence()
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
@@ -82,15 +74,8 @@ class MPG123:
         self.current_entry = 0
         self.entry_count = 0
 
-#    def __del__(self):
-        #self.process.terminate()
-
     def __call__(self, ev):
         self.ctrl_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
-
-    # Write a command to the mpg123 process
-    def write(self, cmd):
-        self.instance.player.sendline(cmd)
 
     #
     # Call the method defined in the note_mapping dict
@@ -137,11 +122,14 @@ class MPG123:
 
     # MPG123 remote call ------------------------
     def play(self, ev):
-        self.write('ll {} {}/playlist'.format(ev.data1, self.configuration['symlink-target']))
+        self.player.load_list(ev.data1, self.playlist)
         self.current_entry = ev.data1
 
     def pause(self, ev):
-        self.player.pause()
+        if self.player.status == PlayerStatus.PLAYING:
+            self.player.pause()
+        elif self.player.status == PlayerStatus.PAUSED:
+            self.player.resume()
 
     def forward(self, ev):
         self.player.jump('+5 s') if ev.data1 == 45 else self.player.jump('+30 s')
@@ -160,11 +148,12 @@ class MPG123:
             self.play(ev)
 
     def cc_volume(self, ev):
-        # TODO self.player.volume()
-        self.write('v {}'.format(ev.data2))
+        self.player.volume(ev.data2)
 
     def cc_modulation(self, ev):
         pass
 
     def list_files(self, ev):
-        self.write('ll {} {}/playlist'.format(-1, self.configuration['symlink-target']))
+        # TODO remplacer
+        pass
+        #self.write('ll {} {}/playlist'.format(-1, self.configuration['symlink-target']))

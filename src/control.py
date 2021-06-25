@@ -16,16 +16,16 @@ _fcb1010 = (
 
 # Control MPG123 process
 # See MPG123 class to understand how it works
-_mpg123 = (
+_mp3_player = (
 	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
 	(Filter(NOTEON) >> Transpose(-36))
-) >> Call(MPG123())
+) >> Call(Mp3Player())
 
 
 _control = (
 	ChannelFilter(8,9) >>
 	ChannelSplit({
-		8: _mpg123,
+		8: _mp3_player,
 		9: _fcb1010,
 	})
 )

@@ -16,7 +16,7 @@ from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
-from plugins.mpg123.wrapper import *
+from plugins.mp3player.wrapper import *
 
 # Global configuration file
 sys.path.append(os.path.realpath('.'))
@@ -54,7 +54,7 @@ config(
 )
 
 hook(
-    AutoRestart(),
+    #AutoRestart(),
     OSCInterface(),
 )
 
