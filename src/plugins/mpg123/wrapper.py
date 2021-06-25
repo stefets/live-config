@@ -1,7 +1,8 @@
 import json
 import os
-import subprocess
-from subprocess import Popen, PIPE, check_call
+from mpyg321.mpyg321 import MPyg321Player
+#import subprocess
+#from subprocess import Popen, PIPE, check_call
 
 import mididings.constants as _constants
 from mididings.engine import *
@@ -26,10 +27,19 @@ class MPG123:
         with open(file) as json_file:
             self.configuration = json.load(json_file)
 
-        # MPG123 process
-        #self.process = Popen(['mpg123', '--audiodevice', self.configuration[hostname]['hw'], '--remote'],
-        self.process = Popen(['mpg123', '--audiodevice', 'hw:1,0', '--remote'],
-                             stdin=PIPE, text=True)
+        # MPG123 process        
+        # TODO / pass the audiodevice in the constructor
+        # Popen(['mpg123', '--audiodevice', 'hw:1,0', '--remote']
+        # self.instance = MPyg321Player("audiodevice=)
+        #def mpg123(**params):
+        #ad = ""
+        #if 'audiodevice' in params:
+        #ad = "--audiodevice " + params["audiodevice"]
+        #print("mpg123 -R " + ad)
+        #mpg123(audiodevice='hw:1,0')
+        
+        self.instance = MPyg321Player()
+        # TODO player.silence()        
         self.write('silence')
 
         # Accepted range | Range array over the note_mapping array
@@ -72,16 +82,15 @@ class MPG123:
         self.current_entry = 0
         self.entry_count = 0
 
-    def __del__(self):
-        self.process.terminate()
+#    def __del__(self):
+        #self.process.terminate()
 
     def __call__(self, ev):
         self.ctrl_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
 
     # Write a command to the mpg123 process
     def write(self, cmd):
-        self.process.stdin.write(cmd + '\n')
-        self.process.stdin.flush()
+        self.instance.player.sendline(cmd)
 
     #
     # Call the method defined in the note_mapping dict
@@ -132,16 +141,13 @@ class MPG123:
         self.current_entry = ev.data1
 
     def pause(self, ev):
-        self.write('p')
+        self.player.pause()
 
     def forward(self, ev):
-        self.jump('+5 s') if ev.data1 == 45 else self.jump('+30 s')
+        self.player.jump('+5 s') if ev.data1 == 45 else self.player.jump('+30 s')
 
     def rewind(self, ev):
-        self.jump('-5 s') if ev.data1 == 43 else self.jump('-30 s')
-
-    def jump(self, offset):
-        self.write('j ' + offset)
+        self.player.jump('-5 s') if ev.data1 == 43 else self.player.jump('-30 s')
 
     def next_entry(self, ev):
         if self.entry_count >= self.current_entry + 1:
@@ -154,6 +160,7 @@ class MPG123:
             self.play(ev)
 
     def cc_volume(self, ev):
+        # TODO self.player.volume()
         self.write('v {}'.format(ev.data2))
 
     def cc_modulation(self, ev):
