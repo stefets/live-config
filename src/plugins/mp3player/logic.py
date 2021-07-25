@@ -28,10 +28,12 @@ class Mp3Player:
         with open(file) as json_file:
             self.configuration = json.load(json_file)
 
-        self.playlist = self.configuration['symlink-target'] + "playlist"
+        self.playlist = self.configuration['playlist']
 
-        # MPG123 process        
-        self.player = MPyg321Player(audiodevice='hw:1,0')
+        # mpg123/mpg321 wrapper         
+        backend = self.configuration['backend']
+        device = self.configuration[hostname]['hw']
+        self.player = MPyg321Player(player=backend, audiodevice=device)
         self.player.silence()
 
         # Accepted range | Range array over the note_mapping array
@@ -40,7 +42,7 @@ class Mp3Player:
             (0, 1): self.not_implemented,
             (1, 36): self.play,
             (36, 48): self.invoke,
-            (48, 49): self.list_files,
+            (48, 49): self.load_playlist,
         })
 
         # NoteOn mapping
@@ -101,18 +103,21 @@ class Mp3Player:
 
     def on_switch_scene(self, direction):
         index = current_scene() + direction
-        if index > len(scenes()):
-            index = 2
-        switch_scene(index)
+
         # Patch 1 is Initialize, nothing below
         if index <= 1:
             return
 
-        source = self.configuration['albums'] + scenes()[index][0]
+        if index > len(scenes()):
+            index = 2
+
+        switch_scene(index)
+
+        source = self.configuration['repository'] + scenes()[index][0]
         target = self.configuration['symlink-target']
         check_call([self.configuration['symlink-builder'], source, target])
 
-        self.entry_count = subprocess.call('exit $(cat /tmp/playlist|wc -l)', shell=True)
+        self.load_playlist()
 
     def next_subscene(self, ev):
         switch_subscene(current_subscene() + 1)
@@ -153,7 +158,9 @@ class Mp3Player:
     def cc_modulation(self, ev):
         pass
 
-    def list_files(self, ev):
-        # TODO remplacer
-        pass
-        #self.write('ll {} {}/playlist'.format(-1, self.configuration['symlink-target']))
+    def load_playlist(self, ev=None):
+        self.entry_count = 0
+        with open(self.playlist, "r") as pl:
+            for number, line in enumerate(pl):
+                self.entry_count = number+1
+                print(str(self.entry_count) + " " + line.rstrip())
