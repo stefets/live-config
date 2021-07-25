@@ -16,7 +16,7 @@ from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
-from plugins.mp3player.wrapper import *
+from plugins.mp3player.logic import *
 
 # Global configuration file
 sys.path.append(os.path.realpath('.'))
