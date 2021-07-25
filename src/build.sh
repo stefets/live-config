@@ -7,6 +7,11 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 template="main.py"
 output="render.py"
 sceneFileName="./scenes/$1"
+if [ ! -f "$sceneFileName" ]; then
+   echo "Scene $1 invalide"
+   find ./scenes -type f
+   exit 1
+fi
 
 # Merge devices
 devices=$(mktemp)
