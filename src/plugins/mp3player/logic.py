@@ -33,8 +33,7 @@ class Mp3Player:
         # mpg123/mpg321 wrapper         
         backend = self.configuration['backend']
         device = self.configuration[hostname]['hw']
-        self.player = MPyg321Player(player=backend, audiodevice=device)
-        self.player.silence()
+        self.player = MPyg321Player(player=backend, audiodevice=device, performance_mode=False)
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
