@@ -8,6 +8,9 @@
 * A FCB1010 with UNO Chip to control either Mididings, POD or GT10B
 # Notes
 * Script entry point is /src/load.sh sceneFileName
+# Dependencies
+* mpg123
+* mpyg321
 # Build
 * Check the pages on how I build Mididings and MPG123
 * https://github.com/stefets/live-config/wiki
