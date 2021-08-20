@@ -174,16 +174,6 @@ closer_patch_celesta_d4=(
         (KeyFilter('A1') >> Key('C#6'))
    ) >> closer_celesta_d4)
 
-#closer_patch_celesta_d4=( 
-#    (
-#		(~KeyFilter(notes=[36,38,40,41,43,45])) //
-#    	(KeyFilter('C1') >> Key('A5')) //
-#    	(KeyFilter('D1') >> Key('G5')) //
-#    	(KeyFilter('E1') >> Key('D6')) //
-#    	(KeyFilter('F1') >> Key('F5')) //
-#    	(KeyFilter('G1') >> Key('B5')) //
-#    	(KeyFilter('A1') >> Key('C#6')) 
-#   ) >> closer_celesta_d4)
 
 closer_bell_d4 = Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((99*128),15), volume=100)
 closer_patch_d4=(

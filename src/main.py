@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-#-----------------------------------------------------------------------------------------------------------
-# Many thanks to the programmer Dominic Sacre for that masterpiece
-# http://das.nasophon.de/mididings/
-# https://github.com/dsacre
-#-----------------------------------------------------------------------------------------------------------
-# My personal mididings script
-# Stephane Gagnon
-#-----------------------------------------------------------------------------------------------------------
+'''
+Thanks to the programmer Dominic Sacre for that masterpiece
+http://das.nasophon.de/mididings/
+https://github.com/dsacre
+'''
+
 import os
 import sys
 import json
@@ -18,8 +16,10 @@ from mididings import engine
 from mididings.extra.inotify import *
 from plugins.mp3player.logic import *
 
-# Global configuration file
+# Setup path
 sys.path.append(os.path.realpath('.'))
+
+# Config file
 with open('config.json') as json_file:
     configuration = json.load(json_file)
 

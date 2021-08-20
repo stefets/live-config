@@ -5,8 +5,8 @@ _wipe = (
     ResetSD90 // Pass()
 )
 
-# FCB1010 & UNO Chip
-_fcb1010 = (
+# FCB1010 with UNO Chip
+footswitch_controller = (
     CtrlFilter(20, 21, 22) >>
     CtrlSplit({
         20: Call(NavigateToScene),
@@ -14,18 +14,17 @@ _fcb1010 = (
     })
 )
 
-# Control MPG123 process
-# See MPG123 class to understand how it works
-_mp3_player = (
+# Control MPG123 process via a midi keyboard
+keyboard_controller = (
 	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
 	(Filter(NOTEON) >> Transpose(-36))
-) >> Call(Mp3Player())
+) >> Call(Mp3Player(self.configuration["mp3player"]))
 
-
+# Controllers collection
 _control = (
 	ChannelFilter(8,9) >>
 	ChannelSplit({
-		8: _mp3_player,
-		9: _fcb1010,
+		8: keyboard_controller,
+		9: footswitch_controller,
 	})
 )

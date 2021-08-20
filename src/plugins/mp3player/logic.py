@@ -22,11 +22,10 @@ from range_key_dict import RangeKeyDict
 
 
 class Mp3Player:
-    def __init__(self):
+    def __init__(self, config):
         hostname = os.uname()[1]
-        file = os.getcwd() + '/plugins/mp3player/config.json'
-        with open(file) as json_file:
-            self.configuration = json.load(json_file)
+
+        self.configuration = config
 
         self.playlist = self.configuration['playlist']
 

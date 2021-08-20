@@ -31,18 +31,6 @@ class RemoveDuplicates:
 
 
 '''
-#--------------------------------------------------------------------
-# Generate a chord prototype test
-# Better to use the mididings builtin object Hamonize
-def Chord(ev, trigger_notes=(41, 43), chord_offsets=(0, 4, 7)):
-    if ev.type in (NOTEON, NOTEOFF):
-        if ev.data1 in trigger_notes:
-            evcls = NoteOnEvent if ev.type == NOTEON else NoteOffEvent
-            return [evcls(ev.port, ev.channel, ev.note + i, ev.velocity)
-                    for i in chord_offsets]
-    return ev
-#--------------------------------------------------------------------
-
 # WIP: Glissando
 def gliss_function(note, note_max, port, chan, vel):
     output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
@@ -64,8 +52,6 @@ def arpeggiator_exec(e):
     arpeggiator_function(0,16, 50,  e.port, e.channel, 100)
 
 '''
-
-
 # -------------------------------------------------------------------------------------------
 
 
