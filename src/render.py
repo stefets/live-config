@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-#-----------------------------------------------------------------------------------------------------------
-# Many thanks to the programmer Dominic Sacre for that masterpiece
-# http://das.nasophon.de/mididings/
-# https://github.com/dsacre
-#-----------------------------------------------------------------------------------------------------------
-# My personal mididings script
-# Stephane Gagnon
-#-----------------------------------------------------------------------------------------------------------
+'''
+Thanks to the programmer Dominic Sacre for that masterpiece
+http://das.nasophon.de/mididings/
+https://github.com/dsacre
+'''
+
 import os
 import sys
 import json
@@ -16,12 +14,16 @@ from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
-from plugins.mp3player.logic import *
+from plugins.mp3player.galk import Mp3Player
 
-# Global configuration file
+# Setup path
 sys.path.append(os.path.realpath('.'))
+
+# Config file
 with open('config.json') as json_file:
     configuration = json.load(json_file)
+
+mp3player_config = configuration["mp3player"]
 
 config(
 
@@ -94,18 +96,6 @@ class RemoveDuplicates:
 
 
 '''
-#--------------------------------------------------------------------
-# Generate a chord prototype test
-# Better to use the mididings builtin object Hamonize
-def Chord(ev, trigger_notes=(41, 43), chord_offsets=(0, 4, 7)):
-    if ev.type in (NOTEON, NOTEOFF):
-        if ev.data1 in trigger_notes:
-            evcls = NoteOnEvent if ev.type == NOTEON else NoteOffEvent
-            return [evcls(ev.port, ev.channel, ev.note + i, ev.velocity)
-                    for i in chord_offsets]
-    return ev
-#--------------------------------------------------------------------
-
 # WIP: Glissando
 def gliss_function(note, note_max, port, chan, vel):
     output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
@@ -127,8 +117,6 @@ def arpeggiator_exec(e):
     arpeggiator_function(0,16, 50,  e.port, e.channel, 100)
 
 '''
-
-
 # -------------------------------------------------------------------------------------------
 
 
@@ -965,28 +953,28 @@ _wipe = (
     ResetSD90 // Pass()
 )
 
-# FCB1010 & UNO Chip
-_fcb1010 = (
+# FCB1010 with UNO Chip
+footswitch_controller = (
     CtrlFilter(20, 21, 22) >>
     CtrlSplit({
         20: Call(NavigateToScene),
+        21: Discard(),
         22: _wipe,
     })
 )
 
-# Control MPG123 process
-# See MPG123 class to understand how it works
-_mp3_player = (
+# Control MPG123 process via a midi keyboard
+keyboard_controller = (
 	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
 	(Filter(NOTEON) >> Transpose(-36))
-) >> Call(Mp3Player())
+) >> Call(Mp3Player(mp3player_config))
 
-
+# Controllers collection
 _control = (
 	ChannelFilter(8,9) >>
 	ChannelSplit({
-		8: _mp3_player,
-		9: _fcb1010,
+		8: keyboard_controller,
+		9: footswitch_controller,
 	})
 )
 #-----------------------------------------------------------------------------------------------------------
@@ -1171,16 +1159,6 @@ closer_patch_celesta_d4=(
         (KeyFilter('A1') >> Key('C#6'))
    ) >> closer_celesta_d4)
 
-#closer_patch_celesta_d4=( 
-#    (
-#		(~KeyFilter(notes=[36,38,40,41,43,45])) //
-#    	(KeyFilter('C1') >> Key('A5')) //
-#    	(KeyFilter('D1') >> Key('G5')) //
-#    	(KeyFilter('E1') >> Key('D6')) //
-#    	(KeyFilter('F1') >> Key('F5')) //
-#    	(KeyFilter('G1') >> Key('B5')) //
-#    	(KeyFilter('A1') >> Key('C#6')) 
-#   ) >> closer_celesta_d4)
 
 closer_bell_d4 = Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((99*128),15), volume=100)
 closer_patch_d4=(

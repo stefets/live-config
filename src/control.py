@@ -19,7 +19,7 @@ footswitch_controller = (
 keyboard_controller = (
 	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
 	(Filter(NOTEON) >> Transpose(-36))
-) >> Call(Mp3Player(mp3player_config, mp3player_config["player"], mp3player_config["audiodevice"], False))
+) >> Call(Mp3Player(mp3player_config))
 
 # Controllers collection
 _control = (

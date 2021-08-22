@@ -12,28 +12,28 @@ from mididings.engine import *
 from range_key_dict import RangeKeyDict
 
 
-# Class Mp3Player
-#
-# This class is a plugin to play mp3 files with the mpyg321.mpyg321 wrapper for mpg123
-# when (actually) NOTEON or CTRL event type is received in the __call__ function
-#
-# Inspiré du clavier 'lanceur de chansons' de l'émission Québecoise 'Tout le monde en parle'
-#
+'''
+Class Mp3Player
+
+This class is a plugin to play mp3 files with the mpyg321.mpyg321 wrapper for mpg123
+when (actually) NOTEON or CTRL event type is received in the __call__ function
+
+Inspiré du clavier 'lanceur de chansons' de l'émission Québecoise 'Tout le monde en parle'
+'''
 
 
 class Mp3Player(MPyg321Player):
-    def __init__(self, config, player=None, audiodevice=None, performance_mode=True):
-        super().__init__(player, audiodevice, performance_mode)
+    def __init__(self, config):
+        super().__init__(config["player"], config["audiodevice"], True)
 
         self.configuration = config
-        #self.playlist = self.configuration['playlist']
-
+        self.playlist = self.configuration['playlist']
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
         self.note_range_mapping = RangeKeyDict({
-            (0, 1): self.not_implemented,
-            (1, 36): self.play,
+            (0, 1): self.on_zero,
+            (1, 36): self.on_play,
             (36, 48): self.invoke,
             (48, 49): self.load_playlist,
         })
@@ -55,7 +55,7 @@ class Mp3Player(MPyg321Player):
 
             # Black keys
             42: self.prev_entry,
-            44: self.pause,
+            44: self.on_pause,
             46: self.next_entry,
 
         }
@@ -81,7 +81,9 @@ class Mp3Player(MPyg321Player):
     #
     # dict values command functions
     #
-    def not_implemented(self, ev):
+
+    # Note zero (tmp)
+    def on_zero(self, ev):
         pass
 
     # Scenes navigation
@@ -119,34 +121,34 @@ class Mp3Player(MPyg321Player):
         switch_subscene(current_subscene() - 1)
 
     # MPG123 remote call ------------------------
-    def play(self, ev):
-        self.player.load_list(ev.data1, self.playlist)
+    def on_play(self, ev):
+        self.load_list(ev.data1, self.playlist)
         self.current_entry = ev.data1
 
-    def pause(self, ev):
-        if self.player.status == PlayerStatus.PLAYING:
-            self.player.pause()
-        elif self.player.status == PlayerStatus.PAUSED:
-            self.player.resume()
+    def on_pause(self, ev):
+        if self.status == PlayerStatus.PLAYING:
+            self.pause()
+        elif self.status == PlayerStatus.PAUSED:
+            self.resume()
 
     def forward(self, ev):
-        self.player.jump('+5 s') if ev.data1 == 45 else self.player.jump('+30 s')
+        self.jump('+5 s') if ev.data1 == 45 else self.jump('+30 s')
 
     def rewind(self, ev):
-        self.player.jump('-5 s') if ev.data1 == 43 else self.player.jump('-30 s')
+        self.jump('-5 s') if ev.data1 == 43 else self.jump('-30 s')
 
     def next_entry(self, ev):
         if self.entry_count >= self.current_entry + 1:
             ev.data1 = self.current_entry + 1
-            self.play(ev)
+            self.on_play(ev)
 
     def prev_entry(self, ev):
         if self.current_entry > 1:
             ev.data1 = self.current_entry - 1
-            self.play(ev)
+            self.on_play(ev)
 
     def cc_volume(self, ev):
-        self.player.volume(ev.data2)
+        self.volume(ev.data2)
 
     def cc_modulation(self, ev):
         pass
@@ -163,4 +165,4 @@ class Mp3Player(MPyg321Player):
     '''
     def on_any_stop(self):
         # wip
-        pass
+        print("on_any_stop")
