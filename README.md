@@ -9,8 +9,10 @@
 # Notes
 * Script entry point is /src/load.sh sceneFileName
 # Dependencies
+* mididings
 * mpg123
 * mpyg321
+* range-key-dict
 # Build
 * Check the pages on how I build Mididings and MPG123
 * https://github.com/stefets/live-config/wiki
