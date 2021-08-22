@@ -7,7 +7,7 @@ import subprocess
 from subprocess import check_call
 
 import mididings.constants as _constants
-from mididings.engine import *
+from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 
 from range_key_dict import RangeKeyDict
 
@@ -18,7 +18,7 @@ Class Mp3Player
 This class is a plugin to play mp3 files with the mpyg321.mpyg321 wrapper for mpg123
 when (actually) NOTEON or CTRL event type is received in the __call__ function
 
-Inspiré du clavier 'lanceur de chansons' de l'émission Québecoise 'Tout le monde en parle'
+Inspiré du clavier 'lanceur de chanson' de l'émission Québecoise 'Tout le monde en parle'
 '''
 
 
@@ -108,11 +108,8 @@ class Mp3Player(MPyg321Player):
 
         switch_scene(index)
 
-        source = self.configuration['repository'] + scenes()[index][0]
-        target = self.configuration['symlink-target']
-        check_call([self.configuration['symlink-builder'], source, target])
+        self.build_playlist(index)
 
-        self.load_playlist()
 
     def next_subscene(self, ev):
         switch_subscene(current_subscene() + 1)
@@ -120,7 +117,6 @@ class Mp3Player(MPyg321Player):
     def prev_subscene(self, ev):
         switch_subscene(current_subscene() - 1)
 
-    # MPG123 remote call ------------------------
     def on_play(self, ev):
         self.load_list(ev.data1, self.playlist)
         self.current_entry = ev.data1
@@ -157,12 +153,19 @@ class Mp3Player(MPyg321Player):
         self.entry_count = 0
         with open(self.playlist, "r") as pl:
             for number, line in enumerate(pl):
-                self.entry_count = number+1
+                self.entry_count = number + 1
                 print(str(self.entry_count) + " " + line.rstrip())
+
+    def build_playlist(self, index):
+        source = self.configuration['repository'] + scenes()[index][0]
+        target = self.configuration['symlink-target']
+        check_call([self.configuration['symlink-builder'], source, target])
+
+        self.load_playlist()
+
 
     '''
     mpyg321 callbacks region
     '''
     def on_any_stop(self):
-        # wip
-        print("on_any_stop")
+        pass
