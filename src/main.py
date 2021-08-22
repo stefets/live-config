@@ -14,7 +14,7 @@ from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
-from plugins.mp3player.logic import *
+from plugins.mp3player.galk import Mp3Player
 
 # Setup path
 sys.path.append(os.path.realpath('.'))
@@ -22,6 +22,8 @@ sys.path.append(os.path.realpath('.'))
 # Config file
 with open('config.json') as json_file:
     configuration = json.load(json_file)
+
+mp3player_config = configuration["mp3player"]
 
 config(
 

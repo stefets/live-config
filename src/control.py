@@ -10,6 +10,7 @@ footswitch_controller = (
     CtrlFilter(20, 21, 22) >>
     CtrlSplit({
         20: Call(NavigateToScene),
+        21: Discard(),
         22: _wipe,
     })
 )
@@ -18,7 +19,7 @@ footswitch_controller = (
 keyboard_controller = (
 	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
 	(Filter(NOTEON) >> Transpose(-36))
-) >> Call(Mp3Player(self.configuration["mp3player"]))
+) >> Call(Mp3Player(mp3player_config, mp3player_config["player"], mp3player_config["audiodevice"], False))
 
 # Controllers collection
 _control = (

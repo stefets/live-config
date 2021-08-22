@@ -14,25 +14,20 @@ from range_key_dict import RangeKeyDict
 
 # Class Mp3Player
 #
-# This class play mp3 files with the mpyg321.mpyg321 lib
+# This class is a plugin to play mp3 files with the mpyg321.mpyg321 wrapper for mpg123
 # when (actually) NOTEON or CTRL event type is received in the __call__ function
 #
-# It's inspired of the 'song trigger keyboard' of the Quebec TV Show 'Tout le monde en parle'
+# Inspiré du clavier 'lanceur de chansons' de l'émission Québecoise 'Tout le monde en parle'
 #
 
 
-class Mp3Player:
-    def __init__(self, config):
-        hostname = os.uname()[1]
+class Mp3Player(MPyg321Player):
+    def __init__(self, config, player=None, audiodevice=None, performance_mode=True):
+        super().__init__(player, audiodevice, performance_mode)
 
         self.configuration = config
+        #self.playlist = self.configuration['playlist']
 
-        self.playlist = self.configuration['playlist']
-
-        # mpg123/mpg321 wrapper         
-        backend = self.configuration['backend']
-        device = self.configuration[hostname]['hw']
-        self.player = MPyg321Player(player=backend, audiodevice=device, performance_mode=False)
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
@@ -162,3 +157,10 @@ class Mp3Player:
             for number, line in enumerate(pl):
                 self.entry_count = number+1
                 print(str(self.entry_count) + " " + line.rstrip())
+
+    '''
+    mpyg321 callbacks region
+    '''
+    def on_any_stop(self):
+        # wip
+        pass
