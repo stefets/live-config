@@ -11,7 +11,8 @@
 # Dependencies
 * mididings
 * mpg123
-* mpyg321
+* mpyg321 
+* pexpect
 * range-key-dict
 # Build
 * Check the pages on how I build Mididings and MPG123
