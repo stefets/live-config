@@ -76,7 +76,6 @@ class Mp3Player(MPyg321Player):
         })
 
         self.current_entry = 0
-        self.entry_count = 0
         self.jump_offset = 0
         self.vol = 0
         self.songs = []
@@ -91,7 +90,7 @@ class Mp3Player(MPyg321Player):
         self.note_mapping[ev.data1](ev)
 
     def navigate_player(self, ev):
-        if self.entry_count > 0: self.note_mapping[ev.data1](ev)
+        if self.songs: self.note_mapping[ev.data1](ev)
 
     # Note zero (tmp)
     def on_zero(self, ev):
@@ -139,17 +138,17 @@ class Mp3Player(MPyg321Player):
             self.resume()
 
     def forward(self, ev):
-        value = "+{} s".format(self.jump_offset)
-        self.jump(value)
-        #self.jump('+5 s') if ev.data1 == 45 else self.jump('+30 s')
+        self.on_jump("+")
 
     def rewind(self, ev):
-        value = "-{} s".format(self.jump_offset)
+        self.on_jump("-")
+
+    def on_jump(self, sign):
+        value = "{}{} s".format(sign, self.jump_offset)
         self.jump(value)
-        #self.jump('-5 s') if ev.data1 == 43 else self.jump('-30 s')
 
     def next_entry(self, ev):
-        if self.entry_count >= self.current_entry + 1:
+        if len(self.songs) >= self.current_entry + 1:
             ev.data1 = self.current_entry + 1
             self.on_play(ev)
 
@@ -171,11 +170,9 @@ class Mp3Player(MPyg321Player):
 
     def load_playlist(self, ev=None):
         self.songs = []
-        self.entry_count = 0
         try:
             with open(self.playlist, "r") as pl:
                 for number, line in enumerate(pl):
-                    self.entry_count = number + 1
                     title = line.rstrip()
                     self.songs.append(title)
             self.list_playlist()
