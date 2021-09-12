@@ -3,8 +3,10 @@ import os
 
 from mpyg321.mpyg321 import MPyg321Player, PlayerStatus
 
+
 import subprocess
 from subprocess import check_call
+from colorama import Fore, Back, Style
 
 import mididings.constants as _constants
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
@@ -28,7 +30,7 @@ class Mp3Player(MPyg321Player):
 
         self.configuration = config
         self.playlist = self.configuration['playlist']
-        self.ksize = 49 # futur
+        self.ksize = self.configuration["keyboard_size"]
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
@@ -41,7 +43,7 @@ class Mp3Player(MPyg321Player):
             (36, 41): self.navigate_scene,
             (41, 48): self.navigate_player,
 
-            (self.ksize-1, self.ksize): self.load_playlist,
+            (self.ksize-1, self.ksize): self.list_playlist,
 
         })
 
@@ -69,13 +71,15 @@ class Mp3Player(MPyg321Player):
 
         # Control change mapping
         self.ctrl_range_mapping = RangeKeyDict({
-            (0, 1): self.cc_modulation,
-            (7, 8): self.cc_volume,
+            (0, 2): self.set_offset,
+            (7, 8): self.set_volume,
         })
 
         self.current_entry = 0
         self.entry_count = 0
-        self.jump = 5 # futur
+        self.jump_offset = 0
+        self.vol = 0
+        self.songs = []
 
     def __call__(self, ev):
         self.ctrl_range_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
@@ -135,10 +139,14 @@ class Mp3Player(MPyg321Player):
             self.resume()
 
     def forward(self, ev):
-        self.jump('+5 s') if ev.data1 == 45 else self.jump('+30 s')
+        value = "+{} s".format(self.jump_offset)
+        self.jump(value)
+        #self.jump('+5 s') if ev.data1 == 45 else self.jump('+30 s')
 
     def rewind(self, ev):
-        self.jump('-5 s') if ev.data1 == 43 else self.jump('-30 s')
+        value = "-{} s".format(self.jump_offset)
+        self.jump(value)
+        #self.jump('-5 s') if ev.data1 == 43 else self.jump('-30 s')
 
     def next_entry(self, ev):
         if self.entry_count >= self.current_entry + 1:
@@ -150,19 +158,27 @@ class Mp3Player(MPyg321Player):
             ev.data1 = self.current_entry - 1
             self.on_play(ev)
 
-    def cc_volume(self, ev):
+    def set_volume(self, ev):
+        self.vol = ev.data2
         self.volume(ev.data2)
+        self.update_display()
 
-    def cc_modulation(self, ev):
-        pass
+    def set_offset(self, ev):
+        mod =  ev.data2 % 2
+        if mod == 0:
+            self.jump_offset = ev.data2 / 2
+            self.update_display()
 
     def load_playlist(self, ev=None):
+        self.songs = []
         self.entry_count = 0
         try:
             with open(self.playlist, "r") as pl:
                 for number, line in enumerate(pl):
                     self.entry_count = number + 1
-                    print(str(self.entry_count) + " " + line.rstrip())
+                    title = line.rstrip()
+                    self.songs.append(title)
+            self.list_playlist()
         except FileNotFoundError:
             pass
 
@@ -174,6 +190,16 @@ class Mp3Player(MPyg321Player):
 
         self.load_playlist()
 
+
+    def update_display(self):
+        print("{}VOL={}% | JMP={}s {}".format(Fore.RED, self.vol, self.jump_offset, Style.RESET_ALL), end="\r", flush=True)
+
+    def list_playlist(self, ev=None):
+        #print("", end='\n', flush=True)
+        index = 0
+        for song in self.songs:
+            index += 1
+            print("{}-{}".format(index, song))
 
     '''
     mpyg321 callbacks region
