@@ -1245,6 +1245,14 @@ _scenes = {
         [
             Scene("Default", init_patch=Discard(), patch=Discard()),
         ]),
+    8: SceneGroup("demo",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    9: SceneGroup("demon",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
 }
 #-----------------------------------------------------------------------------------------------------------
 
