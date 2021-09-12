@@ -28,14 +28,21 @@ class Mp3Player(MPyg321Player):
 
         self.configuration = config
         self.playlist = self.configuration['playlist']
+        self.ksize = 49 # futur
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
         self.note_range_mapping = RangeKeyDict({
+
             (0, 1): self.on_zero,
+
             (1, 36): self.on_play,
-            (36, 48): self.invoke,
-            (48, 49): self.load_playlist,
+            
+            (36, 41): self.navigate_scene,
+            (41, 48): self.navigate_player,
+
+            (self.ksize-1, self.ksize): self.load_playlist,
+
         })
 
         # NoteOn mapping
@@ -61,26 +68,26 @@ class Mp3Player(MPyg321Player):
         }
 
         # Control change mapping
-        self.ctrl_mapping = {
-            1: self.cc_modulation,
-            7: self.cc_volume,
-        }
+        self.ctrl_range_mapping = RangeKeyDict({
+            (0, 1): self.cc_modulation,
+            (7, 8): self.cc_volume,
+        })
 
         self.current_entry = 0
         self.entry_count = 0
+        self.jump = 5 # futur
 
     def __call__(self, ev):
-        self.ctrl_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
+        self.ctrl_range_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
 
     #
-    # Call the method defined in the note_mapping dict
+    # Call the method defined in the mapping dictionnaries
     #
-    def invoke(self, ev):
+    def navigate_scene(self, ev):
         self.note_mapping[ev.data1](ev)
 
-    #
-    # dict values command functions
-    #
+    def navigate_player(self, ev):
+        if self.entry_count > 0: self.note_mapping[ev.data1](ev)
 
     # Note zero (tmp)
     def on_zero(self, ev):
@@ -151,10 +158,14 @@ class Mp3Player(MPyg321Player):
 
     def load_playlist(self, ev=None):
         self.entry_count = 0
-        with open(self.playlist, "r") as pl:
-            for number, line in enumerate(pl):
-                self.entry_count = number + 1
-                print(str(self.entry_count) + " " + line.rstrip())
+        try:
+            with open(self.playlist, "r") as pl:
+                for number, line in enumerate(pl):
+                    self.entry_count = number + 1
+                    print(str(self.entry_count) + " " + line.rstrip())
+        except FileNotFoundError:
+            pass
+
 
     def build_playlist(self, index):
         source = self.configuration['repository'] + scenes()[index][0]

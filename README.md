@@ -1,4 +1,4 @@
-# My music configuration with MIDIDINGS and MPG123 as helpers
+# My music configuration with MIDIDINGS as the Maestro and MPG123 as a plugin
 
 <img src="/doc/main-config.jpg" alt="StefSetup"/>
 
