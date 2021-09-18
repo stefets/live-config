@@ -74,14 +74,15 @@ class Mp3Player(MPyg321Player):
             (0, 2): self.set_offset,
             (7, 8): self.set_volume,
         })
+        self.vol = 10
+        self.jump_offset = 5
+        #
 
-        self.current_entry = 0
-        self.jump_offset = 0
-        self.vol = 0
         self.songs = []
+        self.current_entry = 0
         self.spacer = " " * 15
 
-        self.volume(10)
+        self.volume(self.vol)
 
     def __call__(self, ev):
         self.ctrl_range_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
@@ -131,6 +132,7 @@ class Mp3Player(MPyg321Player):
         switch_subscene(current_subscene() - 1)
 
     def on_play(self, ev):
+        if ev.data1 > len(self.songs): return
         self.load_list(ev.data1, self.playlist)
         self.current_entry = ev.data1
         self.update_display()
@@ -195,9 +197,11 @@ class Mp3Player(MPyg321Player):
 
 
     def get_current_song(self):
-        if self.current_entry > 0:
-            return "{}-{}".format(self.current_entry, self.songs[self.current_entry-1])
-        return ""
+        try:
+            if self.current_entry > 0:
+                return "{}-{}".format(self.current_entry, self.songs[self.current_entry-1])
+        except IndexError:
+            return "IndexError"
 
 
     def update_display(self):
