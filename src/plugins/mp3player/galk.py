@@ -79,6 +79,7 @@ class Mp3Player(MPyg321Player):
         self.jump_offset = 0
         self.vol = 0
         self.songs = []
+        self.spacer = " " * 15
 
     def __call__(self, ev):
         self.ctrl_range_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
@@ -130,6 +131,7 @@ class Mp3Player(MPyg321Player):
     def on_play(self, ev):
         self.load_list(ev.data1, self.playlist)
         self.current_entry = ev.data1
+        self.update_display()
 
     def on_pause(self, ev):
         if self.status == PlayerStatus.PLAYING:
@@ -188,8 +190,15 @@ class Mp3Player(MPyg321Player):
         self.load_playlist()
 
 
+    def get_current_song(self):
+        if self.current_entry > 0:
+            return "{}-{}".format(self.current_entry, self.songs[self.current_entry-1])
+        return ""
+
     def update_display(self):
-        print("{}VOL={}% | JMP={}s {}".format(Fore.RED, self.vol, self.jump_offset, Style.RESET_ALL), end="\r", flush=True)
+        print("{}VOL={}% | JMP={}s | {}{}{}".format(Fore.RED, 
+            self.vol, self.jump_offset, self.get_current_song(), self.spacer, 
+            Style.RESET_ALL), end="\r", flush=True)
 
     def list_playlist(self, ev=None):
         #print("", end='\n', flush=True)
@@ -197,6 +206,7 @@ class Mp3Player(MPyg321Player):
         for song in self.songs:
             index += 1
             print("{}-{}".format(index, song))
+        self.update_display()
 
     '''
     mpyg321 callbacks region
