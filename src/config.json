@@ -11,9 +11,9 @@
   "mp3player": {
     "audiodevice" : "hw:1,0",
     "repository": "/media/mididings/soundlib/",
-    "symlink-target": "/tmp/",
+    "symlink-target": "/media/mididings/tmp/",
     "symlink-builder": "./manage-symlinks.sh",
-    "playlist": "/tmp/playlist",
+    "playlist": "/media/mididings/tmp/playlist",
     "player" : "mpg123",
     "keyboard_size" : 49
   },
