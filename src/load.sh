@@ -9,6 +9,9 @@ app="$DIR/build.sh"
 chmod +x $app
 
 scene=$1
+if [ -z "$scene" ]; then
+    scene="default"
+fi
 
 echo "Loading scene $scene"
 $app $scene.py

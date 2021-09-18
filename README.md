@@ -1,4 +1,4 @@
-# My music configuration with MIDIDINGS and MPG123 as helpers
+# My music configuration with MIDIDINGS as the Maestro and MPG123 as a plugin
 
 <img src="/doc/main-config.jpg" alt="StefSetup"/>
 
@@ -9,8 +9,11 @@
 # Notes
 * Script entry point is /src/load.sh sceneFileName
 # Dependencies
+* mididings
 * mpg123
-* mpyg321
+* mpyg321 
+* pexpect
+* range-key-dict
 # Build
 * Check the pages on how I build Mididings and MPG123
 * https://github.com/stefets/live-config/wiki
