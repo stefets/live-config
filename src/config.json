@@ -9,13 +9,15 @@
     "channel": 9
   },
   "mp3player": {
-    "audiodevice" : "hw:1,0",
-    "repository": "/media/mididings/soundlib/",
-    "symlink-target": "/media/mididings/tmp/",
-    "symlink-builder": "./manage-symlinks.sh",
-    "playlist": "/media/mididings/tmp/playlist",
     "player" : "mpg123",
-    "keyboard_size" : 49
+    "audiodevice" : "hw:1,0",
+    "keyboard_size" : 49,
+    "playlist" : {
+      "repository": "/media/mididings/soundlib/",
+      "symlink-target": "/media/mididings/tmp/",
+      "symlink-builder": "./manage-symlinks.sh",
+      "uri": "/media/mididings/tmp/playlist"
+    }
   },
   "omxplayer" : {}  
 }
