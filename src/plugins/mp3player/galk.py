@@ -1,18 +1,16 @@
-import json
 import os
-
-from mpyg321.mpyg321 import MPyg321Player, PlayerStatus
-
-
+import json
 import subprocess
 from subprocess import check_call
-from colorama import Fore, Back, Style
 
-import mididings.constants as _constants
-from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
+from colorama import Fore, Back, Style
 
 from range_key_dict import RangeKeyDict
 
+from mpyg321.mpyg321 import MPyg321Player, PlayerStatus
+
+import mididings.constants as _constants
+from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 
 '''
 Class Mp3Player
@@ -29,7 +27,9 @@ class Mp3Player(MPyg321Player):
         super().__init__(config["player"], config["audiodevice"], True)
 
         self.configuration = config
-        self.playlist = self.configuration['playlist']
+
+        self.playlist = Playlist(self.configuration['playlist'])
+
         self.ksize = self.configuration["keyboard_size"]
 
         # Accepted range | Range array over the note_mapping array
@@ -43,7 +43,7 @@ class Mp3Player(MPyg321Player):
             (36, 41): self.navigate_scene,
             (41, 48): self.navigate_player,
 
-            (self.ksize-1, self.ksize): self.list_playlist,
+            (self.ksize-1, self.ksize): self.playlist.listing,
 
         })
 
@@ -78,7 +78,6 @@ class Mp3Player(MPyg321Player):
         self.jump_offset = 5
         #
 
-        self.songs = []
         self.current_entry = 0
         self.spacer = " " * 15
 
@@ -94,7 +93,7 @@ class Mp3Player(MPyg321Player):
         self.note_mapping[ev.data1](ev)
 
     def navigate_player(self, ev):
-        if self.songs: self.note_mapping[ev.data1](ev)
+        if self.playlist.songs: self.note_mapping[ev.data1](ev)
 
     # Note zero (tmp)
     def on_zero(self, ev):
@@ -122,7 +121,7 @@ class Mp3Player(MPyg321Player):
 
         switch_scene(index)
 
-        self.build_playlist(index)
+        self.playlist.create(index, self.playlist.filename)
 
 
     def next_subscene(self, ev):
@@ -132,8 +131,8 @@ class Mp3Player(MPyg321Player):
         switch_subscene(current_subscene() - 1)
 
     def on_play(self, ev):
-        if ev.data1 > len(self.songs): return
-        self.load_list(ev.data1, self.playlist)
+        if ev.data1 > len(self.playlist.songs): return
+        self.load_list(ev.data1, self.playlist.filename)
         self.current_entry = ev.data1
         self.update_display()
 
@@ -156,7 +155,7 @@ class Mp3Player(MPyg321Player):
         self.jump(value)
 
     def next_entry(self, ev):
-        if len(self.songs) >= self.current_entry + 1:
+        if len(self.playlist.songs) >= self.current_entry + 1:
             ev.data1 = self.current_entry + 1
             self.on_play(ev)
 
@@ -176,30 +175,10 @@ class Mp3Player(MPyg321Player):
             self.jump_offset = ev.data2 / 2
             self.update_display()
 
-    def load_playlist(self, ev=None):
-        self.songs = []
-        try:
-            with open(self.playlist, "r") as pl:
-                for number, line in enumerate(pl):
-                    title = line.rstrip()
-                    self.songs.append(title)
-            self.list_playlist()
-        except FileNotFoundError:
-            pass
-
-
-    def build_playlist(self, index):
-        source = self.configuration['repository'] + scenes()[index][0]
-        target = self.configuration['symlink-target']
-        check_call([self.configuration['symlink-builder'], source, target])
-
-        self.load_playlist()
-
-
     def get_current_song(self):
         try:
             if self.current_entry > 0:
-                return "{}-{}".format(self.current_entry, self.songs[self.current_entry-1])
+                return "{}-{}".format(self.current_entry, self.playlist.songs[self.current_entry-1])
         except IndexError:
             return "IndexError"
 
@@ -210,17 +189,44 @@ class Mp3Player(MPyg321Player):
             Style.RESET_ALL), end="\r", flush=True)
 
 
-    def list_playlist(self, ev=None):
-        #print("", end='\n', flush=True)
-        index = 0
-        for song in self.songs:
-            index += 1
-            print("{}-{}".format(index, song))
-        self.update_display()
-
-
     '''
     mpyg321 callbacks region
     '''
     def on_any_stop(self):
         self.status = PlayerStatus.STOPPED
+
+
+
+class Playlist():
+    def __init__(self, config):
+        self.configuration = config
+        self.filename = self.configuration['uri']
+        self.songs = []
+
+    def create(self, index, configuration):
+        source = self.configuration['repository'] + scenes()[index][0]
+        target = self.configuration['symlink-target']
+        check_call([self.configuration['symlink-builder'], source, target])
+        self.load()
+
+    def length(self):
+        return len(songs)
+
+    def listing(self, ev=None):
+        # TODO update display
+        rank = 0
+        for song in self.songs:
+            rank += 1
+            print("{}-{}".format(rank, song))
+
+    def load(self, ev=None):
+       self.songs = []
+       try:
+           with open(self.filename, "r") as pl:
+               for number, line in enumerate(pl):
+                   title = line.rstrip()
+                   self.songs.append(title)
+           self.listing()
+       except FileNotFoundError:
+           pass
+
