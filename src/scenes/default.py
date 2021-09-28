@@ -52,4 +52,8 @@
         [
             Scene("Default", init_patch=Discard(), patch=Discard()),
         ]),
+    15: SceneGroup("power-windows",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
 

@@ -1253,6 +1253,31 @@ _scenes = {
         [
             Scene("Default", init_patch=Discard(), patch=Discard()),
         ]),
+    10: SceneGroup("fun",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    11: SceneGroup("hits",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    12: SceneGroup("middleage",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    13: SceneGroup("tv",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    14: SceneGroup("delirium",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    15: SceneGroup("power-windows",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+
 }
 #-----------------------------------------------------------------------------------------------------------
 

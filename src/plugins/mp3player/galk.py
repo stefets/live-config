@@ -121,7 +121,7 @@ class Mp3Player(MPyg321Player):
 
         switch_scene(index)
 
-        self.playlist.create(index, self.configuration["uri"])
+        self.playlist.create(index, self.playlist.filename)
 
 
     def next_subscene(self, ev):
@@ -198,17 +198,18 @@ class Mp3Player(MPyg321Player):
 
 
 class Playlist():
-    def __init__(self, filename):
-        self.filename = filename
+    def __init__(self, config):
+        self.configuration = config
+        self.filename = self.configuration['uri']
         self.songs = []
 
     def create(self, index, configuration):
-        source = configuration['repository'] + scenes()[index][0]
-        target = configuration['symlink-target']
-        check_call([configuration['symlink-builder'], source, target])
-        self.listing()
+        source = self.configuration['repository'] + scenes()[index][0]
+        target = self.configuration['symlink-target']
+        check_call([self.configuration['symlink-builder'], source, target])
+        self.load()
 
-    def length(self) -­> int:
+    def length(self):
         return len(songs)
 
     def listing(self, ev=None):
@@ -228,3 +229,4 @@ class Playlist():
            self.listing()
        except FileNotFoundError:
            pass
+
