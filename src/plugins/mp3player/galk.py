@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import subprocess
 from subprocess import check_call
 
@@ -13,10 +14,9 @@ import mididings.constants as _constants
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 
 '''
-Class Mp3Player
+This plugin play mp3 files, it inherits the mpyg321.mpyg321, a mpg123 wrapper
 
-This class is a plugin to play mp3 files with the mpyg321.mpyg321 wrapper for mpg123
-when (actually) NOTEON or CTRL event type is received in the __call__ function
+This is a callable object, __call__ is called via the Mididings control patch
 
 Inspiré du clavier 'lanceur de chanson' de l'émission Québecoise 'Tout le monde en parle'
 '''
@@ -26,11 +26,11 @@ class Mp3Player(MPyg321Player):
     def __init__(self, config):
         super().__init__(config["player"], config["audiodevice"], True)
 
-        self.configuration = config
+        self.playlist = Playlist(config['playlist'], self)
 
-        self.playlist = Playlist(self.configuration['playlist'])
+        self.ksize = config["keyboard_size"]
 
-        self.ksize = self.configuration["keyboard_size"]
+        self.clear_screen = lambda: print("\033c\033[3J", end='')
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
@@ -83,12 +83,11 @@ class Mp3Player(MPyg321Player):
 
         self.volume(self.vol)
 
+    # Invoker
     def __call__(self, ev):
         self.ctrl_range_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
 
-    #
-    # Call the method defined in the mapping dictionnaries
-    #
+    # Logic
     def navigate_scene(self, ev):
         self.note_mapping[ev.data1](ev)
 
@@ -119,8 +118,13 @@ class Mp3Player(MPyg321Player):
         if index > len(scenes()):
             index = 2
 
+        self.clear_screen()
+
         switch_scene(index)
 
+        time.sleep(0.375) # Offset, wait for Mididings to write its infos to stdout
+
+        self.current_entry = 0
         self.playlist.create(index, self.playlist.filename)
 
 
@@ -131,7 +135,7 @@ class Mp3Player(MPyg321Player):
         switch_subscene(current_subscene() - 1)
 
     def on_play(self, ev):
-        if ev.data1 > len(self.playlist.songs): return
+        if ev.data1 > self.playlist.length(): return
         self.load_list(ev.data1, self.playlist.filename)
         self.current_entry = ev.data1
         self.update_display()
@@ -155,7 +159,7 @@ class Mp3Player(MPyg321Player):
         self.jump(value)
 
     def next_entry(self, ev):
-        if len(self.playlist.songs) >= self.current_entry + 1:
+        if self.playlist.length() >= self.current_entry + 1:
             ev.data1 = self.current_entry + 1
             self.on_play(ev)
 
@@ -166,7 +170,7 @@ class Mp3Player(MPyg321Player):
 
     def set_volume(self, ev):
         self.vol = ev.data2
-        self.volume(ev.data2)
+        self.volume(self.vol)
         self.update_display()
 
     def set_offset(self, ev):
@@ -182,42 +186,42 @@ class Mp3Player(MPyg321Player):
         except IndexError:
             return "IndexError"
 
-
     def update_display(self):
         print(" {}VOL={}% | JMP={}s | {}{}{}".format(Fore.RED, 
             self.vol, self.jump_offset, self.get_current_song(), self.spacer, 
             Style.RESET_ALL), end="\r", flush=True)
 
-
     '''
     mpyg321 callbacks region
     '''
     def on_any_stop(self):
-        self.status = PlayerStatus.STOPPED
-
+        if self.status != PlayerStatus.PAUSED:
+            self.status = PlayerStatus.STOPPED
 
 
 class Playlist():
-    def __init__(self, config):
-        self.configuration = config
-        self.filename = self.configuration['uri']
+    def __init__(self, config, parent):
         self.songs = []
+        self.filename = config['uri']
+        self.datasource = config['datasource']
+        self.target = config['symlink_target']
+        self.builder = config['symlink_builder']
+        self.parent = parent
 
     def create(self, index, configuration):
-        source = self.configuration['repository'] + scenes()[index][0]
-        target = self.configuration['symlink-target']
-        check_call([self.configuration['symlink-builder'], source, target])
+        source = self.datasource + scenes()[index][0]
+        check_call([self.builder, source,  self.target])
         self.load()
 
     def length(self):
-        return len(songs)
+        return len(self.songs)
 
     def listing(self, ev=None):
-        # TODO update display
         rank = 0
         for song in self.songs:
             rank += 1
             print("{}-{}".format(rank, song))
+        self.parent.update_display()
 
     def load(self, ev=None):
        self.songs = []
