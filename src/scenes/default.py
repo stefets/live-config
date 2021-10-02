@@ -1,8 +1,8 @@
     2: SceneGroup("solo-mode",
         [
-            Scene("Rush", init_patch=P02A, patch=Discard()),
-            Scene("Rush-Closer", init_patch=i_closer, patch=p_closer),
-            Scene("BigCountry", init_patch=i_big_country, patch=p_big_country),
+            Scene("Rush", init_patch=i_rush, patch=p_rush),
+            Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
+            Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
         ]),
     3: SceneGroup("styx",
         [
@@ -18,7 +18,7 @@
         ]),
     6: SceneGroup("rush_cover",
         [
-            Scene("Default", init_patch=P02A, patch=Discard()),
+            Scene("Default", patch=Discard()),
         ]),
     7: SceneGroup("bass_cover",
         [

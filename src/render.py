@@ -1205,14 +1205,28 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
              (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,127)))
          ) >> Port('SD90-MIDI-OUT-1'))
 
-# Rush
-i_closer = P02A // Ctrl(hd500_port,hd500_channel, 1, 40)
-p_closer = (pk5 >> Filter(NOTEON) >>
+# Rush generic
+i_rush = P02A // Ctrl(hd500_port,hd500_channel, 1, 40)
+p_rush = (pk5 >> Filter(NOTEON) >>
          (
              (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
              (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,54, 64) // Ctrl(3,9,2,100))) //
              (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,54, 64) // Ctrl(3,9,2,120)))
          ) >> Port('SD90-MIDI-OUT-1'))
+
+# Rush Grand Designs guitar patch
+p_rush_gd = (pk5 >> 
+         [
+            (Filter(NOTEON) >> (
+                (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
+                (KeyFilter(notes=[69]) >> Ctrl(3, 9, 2, 100)) //
+                (KeyFilter(notes=[71]) >> Ctrl(3, 9, 2, 127)) //
+                (KeyFilter(notes=[72]) >> Ctrl(3, 9, 2, 127))
+            )),
+            (Filter(NOTEOFF) >> (
+                (KeyFilter(notes=[72]) >> Ctrl(3, 9, 2, 100))
+            )),
+        ] >> Port('SD90-MIDI-OUT-1'))
 
 #-----------------------------------------------------------------------------------------------------------
 # Scenes body
@@ -1221,9 +1235,9 @@ _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
     2: SceneGroup("solo-mode",
         [
-            Scene("Rush", init_patch=P02A, patch=Discard()),
-            Scene("Rush-Closer", init_patch=i_closer, patch=p_closer),
-            Scene("BigCountry", init_patch=i_big_country, patch=p_big_country),
+            Scene("Rush", init_patch=i_rush, patch=p_rush),
+            Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
+            Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
         ]),
     3: SceneGroup("styx",
         [
@@ -1239,7 +1253,7 @@ _scenes = {
         ]),
     6: SceneGroup("rush_cover",
         [
-            Scene("Default", init_patch=P02A, patch=Discard()),
+            Scene("Default", patch=Discard()),
         ]),
     7: SceneGroup("bass_cover",
         [
