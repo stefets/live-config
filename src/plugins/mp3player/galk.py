@@ -108,8 +108,8 @@ class Mp3Player(MPyg321Player):
     def prev_scene(self, ev):
         self.on_switch_scene(-1)
 
-    def on_switch_scene(self, direction):
-        index = current_scene() + direction
+    def on_switch_scene(self, offset):
+        index = current_scene() + offset
 
         # Patch 1 is Initialize, nothing below
         if index <= 1:
@@ -129,10 +129,17 @@ class Mp3Player(MPyg321Player):
 
 
     def next_subscene(self, ev):
-        switch_subscene(current_subscene() + 1)
+        self.on_switch_subscene(1)
 
     def prev_subscene(self, ev):
-        switch_subscene(current_subscene() - 1)
+        self.on_switch_subscene(-1)
+
+    def on_switch_subscene(self, offset):
+        # TODO : Ne pas switcher si il n'y pas de subscene
+        self.clear_screen()
+        switch_subscene(current_subscene() + offset)
+        time.sleep(0.375)
+        self.update_display()
 
     def on_play(self, ev):
         if ev.data1 > self.playlist.length(): return
@@ -152,10 +159,10 @@ class Mp3Player(MPyg321Player):
     def rewind(self, ev):
         self.on_jump("-")
 
-    def on_jump(self, direction):
+    def on_jump(self, offset):
         if not self.status in [PlayerStatus.PLAYING, PlayerStatus.PAUSED]:
             return
-        value = "{}{} s".format(direction, self.jump_offset)
+        value = "{}{} s".format(offset, self.jump_offset)
         self.jump(value)
 
     def next_entry(self, ev):

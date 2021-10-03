@@ -18,11 +18,11 @@
         ]),
     6: SceneGroup("rush_cover",
         [
-            Scene("Default", patch=Discard()),
+            Scene("Default", init_patch=i_rush, patch=Discard()),
         ]),
     7: SceneGroup("bass_cover",
         [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
+            Scene("Default", init_patch=U01_A, patch=Discard()),
         ]),
     8: SceneGroup("demo",
         [
