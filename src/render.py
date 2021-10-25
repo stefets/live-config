@@ -1215,12 +1215,16 @@ p_rush = (pk5 >> Filter(NOTEON) >>
          ) >> Port('SD90-MIDI-OUT-1'))
 
 # Rush Grand Designs guitar patch
+#notes=[67]=Toggle delay
+#notes=[69]=Disto a 100, toggle delay
+#notes=[71]=Disto a 127, toggle delay
+#notes=[72]=On NOTEON disto = 127 else disto = 100
 p_rush_gd = (pk5 >> 
          [
             (Filter(NOTEON) >> (
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
-                (KeyFilter(notes=[69]) >> Ctrl(3, 9, 2, 100)) //
-                (KeyFilter(notes=[71]) >> Ctrl(3, 9, 2, 127)) //
+                (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100),Ctrl(3, 9, 54, 64)]) //
+                (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127),Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[72]) >> Ctrl(3, 9, 2, 127))
             )),
             (Filter(NOTEOFF) >> (
