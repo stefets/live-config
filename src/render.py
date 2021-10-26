@@ -14,6 +14,7 @@ from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
+from mididings.event import PitchbendEvent
 from plugins.mp3player.galk import Mp3Player
 
 # Setup path
@@ -192,13 +193,16 @@ def OnPitchbend(ev, direction):
 # filters.py
 #-----------------------------------------------------------------------------------------------------------
 # # ALLOWED FILTERS : Available for patches, meaning, allow only for instance
+
 keyboard_channel=1
 pk5_channel=3
+
 q49 = ChannelFilter(keyboard_channel)  # Filter by hardware / channel
 pk5 = ChannelFilter(pk5_channel)  # Filter by hardware & channel
+
 # fcb=ChannelFilter(9)
 # hd500=ChannelFilter(9)
-# # gt10b=ChannelFilter(16)
+# gt10b=ChannelFilter(16)
 
 #-----------------------------------------------------------------------------------------------------------
 # Devices body
@@ -1232,70 +1236,35 @@ p_rush_gd = (pk5 >>
             )),
         ] >> Port('SD90-MIDI-OUT-1'))
 
+
+
 #-----------------------------------------------------------------------------------------------------------
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-    2: SceneGroup("solo-mode",
+    2:SceneGroup(
+        "solo-mode", 
         [
-            Scene("Rush", init_patch=i_rush, patch=p_rush),
-            Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
-            Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
-        ]),
-    3: SceneGroup("styx",
-        [
-            Scene("Default", init_patch=U01_A, patch=Discard()),
-        ]),
-    4: SceneGroup("tabarnac",
-        [
-            Scene("Default", patch=Discard()),
-        ]),
-    5: SceneGroup("palindrome",
-        [
-            Scene("Centurion - guitar/synth cover", patch=centurion_patch),
-        ]),
-    6: SceneGroup("rush_cover",
-        [
-            Scene("Default", init_patch=i_rush, patch=Discard()),
-        ]),
-    7: SceneGroup("bass_cover",
-        [
-            Scene("Default", init_patch=U01_A, patch=Discard()),
-        ]),
-    8: SceneGroup("demo",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    9: SceneGroup("demon",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    10: SceneGroup("fun",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    11: SceneGroup("hits",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    12: SceneGroup("middleage",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    13: SceneGroup("tv",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    14: SceneGroup("delirium",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    15: SceneGroup("power-windows",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
+            Scene("Marathon-Intro/Chords", Port(1) >> (
+            [
+                ChannelSplit({
+                    keyboard_channel : marathon_intro,
+                    pk5_channel : marathon_chords,
+                }),
+                ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> 
+                    Fork([Channel(3),Channel(4)]) >>
+                    Fork([(CtrlFilter(2) >> Process(OnPitchbend,direction=-1))],
+                         [(CtrlFilter(1) >> CtrlMap(1,7))])
+            ])),
+            Scene("Marathon-Bridge/Solo/Ending", 
+                ChannelSplit(
+                    {
+                        keyboard_channel : (marathon_bridge // marathon_bridge_split),
+                        pk5_channel : marathon_chords,
+                    })),
 
+        ]),
 }
 #-----------------------------------------------------------------------------------------------------------
 
@@ -1307,8 +1276,8 @@ _pre  = ~ChannelFilter(8,9)
 _post = Pass()
 
 # DEBUG
-#_pre  = Print('input', portnames='in')
-#_post = Print('output',portnames='out')
+_pre  = Print('input', portnames='in')
+_post = Print('output',portnames='out')
 
 run(
     control=_control,

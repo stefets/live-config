@@ -34,7 +34,7 @@
           ])),
         Scene("Marathon-Bridge/Solo/Ending", 
             ChannelSplit({
-                1 : (marathon_bridge // marathon_bridge_split),
-                2 : marathon_chords,
+                keyboard_channel : (marathon_bridge // marathon_bridge_split),
+                pk5_channel : marathon_chords,
             })),
    ]),
