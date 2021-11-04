@@ -24,7 +24,7 @@ Inspiré du clavier 'lanceur de chanson' de l'émission Québecoise 'Tout le mon
 
 class Mp3Player(MPyg321Player):
     def __init__(self, config):
-        super().__init__(config["player"], config["audiodevice"], True)
+        super().__init__(config["player"], config["audiodevice"] if config["audiodevice"] else None, True)
 
         self.playlist = Playlist(config['playlist'], self)
 
