@@ -15,7 +15,7 @@
     "playlist" : {
       "datasource": "/media/mididings/soundlib/",
       "symlink_target": "/media/mididings/tmp/",
-      "symlink_builder": "./manage-symlinks.sh",
+      "symlink_builder": "./mksymlinks.sh",
       "uri": "/media/mididings/tmp/playlist"
     }
   },

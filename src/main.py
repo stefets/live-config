@@ -15,6 +15,7 @@ from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent
+from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 from plugins.mp3player.galk import Mp3Player
 
 # Setup path
@@ -105,8 +106,8 @@ _pre  = ~ChannelFilter(8,9)
 _post = Pass()
 
 # DEBUG
-_pre  = Print('input', portnames='in')
-_post = Print('output',portnames='out')
+#_pre  = Print('input', portnames='in')
+#_post = Print('output',portnames='out')
 
 run(
     control=_control,

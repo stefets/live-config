@@ -15,6 +15,7 @@ from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent
+from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 from plugins.mp3player.galk import Mp3Player
 
 # Setup path
@@ -1201,7 +1202,7 @@ tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
 # Big Country
-i_big_country = P14A // Ctrl(hd500_port,hd500_channel, 1, 40)
+i_big_country = U01_A // P14A // Ctrl(hd500_port, hd500_channel, 1, 40)
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
              (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
@@ -1243,28 +1244,65 @@ p_rush_gd = (pk5 >>
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-    2:SceneGroup(
-        "solo-mode", 
+    2: SceneGroup("solo-mode",
         [
-            Scene("Marathon-Intro/Chords", Port(1) >> (
-            [
-                ChannelSplit({
-                    keyboard_channel : marathon_intro,
-                    pk5_channel : marathon_chords,
-                }),
-                ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> 
-                    Fork([Channel(3),Channel(4)]) >>
-                    Fork([(CtrlFilter(2) >> Process(OnPitchbend,direction=-1))],
-                         [(CtrlFilter(1) >> CtrlMap(1,7))])
-            ])),
-            Scene("Marathon-Bridge/Solo/Ending", 
-                ChannelSplit(
-                    {
-                        keyboard_channel : (marathon_bridge // marathon_bridge_split),
-                        pk5_channel : marathon_chords,
-                    })),
-
+            Scene("Rush", init_patch=i_rush, patch=p_rush),
+            Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
+            Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
         ]),
+    3: SceneGroup("styx",
+        [
+            Scene("Default", init_patch=U01_A, patch=Discard()),
+        ]),
+    4: SceneGroup("tabarnac",
+        [
+            Scene("Default", patch=Discard()),
+        ]),
+    5: SceneGroup("palindrome",
+        [
+            Scene("Centurion - guitar/synth cover", patch=centurion_patch),
+        ]),
+    6: SceneGroup("rush_cover",
+        [
+            Scene("Default", init_patch=i_rush, patch=Discard()),
+        ]),
+    7: SceneGroup("bass_cover",
+        [
+            Scene("Default", init_patch=U01_A, patch=Discard()),
+        ]),
+    8: SceneGroup("demo",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    9: SceneGroup("demon",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    10: SceneGroup("fun",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    11: SceneGroup("hits",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    12: SceneGroup("middleage",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    13: SceneGroup("tv",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    14: SceneGroup("delirium",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    15: SceneGroup("power-windows",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+
 }
 #-----------------------------------------------------------------------------------------------------------
 
@@ -1276,8 +1314,8 @@ _pre  = ~ChannelFilter(8,9)
 _post = Pass()
 
 # DEBUG
-_pre  = Print('input', portnames='in')
-_post = Print('output',portnames='out')
+#_pre  = Print('input', portnames='in')
+#_post = Print('output',portnames='out')
 
 run(
     control=_control,
