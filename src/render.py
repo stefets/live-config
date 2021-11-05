@@ -1201,17 +1201,32 @@ tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 # Son 5
 tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
-# Big Country
-i_big_country = U01_A // P14A // Ctrl(hd500_port, hd500_channel, 1, 40)
+# Band : Big Country ------------------------------------------
+# Pour : In a big country
+# Init patch
+i_big_country = (
+        U01_A // P14A // 
+        Ctrl(hd500_port, hd500_channel, 1, 40) //
+        Ctrl(hd500_port, hd500_channel, 2, 127))
+
+# Execution patch
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
-             (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
-             (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,100))) //
-             (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,127)))
+             (KeyFilter(notes=[67]) >> Ctrl(hd500_port, hd500_channel, 2, 100)) //
+             (KeyFilter(notes=[69]) >> Ctrl(hd500_port, hd500_channel, 54, 64)) //
+             (KeyFilter(notes=[71]) >> (Ctrl(hd500_port, hd500_channel, 52, 64) // Ctrl(hd500_port, hd500_channel,2,100))) //
+             (KeyFilter(notes=[72]) >> (Ctrl(hd500_port, hd500_channel, 52, 64) // Ctrl(hd500_port, hd500_channel,2,127)))
          ) >> Port('SD90-MIDI-OUT-1'))
+# Big Country fin de section ------------------------------------------
 
-# Rush generic
-i_rush = P02A // Ctrl(hd500_port,hd500_channel, 1, 40)
+# Band : Rush ------------------------------------------
+# Pour : Subdivisions, The Trees
+# Init patch
+i_rush = (
+        P02A // 
+        Ctrl(hd500_port,hd500_channel, 1, 40))
+
+# Execution patch
 p_rush = (pk5 >> Filter(NOTEON) >>
          (
              (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
