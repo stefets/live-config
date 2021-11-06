@@ -216,9 +216,17 @@ class Playlist():
         self.parent = parent
 
     def create(self, index, configuration):
-        source = self.datasource + scenes()[index][0]
-        check_call([self.builder, source,  self.target])
-        self.load()
+        context = scenes()[index][0]
+        source = self.datasource + context
+        try:
+            check_call([self.builder, source,  self.target])
+            self.load()
+        except subprocess.CalledProcessError as cpe:
+            if cpe.returncode == 3:
+                print("Warning: No playlist for " + context)
+            else:
+                print("Error: " + str(cpe.returncode))
+                    
 
     def length(self):
         return len(self.songs)

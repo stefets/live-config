@@ -1235,16 +1235,16 @@ p_rush = (pk5 >> Filter(NOTEON) >>
          ) >> Port('SD90-MIDI-OUT-1'))
 
 # Rush Grand Designs guitar patch
-#notes=[67]=Toggle delay
-#notes=[69]=Disto a 100, toggle delay
-#notes=[71]=Disto a 127, toggle delay
-#notes=[72]=On NOTEON disto = 127 else disto = 100
+# notes=[67]=Toggle delay
+# notes=[69]=Disto a 100, toggle delay
+# notes=[71]=Disto a 127, toggle delay
+# notes=[72]=On NOTEON disto = 127 else disto = 100
 p_rush_gd = (pk5 >> 
          [
             (Filter(NOTEON) >> (
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
-                (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100),Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127),Ctrl(3, 9, 54, 64)]) //
+                (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
+                (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[72]) >> Ctrl(3, 9, 2, 127))
             )),
             (Filter(NOTEOFF) >> (
@@ -1259,65 +1259,47 @@ p_rush_gd = (pk5 >>
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-    2: SceneGroup("solo-mode",
+    2: Scene("RedBarchetta", init_patch=i_rush, patch=LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    3: Scene("FreeWill", init_patch=i_rush, patch=Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, pk5 >> Transpose(-24) >> closer_base]),
+    5: SceneGroup("The Trees", [
+            #Scene("Bridge",  play >> System(play_file("trees_full.mp3"))),
+            Scene("Synth",init_patch=i_rush,patch= Transpose(-29) >> LatchNotes(False,reset='G0') >> lowsynth),
+       ]),
+    6: SceneGroup("Time Stand Still", [
+			#Scene("TSS-Intro", play >> System(play_file("tss.mp3"))),
+			Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, pk5 >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+	   ]),
+    7: SceneGroup("2112", 
         [
-            Scene("Rush", init_patch=i_rush, patch=p_rush),
-            Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
-            Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
+            #Scene("2112-MP3 via D4", Process(RemoveDuplicates()) >> d4play >> System(play_file("2112.mp3"))),
+            #Scene("2112-MP3 via FCB1010", play >> System(play_file("2112.mp3"))),
+            Scene("Explosion",init_patch=i_rush,  patch=explosion),
         ]),
-    3: SceneGroup("styx",
-        [
-            Scene("Default", init_patch=U01_A, patch=Discard()),
-        ]),
-    4: SceneGroup("tabarnac",
-        [
-            Scene("Default", patch=Discard()),
-        ]),
-    5: SceneGroup("palindrome",
-        [
-            Scene("Centurion - guitar/synth cover", patch=centurion_patch),
-        ]),
-    6: SceneGroup("rush_cover",
-        [
-            Scene("Default", init_patch=i_rush, patch=Discard()),
-        ]),
-    7: SceneGroup("bass_cover",
-        [
-            Scene("Default", init_patch=U01_A, patch=Discard()),
-        ]),
-    8: SceneGroup("demo",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    9: SceneGroup("demon",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    10: SceneGroup("fun",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    11: SceneGroup("hits",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    12: SceneGroup("middleage",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    13: SceneGroup("tv",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    14: SceneGroup("delirium",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    15: SceneGroup("power-windows",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-
+    8: Scene("Analog Kid", init_patch=i_rush, patch=analogkid_main),
+    #9: Scene("Hemispheres", play >> System(play_file("hemispheres.mp3"))),
+    #10: Scene("Circumstances", play >> System(play_file("circumstances.mp3"))),
+    #11: SceneGroup("Natural Science", [
+    #        Scene("Intro", play >> System(play_file("ns_intro.mp3"))),
+    #        Scene("Outro", play >> System(play_file("ns_outro.mp3"))),
+    #   ]),
+    #12:Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
+    #13:Scene("TimeStandSteel.D4",  
+#			[
+#			ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
+#			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
+#				[
+#					(
+#					tss_d4_melo_tom_A // 
+#					tss_d4_castanet // 
+#					tss_d4_melo_tom_B // 
+#					tss_d4_808_tom
+#					)
+#	 			]]),
+#    14:Scene("Closer A", Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
+#    15:Scene("Closer B", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
+#    16:Scene("YYZ", Process(RemoveDuplicates()) >> yyz),
+#    17:Scene("Mission",  mission),
 }
 #-----------------------------------------------------------------------------------------------------------
 
