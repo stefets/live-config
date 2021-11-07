@@ -23,7 +23,7 @@
         Scene("Marathon-Intro/Chords", Port(1) >> (
           [
             ChannelSplit({
-                keyboard_channel : marathon_intro,
+                cme_channel : marathon_intro,
                 pk5_channel : marathon_chords,
             }),
             (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> Fork([Channel(3),Channel(4)]) >>
@@ -34,7 +34,7 @@
           ])),
         Scene("Marathon-Bridge/Solo/Ending", 
             ChannelSplit({
-                keyboard_channel : (marathon_bridge // marathon_bridge_split),
+                cme_channel : (marathon_bridge // marathon_bridge_split),
                 pk5_channel : marathon_chords,
             })),
    ]),

@@ -1,11 +1,16 @@
-# # ALLOWED FILTERS : Available for patches, meaning, allow only for instance
+# Channel et filtre des inputs
 
-keyboard_channel=1
-pk5_channel=3
+# Instruments d'exécution et/ou controlleur
+inputs=configuration["inputs"]
+cme_channel=inputs["cme"]
+cme = ChannelFilter(cme_channel)
 
-q49 = ChannelFilter(keyboard_channel)  # Filter by hardware / channel
-pk5 = ChannelFilter(pk5_channel)  # Filter by hardware & channel
+pk5_channel=inputs["pk5"]
+pk5 = ChannelFilter(pk5_channel)
 
-# fcb=ChannelFilter(9)
-# hd500=ChannelFilter(9)
-# gt10b=ChannelFilter(16)
+q49_channel=inputs["q49"]
+q49 = ChannelFilter(q49_channel)
+
+fcb_channel=inputs["fcb"]
+fcb = ChannelFilter(fcb_channel)
+

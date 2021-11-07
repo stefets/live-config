@@ -8,6 +8,7 @@
 # Target = uri
 origin=$1
 target=$2
+playlist=$3
 
 if [ ! -d "$origin" ]
 then
@@ -25,6 +26,6 @@ do
 done
 
 # Liste les mp3 dans le fichier playlist pour mpg123
-ls *.mp3 > playlist
+ls *.mp3 > $playlist
 
 exit 0

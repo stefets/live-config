@@ -10,12 +10,14 @@ https://github.com/dsacre
 import os
 import sys
 import json
+
 from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
+
 from plugins.mp3player.galk import Mp3Player
 
 # Setup path
@@ -24,8 +26,6 @@ sys.path.append(os.path.realpath('.'))
 # Config file
 with open('config.json') as json_file:
     configuration = json.load(json_file)
-
-mp3player_config = configuration["mp3player"]
 
 config(
 
@@ -47,12 +47,10 @@ config(
 
     in_ports = [
         # DeviceName                    # Description               #
-        ('Q49_MIDI_IN_1', '20:0',),     # Alesis Q49 USB MODE
+        ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
+        ('SD90-MIDI-IN-2','20:3',),     # Edirol SD-90 MIDI IN 2
 
         ('UM2-MIDI-IN-1', '24:0',),     # Edirol UM-2eX MIDI IN-1
-
-        ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
-        ('SD90-MIDI-IN-2','20:3',)      # Edirol SD-90 MIDI IN 2
     ],
 
 )
@@ -193,17 +191,22 @@ def OnPitchbend(ev, direction):
 # Filters body
 # filters.py
 #-----------------------------------------------------------------------------------------------------------
-# # ALLOWED FILTERS : Available for patches, meaning, allow only for instance
+# Channel et filtre des inputs
 
-keyboard_channel=1
-pk5_channel=3
+# Instruments d'exécution et/ou controlleur
+inputs=configuration["inputs"]
+cme_channel=inputs["cme"]
+cme = ChannelFilter(cme_channel)
 
-q49 = ChannelFilter(keyboard_channel)  # Filter by hardware / channel
-pk5 = ChannelFilter(pk5_channel)  # Filter by hardware & channel
+pk5_channel=inputs["pk5"]
+pk5 = ChannelFilter(pk5_channel)
 
-# fcb=ChannelFilter(9)
-# hd500=ChannelFilter(9)
-# gt10b=ChannelFilter(16)
+q49_channel=inputs["q49"]
+q49 = ChannelFilter(q49_channel)
+
+fcb_channel=inputs["fcb"]
+fcb = ChannelFilter(fcb_channel)
+
 
 #-----------------------------------------------------------------------------------------------------------
 # Devices body
@@ -951,37 +954,39 @@ InitSoundModule = (ResetSD90 // InitPitchBend)
 #-----------------------------------------------------------------------------------------------------------
 # Control body
 # control.py
-# Wipe all
-# TODO - Move _wipe ailleur
-_wipe = (
-    System(AllAudioOff) // Pass() //
-    ResetSD90 // Pass()
-)
-
-# FCB1010 with UNO Chip
-footswitch_controller = (
+# Controlleur 1 : changement de scene
+nav_controller_channel=configuration["nav_controller_channel"]
+nav_controller = (
     CtrlFilter(20, 21, 22) >>
     CtrlSplit({
         20: Call(NavigateToScene),
         21: Discard(),
-        22: _wipe,
+        22: Discard(),
     })
 )
 
-# Control MPG123 process via a midi keyboard
-keyboard_controller = (
-	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
-	(Filter(NOTEON) >> Transpose(-36))
-) >> Call(Mp3Player(mp3player_config))
+# MP3 Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player
+# Converti le volume ainsi que la modulation en pourcentage
+mp3_config=configuration["mp3player"]
+mp3_controller=mp3_config["controller"]
 
-# Controllers collection
+mp3_controller_channel=mp3_controller["channel"]
+mp3_controller = (
+	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
+	(Filter(NOTEON) >> Transpose(mp3_controller["transpose"]))
+    ) >> Call(Mp3Player(mp3_config))
+
+
+# Collection de controllers
+controllers = ChannelFilter(mp3_controller_channel,nav_controller_channel)
 _control = (
-	ChannelFilter(8,9) >>
+	controllers >>
 	ChannelSplit({
-		8: keyboard_controller,
-		9: footswitch_controller,
+		mp3_controller_channel: mp3_controller,
+		nav_controller_channel: nav_controller,
 	})
 )
+
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
@@ -1030,8 +1035,7 @@ keysynth =  Velocity(fixed=80) >> Output('SD90-PART-A', channel=3, program=((96*
 # Patches for Marathon by Rush
 
 # Accept (B4, B3) and E4 => transformed to a chord 
-# Q49 only
-marathon_intro=(q49>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
+marathon_intro=(cme>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
 	( 
 		(KeyFilter('e4') >> Harmonize('e','major',['unison', 'fifth'])) //
 		(KeyFilter(notes=[71, 83])) 
@@ -1056,7 +1060,7 @@ marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=80) >>
 
 	) >> Transpose(-24) >> Output('SD90-PART-A', channel=4, program=((96*128)+1,51), volume=100, ctrls={93:75, 91:75}))
 
-marathon_bridge=(q49 >>
+marathon_bridge=(cme >>
 	(
 		(KeyFilter('c2') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('e2') >> Key('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
@@ -1064,7 +1068,7 @@ marathon_bridge=(q49 >>
 	) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
 # Solo bridge, lower -12
-marathon_bridge_lower=(q49 >>
+marathon_bridge_lower=(cme >>
 	(
 		(KeyFilter('c1') >> Key('b1') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('d1') >> Key('e1') >> Harmonize('e','major',['third', 'fifth'])) //
@@ -1072,7 +1076,7 @@ marathon_bridge_lower=(q49 >>
 	) >> Velocity(fixed=90) >>  Output('SD90-PART-A', channel=4, program=((96*128),51), volume=75, ctrls={93:75, 91:75}))
 
 # You can take the most
-marathon_cascade=(q49 >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output('SD90-PART-B', channel=11, program=((99*128),99), volume=80))
+marathon_cascade=(cme >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output('SD90-PART-B', channel=11, program=((99*128),99), volume=80))
 
 marathon_bridge_split= KeySplit('f3', marathon_bridge_lower, marathon_cascade)
 
@@ -1259,47 +1263,65 @@ p_rush_gd = (pk5 >>
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-    2: Scene("RedBarchetta", init_patch=i_rush, patch=LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
-    3: Scene("FreeWill", init_patch=i_rush, patch=Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
-    4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, pk5 >> Transpose(-24) >> closer_base]),
-    5: SceneGroup("The Trees", [
-            #Scene("Bridge",  play >> System(play_file("trees_full.mp3"))),
-            Scene("Synth",init_patch=i_rush,patch= Transpose(-29) >> LatchNotes(False,reset='G0') >> lowsynth),
-       ]),
-    6: SceneGroup("Time Stand Still", [
-			#Scene("TSS-Intro", play >> System(play_file("tss.mp3"))),
-			Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, pk5 >> LatchNotes(False, reset='c4') >> tss_foot_main]),
-	   ]),
-    7: SceneGroup("2112", 
+    2: SceneGroup("solo-mode",
         [
-            #Scene("2112-MP3 via D4", Process(RemoveDuplicates()) >> d4play >> System(play_file("2112.mp3"))),
-            #Scene("2112-MP3 via FCB1010", play >> System(play_file("2112.mp3"))),
-            Scene("Explosion",init_patch=i_rush,  patch=explosion),
+            Scene("Rush", init_patch=i_rush, patch=p_rush),
+            Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
+            Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
         ]),
-    8: Scene("Analog Kid", init_patch=i_rush, patch=analogkid_main),
-    #9: Scene("Hemispheres", play >> System(play_file("hemispheres.mp3"))),
-    #10: Scene("Circumstances", play >> System(play_file("circumstances.mp3"))),
-    #11: SceneGroup("Natural Science", [
-    #        Scene("Intro", play >> System(play_file("ns_intro.mp3"))),
-    #        Scene("Outro", play >> System(play_file("ns_outro.mp3"))),
-    #   ]),
-    #12:Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
-    #13:Scene("TimeStandSteel.D4",  
-#			[
-#			ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
-#			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
-#				[
-#					(
-#					tss_d4_melo_tom_A // 
-#					tss_d4_castanet // 
-#					tss_d4_melo_tom_B // 
-#					tss_d4_808_tom
-#					)
-#	 			]]),
-#    14:Scene("Closer A", Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
-#    15:Scene("Closer B", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
-#    16:Scene("YYZ", Process(RemoveDuplicates()) >> yyz),
-#    17:Scene("Mission",  mission),
+    3: SceneGroup("styx",
+        [
+            Scene("Default", init_patch=U01_A, patch=Discard()),
+        ]),
+    4: SceneGroup("tabarnac",
+        [
+            Scene("Default", patch=Discard()),
+        ]),
+    5: SceneGroup("palindrome",
+        [
+            Scene("Centurion - guitar/synth cover", patch=centurion_patch),
+        ]),
+    6: SceneGroup("rush_cover",
+        [
+            Scene("Default", init_patch=i_rush, patch=Discard()),
+        ]),
+    7: SceneGroup("bass_cover",
+        [
+            Scene("Default", init_patch=U01_A, patch=Discard()),
+        ]),
+    8: SceneGroup("demo",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    9: SceneGroup("demon",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    10: SceneGroup("fun",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    11: SceneGroup("hits",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    12: SceneGroup("middleage",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    13: SceneGroup("tv",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    14: SceneGroup("delirium",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    15: SceneGroup("power-windows",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+
 }
 #-----------------------------------------------------------------------------------------------------------
 
@@ -1307,6 +1329,7 @@ _scenes = {
 # Run region
 #-----------------------------------------------------------------------------------------------------------
 # PROD
+# Exclus les controllers
 _pre  = ~ChannelFilter(8,9)
 _post = Pass()
 

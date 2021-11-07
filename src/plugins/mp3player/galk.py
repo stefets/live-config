@@ -28,7 +28,8 @@ class Mp3Player(MPyg321Player):
 
         self.playlist = Playlist(config['playlist'], self)
 
-        self.ksize = config["keyboard_size"]
+        self.controller = config["controller"]
+        self.ksize = self.controller["size"]
 
         self.clear_screen = lambda: print("\033c\033[3J", end='')
 
@@ -209,7 +210,7 @@ class Mp3Player(MPyg321Player):
 class Playlist():
     def __init__(self, config, parent):
         self.songs = []
-        self.filename = config['uri']
+        self.filename = config['filename']
         self.datasource = config['datasource']
         self.target = config['symlink_target']
         self.builder = config['symlink_builder']
@@ -219,7 +220,7 @@ class Playlist():
         context = scenes()[index][0]
         source = self.datasource + context
         try:
-            check_call([self.builder, source,  self.target])
+            check_call([self.builder, source,  self.target, self.filename])
             self.load()
         except subprocess.CalledProcessError as cpe:
             if cpe.returncode == 3:
