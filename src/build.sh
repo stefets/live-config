@@ -5,7 +5,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 template="main.py"
-output="render.py"
+output="example.py"
 sceneFileName="./scenes/$1"
 if [ ! -f "$sceneFileName" ]; then
    echo "Scene $1 invalide"
