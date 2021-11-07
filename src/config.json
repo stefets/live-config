@@ -1,12 +1,7 @@
 {
-  "GT10B": {
-    "channel": 16
-  },
-  "HD500": {
-    "channel": 9
-  },
-  "FCB1010": {
-    "channel": 9
+  "devices" : {
+      "gt10b" : 16,
+      "hd500" : 9
   },
   "inputs" : {
       "cme" : 1,
@@ -30,5 +25,5 @@
         "channel" : 8
     }  
   },
-  "omxplayer" : {}  
+  "videoplayer" : {}  
 }

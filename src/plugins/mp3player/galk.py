@@ -13,6 +13,7 @@ from mpyg321.mpyg321 import MPyg321Player, PlayerStatus
 import mididings.constants as _constants
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 
+
 '''
 This plugin play mp3 files, it inherits the mpyg321.mpyg321, a mpg123 wrapper
 
@@ -27,11 +28,11 @@ class Mp3Player(MPyg321Player):
         super().__init__(config["player"], config["audiodevice"] if config["audiodevice"] else None, True)
 
         self.playlist = Playlist(config['playlist'], self)
+        self.controller = Controller(config["controller"])
 
-        self.controller = config["controller"]
-        self.ksize = self.controller["size"]
-
+        # TODO : UI Class
         self.clear_screen = lambda: print("\033c\033[3J", end='')
+        self.spacer = " " * 15
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
@@ -44,7 +45,7 @@ class Mp3Player(MPyg321Player):
             (36, 41): self.navigate_scene,
             (41, 48): self.navigate_player,
 
-            (self.ksize-1, self.ksize): self.playlist.listing,
+            (self.controller.size-1, self.controller.size): self.playlist.listing,
 
         })
 
@@ -75,13 +76,10 @@ class Mp3Player(MPyg321Player):
             (0, 2): self.set_offset,
             (7, 8): self.set_volume,
         })
-        self.vol = 10
         self.jump_offset = 5
-        #
-
         self.current_entry = 0
-        self.spacer = " " * 15
 
+        self.vol = 10
         self.volume(self.vol)
 
     # Invoker
@@ -249,4 +247,10 @@ class Playlist():
            self.listing()
        except FileNotFoundError:
            pass
+
+
+class Controller():
+    def __init__(self, config):
+        self.size = config['size']
+
 

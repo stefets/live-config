@@ -217,7 +217,7 @@ fcb = ChannelFilter(fcb_channel)
 # TODO : Create a device builder
 
 # Midi channel defined in config.json
-GT10BChannel = configuration['GT10B']['channel']
+GT10BChannel = configuration['devices']['gt10b']
 
 # Output port to use, specified in main.py
 GT10BPort = 3
@@ -758,7 +758,7 @@ P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 # POD-HD-500
 #
 
-hd500_channel = configuration['HD500']['channel']
+hd500_channel = configuration['devices']['hd500']
 hd500_port = 3
 
 P01A = Program(hd500_port, channel=hd500_channel, program=1)
