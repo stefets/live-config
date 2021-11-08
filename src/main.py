@@ -19,6 +19,7 @@ from mididings.event import PitchbendEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 
 from plugins.mp3player.galk import Mp3Player
+from plugins.philips.wrappers import Hue
 
 # Setup path
 sys.path.append(os.path.realpath('.'))

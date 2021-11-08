@@ -254,10 +254,10 @@ p_rush_gd = (pk5 >>
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
                 (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[72]) >> Ctrl(3, 9, 2, 127))
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), Call(Hue('studio-red'))])
             )),
             (Filter(NOTEOFF) >> (
-                (KeyFilter(notes=[72]) >> Ctrl(3, 9, 2, 100))
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), Call(Hue('studio-ambiance'))])
             )),
         ] >> Port('SD90-MIDI-OUT-1'))
 
