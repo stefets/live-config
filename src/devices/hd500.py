@@ -4,7 +4,7 @@
 # POD-HD-500
 #
 
-hd500_channel = configuration['HD500']['channel']
+hd500_channel = configuration['devices']['hd500']
 hd500_port = 3
 
 P01A = Program(hd500_port, channel=hd500_channel, program=1)

@@ -40,8 +40,7 @@ keysynth =  Velocity(fixed=80) >> Output('SD90-PART-A', channel=3, program=((96*
 # Patches for Marathon by Rush
 
 # Accept (B4, B3) and E4 => transformed to a chord 
-# Q49 only
-marathon_intro=(q49>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
+marathon_intro=(cme>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
 	( 
 		(KeyFilter('e4') >> Harmonize('e','major',['unison', 'fifth'])) //
 		(KeyFilter(notes=[71, 83])) 
@@ -66,7 +65,7 @@ marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=80) >>
 
 	) >> Transpose(-24) >> Output('SD90-PART-A', channel=4, program=((96*128)+1,51), volume=100, ctrls={93:75, 91:75}))
 
-marathon_bridge=(q49 >>
+marathon_bridge=(cme >>
 	(
 		(KeyFilter('c2') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('e2') >> Key('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
@@ -74,7 +73,7 @@ marathon_bridge=(q49 >>
 	) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
 # Solo bridge, lower -12
-marathon_bridge_lower=(q49 >>
+marathon_bridge_lower=(cme >>
 	(
 		(KeyFilter('c1') >> Key('b1') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('d1') >> Key('e1') >> Harmonize('e','major',['third', 'fifth'])) //
@@ -82,7 +81,7 @@ marathon_bridge_lower=(q49 >>
 	) >> Velocity(fixed=90) >>  Output('SD90-PART-A', channel=4, program=((96*128),51), volume=75, ctrls={93:75, 91:75}))
 
 # You can take the most
-marathon_cascade=(q49 >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output('SD90-PART-B', channel=11, program=((99*128),99), volume=80))
+marathon_cascade=(cme >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output('SD90-PART-B', channel=11, program=((99*128),99), volume=80))
 
 marathon_bridge_split= KeySplit('f3', marathon_bridge_lower, marathon_cascade)
 
@@ -211,17 +210,32 @@ tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 # Son 5
 tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
-# Big Country
-i_big_country = P14A // Ctrl(hd500_port,hd500_channel, 1, 40)
+# Band : Big Country ------------------------------------------
+# Pour : In a big country
+# Init patch
+i_big_country = (
+        U01_A // P14A // 
+        Ctrl(hd500_port, hd500_channel, 1, 40) //
+        Ctrl(hd500_port, hd500_channel, 2, 127))
+
+# Execution patch
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
-             (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
-             (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,100))) //
-             (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,127)))
+             (KeyFilter(notes=[67]) >> Ctrl(hd500_port, hd500_channel, 2, 100)) //
+             (KeyFilter(notes=[69]) >> Ctrl(hd500_port, hd500_channel, 54, 64)) //
+             (KeyFilter(notes=[71]) >> (Ctrl(hd500_port, hd500_channel, 52, 64) // Ctrl(hd500_port, hd500_channel,2,100))) //
+             (KeyFilter(notes=[72]) >> (Ctrl(hd500_port, hd500_channel, 52, 64) // Ctrl(hd500_port, hd500_channel,2,127)))
          ) >> Port('SD90-MIDI-OUT-1'))
+# Big Country fin de section ------------------------------------------
 
-# Rush generic
-i_rush = P02A // Ctrl(hd500_port,hd500_channel, 1, 40)
+# Band : Rush ------------------------------------------
+# Pour : Subdivisions, The Trees
+# Init patch
+i_rush = (
+        P02A // 
+        Ctrl(hd500_port,hd500_channel, 1, 40))
+
+# Execution patch
 p_rush = (pk5 >> Filter(NOTEON) >>
          (
              (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
@@ -230,15 +244,21 @@ p_rush = (pk5 >> Filter(NOTEON) >>
          ) >> Port('SD90-MIDI-OUT-1'))
 
 # Rush Grand Designs guitar patch
+# notes=[67]=Toggle delay
+# notes=[69]=Disto a 100, toggle delay
+# notes=[71]=Disto a 127, toggle delay
+# notes=[72]=On NOTEON disto = 127 else disto = 100
 p_rush_gd = (pk5 >> 
          [
             (Filter(NOTEON) >> (
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
-                (KeyFilter(notes=[69]) >> Ctrl(3, 9, 2, 100)) //
-                (KeyFilter(notes=[71]) >> Ctrl(3, 9, 2, 127)) //
+                (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
+                (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[72]) >> Ctrl(3, 9, 2, 127))
             )),
             (Filter(NOTEOFF) >> (
                 (KeyFilter(notes=[72]) >> Ctrl(3, 9, 2, 100))
             )),
         ] >> Port('SD90-MIDI-OUT-1'))
+
+

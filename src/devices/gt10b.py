@@ -5,7 +5,7 @@
 # TODO : Create a device builder
 
 # Midi channel defined in config.json
-GT10BChannel = configuration['GT10B']['channel']
+GT10BChannel = configuration['devices']['gt10b']
 
 # Output port to use, specified in main.py
 GT10BPort = 3
