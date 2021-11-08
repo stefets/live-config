@@ -248,7 +248,7 @@ p_rush = (pk5 >> Filter(NOTEON) >>
 # notes=[69]=Disto a 100, toggle delay
 # notes=[71]=Disto a 127, toggle delay
 # notes=[72]=On NOTEON disto = 127 else disto = 100
-p_rush_gd = (pk5 >> 
+p_rush_gd = (ChannelFilter(pk5_channel,cme_channel) >> 
          [
             (Filter(NOTEON) >> (
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
