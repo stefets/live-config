@@ -1,23 +1,29 @@
 {
-  "GT10B": {
-    "channel": 16
+  "devices" : {
+      "gt10b" : 16,
+      "hd500" : 9
   },
-  "HD500": {
-    "channel": 9
+  "inputs" : {
+      "cme" : 1,
+      "q49" : 8,
+      "fcb" : 9,
+      "pk5" : 3
   },
-  "FCB1010": {
-    "channel": 9
-  },
+  "nav_controller_channel" : 9,
   "mp3player": {
     "player" : "mpg123",
     "audiodevice" : "hw:1,0",
-    "keyboard_size" : 49,
     "playlist" : {
       "datasource": "/media/mididings/soundlib/",
       "symlink_target": "/media/mididings/tmp/",
-      "symlink_builder": "./manage-symlinks.sh",
-      "uri": "/media/mididings/tmp/playlist"
-    }
+      "symlink_builder": "./mksymlinks.sh",
+      "filename": "/media/mididings/tmp/playlist.txt"
+    },
+    "controller" : {
+        "size" : 49,
+        "transpose" : -36,
+        "channel" : 8
+    }  
   },
-  "omxplayer" : {}  
+  "videoplayer" : {}  
 }

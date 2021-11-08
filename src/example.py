@@ -10,10 +10,14 @@ https://github.com/dsacre
 import os
 import sys
 import json
+
 from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
+from mididings.event import PitchbendEvent
+from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
+
 from plugins.mp3player.galk import Mp3Player
 
 # Setup path
@@ -22,8 +26,6 @@ sys.path.append(os.path.realpath('.'))
 # Config file
 with open('config.json') as json_file:
     configuration = json.load(json_file)
-
-mp3player_config = configuration["mp3player"]
 
 config(
 
@@ -45,12 +47,10 @@ config(
 
     in_ports = [
         # DeviceName                    # Description               #
-        ('Q49_MIDI_IN_1', '20:0',),     # Alesis Q49 USB MODE
+        ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
+        ('SD90-MIDI-IN-2','20:3',),     # Edirol SD-90 MIDI IN 2
 
         ('UM2-MIDI-IN-1', '24:0',),     # Edirol UM-2eX MIDI IN-1
-
-        ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
-        ('SD90-MIDI-IN-2','20:3',)      # Edirol SD-90 MIDI IN 2
     ],
 
 )
@@ -191,14 +191,22 @@ def OnPitchbend(ev, direction):
 # Filters body
 # filters.py
 #-----------------------------------------------------------------------------------------------------------
-# # ALLOWED FILTERS : Available for patches, meaning, allow only for instance
-keyboard_channel=1
-pk5_channel=3
-q49 = ChannelFilter(keyboard_channel)  # Filter by hardware / channel
-pk5 = ChannelFilter(pk5_channel)  # Filter by hardware & channel
-# fcb=ChannelFilter(9)
-# hd500=ChannelFilter(9)
-# # gt10b=ChannelFilter(16)
+# Channel et filtre des inputs
+
+# Instruments d'exécution et/ou controlleur
+inputs=configuration["inputs"]
+cme_channel=inputs["cme"]
+cme = ChannelFilter(cme_channel)
+
+pk5_channel=inputs["pk5"]
+pk5 = ChannelFilter(pk5_channel)
+
+q49_channel=inputs["q49"]
+q49 = ChannelFilter(q49_channel)
+
+fcb_channel=inputs["fcb"]
+fcb = ChannelFilter(fcb_channel)
+
 
 #-----------------------------------------------------------------------------------------------------------
 # Devices body
@@ -209,7 +217,7 @@ pk5 = ChannelFilter(pk5_channel)  # Filter by hardware & channel
 # TODO : Create a device builder
 
 # Midi channel defined in config.json
-GT10BChannel = configuration['GT10B']['channel']
+GT10BChannel = configuration['devices']['gt10b']
 
 # Output port to use, specified in main.py
 GT10BPort = 3
@@ -750,7 +758,7 @@ P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 # POD-HD-500
 #
 
-hd500_channel = configuration['HD500']['channel']
+hd500_channel = configuration['devices']['hd500']
 hd500_port = 3
 
 P01A = Program(hd500_port, channel=hd500_channel, program=1)
@@ -946,37 +954,39 @@ InitSoundModule = (ResetSD90 // InitPitchBend)
 #-----------------------------------------------------------------------------------------------------------
 # Control body
 # control.py
-# Wipe all
-# TODO - Move _wipe ailleur
-_wipe = (
-    System(AllAudioOff) // Pass() //
-    ResetSD90 // Pass()
-)
-
-# FCB1010 with UNO Chip
-footswitch_controller = (
+# Controlleur 1 : changement de scene
+nav_controller_channel=configuration["nav_controller_channel"]
+nav_controller = (
     CtrlFilter(20, 21, 22) >>
     CtrlSplit({
         20: Call(NavigateToScene),
         21: Discard(),
-        22: _wipe,
+        22: Discard(),
     })
 )
 
-# Control MPG123 process via a midi keyboard
-keyboard_controller = (
-	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
-	(Filter(NOTEON) >> Transpose(-36))
-) >> Call(Mp3Player(mp3player_config))
+# MP3 Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player
+# Converti le volume ainsi que la modulation en pourcentage
+mp3_config=configuration["mp3player"]
+mp3_controller=mp3_config["controller"]
 
-# Controllers collection
+mp3_controller_channel=mp3_controller["channel"]
+mp3_controller = (
+	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
+	(Filter(NOTEON) >> Transpose(mp3_controller["transpose"]))
+    ) >> Call(Mp3Player(mp3_config))
+
+
+# Collection de controllers
+controllers = ChannelFilter(mp3_controller_channel,nav_controller_channel)
 _control = (
-	ChannelFilter(8,9) >>
+	controllers >>
 	ChannelSplit({
-		8: keyboard_controller,
-		9: footswitch_controller,
+		mp3_controller_channel: mp3_controller,
+		nav_controller_channel: nav_controller,
 	})
 )
+
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
@@ -1025,8 +1035,7 @@ keysynth =  Velocity(fixed=80) >> Output('SD90-PART-A', channel=3, program=((96*
 # Patches for Marathon by Rush
 
 # Accept (B4, B3) and E4 => transformed to a chord 
-# Q49 only
-marathon_intro=(q49>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
+marathon_intro=(cme>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
 	( 
 		(KeyFilter('e4') >> Harmonize('e','major',['unison', 'fifth'])) //
 		(KeyFilter(notes=[71, 83])) 
@@ -1051,7 +1060,7 @@ marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=80) >>
 
 	) >> Transpose(-24) >> Output('SD90-PART-A', channel=4, program=((96*128)+1,51), volume=100, ctrls={93:75, 91:75}))
 
-marathon_bridge=(q49 >>
+marathon_bridge=(cme >>
 	(
 		(KeyFilter('c2') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('e2') >> Key('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
@@ -1059,7 +1068,7 @@ marathon_bridge=(q49 >>
 	) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
 
 # Solo bridge, lower -12
-marathon_bridge_lower=(q49 >>
+marathon_bridge_lower=(cme >>
 	(
 		(KeyFilter('c1') >> Key('b1') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('d1') >> Key('e1') >> Harmonize('e','major',['third', 'fifth'])) //
@@ -1067,7 +1076,7 @@ marathon_bridge_lower=(q49 >>
 	) >> Velocity(fixed=90) >>  Output('SD90-PART-A', channel=4, program=((96*128),51), volume=75, ctrls={93:75, 91:75}))
 
 # You can take the most
-marathon_cascade=(q49 >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output('SD90-PART-B', channel=11, program=((99*128),99), volume=80))
+marathon_cascade=(cme >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output('SD90-PART-B', channel=11, program=((99*128),99), volume=80))
 
 marathon_bridge_split= KeySplit('f3', marathon_bridge_lower, marathon_cascade)
 
@@ -1196,17 +1205,32 @@ tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
 # Son 5
 tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
-# Big Country
-i_big_country = P14A // Ctrl(hd500_port,hd500_channel, 1, 40)
+# Band : Big Country ------------------------------------------
+# Pour : In a big country
+# Init patch
+i_big_country = (
+        U01_A // P14A // 
+        Ctrl(hd500_port, hd500_channel, 1, 40) //
+        Ctrl(hd500_port, hd500_channel, 2, 127))
+
+# Execution patch
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
-             (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
-             (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,100))) //
-             (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,52, 64) // Ctrl(3,9,2,127)))
+             (KeyFilter(notes=[67]) >> Ctrl(hd500_port, hd500_channel, 2, 100)) //
+             (KeyFilter(notes=[69]) >> Ctrl(hd500_port, hd500_channel, 54, 64)) //
+             (KeyFilter(notes=[71]) >> (Ctrl(hd500_port, hd500_channel, 52, 64) // Ctrl(hd500_port, hd500_channel,2,100))) //
+             (KeyFilter(notes=[72]) >> (Ctrl(hd500_port, hd500_channel, 52, 64) // Ctrl(hd500_port, hd500_channel,2,127)))
          ) >> Port('SD90-MIDI-OUT-1'))
+# Big Country fin de section ------------------------------------------
 
-# Rush generic
-i_rush = P02A // Ctrl(hd500_port,hd500_channel, 1, 40)
+# Band : Rush ------------------------------------------
+# Pour : Subdivisions, The Trees
+# Init patch
+i_rush = (
+        P02A // 
+        Ctrl(hd500_port,hd500_channel, 1, 40))
+
+# Execution patch
 p_rush = (pk5 >> Filter(NOTEON) >>
          (
              (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
@@ -1215,22 +1239,24 @@ p_rush = (pk5 >> Filter(NOTEON) >>
          ) >> Port('SD90-MIDI-OUT-1'))
 
 # Rush Grand Designs guitar patch
-#notes=[67]=Toggle delay
-#notes=[69]=Disto a 100, toggle delay
-#notes=[71]=Disto a 127, toggle delay
-#notes=[72]=On NOTEON disto = 127 else disto = 100
+# notes=[67]=Toggle delay
+# notes=[69]=Disto a 100, toggle delay
+# notes=[71]=Disto a 127, toggle delay
+# notes=[72]=On NOTEON disto = 127 else disto = 100
 p_rush_gd = (pk5 >> 
          [
             (Filter(NOTEON) >> (
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
-                (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100),Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127),Ctrl(3, 9, 54, 64)]) //
+                (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
+                (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[72]) >> Ctrl(3, 9, 2, 127))
             )),
             (Filter(NOTEOFF) >> (
                 (KeyFilter(notes=[72]) >> Ctrl(3, 9, 2, 100))
             )),
         ] >> Port('SD90-MIDI-OUT-1'))
+
+
 
 #-----------------------------------------------------------------------------------------------------------
 # Scenes body
@@ -1303,6 +1329,7 @@ _scenes = {
 # Run region
 #-----------------------------------------------------------------------------------------------------------
 # PROD
+# Exclus les controllers
 _pre  = ~ChannelFilter(8,9)
 _post = Pass()
 

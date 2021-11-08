@@ -10,10 +10,14 @@ https://github.com/dsacre
 import os
 import sys
 import json
+
 from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
+from mididings.event import PitchbendEvent
+from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
+
 from plugins.mp3player.galk import Mp3Player
 
 # Setup path
@@ -22,8 +26,6 @@ sys.path.append(os.path.realpath('.'))
 # Config file
 with open('config.json') as json_file:
     configuration = json.load(json_file)
-
-mp3player_config = configuration["mp3player"]
 
 config(
 
@@ -45,12 +47,10 @@ config(
 
     in_ports = [
         # DeviceName                    # Description               #
-        ('Q49_MIDI_IN_1', '20:0',),     # Alesis Q49 USB MODE
+        ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
+        ('SD90-MIDI-IN-2','20:3',),     # Edirol SD-90 MIDI IN 2
 
         ('UM2-MIDI-IN-1', '24:0',),     # Edirol UM-2eX MIDI IN-1
-
-        ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
-        ('SD90-MIDI-IN-2','20:3',)      # Edirol SD-90 MIDI IN 2
     ],
 
 )
@@ -100,6 +100,7 @@ __SCENES__
 # Run region
 #-----------------------------------------------------------------------------------------------------------
 # PROD
+# Exclus les controllers
 _pre  = ~ChannelFilter(8,9)
 _post = Pass()
 
