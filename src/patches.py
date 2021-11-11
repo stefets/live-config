@@ -262,3 +262,5 @@ p_rush_gd = (ChannelFilter(pk5_channel,cme_channel) >>
         ] >> Port('SD90-MIDI-OUT-1'))
 
 
+p_glissando=(Filter(NOTEON) >> Call(glissando, 24, 100, 100, 0.0125))
+
