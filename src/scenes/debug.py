@@ -1,7 +1,8 @@
 	2:Scene("Piano", patch=piano),
-	3:Scene("StandardSet",Transpose(-12) >> StandardSet),
-	4:Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
-	#4:Scene("SetPitchBend", patch=violon, init_patch=portamento_up),
+	3:Scene("Glissando", patch=p_glissando),
+	#4:Scene("StandardSet",Transpose(-12) >> StandardSet),
+	#5:Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
+	#4:Scene("SetPitchBend", patch=violon, init_patch=portamento_up),,
 #	2:Scene("HighWater", lowsynth),
 #	3:SceneGroup ("Marathon", [
 #        Scene("Marathon-Intro",

@@ -10,6 +10,9 @@
       "pk5" : 3
   },
   "nav_controller_channel" : 9,
+  "hue": {
+      "uri" : "http://192.168.1.146:5002/scenes/"
+  },
   "mp3player": {
     "player" : "mpg123",
     "audiodevice" : "hw:1,0",
