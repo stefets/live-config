@@ -8,7 +8,9 @@
 GT10BChannel = configuration['devices']['gt10b']
 
 # Output port to use, specified in main.py
-GT10BPort = 3
+#GT10BPort = 'SD90-MIDI-OUT-1'  # 5 pin midi in, recu du SD-90
+#GT10BPort = 'UM2-MIDI-OUT-1'  # 5 pin midi in, recu du SD-90
+GT10BPort = 'GT10B-MIDI-OUT-1'  # USB MODE
 
 # TODO : Rework that sucks
 #GT10B_volume = (ChannelFilter(9) >> Channel(16) >> CtrlFilter(1) >> CtrlMap(1, 7) >> Port(3))
@@ -122,6 +124,15 @@ GT10B_pgrm_99 = Program(GT10BPort, channel=GT10BChannel, program=99)
 GT10B_pgrm_100 = Program(GT10BPort, channel=GT10BChannel, program=100)
 
 # GT10B_bank 0
+#U01_A = [
+#       Ctrl(GT10BPort, GT10BChannel,10, 127),
+#       Ctrl(GT10BPort, GT10BChannel,10, 0),
+#       Ctrl(GT10BPort, GT10BChannel,11, 127),
+#       Ctrl(GT10BPort, GT10BChannel,11, 0),
+#       Ctrl(GT10BPort, GT10BChannel,7, 127),
+#       ]
+
+#U01_A = (GT10B_bank_0 // GT10B_pgrm_1 // Ctrl(GT10BPort, GT10BChannel, 7,127))
 U01_A = (GT10B_bank_0 // GT10B_pgrm_1)
 U01_B = (GT10B_bank_0 // GT10B_pgrm_2)
 U01_C = (GT10B_bank_0 // GT10B_pgrm_3)

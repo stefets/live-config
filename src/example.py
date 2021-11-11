@@ -31,9 +31,13 @@ with open('config.json') as json_file:
 config(
 
     # Defaults
-    # initial_scene = 1,
+    initial_scene = 3,
     # backend = 'alsa',
     # client_name = 'mididings',
+
+    # 
+    #   Device name                     # Description               #
+    #  
 
     out_ports = [
         # DeviceName                    # Description               # Mididings corresponding port
@@ -42,16 +46,23 @@ config(
         ('SD90-MIDI-OUT-1', '20:2',),   # Edirol SD-90 MIDI OUT 1   Port(3)
         ('SD90-MIDI-OUT-2', '20:3',),   # Edirol SD-90 MIDI OUT 2   Port(4)
 
-        ('UM2-MIDI-OUT-1', '24:0',),    # Edirol UM-2eX MIDI OUT 1  Port(5)
-        ('UM2-MIDI-OUT-2', '24:1',),    # Edirol UM-2eX MIDI OUT 2  Port(6)
+        ('GT10B-MIDI-OUT-1', '24:0',),  # Boss GT10B MIDI OUT 1     Port(5)
+
+        ('UM2-MIDI-OUT-1', '28:0',),    # Edirol UM-2eX MIDI OUT 1  Port(6)
+        ('UM2-MIDI-OUT-2', '28:1',),    # Edirol UM-2eX MIDI OUT 2  Port(7)
+
+        ('THRU', '14:0',),              # Internal Thru             Port(8)
     ],
 
     in_ports = [
-        # DeviceName                    # Description               #
         ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
         ('SD90-MIDI-IN-2','20:3',),     # Edirol SD-90 MIDI IN 2
 
-        ('UM2-MIDI-IN-1', '24:0',),     # Edirol UM-2eX MIDI IN-1
+        ('GT10B-MIDI-IN-1', '24:0',),   # Boss GT10B MIDI IN 1
+
+        ('UM2-MIDI-IN-1', '28:0',),     # Edirol UM-2eX MIDI IN-1
+
+        ('THRU', '14:0',),              # Internal Thru
     ],
 
 )
@@ -221,7 +232,9 @@ fcb = ChannelFilter(fcb_channel)
 GT10BChannel = configuration['devices']['gt10b']
 
 # Output port to use, specified in main.py
-GT10BPort = 3
+#GT10BPort = 'SD90-MIDI-OUT-1'  # 5 pin midi in, recu du SD-90
+#GT10BPort = 'UM2-MIDI-OUT-1'  # 5 pin midi in, recu du SD-90
+GT10BPort = 'GT10B-MIDI-OUT-1'  # USB MODE
 
 # TODO : Rework that sucks
 #GT10B_volume = (ChannelFilter(9) >> Channel(16) >> CtrlFilter(1) >> CtrlMap(1, 7) >> Port(3))
@@ -335,6 +348,15 @@ GT10B_pgrm_99 = Program(GT10BPort, channel=GT10BChannel, program=99)
 GT10B_pgrm_100 = Program(GT10BPort, channel=GT10BChannel, program=100)
 
 # GT10B_bank 0
+#U01_A = [
+#       Ctrl(GT10BPort, GT10BChannel,10, 127),
+#       Ctrl(GT10BPort, GT10BChannel,10, 0),
+#       Ctrl(GT10BPort, GT10BChannel,11, 127),
+#       Ctrl(GT10BPort, GT10BChannel,11, 0),
+#       Ctrl(GT10BPort, GT10BChannel,7, 127),
+#       ]
+
+#U01_A = (GT10B_bank_0 // GT10B_pgrm_1 // Ctrl(GT10BPort, GT10BChannel, 7,127))
 U01_A = (GT10B_bank_0 // GT10B_pgrm_1)
 U01_B = (GT10B_bank_0 // GT10B_pgrm_2)
 U01_C = (GT10B_bank_0 // GT10B_pgrm_3)
@@ -958,8 +980,9 @@ InitSoundModule = (ResetSD90 // InitPitchBend)
 # Controlleur 1 : changement de scene
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
-    CtrlFilter(20, 21, 22) >>
+    CtrlFilter(1, 20, 21, 22) >>
     CtrlSplit({
+         1: Ctrl(GT10BPort, GT10BChannel, 7, EVENT_VALUE),
         20: Call(NavigateToScene),
         21: Discard(),
         22: Discard(),
@@ -1331,16 +1354,16 @@ _scenes = {
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-_pre  = ~ChannelFilter(8,9)
-_post = Pass()
+#pre  = ~ChannelFilter(8,9)
+#post = Pass()
 
 # DEBUG
-#_pre  = Print('input', portnames='in')
-#_post = Print('output',portnames='out')
+pre  = Print('input', portnames='in')
+post = Print('output',portnames='out')
 
 run(
     control=_control,
     scenes=_scenes,
-    pre=_pre,
-    post=_post,
+    pre=pre,
+    post=post,
 )

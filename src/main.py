@@ -31,9 +31,13 @@ with open('config.json') as json_file:
 config(
 
     # Defaults
-    # initial_scene = 1,
+    initial_scene = 3,
     # backend = 'alsa',
     # client_name = 'mididings',
+
+    # 
+    #   Device name                     # Description               #
+    #  
 
     out_ports = [
         # DeviceName                    # Description               # Mididings corresponding port
@@ -42,16 +46,23 @@ config(
         ('SD90-MIDI-OUT-1', '20:2',),   # Edirol SD-90 MIDI OUT 1   Port(3)
         ('SD90-MIDI-OUT-2', '20:3',),   # Edirol SD-90 MIDI OUT 2   Port(4)
 
-        ('UM2-MIDI-OUT-1', '24:0',),    # Edirol UM-2eX MIDI OUT 1  Port(5)
-        ('UM2-MIDI-OUT-2', '24:1',),    # Edirol UM-2eX MIDI OUT 2  Port(6)
+        ('GT10B-MIDI-OUT-1', '24:0',),  # Boss GT10B MIDI OUT 1     Port(5)
+
+        ('UM2-MIDI-OUT-1', '28:0',),    # Edirol UM-2eX MIDI OUT 1  Port(6)
+        ('UM2-MIDI-OUT-2', '28:1',),    # Edirol UM-2eX MIDI OUT 2  Port(7)
+
+        ('THRU', '14:0',),              # Internal Thru             Port(8)
     ],
 
     in_ports = [
-        # DeviceName                    # Description               #
         ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
         ('SD90-MIDI-IN-2','20:3',),     # Edirol SD-90 MIDI IN 2
 
-        ('UM2-MIDI-IN-1', '24:0',),     # Edirol UM-2eX MIDI IN-1
+        ('GT10B-MIDI-IN-1', '24:0',),   # Boss GT10B MIDI IN 1
+
+        ('UM2-MIDI-IN-1', '28:0',),     # Edirol UM-2eX MIDI IN-1
+
+        ('THRU', '14:0',),              # Internal Thru
     ],
 
 )
@@ -102,16 +113,16 @@ __SCENES__
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-_pre  = ~ChannelFilter(8,9)
-_post = Pass()
+#pre  = ~ChannelFilter(8,9)
+#post = Pass()
 
 # DEBUG
-#_pre  = Print('input', portnames='in')
-#_post = Print('output',portnames='out')
+pre  = Print('input', portnames='in')
+post = Print('output',portnames='out')
 
 run(
     control=_control,
     scenes=_scenes,
-    pre=_pre,
-    post=_post,
+    pre=pre,
+    post=post,
 )

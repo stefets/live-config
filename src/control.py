@@ -1,8 +1,9 @@
 # Controlleur 1 : changement de scene
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
-    CtrlFilter(20, 21, 22) >>
+    CtrlFilter(1, 20, 21, 22) >>
     CtrlSplit({
+         1: Ctrl(GT10BPort, GT10BChannel, 7, EVENT_VALUE),
         20: Call(NavigateToScene),
         21: Discard(),
         22: Discard(),
