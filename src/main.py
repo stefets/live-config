@@ -33,7 +33,7 @@ with open('config.json') as json_file:
 config(
 
     # Defaults
-    # initial_scene = 1,
+    initial_scene = 1,
     # backend = 'alsa',
     # client_name = 'mididings',
 
