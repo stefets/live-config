@@ -254,13 +254,14 @@ p_rush_gd = (ChannelFilter(pk5_channel,cme_channel) >>
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
                 (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), Call(Hue('studio-red'))])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127)])
             )),
             (Filter(NOTEOFF) >> (
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), Call(Hue('studio-ambiance'))])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120)])
             )),
         ] >> Port('SD90-MIDI-OUT-1'))
 
 
 p_glissando=(Filter(NOTEON) >> Call(glissando, 24, 100, 100, 0.0125))
 
+p_hue=Filter(NOTEON|NOTEOFF) >> Call(Hue(configuration['hue']))

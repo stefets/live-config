@@ -1,16 +1,10 @@
-import os
-import json
-import sys
-import requests
+from phue import Bridge
+import mididings.constants as _constants
 
 class Hue():
-    def __init__(self, sid):
-        self.sid = sid
+    def __init__(self, config):
+        self.bridge = Bridge(config["ip"], config["username"])
 
     def __call__(self, ev):
-        try:
-            response = requests.get("http://192.168.1.146:5002/scenes/" + self.sid)
-        except:
-            print("Hue plugin error: Request failed")
+        self.bridge.set_light('Studio 2', 'on', True) if ev.type == _constants.NOTEON else self.bridge.set_light('Studio 2', 'on', False)
 
-    
