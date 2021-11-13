@@ -20,8 +20,8 @@ from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
-from plugins.mp3player.galk import Mp3Player
-from plugins.philips.wrappers import Hue
+from plugins.audioplayer.mp3 import Mp3Player
+from plugins.lighting.philips import HueScene, HueBlackout
 
 # Setup path
 sys.path.append(os.path.realpath('.'))
@@ -30,10 +30,15 @@ sys.path.append(os.path.realpath('.'))
 with open('config.json') as json_file:
     configuration = json.load(json_file)
 
+# Plugins config
+plugins=configuration['plugins']
+hue_config=plugins['hue']
+key_config=plugins['mp3']
+
 config(
 
     # Defaults
-    initial_scene = 15,
+    # initial_scene = 1,
     # backend = 'alsa',
     # client_name = 'mididings',
 
@@ -969,6 +974,9 @@ InitSoundModule = (ResetSD90 // InitPitchBend)
 # Control body
 # control.py
 # Controlleur 1 : changement de scene
+from plugins.lighting.philips import HueBlackout
+
+
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
     CtrlFilter(1, 20, 21, 22) >>
@@ -980,24 +988,24 @@ nav_controller = (
     })
 )
 
-# MP3 Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player
-# Converti le volume ainsi que la modulation en pourcentage
-mp3_config=configuration["mp3player"]
-mp3_controller=mp3_config["controller"]
+# Keyboard Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player ou le Philips Hue
+# Limite le Control #1 et #7 en %
+key_controller=key_config["controller"]
+key_transpose=Transpose(key_controller["transpose"])
 
-mp3_controller_channel=mp3_controller["channel"]
-mp3_controller = (
-	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
-	(Filter(NOTEON) >> Transpose(mp3_controller["transpose"]))
-    ) >> Call(Mp3Player(mp3_config))
+key_controller_channel=key_controller["channel"]
+key_controller = [
+	    [CtrlFilter(1, 7) >> CtrlValueFilter(0, 101), Filter(NOTEON) >> key_transpose] >> Call(Mp3Player(key_config)),
+        Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[0]) >> Call(HueBlackout(hue_config))
+]
 
 
 # Collection de controllers
-controllers = ChannelFilter(mp3_controller_channel,nav_controller_channel)
+controllers = ChannelFilter(key_controller_channel,nav_controller_channel)
 _control = (
 	controllers >>
 	ChannelSplit({
-		mp3_controller_channel: mp3_controller,
+		key_controller_channel: key_controller,
 		nav_controller_channel: nav_controller,
 	})
 )
@@ -1264,17 +1272,15 @@ p_rush_gd = (ChannelFilter(pk5_channel) >>
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
                 (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), Call(Hue(configuration['hue'], "GrandDesignsRed"))])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), Call(HueScene(hue_config, "GrandDesignsRed"))])
             )),
             (Filter(NOTEOFF) >> (
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), Call(Hue(configuration['hue'], "Galaxie"))])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), Call(HueScene(hue_config, "Galaxie"))])
             )),
         ] >> Port('SD90-MIDI-OUT-1'))
 
 
 p_glissando=(Filter(NOTEON) >> Call(glissando, 24, 100, 100, 0.0125))
-
-p_hue=Filter(NOTEON|NOTEOFF) >> Call(Hue(configuration['hue']))
 
 #-----------------------------------------------------------------------------------------------------------
 # Scenes body
@@ -1353,8 +1359,8 @@ pre  = ~ChannelFilter(8,9)
 post = Pass()
 
 # DEBUG
-pre  = Print('input', portnames='in')
-post = Print('output',portnames='out')
+#pre  = Print('input', portnames='in')
+#post = Print('output',portnames='out')
 
 run(
     control=_control,
