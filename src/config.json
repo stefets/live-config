@@ -12,7 +12,11 @@
   "nav_controller_channel" : 9,
   "hue": {
       "ip" : "192.168.1.225",
-      "username" : "kwNE1s6SuSmsWQnJO5IH7qVV6YrEkSmRBjXLtblu"
+      "username" : "kwNE1s6SuSmsWQnJO5IH7qVV6YrEkSmRBjXLtblu",
+      "zone" : "Salle de musique",
+      "mapping" : {
+          "GrandDesignsRed": 72
+      }
   },
   "mp3player": {
     "player" : "mpg123",

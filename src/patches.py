@@ -248,16 +248,16 @@ p_rush = (pk5 >> Filter(NOTEON) >>
 # notes=[69]=Disto a 100, toggle delay
 # notes=[71]=Disto a 127, toggle delay
 # notes=[72]=On NOTEON disto = 127 else disto = 100
-p_rush_gd = (ChannelFilter(pk5_channel,cme_channel) >> 
+p_rush_gd = (ChannelFilter(pk5_channel) >> 
          [
             (Filter(NOTEON) >> (
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
                 (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127)])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), Call(Hue(configuration['hue'], "GrandDesignsRed"))])
             )),
             (Filter(NOTEOFF) >> (
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120)])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), Call(Hue(configuration['hue'], "Galaxie"))])
             )),
         ] >> Port('SD90-MIDI-OUT-1'))
 

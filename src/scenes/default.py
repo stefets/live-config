@@ -55,5 +55,6 @@
     15: SceneGroup("power-windows",
         [
             Scene("Default", init_patch=Discard(), patch=Discard()),
+            Scene("GrandDesigns", init_patch=Discard(), patch=p_rush_gd),
         ]),
 

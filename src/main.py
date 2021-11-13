@@ -33,7 +33,7 @@ with open('config.json') as json_file:
 config(
 
     # Defaults
-    # initial_scene = 1,
+    initial_scene = 15,
     # backend = 'alsa',
     # client_name = 'mididings',
 
@@ -113,8 +113,8 @@ __SCENES__
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-#pre  = ~ChannelFilter(8,9)
-#post = Pass()
+pre  = ~ChannelFilter(8,9)
+post = Pass()
 
 # DEBUG
 pre  = Print('input', portnames='in')
