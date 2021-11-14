@@ -1,12 +1,14 @@
 #
-# This is the patches specific for a certain device
-#
-# POD-HD-500
+# Line 6 POD-HD-500
 #
 
+# Channel d'écoute
 hd500_channel = configuration['devices']['hd500']
-hd500_port = 3
 
+# Connecté a quel port MIDI ?
+hd500_port = 'SD90-MIDI-OUT-1'
+
+# Programmes
 P01A = Program(hd500_port, channel=hd500_channel, program=1)
 P01B = Program(hd500_port, channel=hd500_channel, program=2)
 P01C = Program(hd500_port, channel=hd500_channel, program=3)
@@ -72,19 +74,13 @@ P16B = Program(hd500_port, channel=hd500_channel, program=62)
 P16C = Program(hd500_port, channel=hd500_channel, program=63)
 P16D = Program(hd500_port, channel=hd500_channel, program=64)
 
-#
-
-#
 # POD-HD-500 to control Fender Super60
-#
+# TODO Revisiter cela
+#S60A = Program(hd500_port, channel=hd500_channel, program=61)
+#S60B = Program(hd500_port, channel=hd500_channel, program=62)
+#S60C = Program(hd500_port, channel=hd500_channel, program=63)
+#S60D = Program(hd500_port, channel=hd500_channel, program=64)
 
-# Depend on hd500.py
-S60A = Program(hd500_port, channel=hd500_channel, program=61)
-S60B = Program(hd500_port, channel=hd500_channel, program=62)
-S60C = Program(hd500_port, channel=hd500_channel, program=63)
-S60D = Program(hd500_port, channel=hd500_channel, program=64)
-
-# hd500_port, Channel, CC, Value
 # Footsiwtch
 FS1 = Ctrl(hd500_port, hd500_channel, 51, 64)
 FS2 = Ctrl(hd500_port, hd500_channel, 52, 64)
@@ -96,6 +92,11 @@ FS7 = Ctrl(hd500_port, hd500_channel, 57, 64)
 FS8 = Ctrl(hd500_port, hd500_channel, 58, 64)
 TOE = Ctrl(hd500_port, hd500_channel, 59, 64)
 
-# Pedal - useless
+# Exp1 et Exp2
+Expr1 = Ctrl(hd500_port, hd500_channel, 1, EVENT_VALUE)
+Expr2 = Ctrl(hd500_port, hd500_channel, 2, EVENT_VALUE)
 
 # Looper
+TunerOn = Ctrl(hd500_port, hd500_channel, 69, 127)
+TunerOff = Ctrl(hd500_port, hd500_channel, 69, 0)
+

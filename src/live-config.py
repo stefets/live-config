@@ -772,14 +772,16 @@ P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 # GT10BU_F_S8=Ctrl(3,9,58,64)
 # GT10BU_T_OE=Ctrl(3,9,59,64)
 #
-# This is the patches specific for a certain device
-#
-# POD-HD-500
+# Line 6 POD-HD-500
 #
 
+# Channel d'écoute
 hd500_channel = configuration['devices']['hd500']
-hd500_port = 3
 
+# Connecté a quel port MIDI ?
+hd500_port = 'SD90-MIDI-OUT-1'
+
+# Programmes
 P01A = Program(hd500_port, channel=hd500_channel, program=1)
 P01B = Program(hd500_port, channel=hd500_channel, program=2)
 P01C = Program(hd500_port, channel=hd500_channel, program=3)
@@ -845,19 +847,13 @@ P16B = Program(hd500_port, channel=hd500_channel, program=62)
 P16C = Program(hd500_port, channel=hd500_channel, program=63)
 P16D = Program(hd500_port, channel=hd500_channel, program=64)
 
-#
-
-#
 # POD-HD-500 to control Fender Super60
-#
+# TODO Revisiter cela
+#S60A = Program(hd500_port, channel=hd500_channel, program=61)
+#S60B = Program(hd500_port, channel=hd500_channel, program=62)
+#S60C = Program(hd500_port, channel=hd500_channel, program=63)
+#S60D = Program(hd500_port, channel=hd500_channel, program=64)
 
-# Depend on hd500.py
-S60A = Program(hd500_port, channel=hd500_channel, program=61)
-S60B = Program(hd500_port, channel=hd500_channel, program=62)
-S60C = Program(hd500_port, channel=hd500_channel, program=63)
-S60D = Program(hd500_port, channel=hd500_channel, program=64)
-
-# hd500_port, Channel, CC, Value
 # Footsiwtch
 FS1 = Ctrl(hd500_port, hd500_channel, 51, 64)
 FS2 = Ctrl(hd500_port, hd500_channel, 52, 64)
@@ -869,9 +865,14 @@ FS7 = Ctrl(hd500_port, hd500_channel, 57, 64)
 FS8 = Ctrl(hd500_port, hd500_channel, 58, 64)
 TOE = Ctrl(hd500_port, hd500_channel, 59, 64)
 
-# Pedal - useless
+# Exp1 et Exp2
+Expr1 = Ctrl(hd500_port, hd500_channel, 1, EVENT_VALUE)
+Expr2 = Ctrl(hd500_port, hd500_channel, 2, EVENT_VALUE)
 
 # Looper
+TunerOn = Ctrl(hd500_port, hd500_channel, 69, 127)
+TunerOff = Ctrl(hd500_port, hd500_channel, 69, 0)
+
 #
 # This is the patches specific for the sound modules configuration
 #
@@ -971,83 +972,46 @@ BrushingSaw =  Output('SD90-PART-A', channel=1, program=((80 * 128), 2))
 InitSoundModule = (ResetSD90 // InitPitchBend)
 
 #-----------------------------------------------------------------------------------------------------------
-# Control body
-# control.py
-# Controlleur 1 : changement de scene
-from plugins.lighting.philips import HueBlackout
-
-
-nav_controller_channel=configuration["nav_controller_channel"]
-nav_controller = (
-    CtrlFilter(1, 20, 21, 22) >>
-    CtrlSplit({
-         1: Ctrl(GT10BPort, GT10BChannel, 7, EVENT_VALUE),
-        20: Call(NavigateToScene),
-        21: Discard(),
-        22: Discard(),
-    })
-)
-
-# Keyboard Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player ou le Philips Hue
-# Limite le Control #1 et #7 en %
-key_controller=key_config["controller"]
-key_transpose=Transpose(key_controller["transpose"])
-
-key_controller_channel=key_controller["channel"]
-key_controller = [
-    [CtrlFilter(1, 7) >> CtrlValueFilter(0, 101), Filter(NOTEON) >> key_transpose] >> Call(Mp3Player(key_config)),
-    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[0]) >> Call(HueBlackout(hue_config)),
-    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[48]) >> Call(HueScene(hue_config, "Normal"))
-]
-
-
-# Collection de controllers
-controllers = ChannelFilter(key_controller_channel,nav_controller_channel)
-_control = (
-	controllers >>
-	ChannelSplit({
-		key_controller_channel: key_controller,
-		nav_controller_channel: nav_controller,
-	})
-)
-
-#-----------------------------------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------------------
 # Patches body
 # patches.py
 #-----------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------
-# Lighting patches
-hc=hue_config
-HueOff=Call(HueBlackout(hc))
-HueGalaxie=Call(HueScene(hc, "Galaxie"))
-HueGalaxie1=Call(HueScene(hc, "Galaxie", 1))
-HueDemon=Call(HueScene(hc, "Demon"))
-HueSoloRed=Call(HueScene(hc, "SoloRed"))
-HueSoloRed1=Call(HueScene(hc, "SoloRed", 1))
+'''
+Notes :
+
+- L'utilisation du Ctrl(3,value) sert a passer le value dans EVENT_VALUE pour l'unité suivante dans une série d'unité
+- Soit pour assigner une valeur au pédales d'expression du POD HD 500
+- Soit pour déterminer la valeur d'une transition pour le chargement d'une scène du Philips HUE
+
+Controller 3 : ref.: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
+CC      Bin             Hex     Control function    Value       Used as
+3	00000011	03	Undefined	    0-127	MSB
+'''
+# Lighting patches -----------------------------------------------------------------------------
+HueOff=Call(HueBlackout(hue_config))
+HueNormal=Call(HueScene(hue_config, "Normal"))
+HueGalaxie=Call(HueScene(hue_config, "Galaxie"))
+HueDemon=Call(HueScene(hue_config, "Demon"))
+HueSoloRed=Call(HueScene(hue_config, "SoloRed"))
 #-----------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------
 # Execution patches
 #-----------------------------------------------------------------------------------------------
-phantom=Velocity(fixed=0) >> Output('SD90-PART-A', channel=1, program=((96*128),1), volume=0)
 
+# TODO Revisiter cela
 # PORTAMENTO 
-portamento_base=Ctrl(1,1,5,50)
-portamento_off=Ctrl(1,1,65,0)	# Switch OFF
-portamento_on=Ctrl(1,1,65,127)  # Switch ON
-portamento_up=(portamento_base // portamento_on)
-portamento_off=(portamento_base // portamento_off)
-
-#Pas de resultat encore
+#portamento_base=Ctrl(1,1,5,50)
+#portamento_off=Ctrl(1,1,65,0)	# Switch OFF
+#portamento_on=Ctrl(1,1,65,127)  # Switch ON
+#portamento_up=(portamento_base // portamento_on)
+#portamento_off=(portamento_base // portamento_off)
 #legato=Ctrl(1,1,120,0)
 
 d4= Output('SD90-PART-A', channel=10, program=1, volume=100)
 d4_tom= Output('SD90-PART-A', channel=11, program=((96*128)+1,118), volume=100)
 
 # FX Section
-explosion =  Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128)+3,128), volume=100)
+explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128)+3,128), volume=100)
 #--------------------------------------------------------------------
 violon = Output('SD90-PART-A', channel=1, program=((96*128),41))
 piano_base =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128),1))
@@ -1154,6 +1118,7 @@ analogkid_main =  KeySplit('f3', analogkid_low, analogkid_high)
 limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=((80*128),12), volume=100)
 
 # Patch Centurion
+# TODO : Pan pour chaque programme
 centurion_synth = (Velocity(fixed=110) >>
 	(
 		Output('SD90-PART-A', channel=1, program=((99*128),96), volume=110) // 
@@ -1161,11 +1126,11 @@ centurion_synth = (Velocity(fixed=110) >>
 	))
 
 # Patch Centurion Video
-# TODO Ajouter vp.sh dans la configuration json
-centurion_video=( System('./vp.sh /mnt/flash/live/video/centurion_silent.avi') )
+# TODO Passer pas le plugin de videoplayer
+#centurion_video=( System('./vp.sh /mnt/flash/live/video/centurion_silent.avi') )
 
 # Patch Centurion Hack 
-centurion_patch=( LatchNotes(True,reset='C3') >>
+centurion_patch=(LatchNotes(True,reset='C3') >>
 	(
 		(KeyFilter('D3') >> Key('D1')) //
 		(KeyFilter('E3') >> Key('D2')) //
@@ -1174,123 +1139,112 @@ centurion_patch=( LatchNotes(True,reset='C3') >>
 		(KeyFilter('A3') >> Key('D5'))
 	) >> centurion_synth)
 
-# PAD SECTION --------------------------------------------------------------------------------------------------
-
-# Hack SD90-PART-A - Closer to the heart
-closer_celesta_d4 =Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((98*128),11), volume=110)
-#closer_celesta_d4 = (
-#	(
-#		Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((98*128),11), volume=110) //
-#		(Velocity(fixed=100) >> Transpose(-72) >> Output('SD90-PART-A', channel=2, program=((99*128),96), volume=80))
-#	))
-
-closer_patch_celesta_d4=(
-    (
-		(~KeyFilter(notes=[36,38,40,41,43,45])) //
-        (KeyFilter('C1') >> Key('A5')) //
-        (KeyFilter('D1') >> Key('B5')) //
-        (KeyFilter('E1') >> Key('G5')) //
-        (KeyFilter('F1') >> Key('D6')) //
-        (KeyFilter('G1') >> Key('F5')) //
-        (KeyFilter('A1') >> Key('C#6'))
-   ) >> closer_celesta_d4)
-
-
-closer_bell_d4 = Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((99*128),15), volume=100)
-closer_patch_d4=(
-    (
-		(~KeyFilter(notes=[36,38,40,41,43,45])) //
-        (KeyFilter('C1') >> Key('D4')) //
-        (KeyFilter('E1') >> Key('A3')) //
-        (KeyFilter('G1') >> Key('G3')) //
-        (KeyFilter('D1') >> Key('F#3'))
-   ) >> closer_bell_d4)
-
-# YYZ
-yyz_bell=Output('SD90-PART-A', channel=10, program=1, volume=100)
-yyz=(
-	(
-		(KeyFilter('A1') >> Key('A4')) //
-		(KeyFilter('F1') >> Key('G#4')) 
-	) >> yyz_bell)
-
-# Time Stand Steel
-# Instruments
-d4_melo_tom=Velocity(fixed=100) >> Output('SD90-PART-A', channel=11, program=((99*128)+1,118), volume=100)
-d4_castanet=Velocity(fixed=100) >> Output('SD90-PART-A', channel=12, program=((99*128)+1,116), volume=100)
-d4_808_tom=Velocity(fixed=80) >> Output('SD90-PART-A', channel=13, program=((99*128)+1,119), volume=100)
-
-# Sons 1 et 2
-tss_d4_melo_tom_A=KeyFilter('E1') >> Key('E6') >> d4_melo_tom
-
-# Son 3
-tss_d4_castanet=KeyFilter('G1') >> Key('a#2') >> d4_castanet
-
-# Son 4
-tss_d4_melo_tom_B=KeyFilter('F1') >> Key('a4') >> d4_808_tom
-
-# Son 5
-tss_d4_808_tom=KeyFilter('A1') >> Key('f#5') >> d4_808_tom
 
 # Band : Big Country ------------------------------------------
 # Pour : In a big country
 # Init patch
-i_big_country = (
-        U01_A // P14A // 
-        Ctrl(hd500_port, hd500_channel, 1, 40) //
-        Ctrl(hd500_port, hd500_channel, 2, 127))
+i_big_country = [U01_A, P14A, Ctrl(3,40) >> Expr1 , Ctrl(3,100) >> Expr2]
 
 # Execution patch
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
-             (KeyFilter(notes=[67]) >> Ctrl(hd500_port, hd500_channel, 2, 100)) //
-             (KeyFilter(notes=[69]) >> Ctrl(hd500_port, hd500_channel, 54, 64)) //
-             (KeyFilter(notes=[71]) >> (Ctrl(hd500_port, hd500_channel, 52, 64) // Ctrl(hd500_port, hd500_channel,2,100))) //
-             (KeyFilter(notes=[72]) >> (Ctrl(hd500_port, hd500_channel, 52, 64) // Ctrl(hd500_port, hd500_channel,2,127)))
-         ) >> Port('SD90-MIDI-OUT-1'))
+             (KeyFilter(notes=[67]) >> Ctrl(3, 100) >> Expr2) //
+             (KeyFilter(notes=[69]) >> FS4) //
+             (KeyFilter(notes=[71]) >> (FS2 // Ctrl(3,100) >> Expr2)) //
+             (KeyFilter(notes=[72]) >> (FS2 // Ctrl(3,127) >> Expr2))
+         ))
 # Big Country fin de section ------------------------------------------
 
 # Band : Rush ------------------------------------------
 # Init patch
-i_rush = (
-        P02A // 
-        Ctrl(hd500_port,hd500_channel, 1, 40))
+i_rush = [P02A, Ctrl(3,40) >> Expr1]
 
 # Generics
+# Tout en parallelle mais séparé par contexte
 p_rush = (pk5 >> Filter(NOTEON) >>
     [
         [
             KeyFilter(notes=[60]) >> HueOff,
             KeyFilter(notes=[62]) >> HueGalaxie,
-            KeyFilter(notes=[64]) >> HueSoloRed1
+            KeyFilter(notes=[64]) >> HueSoloRed
         ],                
         [
-            KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64),
-            KeyFilter(notes=[71]) >> [Ctrl(3,9,51, 64), Ctrl(3,9,54, 64), Ctrl(3,9,2,100)],
-            KeyFilter(notes=[72]) >> [Ctrl(3,9,51, 64), Ctrl(3,9,54, 64), Ctrl(3,9,2,120)]
-        ] >> Port('SD90-MIDI-OUT-1')
+            KeyFilter(notes=[69]) >> FS4,
+            KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100) >> Expr2],
+            KeyFilter(notes=[72]) >> [FS1, FS4, Ctrl(3,120) >> Expr2]
+        ]
     ])
 
 # Grand Designs
-p_rush_gd = (ChannelFilter(pk5_channel) >> 
-         [
-            (Filter(NOTEON) >> (
-                (KeyFilter(notes=[60]) >> HueOff) //
-                (KeyFilter(notes=[61]) >> HueDemon) //
-                (KeyFilter(notes=[62]) >> HueGalaxie) //
-                (KeyFilter(notes=[64]) >> HueSoloRed1) //
-                (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
-                (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), HueSoloRed1])
-            )),
-            (Filter(NOTEOFF) >> (
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), HueGalaxie1])
-            )),
-        ] >> Port('SD90-MIDI-OUT-1'))
+p_rush_gd = (pk5 >> 
+    [
+        Filter(NOTEON) >> [
+                [ 
+                    KeyFilter(notes=[60]) >> HueOff,
+                    KeyFilter(notes=[61]) >> HueDemon,
+                    KeyFilter(notes=[62]) >> HueGalaxie,
+                    KeyFilter(notes=[64, 72]) >> HueSoloRed,
+                ],
+                [
+                    KeyFilter(notes=[67]) >> FS4,
+                    KeyFilter(notes=[69]) >> [Ctrl(3, 100) >> Expr2, FS4],
+                    KeyFilter(notes=[71]) >> [Ctrl(3, 127) >> Expr2, FS4],
+                    KeyFilter(notes=[72]) >>  Ctrl(3, 127) >> Expr2
+                ],
+            ],
+        Filter(NOTEOFF) >> [
+                [
+                    KeyFilter(notes=[72]) >> HueGalaxie
+                ],
+                [
+                    KeyFilter(notes=[72]) >> Ctrl(3, 100) >> Expr2
+                ]
+            ],
+    ])
 # Rush fin de section ------------------------------------------
 
 p_glissando=(Filter(NOTEON) >> Call(glissando, 24, 100, 100, 0.0125))
+
+#-----------------------------------------------------------------------------------------------------------
+# Control body
+# control.py
+# Controlleur 1 : changement de scene
+
+nav_controller_channel=configuration["nav_controller_channel"]
+nav_controller = (
+    CtrlFilter(1, 20, 21, 22) >>
+    CtrlSplit({
+         1: Ctrl(GT10BPort, GT10BChannel, 7, EVENT_VALUE),
+        20: Call(NavigateToScene),
+        21: Discard(),
+        22: Discard(),
+    })
+)
+
+# Keyboard Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player ou le Philips Hue
+# Limite le Control #1 et #7 en %
+key_controller=key_config["controller"]
+key_transpose=Transpose(key_controller["transpose"])
+
+key_controller_channel=key_controller["channel"]
+key_controller = [
+    [CtrlFilter(1, 7) >> CtrlValueFilter(0, 101), Filter(NOTEON) >> key_transpose] >> Call(Mp3Player(key_config)),
+    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[0]) >> HueOff,
+    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[48]) >> HueNormal
+]
+
+
+# Collection de controllers
+controllers = ChannelFilter(key_controller_channel,nav_controller_channel)
+_control = (
+	controllers >>
+	ChannelSplit({
+		key_controller_channel: key_controller,
+		nav_controller_channel: nav_controller,
+	})
+)
+
+#-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # Scenes body
