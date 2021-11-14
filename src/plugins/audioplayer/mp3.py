@@ -15,9 +15,9 @@ from mididings.engine import scenes, current_scene, switch_scene, current_subsce
 
 
 '''
-This plugin play mp3 files, it inherits the mpyg321.mpyg321, a mpg123 wrapper
+This plugin plays mp3 files, it inherits the mpyg321.mpyg321, a mpg123 wrapper
 
-This is a callable object, __call__ is called via the Mididings control patch
+This is a callable object, __call__ is called via the control patch (src/control.py)
 
 Inspiré du clavier 'lanceur de chanson' de l'émission Québecoise 'Tout le monde en parle'
 '''

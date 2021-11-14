@@ -1,11 +1,18 @@
 #-----------------------------------------------------------------------------------------------
-# PROGRAM CHANGE SECTION
+# Lighting patches
+hc=hue_config
+HueOff=Call(HueBlackout(hc))
+HueGalaxie=Call(HueScene(hc, "Galaxie"))
+HueGalaxie1=Call(HueScene(hc, "Galaxie", 1))
+HueDemon=Call(HueScene(hc, "Demon"))
+HueSoloRed=Call(HueScene(hc, "SoloRed"))
+HueSoloRed1=Call(HueScene(hc, "SoloRed", 1))
+#-----------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------
+# Execution patches
 #-----------------------------------------------------------------------------------------------
 phantom=Velocity(fixed=0) >> Output('SD90-PART-A', channel=1, program=((96*128),1), volume=0)
-
-# Works great in init_patch
-#Chorus=Ctrl(3,1,93,127)
-#Reverb =Ctrl(3,1,93,127)
 
 # PORTAMENTO 
 portamento_base=Ctrl(1,1,5,50)
@@ -17,10 +24,6 @@ portamento_off=(portamento_base // portamento_off)
 #Pas de resultat encore
 #legato=Ctrl(1,1,120,0)
 
-# Simple output patch for testing equipment
-#SD90-PART-A= Output('SD90-PART-A', channel=1, program=1, volume=100)
-#SD90-PART-A= Output('SD90-PART-A', channel=2, program=1, volume=100)
-#SD90-PART-A_drum= Channel(10) >> Transpose(-24) >> Output('SD90-PART-A', channel=10, program=1, volume=100)
 d4= Output('SD90-PART-A', channel=10, program=1, volume=100)
 d4_tom= Output('SD90-PART-A', channel=11, program=((96*128)+1,118), volume=100)
 
@@ -229,38 +232,44 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
 # Big Country fin de section ------------------------------------------
 
 # Band : Rush ------------------------------------------
-# Pour : Subdivisions, The Trees
 # Init patch
 i_rush = (
         P02A // 
         Ctrl(hd500_port,hd500_channel, 1, 40))
 
-# Execution patch
+# Generics
 p_rush = (pk5 >> Filter(NOTEON) >>
-         (
-             (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
-             (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,54, 64) // Ctrl(3,9,2,100))) //
-             (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,54, 64) // Ctrl(3,9,2,120)))
-         ) >> Port('SD90-MIDI-OUT-1'))
+    [
+        [
+            KeyFilter(notes=[60]) >> HueOff,
+            KeyFilter(notes=[62]) >> HueGalaxie,
+            KeyFilter(notes=[64]) >> HueSoloRed1
+        ],                
+        [
+            KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64),
+            KeyFilter(notes=[71]) >> [Ctrl(3,9,51, 64), Ctrl(3,9,54, 64), Ctrl(3,9,2,100)],
+            KeyFilter(notes=[72]) >> [Ctrl(3,9,51, 64), Ctrl(3,9,54, 64), Ctrl(3,9,2,120)]
+        ] >> Port('SD90-MIDI-OUT-1')
+    ])
 
-# Rush Grand Designs guitar patch
-# notes=[67]=Toggle delay
-# notes=[69]=Disto a 100, toggle delay
-# notes=[71]=Disto a 127, toggle delay
-# notes=[72]=On NOTEON disto = 127 else disto = 100
-p_rush_gd = (ChannelFilter(pk5_channel,cme_channel) >> 
+# Grand Designs
+p_rush_gd = (ChannelFilter(pk5_channel) >> 
          [
             (Filter(NOTEON) >> (
+                (KeyFilter(notes=[60]) >> HueOff) //
+                (KeyFilter(notes=[61]) >> HueDemon) //
+                (KeyFilter(notes=[62]) >> HueGalaxie) //
+                (KeyFilter(notes=[64]) >> HueSoloRed1) //
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
                 (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), Call(Hue('studio-red'))])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), HueSoloRed1])
             )),
             (Filter(NOTEOFF) >> (
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), Call(Hue('studio-ambiance'))])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), HueGalaxie1])
             )),
         ] >> Port('SD90-MIDI-OUT-1'))
-
+# Rush fin de section ------------------------------------------
 
 p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, 'SD90-PART-A'))
 

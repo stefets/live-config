@@ -10,23 +10,28 @@
       "pk5" : 3
   },
   "nav_controller_channel" : 9,
-  "hue": {
-      "uri" : "http://192.168.1.146:5002/scenes/"
-  },
-  "mp3player": {
-    "player" : "mpg123",
-    "audiodevice" : "hw:1,0",
-    "playlist" : {
-      "datasource": "/media/mididings/soundlib/",
-      "symlink_target": "/media/mididings/tmp/",
-      "symlink_builder": "./mksymlinks.sh",
-      "filename": "/media/mididings/tmp/playlist.txt"
+  "plugins" : {
+    "hue": {
+      "ip" : "192.168.1.225",
+      "username" : "kwNE1s6SuSmsWQnJO5IH7qVV6YrEkSmRBjXLtblu",
+      "zone" : "Salle de musique"
     },
-    "controller" : {
-        "size" : 49,
-        "transpose" : -36,
-        "channel" : 8
-    }  
-  },
-  "videoplayer" : {}  
+    "mp3": {
+      "player" : "mpg123",
+      "audiodevice" : "hw:1,0",
+      "playlist" : {
+        "datasource": "/media/mididings/soundlib/",
+        "symlink_target": "/media/mididings/tmp/",
+        "symlink_builder": "./mksymlinks.sh",
+        "filename": "/media/mididings/tmp/playlist.txt"
+      },
+      "controller" : {
+          "size" : 49,
+          "transpose" : -36,
+          "channel" : 8
+      }  
+    },
+    "videoplayer" : {},
+    "osc" : {}  
+  }
 }

@@ -1,6 +1,6 @@
 # My music configuration with MIDIDINGS as the Maestro and MPG123 as a plugin
 
-<img src="/doc/main-config.draw.jpg" />
+<img src="/doc/live-config.png" />
 
 # Hardware
 * Edirol SD-90, Roland PK5A, POD HD500, Boss GT10B, UM-2eX, M-Key v2, Alesis Q49
