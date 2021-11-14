@@ -229,21 +229,23 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
 # Big Country fin de section ------------------------------------------
 
 # Band : Rush ------------------------------------------
-# Pour : Subdivisions, The Trees
 # Init patch
 i_rush = (
         P02A // 
         Ctrl(hd500_port,hd500_channel, 1, 40))
 
-# Execution patch
+# Generics
 p_rush = (pk5 >> Filter(NOTEON) >>
          (
+             (KeyFilter(notes=[60]) >> Call(HueBlackout(hue_config))) //
+             (KeyFilter(notes=[62]) >> Call(HueScene(hue_config, "Galaxie"))) //
+             (KeyFilter(notes=[64]) >> Call(HueScene(hue_config, "SoloRed", 1))) //
              (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
              (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,54, 64) // Ctrl(3,9,2,100))) //
              (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,54, 64) // Ctrl(3,9,2,120)))
          ) >> Port('SD90-MIDI-OUT-1'))
 
-# Rush Grand Designs guitar patch
+# Grand Designs
 # notes=[67]=Toggle delay
 # notes=[69]=Disto a 100, toggle delay
 # notes=[71]=Disto a 127, toggle delay
@@ -251,15 +253,19 @@ p_rush = (pk5 >> Filter(NOTEON) >>
 p_rush_gd = (ChannelFilter(pk5_channel) >> 
          [
             (Filter(NOTEON) >> (
+                (KeyFilter(notes=[60]) >> Call(HueBlackout(hue_config))) //
+                (KeyFilter(notes=[61]) >> Call(HueScene(hue_config, "Demon"))) //
+                (KeyFilter(notes=[62]) >> Call(HueScene(hue_config, "Galaxie"))) //
+                (KeyFilter(notes=[64]) >> Call(HueScene(hue_config, "SoloRed", 1))) //
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
                 (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), Call(HueScene(hue_config, "GrandDesignsRed"))])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), Call(HueScene(hue_config, "SoloRed", 1))])
             )),
             (Filter(NOTEOFF) >> (
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), Call(HueScene(hue_config, "Galaxie"))])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), Call(HueScene(hue_config, "Galaxie", 1))])
             )),
         ] >> Port('SD90-MIDI-OUT-1'))
-
+# Rush fin de section ------------------------------------------
 
 p_glissando=(Filter(NOTEON) >> Call(glissando, 24, 100, 100, 0.0125))

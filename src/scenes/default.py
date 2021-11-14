@@ -1,6 +1,6 @@
     2: SceneGroup("solo-mode",
         [
-            Scene("Rush", init_patch=i_rush, patch=p_rush),
+            Scene("Rush Generics", init_patch=i_rush, patch=p_rush),
             Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
             Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
         ]),
