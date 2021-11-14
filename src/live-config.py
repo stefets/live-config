@@ -874,49 +874,89 @@ TunerOn = Ctrl(hd500_port, hd500_channel, 69, 127)
 TunerOff = Ctrl(hd500_port, hd500_channel, 69, 0)
 
 #
-# This is the patches specific for the sound modules configuration
+# EDIROL SD-90 syntaxe
 #
-# EDIROL SD-90
-#
-# Reset string
+
 ResetSD90 = SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
+factor = 128
+
+'''
+Inst part: 
+80(50H) = Special 1 set
+81(51H) = Special 2 set
+96(60H) = Classical set
+97(61H) = Contemporary set
+98(62H) = Solo set
+99(63H) = Enhanced set
+'''
+Special1=80*factor
+Special2=81*factor
+Classical=96*factor
+Contemporary=97*factor
+Solo=98*factor
+Enhanced=99*factor
+
+'''
+Drum part: 
+104(60H) = Classical set
+105(61H) = Contemporary set
+106(62H) = Solo set
+107(63H) = Enhanced set
+'''
+ClassicalDrum=104*factor
+ContemporaryDrum=105*factor
+SoloDrum=106*factor
+EnhancedDrum=107*factor
+
+'''
+Variable
+'''
+Var1=1
+Var2=2
+Var3=3
+Var4=4
+Var5=5
+Var6=6
+Var7=7
+Var8=8
+Var9=9
 
 # Configure PitchBend Sensitivity
 # SD-90 Part A - All Channel
 #      * RPN MSB/LSB 0 = PitchBendSens ****  //  ****** DataEntry 12 tone *******
-PB_A01 = (Ctrl(1, 1, 100, 0) // Ctrl(1, 1, 101, 0) // Ctrl(1, 1, 6, 12) // Ctrl(1, 1, 38, 0))
-PB_A02 = (Ctrl(1, 2, 100, 0) // Ctrl(1, 2, 101, 0) // Ctrl(1, 2, 6, 12) // Ctrl(1, 2, 38, 0))
-PB_A03 = (Ctrl(1, 3, 100, 0) // Ctrl(1, 3, 101, 0) // Ctrl(1, 3, 6, 12) // Ctrl(1, 3, 38, 0))
-PB_A04 = (Ctrl(1, 4, 100, 0) // Ctrl(1, 4, 101, 0) // Ctrl(1, 4, 6, 12) // Ctrl(1, 4, 38, 0))
-PB_A05 = (Ctrl(1, 5, 100, 0) // Ctrl(1, 5, 101, 0) // Ctrl(1, 5, 6, 12) // Ctrl(1, 5, 38, 0))
-PB_A06 = (Ctrl(1, 6, 100, 0) // Ctrl(1, 6, 101, 0) // Ctrl(1, 6, 6, 12) // Ctrl(1, 6, 38, 0))
-PB_A07 = (Ctrl(1, 7, 100, 0) // Ctrl(1, 7, 101, 0) // Ctrl(1, 7, 6, 12) // Ctrl(1, 7, 38, 0))
-PB_A08 = (Ctrl(1, 8, 100, 0) // Ctrl(1, 8, 101, 0) // Ctrl(1, 8, 6, 12) // Ctrl(1, 8, 38, 0))
-PB_A09 = (Ctrl(1, 9, 100, 0) // Ctrl(1, 9, 101, 0) // Ctrl(1, 9, 6, 12) // Ctrl(1, 9, 38, 0))
-PB_A10 = (Ctrl(1, 10, 100, 0) // Ctrl(1, 10, 101, 0) // Ctrl(1, 10, 6, 12) // Ctrl(1, 10, 38, 0))
-PB_A11 = (Ctrl(1, 11, 100, 0) // Ctrl(1, 11, 101, 0) // Ctrl(1, 11, 6, 12) // Ctrl(1, 11, 38, 0))
-PB_A12 = (Ctrl(1, 12, 100, 0) // Ctrl(1, 12, 101, 0) // Ctrl(1, 12, 6, 12) // Ctrl(1, 12, 38, 0))
-PB_A13 = (Ctrl(1, 13, 100, 0) // Ctrl(1, 13, 101, 0) // Ctrl(1, 13, 6, 12) // Ctrl(1, 13, 38, 0))
-PB_A14 = (Ctrl(1, 14, 100, 0) // Ctrl(1, 14, 101, 0) // Ctrl(1, 14, 6, 12) // Ctrl(1, 14, 38, 0))
-PB_A15 = (Ctrl(1, 15, 100, 0) // Ctrl(1, 15, 101, 0) // Ctrl(1, 15, 6, 12) // Ctrl(1, 15, 38, 0))
-PB_A16 = (Ctrl(1, 16, 100, 0) // Ctrl(1, 16, 101, 0) // Ctrl(1, 16, 6, 12) // Ctrl(1, 16, 38, 0))
+PB_A01 = (Ctrl('SD90-PART-A', 1, 100, 0) // Ctrl('SD90-PART-A', 1, 101, 0) // Ctrl('SD90-PART-A', 1, 6, 12) // Ctrl('SD90-PART-A', 1, 38, 0))
+PB_A02 = (Ctrl('SD90-PART-A', 2, 100, 0) // Ctrl('SD90-PART-A', 2, 101, 0) // Ctrl('SD90-PART-A', 2, 6, 12) // Ctrl('SD90-PART-A', 2, 38, 0))
+PB_A03 = (Ctrl('SD90-PART-A', 3, 100, 0) // Ctrl('SD90-PART-A', 3, 101, 0) // Ctrl('SD90-PART-A', 3, 6, 12) // Ctrl('SD90-PART-A', 3, 38, 0))
+PB_A04 = (Ctrl('SD90-PART-A', 4, 100, 0) // Ctrl('SD90-PART-A', 4, 101, 0) // Ctrl('SD90-PART-A', 4, 6, 12) // Ctrl('SD90-PART-A', 4, 38, 0))
+PB_A05 = (Ctrl('SD90-PART-A', 5, 100, 0) // Ctrl('SD90-PART-A', 5, 101, 0) // Ctrl('SD90-PART-A', 5, 6, 12) // Ctrl('SD90-PART-A', 5, 38, 0))
+PB_A06 = (Ctrl('SD90-PART-A', 6, 100, 0) // Ctrl('SD90-PART-A', 6, 101, 0) // Ctrl('SD90-PART-A', 6, 6, 12) // Ctrl('SD90-PART-A', 6, 38, 0))
+PB_A07 = (Ctrl('SD90-PART-A', 7, 100, 0) // Ctrl('SD90-PART-A', 7, 101, 0) // Ctrl('SD90-PART-A', 7, 6, 12) // Ctrl('SD90-PART-A', 7, 38, 0))
+PB_A08 = (Ctrl('SD90-PART-A', 8, 100, 0) // Ctrl('SD90-PART-A', 8, 101, 0) // Ctrl('SD90-PART-A', 8, 6, 12) // Ctrl('SD90-PART-A', 8, 38, 0))
+PB_A09 = (Ctrl('SD90-PART-A', 9, 100, 0) // Ctrl('SD90-PART-A', 9, 101, 0) // Ctrl('SD90-PART-A', 9, 6, 12) // Ctrl('SD90-PART-A', 9, 38, 0))
+PB_A10 = (Ctrl('SD90-PART-A', 10, 100, 0) // Ctrl('SD90-PART-A', 10, 101, 0) // Ctrl('SD90-PART-A', 10, 6, 12) // Ctrl('SD90-PART-A', 10, 38, 0))
+PB_A11 = (Ctrl('SD90-PART-A', 11, 100, 0) // Ctrl('SD90-PART-A', 11, 101, 0) // Ctrl('SD90-PART-A', 11, 6, 12) // Ctrl('SD90-PART-A', 11, 38, 0))
+PB_A12 = (Ctrl('SD90-PART-A', 12, 100, 0) // Ctrl('SD90-PART-A', 12, 101, 0) // Ctrl('SD90-PART-A', 12, 6, 12) // Ctrl('SD90-PART-A', 12, 38, 0))
+PB_A13 = (Ctrl('SD90-PART-A', 13, 100, 0) // Ctrl('SD90-PART-A', 13, 101, 0) // Ctrl('SD90-PART-A', 13, 6, 12) // Ctrl('SD90-PART-A', 13, 38, 0))
+PB_A14 = (Ctrl('SD90-PART-A', 14, 100, 0) // Ctrl('SD90-PART-A', 14, 101, 0) // Ctrl('SD90-PART-A', 14, 6, 12) // Ctrl('SD90-PART-A', 14, 38, 0))
+PB_A15 = (Ctrl('SD90-PART-A', 15, 100, 0) // Ctrl('SD90-PART-A', 15, 101, 0) // Ctrl('SD90-PART-A', 15, 6, 12) // Ctrl('SD90-PART-A', 15, 38, 0))
+PB_A16 = (Ctrl('SD90-PART-A', 16, 100, 0) // Ctrl('SD90-PART-A', 16, 101, 0) // Ctrl('SD90-PART-A', 16, 6, 12) // Ctrl('SD90-PART-A', 16, 38, 0))
 # SD-90 Part B - All Channel
-PB_B01 = (Ctrl(2, 1, 100, 0) // Ctrl(2, 1, 101, 0) // Ctrl(2, 1, 6, 12) // Ctrl(2, 1, 38, 0))
-PB_B02 = (Ctrl(2, 2, 100, 0) // Ctrl(2, 2, 101, 0) // Ctrl(2, 2, 6, 12) // Ctrl(2, 2, 38, 0))
-PB_B03 = (Ctrl(2, 3, 100, 0) // Ctrl(2, 3, 101, 0) // Ctrl(2, 3, 6, 12) // Ctrl(2, 3, 38, 0))
-PB_B04 = (Ctrl(2, 4, 100, 0) // Ctrl(2, 4, 101, 0) // Ctrl(2, 4, 6, 12) // Ctrl(2, 4, 38, 0))
-PB_B05 = (Ctrl(2, 5, 100, 0) // Ctrl(2, 5, 101, 0) // Ctrl(2, 5, 6, 12) // Ctrl(2, 5, 38, 0))
-PB_B06 = (Ctrl(2, 6, 100, 0) // Ctrl(2, 6, 101, 0) // Ctrl(2, 6, 6, 12) // Ctrl(2, 6, 38, 0))
-PB_B07 = (Ctrl(2, 7, 100, 0) // Ctrl(2, 7, 101, 0) // Ctrl(2, 7, 6, 12) // Ctrl(2, 7, 38, 0))
-PB_B08 = (Ctrl(2, 8, 100, 0) // Ctrl(2, 8, 101, 0) // Ctrl(2, 8, 6, 12) // Ctrl(2, 8, 38, 0))
-PB_B09 = (Ctrl(2, 9, 100, 0) // Ctrl(2, 9, 101, 0) // Ctrl(2, 9, 6, 12) // Ctrl(2, 9, 38, 0))
-PB_B10 = (Ctrl(2, 10, 100, 0) // Ctrl(2, 10, 101, 0) // Ctrl(2, 10, 6, 12) // Ctrl(2, 10, 38, 0))
-PB_B11 = (Ctrl(2, 11, 100, 0) // Ctrl(2, 11, 101, 0) // Ctrl(2, 11, 6, 12) // Ctrl(2, 11, 38, 0))
-PB_B12 = (Ctrl(2, 12, 100, 0) // Ctrl(2, 12, 101, 0) // Ctrl(2, 12, 6, 12) // Ctrl(2, 12, 38, 0))
-PB_B13 = (Ctrl(2, 13, 100, 0) // Ctrl(2, 13, 101, 0) // Ctrl(2, 13, 6, 12) // Ctrl(2, 13, 38, 0))
-PB_B14 = (Ctrl(2, 14, 100, 0) // Ctrl(2, 14, 101, 0) // Ctrl(2, 14, 6, 12) // Ctrl(2, 14, 38, 0))
-PB_B15 = (Ctrl(2, 15, 100, 0) // Ctrl(2, 15, 101, 0) // Ctrl(2, 15, 6, 12) // Ctrl(2, 15, 38, 0))
-PB_B16 = (Ctrl(2, 16, 100, 0) // Ctrl(2, 16, 101, 0) // Ctrl(2, 16, 6, 12) // Ctrl(2, 16, 38, 0))
+PB_B01 = (Ctrl('SD90-PART-B', 1, 100, 0) // Ctrl('SD90-PART-B', 1, 101, 0) // Ctrl('SD90-PART-B', 1, 6, 12) // Ctrl('SD90-PART-B', 1, 38, 0))
+PB_B02 = (Ctrl('SD90-PART-B', 2, 100, 0) // Ctrl('SD90-PART-B', 2, 101, 0) // Ctrl('SD90-PART-B', 2, 6, 12) // Ctrl('SD90-PART-B', 2, 38, 0))
+PB_B03 = (Ctrl('SD90-PART-B', 3, 100, 0) // Ctrl('SD90-PART-B', 3, 101, 0) // Ctrl('SD90-PART-B', 3, 6, 12) // Ctrl('SD90-PART-B', 3, 38, 0))
+PB_B04 = (Ctrl('SD90-PART-B', 4, 100, 0) // Ctrl('SD90-PART-B', 4, 101, 0) // Ctrl('SD90-PART-B', 4, 6, 12) // Ctrl('SD90-PART-B', 4, 38, 0))
+PB_B05 = (Ctrl('SD90-PART-B', 5, 100, 0) // Ctrl('SD90-PART-B', 5, 101, 0) // Ctrl('SD90-PART-B', 5, 6, 12) // Ctrl('SD90-PART-B', 5, 38, 0))
+PB_B06 = (Ctrl('SD90-PART-B', 6, 100, 0) // Ctrl('SD90-PART-B', 6, 101, 0) // Ctrl('SD90-PART-B', 6, 6, 12) // Ctrl('SD90-PART-B', 6, 38, 0))
+PB_B07 = (Ctrl('SD90-PART-B', 7, 100, 0) // Ctrl('SD90-PART-B', 7, 101, 0) // Ctrl('SD90-PART-B', 7, 6, 12) // Ctrl('SD90-PART-B', 7, 38, 0))
+PB_B08 = (Ctrl('SD90-PART-B', 8, 100, 0) // Ctrl('SD90-PART-B', 8, 101, 0) // Ctrl('SD90-PART-B', 8, 6, 12) // Ctrl('SD90-PART-B', 8, 38, 0))
+PB_B09 = (Ctrl('SD90-PART-B', 9, 100, 0) // Ctrl('SD90-PART-B', 9, 101, 0) // Ctrl('SD90-PART-B', 9, 6, 12) // Ctrl('SD90-PART-B', 9, 38, 0))
+PB_B10 = (Ctrl('SD90-PART-B', 10, 100, 0) // Ctrl('SD90-PART-B', 10, 101, 0) // Ctrl('SD90-PART-B', 10, 6, 12) // Ctrl('SD90-PART-B', 10, 38, 0))
+PB_B11 = (Ctrl('SD90-PART-B', 11, 100, 0) // Ctrl('SD90-PART-B', 11, 101, 0) // Ctrl('SD90-PART-B', 11, 6, 12) // Ctrl('SD90-PART-B', 11, 38, 0))
+PB_B12 = (Ctrl('SD90-PART-B', 12, 100, 0) // Ctrl('SD90-PART-B', 12, 101, 0) // Ctrl('SD90-PART-B', 12, 6, 12) // Ctrl('SD90-PART-B', 12, 38, 0))
+PB_B13 = (Ctrl('SD90-PART-B', 13, 100, 0) // Ctrl('SD90-PART-B', 13, 101, 0) // Ctrl('SD90-PART-B', 13, 6, 12) // Ctrl('SD90-PART-B', 13, 38, 0))
+PB_B14 = (Ctrl('SD90-PART-B', 14, 100, 0) // Ctrl('SD90-PART-B', 14, 101, 0) // Ctrl('SD90-PART-B', 14, 6, 12) // Ctrl('SD90-PART-B', 14, 38, 0))
+PB_B15 = (Ctrl('SD90-PART-B', 15, 100, 0) // Ctrl('SD90-PART-B', 15, 101, 0) // Ctrl('SD90-PART-B', 15, 6, 12) // Ctrl('SD90-PART-B', 15, 38, 0))
+PB_B16 = (Ctrl('SD90-PART-B', 16, 100, 0) // Ctrl('SD90-PART-B', 16, 101, 0) // Ctrl('SD90-PART-B', 16, 6, 12) // Ctrl('SD90-PART-B', 16, 38, 0))
 
 InitPitchBend = (
         PB_B01 // PB_B02 // PB_B03 // PB_B04 // PB_B05 // PB_B06 // PB_B07 // PB_B08 //
@@ -928,44 +968,42 @@ InitPitchBend = (
 # SD-90 # DRUM MAPPING
 # --------------------------------------------
 # Classical Set
-StandardSet =  Output('SD90-PART-A', channel=10, program=(13312, 1))
-RoomSet =  Output('SD90-PART-A', channel=10, program=(13312, 9))
-PowerSet =  Output('SD90-PART-A', channel=10, program=(13312, 17))
-ElectricSet =  Output('SD90-PART-A', channel=10, program=(13312, 25))
-AnalogSet =  Output('SD90-PART-A', channel=10, program=(13312, 26))
-JazzSet =  Output('SD90-PART-A', channel=10, program=(13312, 33))
-BrushSet =  Output('SD90-PART-A', channel=10, program=(13312, 41))
-OrchestraSet =  Output('SD90-PART-A', channel=10, program=(13312, 49))
-SFXSet =  Output('SD90-PART-A', channel=10, program=(13312, 57))
+StandardSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 1))
+RoomSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 9))
+PowerSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 17))
+ElectricSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 25))
+AnalogSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 26))
+JazzSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 33))
+BrushSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 41))
+OrchestraSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 49))
+SFXSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 57))
 # Contemporary Set
-StandardSet2 =  Output('SD90-PART-A', channel=10, program=(13440, 1))
-RoomSet2 =  Output('SD90-PART-A', channel=10, program=(13440, 9))
-PowerSet2 =  Output('SD90-PART-A', channel=10, program=(13440, 17))
-DanceSet =  Output('SD90-PART-A', channel=10, program=(13440, 25))
-RaveSet =  Output('SD90-PART-A', channel=10, program=(13440, 26))
-JazzSet2 =  Output('SD90-PART-A', channel=10, program=(13440, 33))
-BrushSet2 =  Output('SD90-PART-A', channel=10, program=(13440, 41))
+StandardSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 1))
+RoomSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 9))
+PowerSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 17))
+DanceSet =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 25))
+RaveSet =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 26))
+JazzSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 33))
+BrushSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 41))
 # Solo Set
-St_Standard =  Output('SD90-PART-A', channel=10, program=(13568, 1))
-St_Room =  Output('SD90-PART-A', channel=10, program=(13568, 9))
-St_Power =  Output('SD90-PART-A', channel=10, program=(13568, 17))
-RustSet =  Output('SD90-PART-A', channel=10, program=(13568, 25))
-Analog2Set =  Output('SD90-PART-A', channel=10, program=(13568, 26))
-St_Jazz =  Output('SD90-PART-A', channel=10, program=(13568, 33))
-St_Brush =  Output('SD90-PART-A', channel=10, program=(13568, 41))
+St_Standard =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 1))
+St_Room =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 9))
+St_Power =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 17))
+RustSet =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 25))
+Analog2Set =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 26))
+St_Jazz =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 33))
+St_Brush =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 41))
 # Enhanced Set
-Amb_Standard =  Output('SD90-PART-A', channel=10, program=(13696, 1))
-Amb_Room =  Output('SD90-PART-A', channel=10, program=(13696, 9))
-GatedPower =  Output('SD90-PART-A', channel=10, program=(13696, 17))
-TechnoSet =  Output('SD90-PART-A', channel=10, program=(13696, 25))
-BullySet =  Output('SD90-PART-A', channel=10, program=(13696, 26))
-Amb_Jazz =  Output('SD90-PART-A', channel=10, program=(13696, 33))
-Amb_Brush =  Output('SD90-PART-A', channel=10, program=(13696, 41))
+Amb_Standard =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 1))
+Amb_Room =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 9))
+GatedPower =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 17))
+TechnoSet =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 25))
+BullySet =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 26))
+Amb_Jazz =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 33))
+Amb_Brush =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 41))
 
-### SD-90 Full Patch implementation 
-# TODO 
-BrushingSaw =  Output('SD90-PART-A', channel=1, program=((80 * 128), 2))
-# TODO 
+# TODO SD-90 Full Patch implementation 
+BrushingSaw =  Output('SD90-PART-A', channel=1, program=(Special1, 2))
 ### End SD-90 Patch list
 # -------------------------------------------------------------------
 
@@ -1008,19 +1046,19 @@ HueSoloRed=Call(HueScene(hue_config, "SoloRed"))
 #legato=Ctrl(1,1,120,0)
 
 d4= Output('SD90-PART-A', channel=10, program=1, volume=100)
-d4_tom= Output('SD90-PART-A', channel=11, program=((96*128)+1,118), volume=100)
+d4_tom= Output('SD90-PART-A', channel=11, program=(Classical+Var1,118), volume=100)
 
 # FX Section
-explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128)+3,128), volume=100)
+explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical+Var3,128), volume=100)
 #--------------------------------------------------------------------
-violon = Output('SD90-PART-A', channel=1, program=((96*128),41))
-piano_base =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128),1))
-nf_piano = Output('SD90-PART-A', channel=1, program=((96*128),2), volume=100)
-piano =  Output('SD90-PART-A', channel=3, program=((96*128),1), volume=100)
-piano2 = Output('SD90-PART-A', channel=2, program=((96*128),2), volume=100)
+violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
+piano_base =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,1))
+nf_piano = Output('SD90-PART-A', channel=1, program=(Classical,2), volume=100)
+piano =  Output('SD90-PART-A', channel=3, program=(Classical,1), volume=100)
+piano2 = Output('SD90-PART-A', channel=2, program=(Classical,2), volume=100)
 
 # Patch Synth
-keysynth =  Velocity(fixed=80) >> Output('SD90-PART-A', channel=3, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
+keysynth =  Velocity(fixed=80) >> Output('SD90-PART-A', channel=3, program=(Classical,51), volume=100, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
 # Patches for Marathon by Rush
@@ -1030,7 +1068,7 @@ marathon_intro=(cme>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
 	( 
 		(KeyFilter('e4') >> Harmonize('e','major',['unison', 'fifth'])) //
 		(KeyFilter(notes=[71, 83])) 
-	) >> Output('SD90-PART-A', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
+	) >> Output('SD90-PART-A', channel=3, program=(Classical,51), volume=110, ctrls={93:75, 91:75}))
 
 # Note : ChannelFilter 2 - Enable PK5 message only
 marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=80) >>
@@ -1049,14 +1087,14 @@ marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=80) >>
         # Isolated note
         (KeyFilter('b3') >> Key('a6'))
 
-	) >> Transpose(-24) >> Output('SD90-PART-A', channel=4, program=((96*128)+1,51), volume=100, ctrls={93:75, 91:75}))
+	) >> Transpose(-24) >> Output('SD90-PART-A', channel=4, program=(Classical+Var1,51), volume=100, ctrls={93:75, 91:75}))
 
 marathon_bridge=(cme >>
 	(
 		(KeyFilter('c2') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('e2') >> Key('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
 		(KeyFilter('d2') >> Key('e3') >> Harmonize('e','major',['unison', 'third', 'fifth']))  
-	) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=3, program=((96*128),51), volume=110, ctrls={93:75, 91:75}))
+	) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=3, program=(Classical,51), volume=110, ctrls={93:75, 91:75}))
 
 # Solo bridge, lower -12
 marathon_bridge_lower=(cme >>
@@ -1064,31 +1102,31 @@ marathon_bridge_lower=(cme >>
 		(KeyFilter('c1') >> Key('b1') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('d1') >> Key('e1') >> Harmonize('e','major',['third', 'fifth'])) //
 		(KeyFilter('e1') >> Key('f#2') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ]))
-	) >> Velocity(fixed=90) >>  Output('SD90-PART-A', channel=4, program=((96*128),51), volume=75, ctrls={93:75, 91:75}))
+	) >> Velocity(fixed=90) >>  Output('SD90-PART-A', channel=4, program=(Classical,51), volume=75, ctrls={93:75, 91:75}))
 
 # You can take the most
-marathon_cascade=(cme >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output('SD90-PART-B', channel=11, program=((99*128),99), volume=80))
+marathon_cascade=(cme >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output('SD90-PART-B', channel=11, program=(Enhanced,99), volume=80))
 
 marathon_bridge_split= KeySplit('f3', marathon_bridge_lower, marathon_cascade)
 
 # Patch Syhth. generique pour lowbase
-lowsynth =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=((96*128),51), volume=100, ctrls={93:75, 91:75})
+lowsynth =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=100, ctrls={93:75, 91:75})
 lowsynth2 =  Velocity(fixed=115) >> Output('SD90-PART-A', channel=1, program=51, volume=115, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
 # Patch Closer to the hearth 
-closer_high = Output('SD90-PART-A', channel=1, program=((99*128),15), volume=100)
-closer_base = Velocity(fixed=100) >> Output('SD90-PART-A', channel=2, program=((99*128),51), volume=100)
+closer_high = Output('SD90-PART-A', channel=1, program=(Enhanced,15), volume=100)
+closer_base = Velocity(fixed=100) >> Output('SD90-PART-A', channel=2, program=(Enhanced,51), volume=100)
 closer_main =  KeySplit('c3', closer_base, closer_high)
 #--------------------------------------------------------------------
 
 # Patch Time Stand Still
-tss_high = Velocity(fixed=90) >> Output('SD90-PART-A', channel=3, program=((99*128),92), volume=80)
-tss_base = Transpose(12) >> Velocity(fixed=90) >> Output('SD90-PART-A', channel=3, program=((99*128),92), volume=100)
+tss_high = Velocity(fixed=90) >> Output('SD90-PART-A', channel=3, program=(Enhanced,92), volume=80)
+tss_base = Transpose(12) >> Velocity(fixed=90) >> Output('SD90-PART-A', channel=3, program=(Enhanced,92), volume=100)
 tss_keyboard_main =  KeySplit('c2', tss_base, tss_high)
 
-tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=2, program=((99*128),103), volume=100)
-tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=2, program=((99*128),103), volume=100)
+tss_foot_left = Transpose(-12) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=2, program=(Enhanced,103), volume=100)
+tss_foot_right = Transpose(-24) >> Velocity(fixed=75) >> Output('SD90-PART-A', channel=2, program=(Enhanced,103), volume=100)
 tss_foot_main =  KeySplit('d#3', tss_foot_left, tss_foot_right)
 
 #--------------------------------------------------------------------
@@ -1100,29 +1138,29 @@ tss_foot_main =  KeySplit('d#3', tss_foot_left, tss_foot_right)
 #)
 #analog_pod=(Filter(NOTEON) >> (KeyFilter('c3') % Ctrl(51,27)) >> Output('PODHD500',9))
 
-mission= LatchNotes(False,reset='c#3')  >> Transpose(-12) >>Harmonize('c','major',['unison', 'third', 'fifth', 'octave']) >> Output('SD90-PART-A',channel=1,program=((98*128),53),volume=100,ctrls={91:75})
+mission= LatchNotes(False,reset='c#3')  >> Transpose(-12) >>Harmonize('c','major',['unison', 'third', 'fifth', 'octave']) >> Output('SD90-PART-A',channel=1,program=(Solo,53),volume=100,ctrls={91:75})
 
 analogkid_low= (LatchNotes(False,reset='c#3') >>
 	( 
 		(KeyFilter('c3:d#3') >> Transpose(-7) >> Harmonize('c','major',['unison', 'third', 'fifth', 'octave'])) //
 		(KeyFilter('e3') >> Key('a3')) 
-	) >> Output('SD90-PART-A',channel=1,program=((98*128),53),volume=100,ctrls={91:75}))
-analogkid_high = Output('SD90-PART-A', channel=2, program=((98*128),53), volume=100, ctrls={93:75, 91:100})
+	) >> Output('SD90-PART-A',channel=1,program=(Solo,53),volume=100,ctrls={91:75}))
+analogkid_high = Output('SD90-PART-A', channel=2, program=(Solo,53), volume=100, ctrls={93:75, 91:100})
 analogkid_main =  KeySplit('f3', analogkid_low, analogkid_high)
 
-#analogkid_ending =  Key('a1') >> Output('SD90-PART-A', channel=5, program=((81*128),68), volume=100)
+#analogkid_ending =  Key('a1') >> Output('SD90-PART-A', channel=5, program=(Special2,68), volume=100)
 
 #--------------------------------------------------------------------
 
 # Patch Limelight
-limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=((80*128),12), volume=100)
+limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=(Special1,12), volume=100)
 
 # Patch Centurion
 # TODO : Pan pour chaque programme
 centurion_synth = (Velocity(fixed=110) >>
 	(
-		Output('SD90-PART-A', channel=1, program=((99*128),96), volume=110) // 
-		Output('SD90-PART-A', channel=2, program=((99*128),82), volume=110)
+		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110) // 
+		Output('SD90-PART-A', channel=2, program=(Enhanced,82), volume=110)
 	))
 
 # Patch Centurion Video
@@ -1160,7 +1198,7 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
 i_rush = [P02A, Ctrl(3,40) >> Expr1]
 
 # Generics
-# Tout en parallelle mais séparé par contexte
+# Tout en paralelle mais séparé par contexte
 p_rush = (pk5 >> Filter(NOTEON) >>
     [
         [
@@ -1181,9 +1219,9 @@ p_rush_gd = (pk5 >>
         Filter(NOTEON) >> [
                 [ 
                     KeyFilter(notes=[60]) >> HueOff,
-                    KeyFilter(notes=[61]) >> HueDemon,
-                    KeyFilter(notes=[62]) >> HueGalaxie,
-                    KeyFilter(notes=[64, 72]) >> HueSoloRed,
+                    KeyFilter(notes=[61]) >> Ctrl(3, 1) >> HueDemon,
+                    KeyFilter(notes=[62]) >> Ctrl(3, 50) >> HueGalaxie,
+                    KeyFilter(notes=[64, 72]) >> Ctrl(3, 1) >> HueSoloRed,
                 ],
                 [
                     KeyFilter(notes=[67]) >> FS4,
@@ -1194,7 +1232,7 @@ p_rush_gd = (pk5 >>
             ],
         Filter(NOTEOFF) >> [
                 [
-                    KeyFilter(notes=[72]) >> HueGalaxie
+                    KeyFilter(notes=[72]) >> Ctrl(3, 1) >> HueGalaxie
                 ],
                 [
                     KeyFilter(notes=[72]) >> Ctrl(3, 100) >> Expr2
@@ -1251,94 +1289,66 @@ _control = (
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-	2:Scene("Piano", init_patch=Ctrl(3,50) >> Call(HueScene(hc, "Galaxie")), patch=piano),
-	3:Scene("Piano", init_patch=Call(HueScene(hc, "Galaxie")), patch=piano),
-	4:Scene("Glissando", patch=p_glissando),
-        5:Scene("Hue", patch=p_rush_gd),
-	#4:Scene("StandardSet",Transpose(-12) >> StandardSet),
-	#5:Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
-	#4:Scene("SetPitchBend", patch=violon, init_patch=portamento_up),,
-#	2:Scene("HighWater", lowsynth),
-#	3:SceneGroup ("Marathon", [
-#        Scene("Marathon-Intro",
-#		  [
-#        	marathon,
-#            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
-#            [
-#                	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-#                	(CtrlFilter(1)>>CtrlMap(1,7)) 
-#            ])
-#    	  ]),
-#		Scene("Marathon-Chords", marathon_chords),
-#        Scene("Marathon-Middle",
-#		  [
-#        	marathon,
-#            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
-#            [
-#                	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-#                	(CtrlFilter(1)>>CtrlMap(1,7)) 
-#            ])
-#    	  ]),
-#		Scene("Marathon-Chords", marathon_chords),
-#		Scene("Marathon-Bridge", marathon_bridge),
-#		Scene("Marathon-Solo-Bridge", marathon_bridge2),
-#		Scene("Marathon-Chords", marathon_chords),
-#   ]),
-#
-##	2: Scene("Marathon", 
-#		#[
-#			#marathon,
-#			#(ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >> 
-#			#[
-#				#(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-#			#	(CtrlFilter(1)>>CtrlMap(1,7))
-#			#])
-#		#]),
-#
-## EXPERIMENTATIONS
-#
-#			# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  NoteOn(2,1, 64, 100) )
-#			# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  Pitchbend(2,3, 8192) )
-#
-##    2: SceneGroup("DebugScene", [    
-##		#Scene("Modulation2Volume", 
-##		#	[
-##		#		[ChannelFilter(1) >> tss_keyboard_main // ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlMap(1,7) >> Channel(2)] ,
-##		#		ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
-##		#	]),
-##    	#Scene("Analog Kid", analogkid_main),
-##    	#Scene("Pad D4", centurion_patch),
-##    	Scene("TimeStandSteel.D4",  
-##			[ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
-##			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
-##			[
-##				(
-##				tss_d4_melo_tom_A // 
-##				tss_d4_castanet // 
-##				tss_d4_melo_tom_B // 
-##				tss_d4_808_tom
-##				)
-##	 		]]),
-##		Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
-##    	Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
-##		Scene("2112", Process(RemoveDuplicates()) >> d4play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
-##        Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
-##    	Scene("Closer.D4", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
-##		Scene("2112", Process(RemoveDuplicates()) >> d4play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_808_tom_patch),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_808_tom_patch),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_melo_tom_patch),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.5)) >> closer_patch_celesta_d4),
-##       ]),   
-    #3: Scene("test", patch=marathon_chords),
-    #2: Scene("test", patch=(gt10b_volume // piano), init_patch=U01_A),
-    #2: Scene("test", patch=piano, init_patch=U26_D)
-    #2: Scene("OSC", System('sendosc 192.168.2.25 55555 /stefets i 123'))
-    #2: Scene("Hemispheres", PlayButton >> System(play_file("spectral_mornings.mid"))),
-    #2: Scene("Hemispheres", play >> System(play_file("hemispheres.mp3")),
-	#2: SceneGroup("Group1", [ 
-		#Scene("Test",Pass(),Call(show_time)),
-		#]) 
+    2: SceneGroup("solo-mode",
+        [
+            Scene("Rush Generics", init_patch=i_rush, patch=p_rush),
+            Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
+            Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
+        ]),
+    3: SceneGroup("styx",
+        [
+            Scene("Default", init_patch=U01_A, patch=Discard()),
+        ]),
+    4: SceneGroup("tabarnac",
+        [
+            Scene("Default", patch=Discard()),
+        ]),
+    5: SceneGroup("palindrome",
+        [
+            Scene("Centurion - guitar/synth cover", patch=centurion_patch),
+        ]),
+    6: SceneGroup("rush_cover",
+        [
+            Scene("Default", init_patch=i_rush, patch=Discard()),
+        ]),
+    7: SceneGroup("bass_cover",
+        [
+            Scene("Default", init_patch=U01_A, patch=Discard()),
+        ]),
+    8: SceneGroup("demo",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    9: SceneGroup("demon",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    10: SceneGroup("fun",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    11: SceneGroup("hits",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    12: SceneGroup("middleage",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    13: SceneGroup("tv",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    14: SceneGroup("delirium",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    15: SceneGroup("power-windows",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+            Scene("GrandDesigns", init_patch=Discard(), patch=p_rush_gd),
+        ]),
+
 }
 #-----------------------------------------------------------------------------------------------------------
 
