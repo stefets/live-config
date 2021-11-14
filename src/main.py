@@ -20,8 +20,8 @@ from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
-from plugins.mp3player.galk import Mp3Player
-from plugins.philips.wrappers import Hue
+from plugins.audioplayer.mp3 import Mp3Player
+from plugins.lighting.philips import HueScene, HueBlackout
 
 # Setup path
 sys.path.append(os.path.realpath('.'))
@@ -29,6 +29,11 @@ sys.path.append(os.path.realpath('.'))
 # Config file
 with open('config.json') as json_file:
     configuration = json.load(json_file)
+
+# Plugins config
+plugins=configuration['plugins']
+hue_config=plugins['hue']
+key_config=plugins['mp3']
 
 config(
 
@@ -113,12 +118,12 @@ __SCENES__
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-#pre  = ~ChannelFilter(8,9)
-#post = Pass()
+pre  = ~ChannelFilter(8,9)
+post = Pass()
 
 # DEBUG
-pre  = Print('input', portnames='in')
-post = Print('output',portnames='out')
+#pre  = Print('input', portnames='in')
+#post = Print('output',portnames='out')
 
 run(
     control=_control,

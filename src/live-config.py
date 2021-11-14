@@ -20,8 +20,8 @@ from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
-from plugins.mp3player.galk import Mp3Player
-from plugins.philips.wrappers import Hue
+from plugins.audioplayer.mp3 import Mp3Player
+from plugins.lighting.philips import HueScene, HueBlackout
 
 # Setup path
 sys.path.append(os.path.realpath('.'))
@@ -30,10 +30,15 @@ sys.path.append(os.path.realpath('.'))
 with open('config.json') as json_file:
     configuration = json.load(json_file)
 
+# Plugins config
+plugins=configuration['plugins']
+hue_config=plugins['hue']
+key_config=plugins['mp3']
+
 config(
 
     # Defaults
-    initial_scene = 1,
+    # initial_scene = 1,
     # backend = 'alsa',
     # client_name = 'mididings',
 
@@ -969,6 +974,9 @@ InitSoundModule = (ResetSD90 // InitPitchBend)
 # Control body
 # control.py
 # Controlleur 1 : changement de scene
+from plugins.lighting.philips import HueBlackout
+
+
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
     CtrlFilter(1, 20, 21, 22) >>
@@ -980,24 +988,25 @@ nav_controller = (
     })
 )
 
-# MP3 Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player
-# Converti le volume ainsi que la modulation en pourcentage
-mp3_config=configuration["mp3player"]
-mp3_controller=mp3_config["controller"]
+# Keyboard Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player ou le Philips Hue
+# Limite le Control #1 et #7 en %
+key_controller=key_config["controller"]
+key_transpose=Transpose(key_controller["transpose"])
 
-mp3_controller_channel=mp3_controller["channel"]
-mp3_controller = (
-	(CtrlFilter(1, 7) >> CtrlValueFilter(0, 101)) //
-	(Filter(NOTEON) >> Transpose(mp3_controller["transpose"]))
-    ) >> Call(Mp3Player(mp3_config))
+key_controller_channel=key_controller["channel"]
+key_controller = [
+    [CtrlFilter(1, 7) >> CtrlValueFilter(0, 101), Filter(NOTEON) >> key_transpose] >> Call(Mp3Player(key_config)),
+    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[0]) >> Call(HueBlackout(hue_config)),
+    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[48]) >> Call(HueScene(hue_config, "Normal"))
+]
 
 
 # Collection de controllers
-controllers = ChannelFilter(mp3_controller_channel,nav_controller_channel)
+controllers = ChannelFilter(key_controller_channel,nav_controller_channel)
 _control = (
 	controllers >>
 	ChannelSplit({
-		mp3_controller_channel: mp3_controller,
+		key_controller_channel: key_controller,
 		nav_controller_channel: nav_controller,
 	})
 )
@@ -1009,13 +1018,20 @@ _control = (
 # patches.py
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------
-# PROGRAM CHANGE SECTION
+# Lighting patches
+hc=hue_config
+HueOff=Call(HueBlackout(hc))
+HueGalaxie=Call(HueScene(hc, "Galaxie"))
+HueGalaxie1=Call(HueScene(hc, "Galaxie", 1))
+HueDemon=Call(HueScene(hc, "Demon"))
+HueSoloRed=Call(HueScene(hc, "SoloRed"))
+HueSoloRed1=Call(HueScene(hc, "SoloRed", 1))
+#-----------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------
+# Execution patches
 #-----------------------------------------------------------------------------------------------
 phantom=Velocity(fixed=0) >> Output('SD90-PART-A', channel=1, program=((96*128),1), volume=0)
-
-# Works great in init_patch
-#Chorus=Ctrl(3,1,93,127)
-#Reverb =Ctrl(3,1,93,127)
 
 # PORTAMENTO 
 portamento_base=Ctrl(1,1,5,50)
@@ -1027,10 +1043,6 @@ portamento_off=(portamento_base // portamento_off)
 #Pas de resultat encore
 #legato=Ctrl(1,1,120,0)
 
-# Simple output patch for testing equipment
-#SD90-PART-A= Output('SD90-PART-A', channel=1, program=1, volume=100)
-#SD90-PART-A= Output('SD90-PART-A', channel=2, program=1, volume=100)
-#SD90-PART-A_drum= Channel(10) >> Transpose(-24) >> Output('SD90-PART-A', channel=10, program=1, volume=100)
 d4= Output('SD90-PART-A', channel=10, program=1, volume=100)
 d4_tom= Output('SD90-PART-A', channel=11, program=((96*128)+1,118), volume=100)
 
@@ -1239,133 +1251,112 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
 # Big Country fin de section ------------------------------------------
 
 # Band : Rush ------------------------------------------
-# Pour : Subdivisions, The Trees
 # Init patch
 i_rush = (
         P02A // 
         Ctrl(hd500_port,hd500_channel, 1, 40))
 
-# Execution patch
+# Generics
 p_rush = (pk5 >> Filter(NOTEON) >>
-         (
-             (KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64)) //
-             (KeyFilter(notes=[71]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,54, 64) // Ctrl(3,9,2,100))) //
-             (KeyFilter(notes=[72]) >> (Ctrl(3,9,51, 64) // Ctrl(3,9,54, 64) // Ctrl(3,9,2,120)))
-         ) >> Port('SD90-MIDI-OUT-1'))
+    [
+        [
+            KeyFilter(notes=[60]) >> HueOff,
+            KeyFilter(notes=[62]) >> HueGalaxie,
+            KeyFilter(notes=[64]) >> HueSoloRed1
+        ],                
+        [
+            KeyFilter(notes=[69]) >> Ctrl(3,9,54, 64),
+            KeyFilter(notes=[71]) >> [Ctrl(3,9,51, 64), Ctrl(3,9,54, 64), Ctrl(3,9,2,100)],
+            KeyFilter(notes=[72]) >> [Ctrl(3,9,51, 64), Ctrl(3,9,54, 64), Ctrl(3,9,2,120)]
+        ] >> Port('SD90-MIDI-OUT-1')
+    ])
 
-# Rush Grand Designs guitar patch
-# notes=[67]=Toggle delay
-# notes=[69]=Disto a 100, toggle delay
-# notes=[71]=Disto a 127, toggle delay
-# notes=[72]=On NOTEON disto = 127 else disto = 100
-p_rush_gd = (ChannelFilter(pk5_channel,cme_channel) >> 
+# Grand Designs
+p_rush_gd = (ChannelFilter(pk5_channel) >> 
          [
             (Filter(NOTEON) >> (
+                (KeyFilter(notes=[60]) >> HueOff) //
+                (KeyFilter(notes=[61]) >> HueDemon) //
+                (KeyFilter(notes=[62]) >> HueGalaxie) //
+                (KeyFilter(notes=[64]) >> HueSoloRed1) //
                 (KeyFilter(notes=[67]) >> Ctrl(3, 9, 54, 64)) //
                 (KeyFilter(notes=[69]) >> [Ctrl(3, 9, 2, 100), Ctrl(3, 9, 54, 64)]) //
                 (KeyFilter(notes=[71]) >> [Ctrl(3, 9, 2, 127), Ctrl(3, 9, 54, 64)]) //
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), Call(Hue('studio-red'))])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 127), HueSoloRed1])
             )),
             (Filter(NOTEOFF) >> (
-                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), Call(Hue('studio-ambiance'))])
+                (KeyFilter(notes=[72]) >> [Ctrl(3, 9, 2, 120), HueGalaxie1])
             )),
         ] >> Port('SD90-MIDI-OUT-1'))
-
+# Rush fin de section ------------------------------------------
 
 p_glissando=(Filter(NOTEON) >> Call(glissando, 24, 100, 100, 0.0125))
-
 
 #-----------------------------------------------------------------------------------------------------------
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-	2:Scene("Piano", patch=piano),
-	3:Scene("Glissando", patch=p_glissando),
-	#4:Scene("StandardSet",Transpose(-12) >> StandardSet),
-	#5:Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
-	#4:Scene("SetPitchBend", patch=violon, init_patch=portamento_up),,
-#	2:Scene("HighWater", lowsynth),
-#	3:SceneGroup ("Marathon", [
-#        Scene("Marathon-Intro",
-#		  [
-#        	marathon,
-#            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
-#            [
-#                	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-#                	(CtrlFilter(1)>>CtrlMap(1,7)) 
-#            ])
-#    	  ]),
-#		Scene("Marathon-Chords", marathon_chords),
-#        Scene("Marathon-Middle",
-#		  [
-#        	marathon,
-#            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >>
-#            [
-#                	(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-#                	(CtrlFilter(1)>>CtrlMap(1,7)) 
-#            ])
-#    	  ]),
-#		Scene("Marathon-Chords", marathon_chords),
-#		Scene("Marathon-Bridge", marathon_bridge),
-#		Scene("Marathon-Solo-Bridge", marathon_bridge2),
-#		Scene("Marathon-Chords", marathon_chords),
-#   ]),
-#
-##	2: Scene("Marathon", 
-#		#[
-#			#marathon,
-#			#(ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Channel(3) >> 
-#			#[
-#				#(CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-#			#	(CtrlFilter(1)>>CtrlMap(1,7))
-#			#])
-#		#]),
-#
-## EXPERIMENTATIONS
-#
-#			# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  NoteOn(2,1, 64, 100) )
-#			# flawless (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(2) >>  Pitchbend(2,3, 8192) )
-#
-##    2: SceneGroup("DebugScene", [    
-##		#Scene("Modulation2Volume", 
-##		#	[
-##		#		[ChannelFilter(1) >> tss_keyboard_main // ChannelFilter(1) >> Filter(CTRL) >> CtrlFilter(1) >> CtrlMap(1,7) >> Channel(2)] ,
-##		#		ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
-##		#	]),
-##    	#Scene("Analog Kid", analogkid_main),
-##    	#Scene("Pad D4", centurion_patch),
-##    	Scene("TimeStandSteel.D4",  
-##			[ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main,
-##			ChannelFilter(3) >> Process(RemoveDuplicates(0.01)) >> 
-##			[
-##				(
-##				tss_d4_melo_tom_A // 
-##				tss_d4_castanet // 
-##				tss_d4_melo_tom_B // 
-##				tss_d4_808_tom
-##				)
-##	 		]]),
-##		Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main]),
-##    	Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> closer_patch_celesta_d4),
-##		Scene("2112", Process(RemoveDuplicates()) >> d4play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
-##        Scene("YYZ",  Process(RemoveDuplicates()) >> yyz),
-##    	Scene("Closer.D4", Process(RemoveDuplicates(0.01)) >> closer_patch_d4),
-##		Scene("2112", Process(RemoveDuplicates()) >> d4play >> System("mpg123 -q /mnt/flash/live/2112.mp3")),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_808_tom_patch),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_808_tom_patch),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.01)) >> tss_d4_melo_tom_patch),
-##    	#Scene("Pad D4",  Process(RemoveDuplicates(0.5)) >> closer_patch_celesta_d4),
-##       ]),   
-    #3: Scene("test", patch=marathon_chords),
-    #2: Scene("test", patch=(gt10b_volume // piano), init_patch=U01_A),
-    #2: Scene("test", patch=piano, init_patch=U26_D)
-    #2: Scene("OSC", System('sendosc 192.168.2.25 55555 /stefets i 123'))
-    #2: Scene("Hemispheres", PlayButton >> System(play_file("spectral_mornings.mid"))),
-    #2: Scene("Hemispheres", play >> System(play_file("hemispheres.mp3")),
-	#2: SceneGroup("Group1", [ 
-		#Scene("Test",Pass(),Call(show_time)),
-		#]) 
+    2: SceneGroup("solo-mode",
+        [
+            Scene("Rush Generics", init_patch=i_rush, patch=p_rush),
+            Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
+            Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
+        ]),
+    3: SceneGroup("styx",
+        [
+            Scene("Default", init_patch=U01_A, patch=Discard()),
+        ]),
+    4: SceneGroup("tabarnac",
+        [
+            Scene("Default", patch=Discard()),
+        ]),
+    5: SceneGroup("palindrome",
+        [
+            Scene("Centurion - guitar/synth cover", patch=centurion_patch),
+        ]),
+    6: SceneGroup("rush_cover",
+        [
+            Scene("Default", init_patch=i_rush, patch=Discard()),
+        ]),
+    7: SceneGroup("bass_cover",
+        [
+            Scene("Default", init_patch=U01_A, patch=Discard()),
+        ]),
+    8: SceneGroup("demo",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    9: SceneGroup("demon",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    10: SceneGroup("fun",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    11: SceneGroup("hits",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    12: SceneGroup("middleage",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    13: SceneGroup("tv",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    14: SceneGroup("delirium",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+        ]),
+    15: SceneGroup("power-windows",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+            Scene("GrandDesigns", init_patch=Discard(), patch=p_rush_gd),
+        ]),
+
 }
 #-----------------------------------------------------------------------------------------------------------
 
@@ -1374,12 +1365,12 @@ _scenes = {
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-#pre  = ~ChannelFilter(8,9)
-#post = Pass()
+pre  = ~ChannelFilter(8,9)
+post = Pass()
 
 # DEBUG
-pre  = Print('input', portnames='in')
-post = Print('output',portnames='out')
+#pre  = Print('input', portnames='in')
+#post = Print('output',portnames='out')
 
 run(
     control=_control,
