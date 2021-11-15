@@ -1,5 +1,4 @@
-	2:Scene("Piano", init_patch=Ctrl(3,50) >> Call(HueScene(hc, "Galaxie")), patch=piano),
-	3:Scene("Piano", init_patch=Call(HueScene(hc, "Galaxie")), patch=piano),
+	2:Scene("Piano", patch=piano),
 	4:Scene("Glissando", patch=p_glissando),
         5:Scene("Hue", patch=p_rush_gd),
 	#4:Scene("StandardSet",Transpose(-12) >> StandardSet),
