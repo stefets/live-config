@@ -10,15 +10,18 @@ https://github.com/dsacre
 import os
 import sys
 import json
+from threading import Timer
+from time import sleep
 
 from mididings.extra import *
 from mididings.extra.osc import *
 from mididings import engine
 from mididings.extra.inotify import *
-from mididings.event import PitchbendEvent
-from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
+from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
+from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
-from plugins.mp3player.galk import Mp3Player
+from plugins.audioplayer.mp3 import Mp3Player
+from plugins.lighting.philips import HueScene, HueBlackout
 
 # Setup path
 sys.path.append(os.path.realpath('.'))
@@ -27,6 +30,11 @@ sys.path.append(os.path.realpath('.'))
 with open('config.json') as json_file:
     configuration = json.load(json_file)
 
+# Plugins config
+plugins=configuration['plugins']
+hue_config=plugins['hue']
+key_config=plugins['mp3']
+
 config(
 
     # Defaults
@@ -34,23 +42,32 @@ config(
     # backend = 'alsa',
     # client_name = 'mididings',
 
+    # 
+    #   Device name                     # Description               #
+    #  
+
     out_ports = [
-        # DeviceName                    # Description               # Mididings corresponding port
+
         ('SD90-PART-A', '20:0'),        # Edirol SD-90 PART A       Port(1)
         ('SD90-PART-B', '20:1'),        # Edirol SD-90 PART B       Port(2)
         ('SD90-MIDI-OUT-1', '20:2',),   # Edirol SD-90 MIDI OUT 1   Port(3)
         ('SD90-MIDI-OUT-2', '20:3',),   # Edirol SD-90 MIDI OUT 2   Port(4)
 
-        ('UM2-MIDI-OUT-1', '24:0',),    # Edirol UM-2eX MIDI OUT 1  Port(5)
-        ('UM2-MIDI-OUT-2', '24:1',),    # Edirol UM-2eX MIDI OUT 2  Port(6)
+        ('GT10B-MIDI-OUT-1', '24:0',),  # Boss GT10B MIDI OUT 1     Port(5)
+
+        ('UM2-MIDI-OUT-1', '28:0',),    # Edirol UM-2eX MIDI OUT 1  Port(6)
+        ('UM2-MIDI-OUT-2', '28:1',),    # Edirol UM-2eX MIDI OUT 2  Port(7)
+
     ],
 
     in_ports = [
-        # DeviceName                    # Description               #
+
         ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
         ('SD90-MIDI-IN-2','20:3',),     # Edirol SD-90 MIDI IN 2
 
-        ('UM2-MIDI-IN-1', '24:0',),     # Edirol UM-2eX MIDI IN-1
+        ('GT10B-MIDI-IN-1', '24:0',),   # Boss GT10B MIDI IN 1
+
+        ('UM2-MIDI-IN-1', '28:0',),     # Edirol UM-2eX MIDI IN-1
     ],
 
 )
@@ -76,16 +93,16 @@ __FILTERS__
 __DEVICES__
 
 #-----------------------------------------------------------------------------------------------------------
-# Control body
-# control.py
-__CONTROL__
-#-----------------------------------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------------------
 # Patches body
 # patches.py
 #-----------------------------------------------------------------------------------------------------------
 __PATCHES__
+
+#-----------------------------------------------------------------------------------------------------------
+# Control body
+# control.py
+__CONTROL__
+#-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # Scenes body
@@ -101,16 +118,16 @@ __SCENES__
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-_pre  = ~ChannelFilter(8,9)
-_post = Pass()
+pre  = ~ChannelFilter(8,9)
+post = Pass()
 
 # DEBUG
-#_pre  = Print('input', portnames='in')
-#_post = Print('output',portnames='out')
+#pre  = Print('input', portnames='in')
+#post = Print('output',portnames='out')
 
 run(
     control=_control,
     scenes=_scenes,
-    pre=_pre,
-    post=_post,
+    pre=pre,
+    post=post,
 )

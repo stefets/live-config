@@ -31,27 +31,18 @@ class RemoveDuplicates:
 
 
 '''
-# WIP: Glissando
-def gliss_function(note, note_max, port, chan, vel):
-    output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
-    note += 1
-    if note < note_max:
-        Timer(.01, lambda: gliss_function(note, note_max, port, chan, vel)).start()
-
-def gliss_exec(e):
-    gliss_function(120, 168, e.port, e.channel, 100)
-
-# WIP : Arpeggiator
-def arpeggiator_function(current, max,note, port, chan, vel):
-    output_event(MidiEvent(NOTEOFF if note % 2 else NOTEON, port, chan, note / 2, vel))
-    current += 1
-    if current < max:
-        Timer(.15, lambda: arpeggiator_function(current, max, note,  port, chan, vel)).start()
-
-def arpeggiator_exec(e):
-    arpeggiator_function(0,16, 50,  e.port, e.channel, 100)
-
+Simulate a glissando WIP
 '''
+def gliss_function(note, note_max, port, chan, vel, duration, on):
+    output_event(NoteOnEvent(port, chan, note, vel)) if on else output_event(NoteOffEvent(port, chan, note))
+    if not on:
+        note += 1
+    if note < note_max:
+        Timer(duration, lambda: gliss_function(note, note_max, port, chan, vel, duration, not on)).start()
+
+def glissando(e, from_note, to_note, vel, duration):
+    gliss_function(from_note, to_note, 1, e.channel, vel, duration, True)
+
 # -------------------------------------------------------------------------------------------
 
 
