@@ -4,3 +4,4 @@ render.py
 .idea/
 *.pyc
 .venv
+.vscode
