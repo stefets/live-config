@@ -173,8 +173,8 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
          (
              (KeyFilter(notes=[67]) >> Ctrl(3, 100) >> Expr2) //
              (KeyFilter(notes=[69]) >> FS4) //
-             (KeyFilter(notes=[71]) >> (FS2 // Ctrl(3,100) >> Expr2)) //
-             (KeyFilter(notes=[72]) >> (FS2 // Ctrl(3,127) >> Expr2))
+             (KeyFilter(notes=[71]) >> [FS2, Ctrl(3,100) >> Expr2]) //
+             (KeyFilter(notes=[72]) >> [FS2, Ctrl(3,127) >> Expr2])
          ))
 # Big Country fin de section ------------------------------------------
 
