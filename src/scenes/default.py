@@ -1,7 +1,7 @@
-    2: SceneGroup("solo-mode",
+    2: SceneGroup("bouga-mode",
         [
             Scene("Rush Generics", init_patch=i_rush, patch=p_rush),
-            Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
+            Scene("Grand Designs", init_patch=[i_rush, FS1, FS3], patch=p_rush_gd),
             Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
         ]),
     3: SceneGroup("styx",
@@ -30,7 +30,7 @@
         ]),
     9: SceneGroup("demon",
         [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
+            Scene("Default", init_patch=HueDemon, patch=Discard()),
         ]),
     10: SceneGroup("fun",
         [
