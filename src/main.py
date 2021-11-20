@@ -38,7 +38,7 @@ key_config=plugins['mp3']
 config(
 
     # Defaults
-    # initial_scene = 1,
+    # initial_scene = 2,
     # backend = 'alsa',
     # client_name = 'mididings',
 
