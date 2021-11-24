@@ -15,6 +15,7 @@
         ]),
     99: SceneGroup("Éclairage HUE",
         [
+            Scene("Init", init_patch=Discard(), patch=Discard()),
             Scene("Normal", init_patch=HueNormal, patch=Discard()),
             Scene("Galaxie", init_patch=HueGalaxie, patch=Discard()),
             Scene("Demon", init_patch=HueDemon, patch=Discard()),

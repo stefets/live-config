@@ -228,9 +228,9 @@ fcb = ChannelFilter(fcb_channel)
 GT10BChannel = configuration['devices']['gt10b']
 
 # Output port to use, specified in main.py
-#GT10BPort = 'SD90-MIDI-OUT-1'  # 5 pin midi in, recu du SD-90
-#GT10BPort = 'UM2-MIDI-OUT-1'  # 5 pin midi in, recu du SD-90
-GT10BPort = 'GT10B-MIDI-OUT-1'  # USB MODE
+GT10BPort = 'SD90-MIDI-OUT-1'  # 5 pin midi in, recu du SD-90
+#GT10BPort = 'UM2-MIDI-OUT-1'  # 5 pin midi in, recu du UM2
+#GT10BPort = 'GT10B-MIDI-OUT-1'  # USB MODE
 
 # TODO : Rework that sucks
 #GT10B_volume = (ChannelFilter(9) >> Channel(16) >> CtrlFilter(1) >> CtrlMap(1, 7) >> Port(3))
@@ -1252,7 +1252,7 @@ nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
     CtrlFilter(1, 20, 21, 22) >>
     CtrlSplit({
-         1: Ctrl(GT10BPort, GT10BChannel, 7, EVENT_VALUE),
+         1: CtrlMap(1,7) >> Ctrl(GT10BPort, GT10BChannel, EVENT_CTRL, EVENT_VALUE),
         20: Call(NavigateToScene),
         21: Discard(),
         22: Discard(),
@@ -1266,9 +1266,13 @@ key_transpose=Transpose(key_controller["transpose"])
 
 key_controller_channel=key_controller["channel"]
 key_controller = [
-    [CtrlFilter(1, 7) >> CtrlValueFilter(0, 101), Filter(NOTEON) >> key_transpose] >> Call(Mp3Player(key_config)),
+    [
+        CtrlFilter(1, 7) >> CtrlValueFilter(0, 101), 
+        Filter(NOTEON) >> key_transpose
+    ] >> Call(Mp3Player(key_config)),
     Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[0]) >> HueOff,
-    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[48]) >> HueNormal
+    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[48]) >> HueNormal,
+    CtrlFilter(91) >> CtrlMap(91,1) >> Ctrl(hd500_port, hd500_channel, EVENT_CTRL, EVENT_VALUE)
 ]
 
 
@@ -1289,65 +1293,31 @@ _control = (
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
-    2: SceneGroup("solo-mode",
+    2: SceneGroup("Rush",
         [
-            Scene("Rush Generics", init_patch=i_rush, patch=p_rush),
-            Scene("Rush Grand Designs", init_patch=i_rush, patch=p_rush_gd),
-            Scene("Big Country", init_patch=i_big_country, patch=p_big_country),
+            Scene("Default", init_patch=i_rush, patch=p_rush),
+            Scene("Grand Designs", init_patch=i_rush, patch=p_rush_gd),
+            Scene("Marathon", init_patch=i_rush, patch=Discard()),
         ]),
-    3: SceneGroup("styx",
+    3: SceneGroup("Styx",
         [
-            Scene("Default", init_patch=U01_A, patch=Discard()),
+            Scene("Training", init_patch=U01_A, patch=Discard()),
+            Scene("Majestyx-live", init_patch=U01_C, patch=Discard()),
         ]),
-    4: SceneGroup("tabarnac",
+    4: SceneGroup("BigCountry",
         [
-            Scene("Default", patch=Discard()),
+            Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
         ]),
-    5: SceneGroup("palindrome",
+    99: SceneGroup("Éclairage HUE",
         [
-            Scene("Centurion - guitar/synth cover", patch=centurion_patch),
+            Scene("Init", init_patch=Discard(), patch=Discard()),
+            Scene("Normal", init_patch=HueNormal, patch=Discard()),
+            Scene("Galaxie", init_patch=HueGalaxie, patch=Discard()),
+            Scene("Demon", init_patch=HueDemon, patch=Discard()),
+            Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
+            Scene("Off", init_patch=HueOff, patch=Discard()),
         ]),
-    6: SceneGroup("rush_cover",
-        [
-            Scene("Default", init_patch=i_rush, patch=Discard()),
-        ]),
-    7: SceneGroup("bass_cover",
-        [
-            Scene("Default", init_patch=U01_A, patch=Discard()),
-        ]),
-    8: SceneGroup("demo",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    9: SceneGroup("demon",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    10: SceneGroup("fun",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    11: SceneGroup("hits",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    12: SceneGroup("middleage",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    13: SceneGroup("tv",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    14: SceneGroup("delirium",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-        ]),
-    15: SceneGroup("power-windows",
-        [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
-            Scene("GrandDesigns", init_patch=Discard(), patch=p_rush_gd),
-        ]),
+
 
 }
 #-----------------------------------------------------------------------------------------------------------
