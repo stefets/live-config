@@ -1,10 +1,6 @@
     2: Scene("RedBarchetta", init_patch=i_rush, patch=LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     3: Scene("FreeWill", init_patch=i_rush, patch=Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, pk5 >> Transpose(-24) >> closer_base]),
-    5: SceneGroup("The Trees", [
-            #Scene("Bridge",  play >> System(play_file("trees_full.mp3"))),
-            Scene("Synth",init_patch=i_rush,patch= Transpose(-29) >> LatchNotes(False,reset='G0') >> lowsynth),
-       ]),
     6: SceneGroup("Time Stand Still", [
 			#Scene("TSS-Intro", play >> System(play_file("tss.mp3"))),
 			Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, pk5 >> LatchNotes(False, reset='c4') >> tss_foot_main]),

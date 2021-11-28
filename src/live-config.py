@@ -1239,6 +1239,36 @@ p_rush_gd = (pk5 >>
                 ]
             ],
     ])
+
+# The Trees
+
+# Init patch
+i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueNormal] 
+
+# Execution patch
+p_rush_trees=(pk5 >>
+    [
+        # Controle de l'éclairage
+        Filter(NOTEON) >> [
+            KeyFilter('C3') >> HueGalaxie,
+            KeyFilter(notes=[71]) >> HueGalaxie,
+            KeyFilter(notes=[72]) >> HueSoloRed,
+        ],
+        # Controle du POD HD500 
+        Filter(NOTEON) >> [
+            KeyFilter(notes=[69]) >> FS4,
+            KeyFilter(notes=[71]) >> [FS1, Ctrl(3,100) >> Expr2],
+            KeyFilter(notes=[72]) >> [FS1, Ctrl(3,120) >> Expr2],
+        ],
+        # Controle du séquenceur 
+        [
+            KeyFilter('C3') >> Key('A0'),
+            KeyFilter('D3') >> Key('B0'),
+            KeyFilter('E3') >> Key('D1'),
+            KeyFilter('f3') >> Pass(),
+        ] >> LatchNotes(False, reset='f3') >> lowsynth
+    ])
+
 # Rush fin de section ------------------------------------------
 
 p_glissando=(Filter(NOTEON) >> Call(glissando, 24, 100, 100, 0.0125))
@@ -1295,7 +1325,8 @@ _scenes = {
     1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
     2: SceneGroup("Rush",
         [
-            Scene("Default", init_patch=i_rush, patch=p_rush),
+            Scene("Subdivisions", init_patch=i_rush, patch=p_rush),
+            Scene("The Trees", init_patch=i_rush_trees, patch=p_rush_trees),
             Scene("Grand Designs", init_patch=i_rush, patch=p_rush_gd),
             Scene("Marathon", init_patch=i_rush, patch=Discard()),
         ]),
@@ -1304,7 +1335,7 @@ _scenes = {
             Scene("Training", init_patch=U01_A, patch=Discard()),
             Scene("Majestyx-live", init_patch=U01_C, patch=Discard()),
         ]),
-    4: SceneGroup("BigCountry",
+    4: SceneGroup("Big Country",
         [
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
         ]),
@@ -1331,8 +1362,8 @@ pre  = ~ChannelFilter(8,9)
 post = Pass()
 
 # DEBUG
-#pre  = Print('input', portnames='in')
-#post = Print('output',portnames='out')
+pre  = Print('input', portnames='in')
+post = Print('output',portnames='out')
 
 run(
     control=_control,

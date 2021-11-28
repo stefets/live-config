@@ -122,8 +122,8 @@ pre  = ~ChannelFilter(8,9)
 post = Pass()
 
 # DEBUG
-#pre  = Print('input', portnames='in')
-#post = Print('output',portnames='out')
+pre  = Print('input', portnames='in')
+post = Print('output',portnames='out')
 
 run(
     control=_control,

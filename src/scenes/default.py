@@ -1,6 +1,7 @@
     2: SceneGroup("Rush",
         [
-            Scene("Default", init_patch=i_rush, patch=p_rush),
+            Scene("Subdivisions", init_patch=i_rush, patch=p_rush),
+            Scene("The Trees", init_patch=i_rush_trees, patch=p_rush_trees),
             Scene("Grand Designs", init_patch=i_rush, patch=p_rush_gd),
             Scene("Marathon", init_patch=i_rush, patch=Discard()),
         ]),
@@ -9,7 +10,7 @@
             Scene("Training", init_patch=U01_A, patch=Discard()),
             Scene("Majestyx-live", init_patch=U01_C, patch=Discard()),
         ]),
-    4: SceneGroup("BigCountry",
+    4: SceneGroup("Big Country",
         [
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
         ]),
