@@ -38,7 +38,7 @@ key_config=plugins['mp3']
 config(
 
     # Defaults
-    initial_scene = 1,
+    # initial_scene = 2,
     # backend = 'alsa',
     # client_name = 'mididings',
 
@@ -46,28 +46,30 @@ config(
     #   Device name                     # Description               #
     #  
 
+    # Ports are tokenized and replaced by script_builder.sh
+
     out_ports = [
 
-        ('SD90-PART-A', '20:0'),        # Edirol SD-90 PART A       Port(1)
-        ('SD90-PART-B', '20:1'),        # Edirol SD-90 PART B       Port(2)
-        ('SD90-MIDI-OUT-1', '20:2',),   # Edirol SD-90 MIDI OUT 1   Port(3)
-        ('SD90-MIDI-OUT-2', '20:3',),   # Edirol SD-90 MIDI OUT 2   Port(4)
+        ('SD90-PART-A', '__SD-90 Part A__'),
+        ('SD90-PART-B', '__SD-90 Part B__'),
+        ('SD90-MIDI-OUT-1', '__SD-90 MIDI 1__',),
+        ('SD90-MIDI-OUT-2', '__SD-90 MIDI 2__',),
 
-        ('GT10B-MIDI-OUT-1', '24:0',),  # Boss GT10B MIDI OUT 1     Port(5)
+        ('GT10B-MIDI-OUT-1', '__GT-10B MIDI 1__',),
 
-        ('UM2-MIDI-OUT-1', '28:0',),    # Edirol UM-2eX MIDI OUT 1  Port(6)
-        ('UM2-MIDI-OUT-2', '28:1',),    # Edirol UM-2eX MIDI OUT 2  Port(7)
+        ('UM2-MIDI-OUT-1', '__UM-2 MIDI 1__',),
+        ('UM2-MIDI-OUT-2', '__UM-2 MIDI 2__',),
 
     ],
 
     in_ports = [
 
-        ('SD90-MIDI-IN-1','20:2',),     # Edirol SD-90 MIDI IN 1
-        ('SD90-MIDI-IN-2','20:3',),     # Edirol SD-90 MIDI IN 2
+        ('SD90-MIDI-IN-1','__SD-90 MIDI 1__',),
+        ('SD90-MIDI-IN-2','__SD-90 MIDI 2__',),
 
-        ('GT10B-MIDI-IN-1', '24:0',),   # Boss GT10B MIDI IN 1
+        ('GT10B-MIDI-IN-1', '__GT-10B MIDI 1__',),
 
-        ('UM2-MIDI-IN-1', '28:0',),     # Edirol UM-2eX MIDI IN-1
+        ('UM2-MIDI-IN-1', '__UM-2 MIDI 1__',),
     ],
 
 )
@@ -93,16 +95,16 @@ __FILTERS__
 __DEVICES__
 
 #-----------------------------------------------------------------------------------------------------------
-# Control body
-# control.py
-__CONTROL__
-#-----------------------------------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------------------
 # Patches body
 # patches.py
 #-----------------------------------------------------------------------------------------------------------
 __PATCHES__
+
+#-----------------------------------------------------------------------------------------------------------
+# Control body
+# control.py
+__CONTROL__
+#-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # Scenes body

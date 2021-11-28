@@ -1,13 +1,16 @@
 '''
-    This plugin send commands to a Philips Hue through a Call()
+    Plugin qui contrôle le Philips Hue via Call()
+    CC 3 permet de définir la transition
 '''
 from phue import Bridge
+import mididings.constants as _constants
 
 class HueBase(Bridge):
     def __init__(self, config):
         super().__init__(config["ip"], config["username"])
         
         self.zone = config["zone"]
+        self.cc_transition =  config["cc_transition"]
         self.zone_id = self.get_group_id_by_name(self.zone)
 
 
@@ -22,8 +25,8 @@ class HueScene(HueBase):
         self.transition = transition
 
     def __call__(self, ev):
-        if self.scene:
-            self.run_scene(self.zone, self.scene, self.transition)
+        transition = ev.data2 if ev.type == _constants.CTRL and ev.data1 == self.cc_transition else self.transition
+        self.run_scene(self.zone, self.scene, transition)
 
 
 '''
