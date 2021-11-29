@@ -6,7 +6,7 @@
 * Example : ./load.sh default
 
 # Frontend
-* I maintained an API and a frontend to drive the beast
+* I maintaine an API and a frontend to drive the beast
 * https://github.com/stefets/flaskdings
 
 # Build
