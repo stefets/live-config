@@ -1,22 +1,21 @@
-# My music configuration with MIDIDINGS as the Maestro and MPG123 as a plugin
+# My musical configuration with MIDIDINGS as the KERNEL
 
-<img src="/doc/live-config.png" />
-
-# Hardware
-* Edirol SD-90, Roland PK5A, POD HD500, Boss GT10B, UM-2eX, M-Key v2, Alesis Q49
-* The Alesis Q49 MIDI keyboard is dedicated to control either MPG123, Mididings
-* A FCB1010 with UNO Chip to control either Mididings, POD or GT10B
 # Notes
 * Script entry point is /src/load.sh sceneFileName
-# Dependencies
-* mididings
-* mpg123
-* mpyg321 
-* pexpect
-* range-key-dict
+* Scenes are located in /src/scenes/*.py
+* Example : ./load.sh default
+
+# Frontend
+* I maintained an API and a frontend to drive the beast
+* https://github.com/stefets/flaskdings
+
 # Build
-* Check the pages on how I build Mididings and MPG123
+* Check the pages on how I build Mididings and other tools
 * https://github.com/stefets/live-config/wiki
+
 # Mididings ressources
 * http://dsacre.github.io/mididings/doc/
 * https://groups.google.com/g/mididings
+
+# Example
+<img src="/doc/live-config.png" />

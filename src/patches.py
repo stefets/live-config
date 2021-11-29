@@ -173,8 +173,8 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
          (
              (KeyFilter(notes=[67]) >> Ctrl(3, 100) >> Expr2) //
              (KeyFilter(notes=[69]) >> FS4) //
-             (KeyFilter(notes=[71]) >> (FS2 // Ctrl(3,100) >> Expr2)) //
-             (KeyFilter(notes=[72]) >> (FS2 // Ctrl(3,127) >> Expr2))
+             (KeyFilter(notes=[71]) >> [FS2, Ctrl(3,100) >> Expr2]) //
+             (KeyFilter(notes=[72]) >> [FS2, Ctrl(3,127) >> Expr2])
          ))
 # Big Country fin de section ------------------------------------------
 
@@ -224,6 +224,36 @@ p_rush_gd = (pk5 >>
                 ]
             ],
     ])
+
+# The Trees
+
+# Init patch
+i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueNormal] 
+
+# Execution patch
+p_rush_trees=(pk5 >>
+    [
+        # Controle de l'éclairage
+        Filter(NOTEON) >> [
+            KeyFilter('C3') >> HueGalaxie,
+            KeyFilter(notes=[71]) >> HueGalaxie,
+            KeyFilter(notes=[72]) >> HueSoloRed,
+        ],
+        # Controle du POD HD500 
+        Filter(NOTEON) >> [
+            KeyFilter(notes=[69]) >> FS4,
+            KeyFilter(notes=[71]) >> [FS1, Ctrl(3,100) >> Expr2],
+            KeyFilter(notes=[72]) >> [FS1, Ctrl(3,120) >> Expr2],
+        ],
+        # Controle du séquenceur 
+        [
+            KeyFilter('C3') >> Key('A0'),
+            KeyFilter('D3') >> Key('B0'),
+            KeyFilter('E3') >> Key('D1'),
+            KeyFilter('f3') >> Pass(),
+        ] >> LatchNotes(False, reset='f3') >> lowsynth
+    ])
+
 # Rush fin de section ------------------------------------------
 
 p_glissando=(Filter(NOTEON) >> Call(glissando, 24, 100, 100, 0.0125))
