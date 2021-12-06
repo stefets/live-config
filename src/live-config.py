@@ -50,10 +50,10 @@ config(
 
     out_ports = [
 
-        ('SD90-PART-A', '20:0'),
-        ('SD90-PART-B', '20:1'),
-        ('SD90-MIDI-OUT-1', '20:2',),
-        ('SD90-MIDI-OUT-2', '20:3',),
+        ('SD90-PART-A', ''),
+        ('SD90-PART-B', ''),
+        ('SD90-MIDI-OUT-1', '',),
+        ('SD90-MIDI-OUT-2', '',),
 
         ('GT10B-MIDI-OUT-1', '',),
 
@@ -64,12 +64,14 @@ config(
 
     in_ports = [
 
-        ('SD90-MIDI-IN-1','20:2',),
-        ('SD90-MIDI-IN-2','20:3',),
+        ('SD90-MIDI-IN-1','',),
+        ('SD90-MIDI-IN-2','',),
 
         ('GT10B-MIDI-IN-1', '',),
 
         ('UM2-MIDI-IN-1', '',),
+
+        ('Q49', '28:0',),
     ],
 
 )

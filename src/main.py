@@ -70,6 +70,8 @@ config(
         ('GT10B-MIDI-IN-1', '__GT-10B MIDI 1__',),
 
         ('UM2-MIDI-IN-1', '__UM-2 MIDI 1__',),
+
+        ('Q49', '__Q49 MIDI 1__',),
     ],
 
 )

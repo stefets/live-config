@@ -42,6 +42,7 @@ sed -i \
     -e "s/__UM-2 MIDI 1__/$(alsalist   | grep 'UM-2 MIDI 1'   | awk '{print $1}')/" \
     -e "s/__UM-2 MIDI 2__/$(alsalist   | grep 'UM-2 MIDI 2'   | awk '{print $1}')/" \
     -e "s/__GT-10B MIDI 1__/$(alsalist | grep 'GT-10B MIDI 1' | awk '{print $1}')/" \
+    -e "s/__Q49 MIDI 1__/$(alsalist    | grep 'Q49 MIDI 1'    | awk '{print $1}')/" \
     $output
 
 # Start the mididings script
