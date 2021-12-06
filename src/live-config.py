@@ -46,6 +46,8 @@ config(
     #   Device name                     # Description               #
     #  
 
+    # Ports are tokenized and replaced by script_builder.sh
+
     out_ports = [
 
         ('SD90-PART-A', '20:0'),
@@ -53,10 +55,10 @@ config(
         ('SD90-MIDI-OUT-1', '20:2',),
         ('SD90-MIDI-OUT-2', '20:3',),
 
-        ('GT10B-MIDI-OUT-1', '28:0',),
+        ('GT10B-MIDI-OUT-1', '',),
 
-        ('UM2-MIDI-OUT-1', '24:0',),
-        ('UM2-MIDI-OUT-2', '24:1',),
+        ('UM2-MIDI-OUT-1', '',),
+        ('UM2-MIDI-OUT-2', '',),
 
     ],
 
@@ -65,9 +67,9 @@ config(
         ('SD90-MIDI-IN-1','20:2',),
         ('SD90-MIDI-IN-2','20:3',),
 
-        ('GT10B-MIDI-IN-1', '28:0',),
+        ('GT10B-MIDI-IN-1', '',),
 
-        ('UM2-MIDI-IN-1', '24:0',),
+        ('UM2-MIDI-IN-1', '',),
     ],
 
 )
@@ -1338,6 +1340,10 @@ _scenes = {
     4: SceneGroup("Big Country",
         [
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
+        ]),
+    5: SceneGroup("power-windows",
+        [
+            Scene("Default", init_patch=Discard(), patch=p_rush_gd),
         ]),
     99: SceneGroup("Éclairage HUE",
         [
