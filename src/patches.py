@@ -267,4 +267,5 @@ p_rush_trees=(pk5 >>
 
 # Rush fin de section ------------------------------------------
 
-p_glissando=(Filter(NOTEON) >> Call(glissando, 24, 100, 100, 0.0125))
+p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, 'SD90-PART-A'))
+
