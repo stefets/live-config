@@ -25,6 +25,11 @@ Inspiré du clavier 'lanceur de chanson' de l'émission Québecoise 'Tout le mon
 
 class Mp3Player(MPyg321Player):
     def __init__(self, config):
+
+        self.enable = config["enable"]
+        if not self.enable:
+            return
+
         super().__init__(config["player"], config["audiodevice"] if config["audiodevice"] else None, True)
 
         self.playlist = Playlist(config['playlist'], self)
@@ -84,7 +89,8 @@ class Mp3Player(MPyg321Player):
 
     # Invoker
     def __call__(self, ev):
-        self.ctrl_range_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
+        if self.enable:
+            self.ctrl_range_mapping[ev.data1](ev) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
 
     # Logic
     def navigate_scene(self, ev):

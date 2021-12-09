@@ -34,14 +34,16 @@ sed \
 	$template > $output
 
 # Replace __TOKEN__ for the input and output ports - thanks to alsalist
+ports=$(alsalist)
 sed -i \
-    -e "s/__SD-90 Part A__/$(alsalist  | grep 'SD-90 Part A'  | awk '{print $1}')/" \
-    -e "s/__SD-90 Part B__/$(alsalist  | grep 'SD-90 Part B'  | awk '{print $1}')/" \
-    -e "s/__SD-90 MIDI 1__/$(alsalist  | grep 'SD-90 MIDI 1'  | awk '{print $1}')/" \
-    -e "s/__SD-90 MIDI 2__/$(alsalist  | grep 'SD-90 MIDI 2'  | awk '{print $1}')/" \
-    -e "s/__UM-2 MIDI 1__/$(alsalist   | grep 'UM-2 MIDI 1'   | awk '{print $1}')/" \
-    -e "s/__UM-2 MIDI 2__/$(alsalist   | grep 'UM-2 MIDI 2'   | awk '{print $1}')/" \
-    -e "s/__GT-10B MIDI 1__/$(alsalist | grep 'GT-10B MIDI 1' | awk '{print $1}')/" \
+    -e "s/__SD-90 Part A__/$(echo "$ports" | grep 'SD-90 Part A'  | awk '{print $1}')/" \
+    -e "s/__SD-90 Part B__/$(echo "$ports" | grep 'SD-90 Part B'  | awk '{print $1}')/" \
+    -e "s/__SD-90 MIDI 1__/$(echo "$ports" | grep 'SD-90 MIDI 1'  | awk '{print $1}')/" \
+    -e "s/__SD-90 MIDI 2__/$(echo "$ports" | grep 'SD-90 MIDI 2'  | awk '{print $1}')/" \
+    -e "s/__UM-2 MIDI 1__/$(echo "$ports"  | grep 'UM-2 MIDI 1'   | awk '{print $1}')/" \
+    -e "s/__UM-2 MIDI 2__/$(echo "$ports"  | grep 'UM-2 MIDI 2'   | awk '{print $1}')/" \
+    -e "s/__GT-10B MIDI 1__/$(echo "$ports"| grep 'GT-10B MIDI 1' | awk '{print $1}')/" \
+    -e "s/__Q49 MIDI 1__/$(echo "$ports"   | grep 'Q49 MIDI 1'    | awk '{print $1}')/" \
     $output
 
 # Start the mididings script

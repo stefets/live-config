@@ -2,13 +2,13 @@
         [
             Scene("Subdivisions", init_patch=i_rush, patch=p_rush),
             Scene("The Trees", init_patch=i_rush_trees, patch=p_rush_trees),
-            Scene("Grand Designs", init_patch=i_rush, patch=p_rush_gd),
+            Scene("Grand Designs", init_patch=i_rush_gd, patch=p_rush_gd),
             Scene("Marathon", init_patch=i_rush, patch=Discard()),
         ]),
-    3: SceneGroup("Styx",
+    3: SceneGroup("Majestyx",
         [
             Scene("Training", init_patch=U01_A, patch=Discard()),
-            Scene("Majestyx-live", init_patch=U01_C, patch=Discard()),
+            Scene("Majestyx-live", init_patch=U03_A, patch=Discard()),
         ]),
     4: SceneGroup("Big Country",
         [
@@ -17,6 +17,11 @@
     5: SceneGroup("power-windows",
         [
             Scene("Default", init_patch=Discard(), patch=p_rush_gd),
+        ]),
+    6: SceneGroup("bass-cover",
+        [
+            Scene("Default", init_patch=HueGalaxie, patch=U01_A),
+            Scene("Futur", init_patch=Discard(), patch=Discard()),
         ]),
     99: SceneGroup("Éclairage HUE",
         [
