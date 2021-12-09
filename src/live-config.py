@@ -57,8 +57,8 @@ config(
 
         ('GT10B-MIDI-OUT-1', '',),
 
-        ('UM2-MIDI-OUT-1', '',),
-        ('UM2-MIDI-OUT-2', '',),
+        ('UM2-MIDI-OUT-1', '20:0',),
+        ('UM2-MIDI-OUT-2', '20:1',),
 
     ],
 
@@ -69,9 +69,9 @@ config(
 
         ('GT10B-MIDI-IN-1', '',),
 
-        ('UM2-MIDI-IN-1', '',),
+        ('UM2-MIDI-IN-1', '20:0',),
 
-        ('Q49', '28:0',),
+        ('Q49', '',),
     ],
 
 )
@@ -1346,6 +1346,11 @@ _scenes = {
     5: SceneGroup("power-windows",
         [
             Scene("Default", init_patch=Discard(), patch=p_rush_gd),
+        ]),
+    6: SceneGroup("bass-cover",
+        [
+            Scene("Default", init_patch=HueGalaxie, patch=U01_A),
+            Scene("Futur", init_patch=Discard(), patch=Discard()),
         ]),
     99: SceneGroup("Éclairage HUE",
         [

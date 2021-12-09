@@ -18,6 +18,11 @@
         [
             Scene("Default", init_patch=Discard(), patch=p_rush_gd),
         ]),
+    6: SceneGroup("bass-cover",
+        [
+            Scene("Default", init_patch=HueGalaxie, patch=U01_A),
+            Scene("Futur", init_patch=Discard(), patch=Discard()),
+        ]),
     99: SceneGroup("Éclairage HUE",
         [
             Scene("Init", init_patch=Discard(), patch=Discard()),
