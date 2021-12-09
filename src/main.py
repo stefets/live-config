@@ -32,8 +32,9 @@ with open('config.json') as json_file:
 
 # Plugins config
 plugins=configuration['plugins']
-hue_config=plugins['hue']
-key_config=plugins['mp3']
+hue_config=plugins['lightning']
+key_config=plugins['audioplayer']
+net_config=plugins['net']
 
 config(
 

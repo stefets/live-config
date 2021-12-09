@@ -10,7 +10,8 @@ from requests.exceptions import ConnectionError
 '''
 
 class RequestBase():
-    def __init__(self, uri):
+    def __init__(self, config, uri):
+        self.enable = config["enable"]
         self.uri = uri
 
     def get(self, ev):
@@ -32,23 +33,26 @@ class RequestBase():
 
 ''' GET '''
 class RequestGet(RequestBase):
-    def __init__(self, uri):
-        super().__init__(uri)
+    def __init__(self, config, uri):
+        super().__init__(config, uri)
 
     def __call__(self, ev):
-        super().get(ev)
+        if self.enable:
+            super().get(ev)
 
 class RequestPost(RequestBase):
-    def __init__(self, uri):
-        super().__init__(uri)
+    def __init__(self, config, uri):
+        super().__init__(config, uri)
 
     def __call__(self, ev):
-        super().post()
+        if self.enable:
+            super().post()
 
 class RequestDelete(RequestBase):
-    def __init__(self, uri):
-        super().__init__(uri)
+    def __init__(self, config, uri):
+        super().__init__(config, uri)
 
     def __call__(self, ev):
-        super().delete()
+        if self.enable:
+            super().delete()
 
