@@ -29,19 +29,26 @@ class RemoveDuplicates:
         self.prev_time = now
         return r
 
+# -------------------------------------------------------------------------------------------
+'''
+Execute un glissando
+'''
+#def glissando(ev, from_note, to_note, vel, duration, direction, port):
+#    note_range = range(from_note,to_note) if direction == 1 else reversed(range(from_note,to_note))
+#    for note in note_range:
+#        output_event(NoteOnEvent(port, ev.channel, note, vel))
+#        sleep(duration)
+#        output_event(NoteOffEvent(port, ev.channel, note))
 
-'''
-Simulate a glissando WIP
-'''
-def gliss_function(note, note_max, port, chan, vel, duration, on):
-    output_event(NoteOnEvent(port, chan, note, vel)) if on else output_event(NoteOffEvent(port, chan, note))
+def glissando_process(ev, from_note, to_note, vel, duration, direction, port, on):
+    output_event(NoteOnEvent(port, ev.channel, from_note, vel)) if on else output_event(NoteOffEvent(port, ev.channel, from_note))
     if not on:
-        note += 1
-    if note < note_max:
-        Timer(duration, lambda: gliss_function(note, note_max, port, chan, vel, duration, not on)).start()
+        from_note += 1
+    if from_note < to_note:
+        Timer(duration, lambda: glissando_process(ev, from_note, to_note, vel, duration, direction, port, not on)).start()
 
-def glissando(e, from_note, to_note, vel, duration):
-    gliss_function(from_note, to_note, 1, e.channel, vel, duration, True)
+def glissando(ev, from_note, to_note, vel, duration, direction, port):
+    glissando_process(ev, from_note, to_note, vel, duration, direction, port, True)
 
 # -------------------------------------------------------------------------------------------
 

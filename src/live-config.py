@@ -32,8 +32,9 @@ with open('config.json') as json_file:
 
 # Plugins config
 plugins=configuration['plugins']
-hue_config=plugins['hue']
-key_config=plugins['mp3']
+hue_config=plugins['lightning']
+key_config=plugins['audioplayer']
+net_config=plugins['net']
 
 config(
 
@@ -46,28 +47,32 @@ config(
     #   Device name                     # Description               #
     #  
 
+    # Ports are tokenized and replaced by script_builder.sh
+
     out_ports = [
 
-        ('SD90-PART-A', '20:0'),
-        ('SD90-PART-B', '20:1'),
-        ('SD90-MIDI-OUT-1', '20:2',),
-        ('SD90-MIDI-OUT-2', '20:3',),
+        ('SD90-PART-A', '24:0'),
+        ('SD90-PART-B', '24:1'),
+        ('SD90-MIDI-OUT-1', '24:2',),
+        ('SD90-MIDI-OUT-2', '24:3',),
 
-        ('GT10B-MIDI-OUT-1', '28:0',),
+        ('GT10B-MIDI-OUT-1', '',),
 
-        ('UM2-MIDI-OUT-1', '24:0',),
-        ('UM2-MIDI-OUT-2', '24:1',),
+        ('UM2-MIDI-OUT-1', '',),
+        ('UM2-MIDI-OUT-2', '',),
 
     ],
 
     in_ports = [
 
-        ('SD90-MIDI-IN-1','20:2',),
-        ('SD90-MIDI-IN-2','20:3',),
+        ('SD90-MIDI-IN-1','24:2',),
+        ('SD90-MIDI-IN-2','24:3',),
 
-        ('GT10B-MIDI-IN-1', '28:0',),
+        ('GT10B-MIDI-IN-1', '',),
 
-        ('UM2-MIDI-IN-1', '24:0',),
+        ('UM2-MIDI-IN-1', '',),
+
+        ('Q49', '',),
     ],
 
 )
@@ -111,19 +116,26 @@ class RemoveDuplicates:
         self.prev_time = now
         return r
 
+# -------------------------------------------------------------------------------------------
+'''
+Execute un glissando
+'''
+#def glissando(ev, from_note, to_note, vel, duration, direction, port):
+#    note_range = range(from_note,to_note) if direction == 1 else reversed(range(from_note,to_note))
+#    for note in note_range:
+#        output_event(NoteOnEvent(port, ev.channel, note, vel))
+#        sleep(duration)
+#        output_event(NoteOffEvent(port, ev.channel, note))
 
-'''
-Simulate a glissando WIP
-'''
-def gliss_function(note, note_max, port, chan, vel, duration, on):
-    output_event(NoteOnEvent(port, chan, note, vel)) if on else output_event(NoteOffEvent(port, chan, note))
+def glissando_process(ev, from_note, to_note, vel, duration, direction, port, on):
+    output_event(NoteOnEvent(port, ev.channel, from_note, vel)) if on else output_event(NoteOffEvent(port, ev.channel, from_note))
     if not on:
-        note += 1
-    if note < note_max:
-        Timer(duration, lambda: gliss_function(note, note_max, port, chan, vel, duration, not on)).start()
+        from_note += 1
+    if from_note < to_note:
+        Timer(duration, lambda: glissando_process(ev, from_note, to_note, vel, duration, direction, port, not on)).start()
 
-def glissando(e, from_note, to_note, vel, duration):
-    gliss_function(from_note, to_note, 1, e.channel, vel, duration, True)
+def glissando(ev, from_note, to_note, vel, duration, direction, port):
+    glissando_process(ev, from_note, to_note, vel, duration, direction, port, True)
 
 # -------------------------------------------------------------------------------------------
 
@@ -1110,7 +1122,6 @@ marathon_cascade=(cme >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=
 marathon_bridge_split= KeySplit('f3', marathon_bridge_lower, marathon_cascade)
 
 # Patch Syhth. generique pour lowbase
-lowsynth =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=100, ctrls={93:75, 91:75})
 lowsynth2 =  Velocity(fixed=115) >> Output('SD90-PART-A', channel=1, program=51, volume=115, ctrls={93:75, 91:75})
 #--------------------------------------------------------------------
 
@@ -1155,50 +1166,56 @@ analogkid_main =  KeySplit('f3', analogkid_low, analogkid_high)
 # Patch Limelight
 limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=(Special1,12), volume=100)
 
-# Patch Centurion
-# TODO : Pan pour chaque programme
-centurion_synth = (Velocity(fixed=110) >>
+# Band : Moi ----------------------------------------------------
+
+
+# Centurion 
+
+# Init patch 
+i_centurion=Discard()
+
+# Execution patch
+seq_centurion = (Velocity(fixed=110) >>
 	(
-		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110) // 
-		Output('SD90-PART-A', channel=2, program=(Enhanced,82), volume=110)
+		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110, pan=32) // 
+		Output('SD90-PART-A', channel=2, program=(Enhanced,82), volume=110, pan=96)
 	))
 
-# Patch Centurion Video
-# TODO Passer pas le plugin de videoplayer
-#centurion_video=( System('./vp.sh /mnt/flash/live/video/centurion_silent.avi') )
-
-# Patch Centurion Hack 
-centurion_patch=(LatchNotes(True,reset='C3') >>
+# Filter
+p_centurion = (pk5 >> LatchNotes(True,reset='C3') >>
 	(
 		(KeyFilter('D3') >> Key('D1')) //
 		(KeyFilter('E3') >> Key('D2')) //
 		(KeyFilter('F3') >> Key('D3')) //
 		(KeyFilter('G3') >> Key('D4')) //
 		(KeyFilter('A3') >> Key('D5'))
-	) >> centurion_synth)
+	) >> seq_centurion)
 
 
 # Band : Big Country ------------------------------------------
-# Pour : In a big country
+
+# In a big country
+
 # Init patch
-i_big_country = [U01_A, P14A, Ctrl(3,40) >> Expr1 , Ctrl(3,100) >> Expr2]
+i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,40) >> Expr1 , Ctrl(3,127) >> Expr2]
 
 # Execution patch
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
-             (KeyFilter(notes=[67]) >> Ctrl(3, 100) >> Expr2) //
+             (KeyFilter(notes=[67]) >> [FS4, Ctrl(3, 100) >> Expr2]) //
              (KeyFilter(notes=[69]) >> FS4) //
              (KeyFilter(notes=[71]) >> [FS2, Ctrl(3,100) >> Expr2]) //
              (KeyFilter(notes=[72]) >> [FS2, Ctrl(3,127) >> Expr2])
          ))
+
 # Big Country fin de section ------------------------------------------
 
 # Band : Rush ------------------------------------------
-# Init patch
+
+# Default init patch
 i_rush = [P02A, Ctrl(3,40) >> Expr1]
 
-# Generics
-# Tout en paralelle mais séparé par contexte
+# Default patch - tout en paralelle mais séparé par contexte
 p_rush = (pk5 >> Filter(NOTEON) >>
     [
         [
@@ -1214,6 +1231,11 @@ p_rush = (pk5 >> Filter(NOTEON) >>
     ])
 
 # Grand Designs
+
+# Init patch
+i_rush_gd = [P02A, FS1, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2, HueNormal] 
+
+# Execution patch
 p_rush_gd = (pk5 >> 
     [
         Filter(NOTEON) >> [
@@ -1245,6 +1267,9 @@ p_rush_gd = (pk5 >>
 # Init patch
 i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueNormal] 
 
+# Foot keyboard output
+p_rush_trees_foot = Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=100, ctrls={93:75, 91:75})
+
 # Execution patch
 p_rush_trees=(pk5 >>
     [
@@ -1261,17 +1286,19 @@ p_rush_trees=(pk5 >>
             KeyFilter(notes=[72]) >> [FS1, Ctrl(3,120) >> Expr2],
         ],
         # Controle du séquenceur 
+        # Il faut laisser passer f3 dans un filtre dummy car il sert de Latch
         [
             KeyFilter('C3') >> Key('A0'),
             KeyFilter('D3') >> Key('B0'),
             KeyFilter('E3') >> Key('D1'),
             KeyFilter('f3') >> Pass(),
-        ] >> LatchNotes(False, reset='f3') >> lowsynth
+        ] >> LatchNotes(False, reset='f3') >> p_rush_trees_foot
     ])
 
 # Rush fin de section ------------------------------------------
 
-p_glissando=(Filter(NOTEON) >> Call(glissando, 24, 100, 100, 0.0125))
+p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, 'SD90-PART-A'))
+
 
 #-----------------------------------------------------------------------------------------------------------
 # Control body
@@ -1327,19 +1354,42 @@ _scenes = {
         [
             Scene("Subdivisions", init_patch=i_rush, patch=p_rush),
             Scene("The Trees", init_patch=i_rush_trees, patch=p_rush_trees),
-            Scene("Grand Designs", init_patch=i_rush, patch=p_rush_gd),
+            Scene("Grand Designs", init_patch=i_rush_gd, patch=p_rush_gd),
             Scene("Marathon", init_patch=i_rush, patch=Discard()),
         ]),
-    3: SceneGroup("Styx",
+    3: SceneGroup("BassCover",
         [
-            Scene("Training", init_patch=U01_A, patch=Discard()),
-            Scene("Majestyx-live", init_patch=U01_C, patch=Discard()),
+            Scene("Default", init_patch=HueGalaxie, patch=U01_A),
+            Scene("Futur", init_patch=Discard(), patch=Discard()),
         ]),
     4: SceneGroup("Big Country",
         [
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
         ]),
-    99: SceneGroup("Éclairage HUE",
+    5: SceneGroup("Majestyx",
+        [
+            Scene("Training", init_patch=U01_A, patch=Discard()),
+            Scene("Majestyx-live", init_patch=U03_A, patch=Discard()),
+        ]),
+    6: SceneGroup("GrandDesignsStudio",
+        [
+            Scene("Default", init_patch=Discard(), patch=p_rush_gd),
+        ]),
+    7: SceneGroup("Demonstrations",
+        [
+            Scene("Default", init_patch=Discard(), patch=Discard()),
+            Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
+            Scene("Explosion", patch=explosion),
+        ]),
+    6: SceneGroup("Compositions",
+        [
+            Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
+        ]),
+    9: SceneGroup("Futur",
+        [
+            Scene("Futur", init_patch=Discard(), patch=Discard()),
+        ]),
+    10: SceneGroup("Éclairage HUE",
         [
             Scene("Init", init_patch=Discard(), patch=Discard()),
             Scene("Normal", init_patch=HueNormal, patch=Discard()),
