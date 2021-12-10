@@ -139,27 +139,30 @@ analogkid_main =  KeySplit('f3', analogkid_low, analogkid_high)
 # Patch Limelight
 limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=(Special1,12), volume=100)
 
-# Patch Centurion
-# TODO : Pan pour chaque programme
-centurion_synth = (Velocity(fixed=110) >>
+# Band : Moi ----------------------------------------------------
+
+
+# Centurion 
+
+# Init patch 
+i_centurion=Discard()
+
+# Execution patch
+seq_centurion = (Velocity(fixed=110) >>
 	(
-		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110) // 
-		Output('SD90-PART-A', channel=2, program=(Enhanced,82), volume=110)
+		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110, pan=32) // 
+		Output('SD90-PART-A', channel=2, program=(Enhanced,82), volume=110, pan=96)
 	))
 
-# Patch Centurion Video
-# TODO Passer pas le plugin de videoplayer
-#centurion_video=( System('./vp.sh /mnt/flash/live/video/centurion_silent.avi') )
-
-# Patch Centurion Hack 
-centurion_patch=(LatchNotes(True,reset='C3') >>
+# Filter
+p_centurion = (pk5 >> LatchNotes(True,reset='C3') >>
 	(
 		(KeyFilter('D3') >> Key('D1')) //
 		(KeyFilter('E3') >> Key('D2')) //
 		(KeyFilter('F3') >> Key('D3')) //
 		(KeyFilter('G3') >> Key('D4')) //
 		(KeyFilter('A3') >> Key('D5'))
-	) >> centurion_synth)
+	) >> seq_centurion)
 
 
 # Band : Big Country ------------------------------------------
