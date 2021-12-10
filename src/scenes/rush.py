@@ -1,10 +1,12 @@
-    2: SceneGroup("subdivisions",
+    2: Scene("RedBarchetta", init_patch=i_rush, patch=LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    3: Scene("FreeWill", init_patch=i_rush, patch=Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+    4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, pk5 >> Transpose(-24) >> closer_base]),
+    5: SceneGroup("Time Stand Still", [
+			Scene("TSS-Keyboard", [ChannelFilter(1) >> tss_keyboard_main, pk5 >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+	   ]),
+    6: Scene("Analog Kid", init_patch=i_rush, patch=analogkid_main),
+    7: SceneGroup("rush",
         [
-            Scene("Init", init_patch=P02A, patch=subdivisions),
-        ]),
-    3: SceneGroup("rush",
-        [
-        Scene("Init", init_patch=P02A, patch=Discard()),
         Scene("Analog Kid Keyboard", analogkid_main),
         #Scene("Analog Kid Keyboard", [ChannelFilter(2) >> analogkid_main, ChannelFilter(1) >> analogkid_ending ]),
         Scene("Time Stand Still Keyboard",
@@ -15,26 +17,25 @@
         Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3') >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
         Scene("FreeWill Keyboards", Transpose(0) >> LatchNotes(False,reset='E3') >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
        ]),
-    4: SceneGroup("Closer",
+    8:SceneGroup(
+        "Marathon", 
         [
-            Scene("Default", init_patch=Discard(), patch=closer_main),
-        ]),
-    5:SceneGroup ("Marathon", [
-        Scene("Marathon-Intro/Chords", Port(1) >> (
-          [
-            ChannelSplit({
-                cme_channel : marathon_intro,
-                pk5_channel : marathon_chords,
-            }),
-            (ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> Fork([Channel(3),Channel(4)]) >>
+            Scene("Intro/Chords", Port(1) >> (
             [
-             (CtrlFilter(2)>>Process(OnPitchbend,direction=-1)) //
-                (CtrlFilter(1)>>CtrlMap(1,7))
-            ])
-          ])),
-        Scene("Marathon-Bridge/Solo/Ending", 
-            ChannelSplit({
-                cme_channel : (marathon_bridge // marathon_bridge_split),
-                pk5_channel : marathon_chords,
-            })),
-   ]),
+                ChannelSplit({
+                    cme_channel : marathon_intro,
+                    pk5_channel : marathon_chords,
+                }),
+                ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> 
+                    Fork([Channel(3),Channel(4)]) >>
+                    Fork([(CtrlFilter(2) >> Process(OnPitchbend,direction=-1))],
+                         [(CtrlFilter(1) >> CtrlMap(1,7))])
+            ])),
+            Scene("Bridge/Solo/Ending", 
+                ChannelSplit(
+                    {
+                        cme_channel : (marathon_bridge // marathon_bridge_split),
+                        pk5_channel : marathon_chords,
+                    })),
+
+        ]),
