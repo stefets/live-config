@@ -2,7 +2,6 @@ import subprocess
 from subprocess import check_call
 
 from colorama import Fore, Style
-from functions import NavigateToScene
 
 from range_key_dict import RangeKeyDict
 
@@ -272,7 +271,7 @@ class Playlist():
         return scenes()[current_scene()][1][current_subscene()-1] if self.has_subscene() else None
 
     def listing(self):
-        #self.terminal.clear_screen()
+        self.terminal.clear_screen()
         print("{}{}{}{}".format(Style.BRIGHT, Fore.GREEN, self.get_scene_name(), Style.RESET_ALL))
         rank = 0
         for song in self.songs:
