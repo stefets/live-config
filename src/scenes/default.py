@@ -8,7 +8,8 @@
     3: SceneGroup("BassCover",
         [
             Scene("Default", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
-            Scene("Futur", init_patch=Discard(), patch=Discard()),
+            Scene("Queen", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
+            Scene("T4F", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
         ]),
     4: SceneGroup("Big Country",
         [
