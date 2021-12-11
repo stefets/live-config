@@ -1,10 +1,7 @@
-import os
-import json
-import time
 import subprocess
 from subprocess import check_call
 
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 
 from range_key_dict import RangeKeyDict
 
@@ -84,6 +81,7 @@ class Mp3Player(MPyg321Player):
         self.volume(self.vol)
 
         self.current_scene = -1
+        self.current_subscene = -1
         
     # Invoker
     def __call__(self, ev):
@@ -127,7 +125,7 @@ class Mp3Player(MPyg321Player):
         self.current_scene = index
 
         self.current_entry = 0
-        self.playlist.load_from_file(index)
+        self.playlist.load_from_file()
 
     def next_subscene(self, ev):
         self.on_switch_subscene(1)
@@ -136,18 +134,18 @@ class Mp3Player(MPyg321Player):
         self.on_switch_subscene(-1)
 
     def on_switch_subscene(self, offset):
-        # TODO : Ne pas switcher si il n'y pas de subscene
-        self.terminal.clear_screen()
         switch_subscene(current_subscene() + offset)
-        time.sleep(0.375)
-        self.update_display()
+        self.current_subscene = current_subscene()
+        self.current_entry = 0
+        self.playlist.load_from_file()
 
     def on_play(self, ev):
-        if self.current_entry == 0 or self.current_scene != current_scene():
-            ''' The scene has externally been changed '''
+        if self.current_entry == 0 or self.current_scene != current_scene() or self.current_subscene != current_subscene():
+            ''' The context has externally been changed '''
             self.stop()
             self.current_scene = current_scene()
-            self.playlist.load_from_file(self.current_scene)
+            self.current_subscene = current_subscene()
+            self.playlist.load_from_file()
         if ev.data1 > self.playlist.length(): 
             return
         self.load_list(ev.data1, self.playlist.filename)
@@ -217,35 +215,46 @@ class Playlist():
     def __init__(self, config):
         self.songs = []
         self.filename = None
-        self.name = None
         self.datasource = config['datasource']
         self.target = config['symlink_target']
         self.builder = config['symlink_builder']
         self.terminal = Terminal()
 
     def __call__(self, ev):
-        self.create(current_scene())
+        self.create()
 
-    def create(self, index):
-        self.name = scenes()[index][0]
-        self.filename = self.target + self.name + ".txt"
-        source = self.datasource + self.name
+    def create(self):
+        if self.has_subscene():
+            filedirname = self.get_subscene_name()
+            source = self.datasource + self.get_scene_name() + "/" + self.get_subscene_name()
+        else:
+            filedirname =  self.get_scene_name()
+            source = self.datasource + self.get_scene_name()
+        
+        full_filename = self.target + filedirname + ".txt"
+
         try:
-            check_call([self.builder, source,  self.target, self.filename])
-            self.load_from_file(index)
+            check_call([self.builder, source,  self.target, full_filename])
+            self.load_from_file(full_filename)
         except subprocess.CalledProcessError as cpe:
             if cpe.returncode == 3:
-                print("Warning: No playlist for " + self.name)
+                print("Warning: No playlist for " + self.get_scene_name())
             else:
                 print("Error: " + str(cpe.returncode))
                     
     def length(self):
         return len(self.songs)
 
-    def load_from_file(self, index):
-        self.name = scenes()[index][0]
+    def has_subscene(self):
+        return scenes()[current_scene()][1]
+
+    def load_from_file(self, filename=None):
         self.songs = []
-        self.filename = self.target + self.name + ".txt"
+        if not filename:
+            fname = self.get_subscene_name() if self.has_subscene() else self.get_scene_name()
+            filename = self.target + fname + ".txt"
+        
+        self.filename = filename
         try:
             with open(self.filename, "r") as pl:
                 for number, line in enumerate(pl):
@@ -255,9 +264,15 @@ class Playlist():
         except FileNotFoundError:
             pass
 
+    def get_scene_name(self):
+        return scenes()[current_scene()][0]
+
+    def get_subscene_name(self):
+        return scenes()[current_scene()][1][current_subscene()-1] if self.has_subscene() else None
+
     def listing(self):
         self.terminal.clear_screen()
-        print("{}{}{}{}".format(Style.BRIGHT, Fore.GREEN, self.name, Style.RESET_ALL))
+        print("{}{}{}{}".format(Style.BRIGHT, Fore.GREEN, self.get_scene_name(), Style.RESET_ALL))
         rank = 0
         for song in self.songs:
             rank += 1
