@@ -19,6 +19,7 @@ cd $target
 
 # Crée un symlink dans $target pour chaque mp3
 rm -f *.mp3 # Wipe out current mp3 symlinks
+rm -f *.txt # Wipe out playlist files
 for file in $(find -L $origin -type f -iname "*.mp3" | sort)
 do
     filename="${file##*/}"

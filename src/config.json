@@ -21,12 +21,11 @@
     "audioplayer": {
       "enable" : true,
       "player" : "mpg123",
-      "audiodevice" : "hw:2,0",
+      "audiodevice" : "",
       "playlist" : {
         "datasource": "/media/mididings/soundlib/",
         "symlink_target": "/media/mididings/tmp/",
-        "symlink_builder": "./mksymlinks.sh",
-        "filename": "/media/mididings/tmp/playlist.txt"
+        "symlink_builder": "./mksymlinks.sh"
       },
       "controller" : {
           "size" : 49,

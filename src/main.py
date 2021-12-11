@@ -20,7 +20,7 @@ from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
-from plugins.audioplayer.mp3 import Mp3Player
+from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
 
 # Setup path
@@ -34,6 +34,7 @@ with open('config.json') as json_file:
 plugins=configuration['plugins']
 hue_config=plugins['lightning']
 key_config=plugins['audioplayer']
+playlist_config=key_config["playlist"]
 net_config=plugins['net']
 
 config(
