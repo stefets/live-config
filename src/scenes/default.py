@@ -7,7 +7,7 @@
         ]),
     3: SceneGroup("BassCover",
         [
-            Scene("Default", init_patch=HueGalaxie, patch=U01_A),
+            Scene("Default", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
             Scene("Futur", init_patch=Discard(), patch=Discard()),
         ]),
     4: SceneGroup("Big Country",
@@ -16,7 +16,7 @@
         ]),
     5: SceneGroup("Majestyx",
         [
-            Scene("Training", init_patch=U01_A, patch=Discard()),
+            Scene("Training", init_patch=U01_A//Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Majestyx-live", init_patch=U03_A, patch=Discard()),
         ]),
     6: SceneGroup("GrandDesignsStudio",
