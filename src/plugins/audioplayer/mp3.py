@@ -32,12 +32,10 @@ class Mp3Player(MPyg321Player):
 
         super().__init__(config["player"], config["audiodevice"] if config["audiodevice"] else None, True)
 
-        self.playlist = Playlist(config['playlist'], self)
         self.controller = Controller(config["controller"])
+        self.playlist = Playlist(config['playlist'])
 
-        # TODO : UI Class
-        self.clear_screen = lambda: print("\033c\033[3J", end='')
-        self.spacer = " " * 15
+        self.terminal = Terminal()
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
@@ -49,8 +47,6 @@ class Mp3Player(MPyg321Player):
             
             (36, 41): self.navigate_scene,
             (41, 48): self.navigate_player,
-
-            (self.controller.size-1, self.controller.size): self.playlist.listing,
 
         })
 
@@ -87,6 +83,8 @@ class Mp3Player(MPyg321Player):
         self.vol = 10
         self.volume(self.vol)
 
+        self.current_scene = -1
+        
     # Invoker
     def __call__(self, ev):
         if self.enable:
@@ -97,7 +95,9 @@ class Mp3Player(MPyg321Player):
         self.note_mapping[ev.data1](ev)
 
     def navigate_player(self, ev):
-        if self.playlist.songs: self.note_mapping[ev.data1](ev)
+
+        if self.playlist.songs: 
+            self.note_mapping[ev.data1](ev)
 
     # Note zero (tmp)
     def on_zero(self, ev):
@@ -123,15 +123,11 @@ class Mp3Player(MPyg321Player):
         if index > len(scenes()):
             index = 2
 
-        self.clear_screen()
-
         switch_scene(index)
-
-        time.sleep(0.375) # Offset, wait for Mididings to write its infos to stdout
+        self.current_scene = index
 
         self.current_entry = 0
-        self.playlist.create(index, self.playlist.filename)
-
+        self.playlist.load_from_file(index)
 
     def next_subscene(self, ev):
         self.on_switch_subscene(1)
@@ -141,13 +137,19 @@ class Mp3Player(MPyg321Player):
 
     def on_switch_subscene(self, offset):
         # TODO : Ne pas switcher si il n'y pas de subscene
-        self.clear_screen()
+        self.terminal.clear_screen()
         switch_subscene(current_subscene() + offset)
         time.sleep(0.375)
         self.update_display()
 
     def on_play(self, ev):
-        if ev.data1 > self.playlist.length(): return
+        if self.current_entry == 0 or self.current_scene != current_scene():
+            ''' The scene has externally been changed '''
+            self.stop()
+            self.current_scene = current_scene()
+            self.playlist.load_from_file(self.current_scene)
+        if ev.data1 > self.playlist.length(): 
+            return
         self.load_list(ev.data1, self.playlist.filename)
         self.current_entry = ev.data1
         self.update_display()
@@ -200,7 +202,7 @@ class Mp3Player(MPyg321Player):
 
     def update_display(self):
         print(" {}VOL={}% | JMP={}s | {}{}{}".format(Fore.RED, 
-            self.vol, self.jump_offset, self.get_current_song(), self.spacer, 
+            self.vol, self.jump_offset, self.get_current_song(), self.terminal.spacer, 
             Style.RESET_ALL), end="\r", flush=True)
 
     '''
@@ -212,47 +214,54 @@ class Mp3Player(MPyg321Player):
 
 
 class Playlist():
-    def __init__(self, config, parent):
+    def __init__(self, config):
         self.songs = []
-        self.filename = config['filename']
+        self.filename = None
+        self.name = None
         self.datasource = config['datasource']
         self.target = config['symlink_target']
         self.builder = config['symlink_builder']
-        self.parent = parent
+        self.terminal = Terminal()
 
-    def create(self, index, configuration):
-        context = scenes()[index][0]
-        source = self.datasource + context
+    def __call__(self, ev):
+        self.create(current_scene())
+
+    def create(self, index):
+        self.name = scenes()[index][0]
+        self.filename = self.target + self.name + ".txt"
+        source = self.datasource + self.name
         try:
             check_call([self.builder, source,  self.target, self.filename])
-            self.load()
+            self.load_from_file(index)
         except subprocess.CalledProcessError as cpe:
             if cpe.returncode == 3:
-                print("Warning: No playlist for " + context)
+                print("Warning: No playlist for " + self.name)
             else:
                 print("Error: " + str(cpe.returncode))
                     
-
     def length(self):
         return len(self.songs)
 
-    def listing(self, ev=None):
+    def load_from_file(self, index):
+        self.name = scenes()[index][0]
+        self.songs = []
+        self.filename = self.target + self.name + ".txt"
+        try:
+            with open(self.filename, "r") as pl:
+                for number, line in enumerate(pl):
+                    title = line.rstrip()
+                    self.songs.append(title)
+            self.listing()
+        except FileNotFoundError:
+            pass
+
+    def listing(self):
+        self.terminal.clear_screen()
+        print("{}{}{}{}".format(Style.BRIGHT, Fore.GREEN, self.name, Style.RESET_ALL))
         rank = 0
         for song in self.songs:
             rank += 1
-            print("{}-{}".format(rank, song))
-        self.parent.update_display()
-
-    def load(self, ev=None):
-       self.songs = []
-       try:
-           with open(self.filename, "r") as pl:
-               for number, line in enumerate(pl):
-                   title = line.rstrip()
-                   self.songs.append(title)
-           self.listing()
-       except FileNotFoundError:
-           pass
+            print("{}{}{} {}{}{}{}".format(Style.BRIGHT, Fore.YELLOW, str(rank).zfill(2), Style.RESET_ALL, Style.BRIGHT, Fore.WHITE, song, Style.RESET_ALL))
 
 
 class Controller():
@@ -260,3 +269,7 @@ class Controller():
         self.size = config['size']
 
 
+class Terminal():
+    def __init__(self) -> None:
+        self.clear_screen = lambda: print("\033c\033[3J", end='')
+        self.spacer = " " * 15
