@@ -19,9 +19,9 @@
       "cc_transition" : 3
     },
     "audioplayer": {
-      "enable" : true,
+      "enable" : false,
       "player" : "mpg123",
-      "audiodevice" : "",
+      "audiodevice" : "hw:1,0",
       "playlist" : {
         "datasource": "/media/mididings/soundlib/",
         "symlink_target": "/media/mididings/tmp/",
