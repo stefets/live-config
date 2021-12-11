@@ -22,16 +22,16 @@ sed \
     -e "/__FUNCTIONS__/r functions.py" \
     -e "/__FILTERS__/r filters.py" \
     -e "/__CONTROL__/r control.py" \
-	-e "/__PATCHES__/r patches.py" \
+    -e "/__PATCHES__/r patches.py" \
     -e "/__DEVICES__/r $devices" \
     -e "/__SCENES__/r $sceneFileName" \
-	-e "/__FUNCTIONS__/d" \
-	-e "/__FILTERS__/d" \
-	-e "/__CONTROL__/d" \
-	-e "/__DEVICES__/d" \
-	-e "/__PATCHES__/d" \
-	-e "/__SCENES__/d" \
-	$template > $output
+    -e "/__FUNCTIONS__/d" \
+    -e "/__FILTERS__/d" \
+    -e "/__CONTROL__/d" \
+    -e "/__DEVICES__/d" \
+    -e "/__PATCHES__/d" \
+    -e "/__SCENES__/d" \
+    $template > $output
 
 # Replace __TOKEN__ for the input and output ports - thanks to alsalist
 ports=$(alsalist)
