@@ -4,6 +4,7 @@ Notes :
 - L'utilisation du Ctrl(3,value) sert a passer le value dans EVENT_VALUE pour l'unité suivante dans une série d'unité
 - Soit pour assigner une valeur au pédales d'expression du POD HD 500
 - Soit pour déterminer la valeur d'une transition pour le chargement d'une scène du Philips HUE
+- Soit pour contrôler Cakewalk
 
 Controller 3 : ref.: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
 CC      Bin             Hex     Control function    Value       Used as
@@ -13,29 +14,23 @@ CC      Bin             Hex     Control function    Value       Used as
 HueOff=Call(HueBlackout(hue_config))
 HueNormal=Call(HueScene(hue_config, "Normal"))
 HueGalaxie=Call(HueScene(hue_config, "Galaxie"))
+HueGalaxieMax=Call(HueScene(hue_config, "GalaxieMax"))
 HueDemon=Call(HueScene(hue_config, "Demon"))
 HueSoloRed=Call(HueScene(hue_config, "SoloRed"))
+#-----------------------------------------------------------------------------------------------
+
+# My Cakewalk Generic Control Surface definition -----------------------------------------------
+CakeRecord=Ctrl('SD90-MIDI-OUT-2', 1, 3, 64)
+CakePlay=Ctrl('SD90-MIDI-OUT-2', 1, 3, 66)
+CakeStop=Ctrl('SD90-MIDI-OUT-2', 1, 3, 67)
 #-----------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------
 # Execution patches
 #-----------------------------------------------------------------------------------------------
 
-# TODO Revisiter cela
-# PORTAMENTO 
-#portamento_base=Ctrl(1,1,5,50)
-#portamento_off=Ctrl(1,1,65,0)	# Switch OFF
-#portamento_on=Ctrl(1,1,65,127)  # Switch ON
-#portamento_up=(portamento_base // portamento_on)
-#portamento_off=(portamento_base // portamento_off)
-#legato=Ctrl(1,1,120,0)
 
-d4= Output('SD90-PART-A', channel=10, program=1, volume=100)
-d4_tom= Output('SD90-PART-A', channel=11, program=(Classical+Var1,118), volume=100)
-
-# FX Section
 explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical+Var3,128), volume=100)
-#--------------------------------------------------------------------
 violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
 piano_base =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,1))
 nf_piano = Output('SD90-PART-A', channel=1, program=(Classical,2), volume=100)
@@ -173,6 +168,14 @@ p_centurion = (pk5 >> LatchNotes(True,reset='C3') >>
 i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,40) >> Expr1 , Ctrl(3,127) >> Expr2]
 
 # Execution patch
+
+i_big_country_live = [P14A, FS1, FS3, FS4, Ctrl(3,50) >> Expr1 , Ctrl(3,100) >> Expr2]
+p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
+        [
+            Filter(NOTEON) >> CakePlay,
+            Filter(NOTEOFF) >> HueGalaxieMax, 
+        ])
+
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
              (KeyFilter(notes=[67]) >> [FS4, Ctrl(3, 100) >> Expr2]) //
@@ -275,5 +278,16 @@ p_rush_trees=(pk5 >>
 
 # Rush fin de section ------------------------------------------
 
+
+# FUTUR TESTS
+
+# Glissando
 p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, 'SD90-PART-A'))
 
+# PORTAMENTO 
+#portamento_base=Ctrl(1,1,5,50)
+#portamento_off=Ctrl(1,1,65,0)	# Switch OFF
+#portamento_on=Ctrl(1,1,65,127)  # Switch ON
+#portamento_up=(portamento_base // portamento_on)
+#portamento_off=(portamento_base // portamento_off)
+#legato=Ctrl(1,1,120,0)

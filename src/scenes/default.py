@@ -22,6 +22,7 @@
     5: SceneGroup("Live",
         [
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
+            Scene("In a big country LIVE", init_patch=i_big_country_live, patch=p_big_country // p_big_country_live),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
