@@ -198,10 +198,15 @@ p_rush = (pk5 >> Filter(NOTEON) >>
         ],                
         [
             KeyFilter(notes=[69]) >> FS4,
-            KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100) >> Expr2],
-            KeyFilter(notes=[72]) >> [FS1, FS4, Ctrl(3,120) >> Expr2]
+            KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100) >> Expr2, HueGalaxie],
+            KeyFilter(notes=[72]) >> [FS1, FS4, Ctrl(3,120) >> Expr2, HueSoloRed]
         ]
     ])
+
+# Subdivisions
+
+# Init patch
+i_rush_sub=[P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueGalaxie]
 
 # Grand Designs
 

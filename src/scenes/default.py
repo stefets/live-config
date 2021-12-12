@@ -1,7 +1,7 @@
     2: SceneGroup("Rush",
         [
-            Scene("Subdivisions", init_patch=i_rush, patch=p_rush),
-            Scene("The Trees", init_patch=i_rush_trees//Call(Playlist(playlist_config)), patch=p_rush_trees),
+            Scene("Subdivisions", init_patch=i_rush_sub, patch=p_rush),
+            Scene("TheTrees", init_patch=i_rush_trees//Call(Playlist(playlist_config)), patch=p_rush_trees),
             Scene("Divers", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
             Scene("PowerWindows", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
             Scene("GraceUnderPressure", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
