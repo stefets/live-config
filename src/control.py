@@ -19,7 +19,8 @@ key_transpose=Transpose(key_controller["transpose"])
 key_controller_channel=key_controller["channel"]
 key_controller = [
     [
-        CtrlFilter(1, 7) >> CtrlValueFilter(0, 101), 
+        CtrlFilter(7) >> CtrlValueFilter(0, 101), 
+        CtrlFilter(1) >> CtrlValueFilter(0, 121), 
         Filter(NOTEON) >> key_transpose
     ] >> Call(Mp3Player(key_config)),
     Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[0]) >> HueOff,
