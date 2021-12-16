@@ -169,18 +169,17 @@ i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,40) >> Expr1 , Ctrl(3,127) >> Exp
 
 # Execution patch
 
-i_big_country_live = [P14A, FS1, FS3, FS4, Ctrl(3,50) >> Expr1 , Ctrl(3,100) >> Expr2]
+i_big_country_live = [P14D, FS1, FS3, FS4, Ctrl(3,45) >> Expr1 , Ctrl(3,85) >> Expr2]
 p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
         [
-            Filter(NOTEON) >> CakePlay,
+            Filter(NOTEON) >> [CakePlay],
             Filter(NOTEOFF) >> HueGalaxieMax, 
         ])
 
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
-             (KeyFilter(notes=[67]) >> [FS4, Ctrl(3, 100) >> Expr2]) //
              (KeyFilter(notes=[69]) >> FS4) //
-             (KeyFilter(notes=[71]) >> [FS2, Ctrl(3,100) >> Expr2]) //
+             (KeyFilter(notes=[71]) >> [FS2, Ctrl(3,85) >> Expr2]) //
              (KeyFilter(notes=[72]) >> [FS2, Ctrl(3,127) >> Expr2])
          ))
 
@@ -249,7 +248,7 @@ p_rush_gd = (pk5 >>
 i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueNormal] 
 
 # Foot keyboard output
-p_rush_trees_foot = Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=100, ctrls={93:75, 91:75})
+p_rush_trees_foot = Velocity(fixed=110) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})
 
 # Execution patch
 p_rush_trees=(pk5 >>
