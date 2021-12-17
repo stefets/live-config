@@ -74,6 +74,8 @@ config(
         ('UM2-MIDI-IN-1', '__UM-2 MIDI 1__',),
 
         ('Q49', '__Q49 MIDI 1__',),
+
+        ('CME', '__CME M-KEY MIDI 1__',),
     ],
 
 )

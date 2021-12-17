@@ -77,3 +77,7 @@ def OnPitchbend(ev, direction):
     return PitchbendEvent(ev.port, ev.channel, ev.value * direction)
 
 # ---------------------------------------------------------------------------------------------------------
+
+def osc2midi_value_converter(ev):
+    return ev.data2 * 0.7874015748 / 100
+
