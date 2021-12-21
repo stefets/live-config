@@ -1,5 +1,4 @@
-# This class remove duplicate midi message by taking care of an offset logic
-# NOT STABLE SUSPECT OVERFLOW 
+# This class TRY to remove duplicate midi message by taking care of an offset logic
 class RemoveDuplicates:
     def __init__(self, _wait=0):
         self.wait = _wait
