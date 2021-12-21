@@ -1,5 +1,8 @@
 # Controlleur 1 : changement de scene
 
+#from devices.hd500 import TunerOn
+
+
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
     CtrlFilter(1, 20, 21, 22) >>
@@ -12,19 +15,25 @@ nav_controller = (
 )
 
 # Keyboard Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player ou le Philips Hue
-# Limite le Control #1 et #7 en %
+# Le CC#7 est en % et le CC#1 en secondes pour Mp3Player
+
 key_controller=key_config["controller"]
 key_transpose=Transpose(key_controller["transpose"])
+
+hd500_tuner=Filter(NOTEON) >> key_transpose >> [    
+        KeyFilter(notes=[1]) >> TunerOn,
+        KeyFilter(notes=[3]) >> TunerOff,
+    ]
 
 key_controller_channel=key_controller["channel"]
 key_controller = [
     [
-        CtrlFilter(1, 7) >> CtrlValueFilter(0, 101), 
-        Filter(NOTEON) >> key_transpose
+        Filter(NOTEON) >> key_transpose, 
+        CtrlFilter(7) >> CtrlValueFilter(0, 101), 
+        CtrlFilter(1) >> CtrlValueFilter(0, 121), 
     ] >> Call(Mp3Player(key_config)),
-    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[0]) >> HueOff,
-    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[48]) >> HueNormal,
-    CtrlFilter(91) >> CtrlMap(91,1) >> Ctrl(hd500_port, hd500_channel, EVENT_CTRL, EVENT_VALUE)
+    Filter(NOTEON) >> key_transpose >> [KeyFilter(notes=[0]) >> HueOff, KeyFilter(notes=[48]) >> HueNormal],
+    CtrlFilter(91) >> Expr1
 ]
 
 

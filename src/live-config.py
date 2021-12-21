@@ -20,7 +20,7 @@ from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
-from plugins.audioplayer.mp3 import Mp3Player
+from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
 
 # Setup path
@@ -34,12 +34,13 @@ with open('config.json') as json_file:
 plugins=configuration['plugins']
 hue_config=plugins['lightning']
 key_config=plugins['audioplayer']
+playlist_config=key_config["playlist"]
 net_config=plugins['net']
 
 config(
 
     # Defaults
-    # initial_scene = 2,
+    # initial_scene = 1,
     # backend = 'alsa',
     # client_name = 'mididings',
 
@@ -47,14 +48,14 @@ config(
     #   Device name                     # Description               #
     #  
 
-    # Ports are tokenized and replaced by script_builder.sh
+    # Ports are tokenized and sed/awk by script_builder.sh
 
     out_ports = [
 
-        ('SD90-PART-A', '24:0'),
-        ('SD90-PART-B', '24:1'),
-        ('SD90-MIDI-OUT-1', '24:2',),
-        ('SD90-MIDI-OUT-2', '24:3',),
+        ('SD90-PART-A', ''),
+        ('SD90-PART-B', ''),
+        ('SD90-MIDI-OUT-1', '',),
+        ('SD90-MIDI-OUT-2', '',),
 
         ('GT10B-MIDI-OUT-1', '',),
 
@@ -65,8 +66,8 @@ config(
 
     in_ports = [
 
-        ('SD90-MIDI-IN-1','24:2',),
-        ('SD90-MIDI-IN-2','24:3',),
+        ('SD90-MIDI-IN-1','',),
+        ('SD90-MIDI-IN-2','',),
 
         ('GT10B-MIDI-IN-1', '',),
 
@@ -86,35 +87,8 @@ hook(
 # Class and function body
 # functions.py
 # --------------------------------------------------------------------
-# Function and classes called by scenes
+# Helper functions
 # --------------------------------------------------------------------
-
-#
-# This class remove duplicate midi message by taking care of an offset logic
-# NOT STABLE SUSPECT OVERFLOW 
-class RemoveDuplicates:
-    def __init__(self, _wait=0):
-        self.wait = _wait
-        self.prev_ev = None
-        self.prev_time = 0
-
-    def __call__(self, ev):
-        if ev.type == NOTEOFF:
-            sleep(self.wait)
-            return ev
-        now = engine.time()
-        offset = now - self.prev_time
-        if offset >= 0.035:
-            # if ev.type == NOTEON:
-            #    print "+ " + str(offset)
-            r = ev
-        else:
-            # if ev.type == NOTEON:
-            #    print "- " + str(offset)
-            r = None
-        self.prev_ev = ev
-        self.prev_time = now
-        return r
 
 # -------------------------------------------------------------------------------------------
 '''
@@ -139,13 +113,16 @@ def glissando(ev, from_note, to_note, vel, duration, direction, port):
 
 # -------------------------------------------------------------------------------------------
 
-
-# Navigate through secenes and subscenes
 def NavigateToScene(ev):
-    # MIDIDINGS does not wrap in the builtin ScenesSwitch but SubSecenesSwitch yes with the wrap parameter
-    # With that function, you can wrap trough Scenes AND SubScenes
-    # That function assume that the first SceneNumber is 1
-    # TODO field, values = dict(scenes()).items()[0]
+    ''' 
+    Navigate through Scenes and Sub-Scenes
+    
+    MIDIDINGS does not wrap in the builtin ScenesSwitch but SubSecenesSwitch yes with the wrap parameter
+    
+    With that function, you can wrap trough Scenes AND SubScenes
+    
+    That function assume that the first SceneNumber is 1
+    '''
     if ev.ctrl == 20:
         nb_scenes = len(scenes())
         cs = current_scene()
@@ -172,24 +149,6 @@ def NavigateToScene(ev):
                 switch_subscene(css + 1)
             else:
                 switch_subscene(1)
-
-
-# Stop any audio processing, managed by a simple bash script
-def AllAudioOff(ev):
-    return "/bin/bash ./kill.sh"
-
-
-# Audio and midi players suitable for my SD-90
-def play_file(filename):
-    fname, fext = os.path.splitext(filename)
-    if fext == ".mp3":
-        path = " /tmp/soundlib/mp3/"
-        command = "mpg123 -q"
-    elif fext == ".mid":
-        path = " /tmp/soundlib/midi/"
-        command = "aplaymidi -p 20:1"
-
-    return command + path + filename
 
 
 # Create a pitchbend from a filter logic
@@ -1353,23 +1312,27 @@ _scenes = {
     2: SceneGroup("Rush",
         [
             Scene("Subdivisions", init_patch=i_rush, patch=p_rush),
-            Scene("The Trees", init_patch=i_rush_trees, patch=p_rush_trees),
+            Scene("The Trees", init_patch=i_rush_trees//Call(Playlist(playlist_config)), patch=p_rush_trees),
+            Scene("Divers", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
+            Scene("PowerWindows", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
+            Scene("GraceUnderPressure", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
             Scene("Grand Designs", init_patch=i_rush_gd, patch=p_rush_gd),
             Scene("Marathon", init_patch=i_rush, patch=Discard()),
         ]),
     3: SceneGroup("BassCover",
         [
-            Scene("Default", init_patch=HueGalaxie, patch=U01_A),
+            Scene("Default", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
+            Scene("Queen", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
+            Scene("T4F", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
+            Scene("Toto", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
+        ]),
+    4: SceneGroup("Futur",
+        [
             Scene("Futur", init_patch=Discard(), patch=Discard()),
         ]),
-    4: SceneGroup("Big Country",
+    5: SceneGroup("Live",
         [
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
-        ]),
-    5: SceneGroup("Majestyx",
-        [
-            Scene("Training", init_patch=U01_A, patch=Discard()),
-            Scene("Majestyx-live", init_patch=U03_A, patch=Discard()),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
@@ -1380,14 +1343,26 @@ _scenes = {
             Scene("Default", init_patch=Discard(), patch=Discard()),
             Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
             Scene("Explosion", patch=explosion),
+            Scene("Demon", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Jokes", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Tabarnac", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("TLMEP", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
         ]),
-    6: SceneGroup("Compositions",
+    8: SceneGroup("Compositions",
         [
             Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
         ]),
-    9: SceneGroup("Futur",
+    9: SceneGroup("Musique",
         [
-            Scene("Futur", init_patch=Discard(), patch=Discard()),
+            Scene("Majestyx", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Delirium", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Hits", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Middleage", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("NinaHagen", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("SteveMorse", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Timeline", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("TV", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
         ]),
     10: SceneGroup("Éclairage HUE",
         [

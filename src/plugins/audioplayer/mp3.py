@@ -38,12 +38,14 @@ class Mp3Player(MPyg321Player):
         # Upper bound is exclusive
         self.note_range_mapping = RangeKeyDict({
 
-            (0, 1): self.on_zero,
+            (0, 1): self.unassigned,
 
             (1, 36): self.on_play,
             
             (36, 41): self.navigate_scene,
             (41, 48): self.navigate_player,
+
+            (self.controller.size-1, self.controller.size): self.unassigned,
 
         })
 
@@ -97,8 +99,8 @@ class Mp3Player(MPyg321Player):
         if self.playlist.songs: 
             self.note_mapping[ev.data1](ev)
 
-    # Note zero (tmp)
-    def on_zero(self, ev):
+    # Unassigned key
+    def unassigned(self, ev):
         pass
 
     # Scenes navigation
@@ -142,6 +144,7 @@ class Mp3Player(MPyg321Player):
     def on_play(self, ev):
         if self.current_entry == 0 or self.current_scene != current_scene() or self.current_subscene != current_subscene():
             ''' The context has externally been changed '''
+            ''' Refresh the playlist according the current scene/subscene '''
             self.stop()
             self.current_scene = current_scene()
             self.current_subscene = current_subscene()
@@ -164,10 +167,10 @@ class Mp3Player(MPyg321Player):
     def rewind(self, ev):
         self.on_jump("-")
 
-    def on_jump(self, offset):
+    def on_jump(self, direction):
         if not self.status in [PlayerStatus.PLAYING, PlayerStatus.PAUSED]:
             return
-        value = "{}{} s".format(offset, self.jump_offset)
+        value = "{}{} s".format(direction, self.jump_offset)
         self.jump(value)
 
     def next_entry(self, ev):
@@ -186,9 +189,9 @@ class Mp3Player(MPyg321Player):
         self.update_display()
 
     def set_offset(self, ev):
-        mod =  ev.data2 % 2
-        if mod == 0:
-            self.jump_offset = ev.data2 / 2
+        jump = int(ev.data2 / 2)
+        if jump % 2 == 0:
+            self.jump_offset = jump
             self.update_display()
 
     def get_current_song(self):
