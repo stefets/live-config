@@ -23,6 +23,7 @@ from mididings.engine import scenes, current_scene, switch_scene, current_subsce
 from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
 
+
 # Setup path
 sys.path.append(os.path.realpath('.'))
 
@@ -48,7 +49,7 @@ config(
     #   Device name                     # Description               #
     #  
 
-    # Ports are tokenized and sed/awk by script_builder.sh
+    # Ports are tokenized and sed/awk by build_script.sh
 
     out_ports = [
 
@@ -116,7 +117,7 @@ __CONTROL__
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
+    1: Scene("Initialize", init_patch=InitializeSD90, patch=piano),
 __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------

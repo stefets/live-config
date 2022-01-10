@@ -21,7 +21,7 @@
     "audioplayer": {
       "enable" : true,
       "player" : "mpg123",
-      "audiodevice" : "hw:5,0",
+      "audiodevice" : "hw:4,0",
       "playlist" : {
         "datasource": "/media/mididings/soundlib/",
         "symlink_target": "/media/mididings/tmp/",
