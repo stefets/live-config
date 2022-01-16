@@ -23,6 +23,7 @@ from mididings.engine import scenes, current_scene, switch_scene, current_subsce
 from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
 
+
 # Setup path
 sys.path.append(os.path.realpath('.'))
 
@@ -48,14 +49,14 @@ config(
     #   Device name                     # Description               #
     #  
 
-    # Ports are tokenized and sed/awk by script_builder.sh
+    # Ports are tokenized and sed/awk by build_script.sh
 
     out_ports = [
 
-        ('SD90-PART-A', ''),
-        ('SD90-PART-B', ''),
-        ('SD90-MIDI-OUT-1', '',),
-        ('SD90-MIDI-OUT-2', '',),
+        ('SD90-PART-A', '20:0'),
+        ('SD90-PART-B', '20:1'),
+        ('SD90-MIDI-OUT-1', '20:2',),
+        ('SD90-MIDI-OUT-2', '20:3',),
 
         ('GT10B-MIDI-OUT-1', '',),
 
@@ -66,14 +67,22 @@ config(
 
     in_ports = [
 
-        ('SD90-MIDI-IN-1','',),
-        ('SD90-MIDI-IN-2','',),
+        ('SD90-MIDI-IN-1','20:2',),
+        ('SD90-MIDI-IN-2','20:3',),
 
         ('GT10B-MIDI-IN-1', '',),
 
         ('UM2-MIDI-IN-1', '',),
 
         ('Q49', '',),
+
+        ('CME', '',),
+
+        ('MPK1', '24:0',),
+        ('MPK2', '24:1',),
+        ('MPK3', '24:2',),
+        ('MPK4', '24:3',),
+
     ],
 
 )
@@ -165,6 +174,10 @@ def OnPitchbend(ev, direction):
     return PitchbendEvent(ev.port, ev.channel, ev.value * direction)
 
 # ---------------------------------------------------------------------------------------------------------
+
+def osc2midi_value_converter(ev):
+    return ev.data2 * 0.7874015748 / 100
+
 
 #-----------------------------------------------------------------------------------------------------------
 # Filters body
@@ -845,10 +858,9 @@ TunerOn = Ctrl(hd500_port, hd500_channel, 69, 127)
 TunerOff = Ctrl(hd500_port, hd500_channel, 69, 0)
 
 #
-# EDIROL SD-90 syntaxe
+# The MIDIDINGS syntax for the EDIROL SD-90 Studio Canvas sound module (not fully implemented)
 #
 
-ResetSD90 = SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
 factor = 128
 
 '''
@@ -880,7 +892,7 @@ SoloDrum=106*factor
 EnhancedDrum=107*factor
 
 '''
-Variable
+Variation
 '''
 Var1=1
 Var2=2
@@ -911,6 +923,7 @@ PB_A13 = (Ctrl('SD90-PART-A', 13, 100, 0) // Ctrl('SD90-PART-A', 13, 101, 0) // 
 PB_A14 = (Ctrl('SD90-PART-A', 14, 100, 0) // Ctrl('SD90-PART-A', 14, 101, 0) // Ctrl('SD90-PART-A', 14, 6, 12) // Ctrl('SD90-PART-A', 14, 38, 0))
 PB_A15 = (Ctrl('SD90-PART-A', 15, 100, 0) // Ctrl('SD90-PART-A', 15, 101, 0) // Ctrl('SD90-PART-A', 15, 6, 12) // Ctrl('SD90-PART-A', 15, 38, 0))
 PB_A16 = (Ctrl('SD90-PART-A', 16, 100, 0) // Ctrl('SD90-PART-A', 16, 101, 0) // Ctrl('SD90-PART-A', 16, 6, 12) // Ctrl('SD90-PART-A', 16, 38, 0))
+
 # SD-90 Part B - All Channel
 PB_B01 = (Ctrl('SD90-PART-B', 1, 100, 0) // Ctrl('SD90-PART-B', 1, 101, 0) // Ctrl('SD90-PART-B', 1, 6, 12) // Ctrl('SD90-PART-B', 1, 38, 0))
 PB_B02 = (Ctrl('SD90-PART-B', 2, 100, 0) // Ctrl('SD90-PART-B', 2, 101, 0) // Ctrl('SD90-PART-B', 2, 6, 12) // Ctrl('SD90-PART-B', 2, 38, 0))
@@ -938,6 +951,7 @@ InitPitchBend = (
 # --------------------------------------------
 # SD-90 # DRUM MAPPING
 # --------------------------------------------
+
 # Classical Set
 StandardSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 1))
 RoomSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 9))
@@ -948,6 +962,7 @@ JazzSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 33))
 BrushSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 41))
 OrchestraSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 49))
 SFXSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 57))
+
 # Contemporary Set
 StandardSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 1))
 RoomSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 9))
@@ -956,6 +971,7 @@ DanceSet =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 25))
 RaveSet =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 26))
 JazzSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 33))
 BrushSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 41))
+
 # Solo Set
 St_Standard =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 1))
 St_Room =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 9))
@@ -964,6 +980,7 @@ RustSet =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 25))
 Analog2Set =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 26))
 St_Jazz =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 33))
 St_Brush =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 41))
+
 # Enhanced Set
 Amb_Standard =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 1))
 Amb_Room =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 9))
@@ -973,12 +990,53 @@ BullySet =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 26))
 Amb_Jazz =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 33))
 Amb_Brush =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 41))
 
-# TODO SD-90 Full Patch implementation 
-BrushingSaw =  Output('SD90-PART-A', channel=1, program=(Special1, 2))
+# WIP SD-90 Full Patch implementation 
+# Special 1 instrument part
+DLAPad=Output('SD90-PART-A', channel=1, program=(Special1, 1))
+BrushingSaw=Output('SD90-PART-A', channel=1, program=(Special1, 2))
+Xtremities=Output('SD90-PART-A', channel=1, program=(Special1, 3))
+Atmostrings=Output('SD90-PART-A', channel=1, program=(Special1, 4))
+NooTongs=Output('SD90-PART-A', channel=1, program=(Special1, 5))
+Mistery=Output('SD90-PART-A', channel=1, program=(Special1, 6))
+EastrnEurope=Output('SD90-PART-A', channel=1, program=(Special1, 7))
+HarpsiAndStr=Output('SD90-PART-A', channel=1, program=(Special1, 8))
+ShoutGt=Output('SD90-PART-A', channel=1, program=(Special1,9))
+CleanChorus=Output('SD90-PART-A', channel=1, program=(Special1, 10))
+MidBoostGt=Output('SD90-PART-A', channel=1, program=(Special1, 11))
+Guitarvibe=Output('SD90-PART-A', channel=1, program=(Special1, 12))
+ClusterSect=Output('SD90-PART-A', channel=1, program=(Special1, 13))
+MariachiTp=Output('SD90-PART-A', channel=1, program=(Special1, 14))
+NYTenor=Output('SD90-PART-A', channel=1, program=(Special1, 15))
+JazzClub=Output('SD90-PART-A', channel=1, program=(Special1, 16))
+MoodyAlto=Output('SD90-PART-A', channel=1, program=(Special1, 17))
+FujiYama=Output('SD90-PART-A', channel=1, program=(Special1, 18))
+
+# Special 2 instrument part
+
+# Classical instrument part
+BirdTweet=Output('SD90-PART-A', channel=1, program=(Classical, 124))
+Applause=Output('SD90-PART-B', channel=1, program=(Classical, 127))
+
+# Classical instrument part - Variation 1
+
+# Classical instrument part - Variation 2
+
+# Classical instrument part - Variation 3
+
+# Classical instrument part - Variation 4
+
+# Classical instrument part - Variation 5
+Siren=Output('SD90-PART-B', channel=1, program=(Classical+Var5, 126))
+
+# Classical instrument part - Variation 6
+Train=Output('SD90-PART-B', channel=1, program=(Classical+Var6, 126))
+
 ### End SD-90 Patch list
 # -------------------------------------------------------------------
 
-InitSoundModule = (ResetSD90 // InitPitchBend)
+ResetSD90 = SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
+
+InitializeSD90 = (ResetSD90 // InitPitchBend)
 
 #-----------------------------------------------------------------------------------------------------------
 # Patches body
@@ -990,6 +1048,7 @@ Notes :
 - L'utilisation du Ctrl(3,value) sert a passer le value dans EVENT_VALUE pour l'unité suivante dans une série d'unité
 - Soit pour assigner une valeur au pédales d'expression du POD HD 500
 - Soit pour déterminer la valeur d'une transition pour le chargement d'une scène du Philips HUE
+- Soit pour contrôler Cakewalk
 
 Controller 3 : ref.: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
 CC      Bin             Hex     Control function    Value       Used as
@@ -999,29 +1058,23 @@ CC      Bin             Hex     Control function    Value       Used as
 HueOff=Call(HueBlackout(hue_config))
 HueNormal=Call(HueScene(hue_config, "Normal"))
 HueGalaxie=Call(HueScene(hue_config, "Galaxie"))
+HueGalaxieMax=Call(HueScene(hue_config, "GalaxieMax"))
 HueDemon=Call(HueScene(hue_config, "Demon"))
 HueSoloRed=Call(HueScene(hue_config, "SoloRed"))
+#-----------------------------------------------------------------------------------------------
+
+# My Cakewalk Generic Control Surface definition -----------------------------------------------
+CakeRecord=Ctrl('SD90-MIDI-OUT-2', 1, 3, 64)
+CakePlay=Ctrl('SD90-MIDI-OUT-2', 1, 3, 66)
+CakeStop=Ctrl('SD90-MIDI-OUT-2', 1, 3, 67)
 #-----------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------
 # Execution patches
 #-----------------------------------------------------------------------------------------------
 
-# TODO Revisiter cela
-# PORTAMENTO 
-#portamento_base=Ctrl(1,1,5,50)
-#portamento_off=Ctrl(1,1,65,0)	# Switch OFF
-#portamento_on=Ctrl(1,1,65,127)  # Switch ON
-#portamento_up=(portamento_base // portamento_on)
-#portamento_off=(portamento_base // portamento_off)
-#legato=Ctrl(1,1,120,0)
 
-d4= Output('SD90-PART-A', channel=10, program=1, volume=100)
-d4_tom= Output('SD90-PART-A', channel=11, program=(Classical+Var1,118), volume=100)
-
-# FX Section
 explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical+Var3,128), volume=100)
-#--------------------------------------------------------------------
 violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
 piano_base =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,1))
 nf_piano = Output('SD90-PART-A', channel=1, program=(Classical,2), volume=100)
@@ -1159,11 +1212,18 @@ p_centurion = (pk5 >> LatchNotes(True,reset='C3') >>
 i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,40) >> Expr1 , Ctrl(3,127) >> Expr2]
 
 # Execution patch
+
+i_big_country_live = [P14D, FS1, FS3, FS4, Ctrl(3,45) >> Expr1 , Ctrl(3,85) >> Expr2]
+p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
+        [
+            Filter(NOTEON) >> [CakePlay],
+            Filter(NOTEOFF) >> HueGalaxieMax, 
+        ])
+
 p_big_country = (pk5 >> Filter(NOTEON) >>
          (
-             (KeyFilter(notes=[67]) >> [FS4, Ctrl(3, 100) >> Expr2]) //
              (KeyFilter(notes=[69]) >> FS4) //
-             (KeyFilter(notes=[71]) >> [FS2, Ctrl(3,100) >> Expr2]) //
+             (KeyFilter(notes=[71]) >> [FS2, Ctrl(3,85) >> Expr2]) //
              (KeyFilter(notes=[72]) >> [FS2, Ctrl(3,127) >> Expr2])
          ))
 
@@ -1184,10 +1244,15 @@ p_rush = (pk5 >> Filter(NOTEON) >>
         ],                
         [
             KeyFilter(notes=[69]) >> FS4,
-            KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100) >> Expr2],
-            KeyFilter(notes=[72]) >> [FS1, FS4, Ctrl(3,120) >> Expr2]
+            KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100) >> Expr2, HueGalaxie],
+            KeyFilter(notes=[72]) >> [FS1, FS4, Ctrl(3,120) >> Expr2, HueSoloRed]
         ]
     ])
+
+# Subdivisions
+
+# Init patch
+i_rush_sub=[P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueGalaxie]
 
 # Grand Designs
 
@@ -1227,7 +1292,7 @@ p_rush_gd = (pk5 >>
 i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueNormal] 
 
 # Foot keyboard output
-p_rush_trees_foot = Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=100, ctrls={93:75, 91:75})
+p_rush_trees_foot = Velocity(fixed=110) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})
 
 # Execution patch
 p_rush_trees=(pk5 >>
@@ -1256,39 +1321,55 @@ p_rush_trees=(pk5 >>
 
 # Rush fin de section ------------------------------------------
 
+
+# FUTUR TESTS
+
+# Glissando
 p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, 'SD90-PART-A'))
 
+# PORTAMENTO 
+#portamento_base=Ctrl(1,1,5,50)
+#portamento_off=Ctrl(1,1,65,0)	# Switch OFF
+#portamento_on=Ctrl(1,1,65,127)  # Switch ON
+#portamento_up=(portamento_base // portamento_on)
+#portamento_off=(portamento_base // portamento_off)
+#legato=Ctrl(1,1,120,0)
 
 #-----------------------------------------------------------------------------------------------------------
 # Control body
 # control.py
-# Controlleur 1 : changement de scene
+# Controlleur 1
 
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
-    CtrlFilter(1, 20, 21, 22) >>
+    CtrlFilter(1, 2, 3, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
     CtrlSplit({
-         1: CtrlMap(1,7) >> Ctrl(GT10BPort, GT10BChannel, EVENT_CTRL, EVENT_VALUE),
+        1: Expr1,
+        2: Expr2,
+        69: Ctrl('SD90-MIDI-OUT-1', nav_controller_channel, EVENT_CTRL, EVENT_VALUE),
         20: Call(NavigateToScene),
         21: Discard(),
         22: Discard(),
+        3: CtrlMap(3,7) >> Ctrl('SD90-MIDI-OUT-1', GT10BChannel, EVENT_CTRL, EVENT_VALUE),
+        4: Ctrl('SD90-MIDI-OUT-1', GT10BChannel, EVENT_CTRL, EVENT_VALUE),
+        26: Program('SD90-PART-A', 1, EVENT_VALUE),
     })
 )
 
 # Keyboard Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player ou le Philips Hue
-# Limite le Control #1 et #7 en %
+# Le CC#7 est en % et le CC#1 en secondes pour Mp3Player
+
 key_controller=key_config["controller"]
 key_transpose=Transpose(key_controller["transpose"])
 
 key_controller_channel=key_controller["channel"]
 key_controller = [
     [
-        CtrlFilter(1, 7) >> CtrlValueFilter(0, 101), 
-        Filter(NOTEON) >> key_transpose
+        Filter(NOTEON) >> key_transpose, 
+        CtrlFilter(7) >> CtrlValueFilter(0, 101), 
+        CtrlFilter(1) >> CtrlValueFilter(0, 121), 
     ] >> Call(Mp3Player(key_config)),
-    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[0]) >> HueOff,
-    Filter(NOTEON) >> key_transpose >> KeyFilter(notes=[48]) >> HueNormal,
-    CtrlFilter(91) >> CtrlMap(91,1) >> Ctrl(hd500_port, hd500_channel, EVENT_CTRL, EVENT_VALUE)
+    Filter(NOTEON) >> key_transpose >> [KeyFilter(notes=[0]) >> HueOff, KeyFilter(notes=[48]) >> HueNormal],
 ]
 
 
@@ -1308,11 +1389,11 @@ _control = (
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
+    1: Scene("Initialize", init_patch=InitializeSD90, patch=Port('SD90-PART-A')),
     2: SceneGroup("Rush",
         [
-            Scene("Subdivisions", init_patch=i_rush, patch=p_rush),
-            Scene("The Trees", init_patch=i_rush_trees//Call(Playlist(playlist_config)), patch=p_rush_trees),
+            Scene("Subdivisions", init_patch=i_rush_sub, patch=p_rush),
+            Scene("TheTrees", init_patch=i_rush_trees//Call(Playlist(playlist_config)), patch=p_rush_trees),
             Scene("Divers", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
             Scene("PowerWindows", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
             Scene("GraceUnderPressure", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
@@ -1333,6 +1414,7 @@ _scenes = {
     5: SceneGroup("Live",
         [
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
+            Scene("In a big country LIVE", init_patch=i_big_country_live, patch=p_big_country // p_big_country_live),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [

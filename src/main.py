@@ -77,6 +77,12 @@ config(
         ('Q49', '__Q49 MIDI 1__',),
 
         ('CME', '__CME M-KEY MIDI 1__',),
+
+        ('MPK1', '__MPK249 MIDI 1__',),
+        ('MPK2', '__MPK249 MIDI 2__',),
+        ('MPK3', '__MPK249 MIDI 3__',),
+        ('MPK4', '__MPK249 MIDI 4__',),
+
     ],
 
 )
@@ -117,7 +123,7 @@ __CONTROL__
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=InitializeSD90, patch=piano),
+    1: Scene("Initialize", init_patch=InitializeSD90, patch=Port('SD90-PART-A')),
 __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------

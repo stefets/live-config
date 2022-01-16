@@ -1,16 +1,18 @@
-# Controlleur 1 : changement de scene
-
-#from devices.hd500 import TunerOn
-
+# Controlleur 1
 
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
-    CtrlFilter(1, 20, 21, 22) >>
+    CtrlFilter(1, 2, 3, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
     CtrlSplit({
-         1: CtrlMap(1,7) >> Ctrl(GT10BPort, GT10BChannel, EVENT_CTRL, EVENT_VALUE),
+        1: Expr1,
+        2: Expr2,
+        69: Ctrl('SD90-MIDI-OUT-1', nav_controller_channel, EVENT_CTRL, EVENT_VALUE),
         20: Call(NavigateToScene),
         21: Discard(),
         22: Discard(),
+        3: CtrlMap(3,7) >> Ctrl('SD90-MIDI-OUT-1', GT10BChannel, EVENT_CTRL, EVENT_VALUE),
+        4: Ctrl('SD90-MIDI-OUT-1', GT10BChannel, EVENT_CTRL, EVENT_VALUE),
+        26: Program('SD90-PART-A', 1, EVENT_VALUE),
     })
 )
 
@@ -20,11 +22,6 @@ nav_controller = (
 key_controller=key_config["controller"]
 key_transpose=Transpose(key_controller["transpose"])
 
-hd500_tuner=Filter(NOTEON) >> key_transpose >> [    
-        KeyFilter(notes=[1]) >> TunerOn,
-        KeyFilter(notes=[3]) >> TunerOff,
-    ]
-
 key_controller_channel=key_controller["channel"]
 key_controller = [
     [
@@ -33,7 +30,6 @@ key_controller = [
         CtrlFilter(1) >> CtrlValueFilter(0, 121), 
     ] >> Call(Mp3Player(key_config)),
     Filter(NOTEON) >> key_transpose >> [KeyFilter(notes=[0]) >> HueOff, KeyFilter(notes=[48]) >> HueNormal],
-    CtrlFilter(91) >> Expr1
 ]
 
 
