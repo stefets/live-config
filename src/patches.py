@@ -17,6 +17,21 @@ HueGalaxie=Call(HueScene(hue_config, "Galaxie"))
 HueGalaxieMax=Call(HueScene(hue_config, "GalaxieMax"))
 HueDemon=Call(HueScene(hue_config, "Demon"))
 HueSoloRed=Call(HueScene(hue_config, "SoloRed"))
+HueDetente=Call(HueScene(hue_config, "Détente"))
+HueVeilleuse=Call(HueScene(hue_config, "Veilleuse"))
+HueLecture=Call(HueScene(hue_config, "Lecture"))
+
+hue_akai_pad = Filter(NOTEON) >> [
+    KeyFilter(notes=[101]) >> HueNormal, 
+    KeyFilter(notes=[102]) >> HueDetente, 
+    KeyFilter(notes=[103]) >> HueLecture, 
+    KeyFilter(notes=[104]) >> HueVeilleuse, 
+    KeyFilter(notes=[105]) >> HueGalaxie, 
+    KeyFilter(notes=[106]) >> HueGalaxieMax, 
+    KeyFilter(notes=[107]) >> HueDemon, 
+    KeyFilter(notes=[108]) >> HueOff, 
+]
+
 #-----------------------------------------------------------------------------------------------
 
 # My Cakewalk Generic Control Surface definition -----------------------------------------------
