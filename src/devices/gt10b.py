@@ -12,9 +12,6 @@ GT10BPort = 'SD90-MIDI-OUT-1'  # 5 pin midi in, recu du SD-90
 #GT10BPort = 'UM2-MIDI-OUT-1'  # 5 pin midi in, recu du UM2
 #GT10BPort = 'GT10B-MIDI-OUT-1'  # USB MODE
 
-# TODO : Rework that sucks
-#GT10B_volume = (ChannelFilter(9) >> Channel(16) >> CtrlFilter(1) >> CtrlMap(1, 7) >> Port(3))
-
 # Banks
 GT10B_bank_0 = (Ctrl(GT10BPort, GT10BChannel, 0, 0) // Ctrl(GT10BPort, GT10BChannel, 32, 0))
 GT10B_bank_1 = (Ctrl(GT10BPort, GT10BChannel, 0, 1) // Ctrl(GT10BPort, GT10BChannel, 32, 0))
@@ -539,15 +536,9 @@ P50_B = (GT10B_bank_3 // GT10B_pgrm_98)
 P50_C = (GT10B_bank_3 // GT10B_pgrm_99)
 P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 
-# TODO : Rework 
-# PortU, _Channel, CC, Value
-# FootsUiw_tch
-# GT10BU_F_S1=Ctrl(3,9,51,64)
-# GT10BU_F_S2=Ctrl(3,9,52,64)
-# GT10BU_F_S3=Ctrl(3,9,53,64)
-# GT10BU_F_S4=Ctrl(3,9,54,64)
-# GT10BU_F_S5=Ctrl(3,9,55,64)
-# GT10BU_F_S6=Ctrl(3,9,56,64)
-# GT10BU_F_S7=Ctrl(3,9,57,64)
-# GT10BU_F_S8=Ctrl(3,9,58,64)
-# GT10BU_T_OE=Ctrl(3,9,59,64)
+# Send CC
+GT10B_Ctrl =  Ctrl(GT10BPort, GT10BChannel, EVENT_CTRL, EVENT_VALUE)
+# Send CC aliases
+GT10B_Tuner = GT10B_Ctrl    
+GT10B_Volume = GT10B_Ctrl
+GT10B_Expression = GT10B_Ctrl

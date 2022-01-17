@@ -2,7 +2,7 @@
 
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
-    CtrlFilter(1, 2, 3, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
+    CtrlFilter(1, 2, 7, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
     CtrlSplit({
         1: Expr1,
         2: Expr2,
@@ -10,8 +10,8 @@ nav_controller = (
         20: Call(NavigateToScene),
         21: Discard(),
         22: Discard(),
-        3: CtrlMap(3,7) >> Ctrl('SD90-MIDI-OUT-1', GT10BChannel, EVENT_CTRL, EVENT_VALUE),
-        4: Ctrl('SD90-MIDI-OUT-1', GT10BChannel, EVENT_CTRL, EVENT_VALUE),
+        7: GT10B_Volume,
+        4: GT10B_Tuner,
         26: Program('SD90-PART-A', 1, EVENT_VALUE),
     })
 )
@@ -32,14 +32,17 @@ key_controller = [
     Filter(NOTEON) >> key_transpose >> [KeyFilter(notes=[0]) >> HueOff, KeyFilter(notes=[48]) >> HueNormal],
 ]
 
+hue_controller_channel = 8
+hue_controller = hue_akai_pad
 
 # Collection de controllers
-controllers = ChannelFilter(key_controller_channel,nav_controller_channel)
+controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel)
 _control = (
 	controllers >>
 	ChannelSplit({
 		key_controller_channel: key_controller,
 		nav_controller_channel: nav_controller,
+        hue_controller_channel: hue_controller,
 	})
 )
 

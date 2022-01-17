@@ -53,10 +53,10 @@ config(
 
     out_ports = [
 
-        ('SD90-PART-A', '20:0'),
-        ('SD90-PART-B', '20:1'),
-        ('SD90-MIDI-OUT-1', '20:2',),
-        ('SD90-MIDI-OUT-2', '20:3',),
+        ('SD90-PART-A', '28:0'),
+        ('SD90-PART-B', '28:1'),
+        ('SD90-MIDI-OUT-1', '28:2',),
+        ('SD90-MIDI-OUT-2', '28:3',),
 
         ('GT10B-MIDI-OUT-1', '',),
 
@@ -67,8 +67,8 @@ config(
 
     in_ports = [
 
-        ('SD90-MIDI-IN-1','20:2',),
-        ('SD90-MIDI-IN-2','20:3',),
+        ('SD90-MIDI-IN-1','28:2',),
+        ('SD90-MIDI-IN-2','28:3',),
 
         ('GT10B-MIDI-IN-1', '',),
 
@@ -78,10 +78,10 @@ config(
 
         ('CME', '',),
 
-        ('MPK1', '24:0',),
-        ('MPK2', '24:1',),
-        ('MPK3', '24:2',),
-        ('MPK4', '24:3',),
+        ('MPK1', '32:0',),
+        ('MPK2', '32:1',),
+        ('MPK3', '32:2',),
+        ('MPK4', '32:3',),
 
     ],
 
@@ -215,9 +215,6 @@ GT10BChannel = configuration['devices']['gt10b']
 GT10BPort = 'SD90-MIDI-OUT-1'  # 5 pin midi in, recu du SD-90
 #GT10BPort = 'UM2-MIDI-OUT-1'  # 5 pin midi in, recu du UM2
 #GT10BPort = 'GT10B-MIDI-OUT-1'  # USB MODE
-
-# TODO : Rework that sucks
-#GT10B_volume = (ChannelFilter(9) >> Channel(16) >> CtrlFilter(1) >> CtrlMap(1, 7) >> Port(3))
 
 # Banks
 GT10B_bank_0 = (Ctrl(GT10BPort, GT10BChannel, 0, 0) // Ctrl(GT10BPort, GT10BChannel, 32, 0))
@@ -743,18 +740,12 @@ P50_B = (GT10B_bank_3 // GT10B_pgrm_98)
 P50_C = (GT10B_bank_3 // GT10B_pgrm_99)
 P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 
-# TODO : Rework 
-# PortU, _Channel, CC, Value
-# FootsUiw_tch
-# GT10BU_F_S1=Ctrl(3,9,51,64)
-# GT10BU_F_S2=Ctrl(3,9,52,64)
-# GT10BU_F_S3=Ctrl(3,9,53,64)
-# GT10BU_F_S4=Ctrl(3,9,54,64)
-# GT10BU_F_S5=Ctrl(3,9,55,64)
-# GT10BU_F_S6=Ctrl(3,9,56,64)
-# GT10BU_F_S7=Ctrl(3,9,57,64)
-# GT10BU_F_S8=Ctrl(3,9,58,64)
-# GT10BU_T_OE=Ctrl(3,9,59,64)
+# Send CC
+GT10B_Ctrl =  Ctrl(GT10BPort, GT10BChannel, EVENT_CTRL, EVENT_VALUE)
+# Send CC aliases
+GT10B_Tuner = GT10B_Ctrl    
+GT10B_Volume = GT10B_Ctrl
+GT10B_Expression = GT10B_Ctrl
 #
 # Line 6 POD-HD-500
 #
@@ -1061,6 +1052,21 @@ HueGalaxie=Call(HueScene(hue_config, "Galaxie"))
 HueGalaxieMax=Call(HueScene(hue_config, "GalaxieMax"))
 HueDemon=Call(HueScene(hue_config, "Demon"))
 HueSoloRed=Call(HueScene(hue_config, "SoloRed"))
+HueDetente=Call(HueScene(hue_config, "Détente"))
+HueVeilleuse=Call(HueScene(hue_config, "Veilleuse"))
+HueLecture=Call(HueScene(hue_config, "Lecture"))
+
+hue_akai_pad = Filter(NOTEON) >> [
+    KeyFilter(notes=[101]) >> HueNormal, 
+    KeyFilter(notes=[102]) >> HueDetente, 
+    KeyFilter(notes=[103]) >> HueLecture, 
+    KeyFilter(notes=[104]) >> HueVeilleuse, 
+    KeyFilter(notes=[105]) >> HueGalaxie, 
+    KeyFilter(notes=[106]) >> HueGalaxieMax, 
+    KeyFilter(notes=[107]) >> HueDemon, 
+    KeyFilter(notes=[108]) >> HueOff, 
+]
+
 #-----------------------------------------------------------------------------------------------
 
 # My Cakewalk Generic Control Surface definition -----------------------------------------------
@@ -1342,7 +1348,7 @@ p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, 'SD90-PART
 
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
-    CtrlFilter(1, 2, 3, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
+    CtrlFilter(1, 2, 7, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
     CtrlSplit({
         1: Expr1,
         2: Expr2,
@@ -1350,8 +1356,8 @@ nav_controller = (
         20: Call(NavigateToScene),
         21: Discard(),
         22: Discard(),
-        3: CtrlMap(3,7) >> Ctrl('SD90-MIDI-OUT-1', GT10BChannel, EVENT_CTRL, EVENT_VALUE),
-        4: Ctrl('SD90-MIDI-OUT-1', GT10BChannel, EVENT_CTRL, EVENT_VALUE),
+        7: GT10B_Volume,
+        4: GT10B_Tuner,
         26: Program('SD90-PART-A', 1, EVENT_VALUE),
     })
 )
@@ -1372,14 +1378,17 @@ key_controller = [
     Filter(NOTEON) >> key_transpose >> [KeyFilter(notes=[0]) >> HueOff, KeyFilter(notes=[48]) >> HueNormal],
 ]
 
+hue_controller_channel = 8
+hue_controller = hue_akai_pad
 
 # Collection de controllers
-controllers = ChannelFilter(key_controller_channel,nav_controller_channel)
+controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel)
 _control = (
 	controllers >>
 	ChannelSplit({
 		key_controller_channel: key_controller,
 		nav_controller_channel: nav_controller,
+        hue_controller_channel: hue_controller,
 	})
 )
 
