@@ -151,26 +151,66 @@ NYTenor=Output('SD90-PART-A', channel=1, program=(Special1, 15))
 JazzClub=Output('SD90-PART-A', channel=1, program=(Special1, 16))
 MoodyAlto=Output('SD90-PART-A', channel=1, program=(Special1, 17))
 FujiYama=Output('SD90-PART-A', channel=1, program=(Special1, 18))
+SDPiano=Output('SD90-PART-A', channel=1, program=(Special1, 19))
 
 # Special 2 instrument part
+RichChoir=Output('SD90-PART-A', channel=1, program=(Special2, 18))
+OBBorealis=Output('SD90-PART-A', channel=1, program=(Special2, 80))
+VintagePhase=Output('SD90-PART-A', channel=1, program=(Special2, 82))
+FifthAtmAft=Output('SD90-PART-A', channel=1, program=(Special2, 85))
+Borealis=Output('SD90-PART-A', channel=1, program=(Special2, 106))
+CircularPad=Output('SD90-PART-A', channel=1, program=(Special2, 107))
+Oxigenizer=Output('SD90-PART-A', channel=1, program=(Special2, 108))
+Quasar=Output('SD90-PART-A', channel=1, program=(Special2, 109))
+HellSection=Output('SD90-PART-A', channel=1, program=(Special2, 111))
+
 
 # Classical instrument part
-BirdTweet=Output('SD90-PART-A', channel=1, program=(Classical, 124))
-Applause=Output('SD90-PART-B', channel=1, program=(Classical, 127))
+BirdTweet=Output('SD90-PART-B', channel=4, program=(Classical, 124))
+Applause=Output('SD90-PART-B', channel=8, program=(Classical, 127))
 
 # Classical instrument part - Variation 1
+Itopia=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 92))
+Kalimba=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 109))
+BagPipe=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 110))
+Dog=Output('SD90-PART-B', channel=14, program=(Classical+Var1, 124))
+Telephone2=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 125))
+CarEngine=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 126))
+Laughing=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 127))
 
 # Classical instrument part - Variation 2
+Screaming=Output('SD90-PART-B', channel=13, program=(Classical+Var2, 127))
+DoorCreak=Output('SD90-PART-B', channel=1, program=(Classical+Var2, 125))
+Thunder=Output('SD90-PART-B', channel=15, program=(Classical+Var2, 123))
 
 # Classical instrument part - Variation 3
+Wind=Output('SD90-PART-B', channel=3, program=(Classical+Var3, 123))
+Explosion=Output('SD90-PART-B', channel=7, program=(Classical+Var3, 128))
 
 # Classical instrument part - Variation 4
+Stream=Output('SD90-PART-B', channel=12, program=(Classical+Var4, 123))
+
 
 # Classical instrument part - Variation 5
-Siren=Output('SD90-PART-B', channel=1, program=(Classical+Var5, 126))
+Siren=Output('SD90-PART-B', channel=5, program=(Classical+Var5, 126))
+Bubble=Output('SD90-PART-B', channel=1, program=(Classical+Var5, 123))
 
 # Classical instrument part - Variation 6
-Train=Output('SD90-PART-B', channel=1, program=(Classical+Var6, 126))
+Train=Output('SD90-PART-B', channel=6, program=(Classical+Var6, 126))
+
+# Classical instrument part - Variation 7
+Jetplane=Output('SD90-PART-B', channel=1, program=(Classical+Var7, 126))
+
+# Classical instrument part - Variation 8
+Starship=Output('SD90-PART-B', channel=1, program=(Classical+Var8, 126))
+
+# Contemporary instrument part
+Helicpoter=Output('SD90-PART-B', channel=1, program=(Contemporary, 126))
+Seashore=Output('SD90-PART-B', channel=2, program=(Contemporary, 123))
+
+# Contemporary instrument part - Variation 1
+Rain=Output('SD90-PART-B', channel=1, program=(Contemporary+Var1, 123))
+
 
 ### End SD-90 Patch list
 # -------------------------------------------------------------------

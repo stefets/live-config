@@ -21,7 +21,9 @@ HueDetente=Call(HueScene(hue_config, "Détente"))
 HueVeilleuse=Call(HueScene(hue_config, "Veilleuse"))
 HueLecture=Call(HueScene(hue_config, "Lecture"))
 
-hue_akai_pad = Filter(NOTEON) >> [
+violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
+
+akai_pad = Filter(NOTEON) >> [
     KeyFilter(notes=[101]) >> HueNormal, 
     KeyFilter(notes=[102]) >> HueDetente, 
     KeyFilter(notes=[103]) >> HueLecture, 
@@ -30,6 +32,18 @@ hue_akai_pad = Filter(NOTEON) >> [
     KeyFilter(notes=[106]) >> HueGalaxieMax, 
     KeyFilter(notes=[107]) >> HueDemon, 
     KeyFilter(notes=[108]) >> HueOff, 
+
+]
+
+akai_pad_nature = [
+    KeyFilter(notes=[109]) >> LatchNotes(polyphonic=True) >> Key(0) >> Rain,
+    KeyFilter(notes=[110]) >> Key(12) >> Thunder,
+    KeyFilter(notes=[111]) >> Key(48) >> Dog,
+    KeyFilter(notes=[112]) >> Key(24) >> BirdTweet,
+    KeyFilter(notes=[113]) >> Key(72) >> Screaming,
+    KeyFilter(notes=[114]) >> Key(48) >> Explosion, 
+    KeyFilter(notes=[115]) >> Key(36) >> Stream, 
+    KeyFilter(notes=[116]) >> LatchNotes(polyphonic=True) >> Key(36) >> Applause, 
 ]
 
 #-----------------------------------------------------------------------------------------------
@@ -45,8 +59,7 @@ CakeStop=Ctrl('SD90-MIDI-OUT-2', 1, 3, 67)
 #-----------------------------------------------------------------------------------------------
 
 
-explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical+Var3,128), volume=100)
-violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
+#explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical+Var3,128), volume=100)
 piano_base =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,1))
 nf_piano = Output('SD90-PART-A', channel=1, program=(Classical,2), volume=100)
 piano =  Output('SD90-PART-A', channel=3, program=(Classical,1), volume=100)
@@ -203,7 +216,7 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
 # Band : Rush ------------------------------------------
 
 # Default init patch
-i_rush = [P02A, Ctrl(3,40) >> Expr1]
+i_rush = [P02A, Ctrl(3,50) >> Expr1, Ctrl(3,100) >> Expr2]
 
 # Default patch - tout en paralelle mais séparé par contexte
 p_rush = (pk5 >> Filter(NOTEON) >>
@@ -223,12 +236,12 @@ p_rush = (pk5 >> Filter(NOTEON) >>
 # Subdivisions
 
 # Init patch
-i_rush_sub=[P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueGalaxie]
+i_rush_sub=[P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2]
 
 # Grand Designs
 
 # Init patch
-i_rush_gd = [P02A, FS1, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2, HueNormal] 
+i_rush_gd = [P02A, FS1, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2] 
 
 # Execution patch
 p_rush_gd = (pk5 >> 
@@ -260,7 +273,7 @@ p_rush_gd = (pk5 >>
 # The Trees
 
 # Init patch
-i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueNormal] 
+i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2] 
 
 # Foot keyboard output
 p_rush_trees_foot = Velocity(fixed=110) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})

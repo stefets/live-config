@@ -123,7 +123,7 @@ __CONTROL__
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=InitializeSD90, patch=Port('SD90-PART-A')),
+    1: Scene("Initialize", init_patch=InitializeSD90, patch=[akai_pad_nature]),
 __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ __SCENES__
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-pre  = ~ChannelFilter(8,9)
+pre  = ~ChannelFilter(8,9,11)
 post = Pass()
 
 # DEBUG

@@ -32,8 +32,8 @@ key_controller = [
     Filter(NOTEON) >> key_transpose >> [KeyFilter(notes=[0]) >> HueOff, KeyFilter(notes=[48]) >> HueNormal],
 ]
 
-hue_controller_channel = 8
-hue_controller = hue_akai_pad
+hue_controller_channel = 11
+hue_controller = akai_pad
 
 # Collection de controllers
 controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel)
