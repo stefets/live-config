@@ -5,3 +5,4 @@ render.py
 *.pyc
 .venv
 .vscode
+.cache
