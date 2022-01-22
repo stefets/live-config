@@ -35,6 +35,9 @@ key_controller = [
 hue_controller_channel = 11
 hue_controller = akai_pad
 
+spotify_channel = 11
+spotify_patch = Filter(NOTEON) >> Transpose(-36) >> Call(SpotifyPlayer(spotify_config))
+
 # Collection de controllers
 controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel)
 _control = (
@@ -43,6 +46,7 @@ _control = (
 		key_controller_channel: key_controller,
 		nav_controller_channel: nav_controller,
         hue_controller_channel: hue_controller,
+        spotify_channel : spotify_patch
 	})
 )
 

@@ -71,5 +71,9 @@
             Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
             Scene("Off", init_patch=HueOff, patch=Discard()),
         ]),
+    11: SceneGroup("Spotify", 
+        [
+            Scene("Medieval", Discard()),
+        ]),
 
 

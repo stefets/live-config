@@ -22,6 +22,7 @@ from mididings.engine import scenes, current_scene, switch_scene, current_subsce
 
 from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
+from plugins.audioplayer.spotify import SpotifyPlayer
 
 
 # Setup path
@@ -37,6 +38,7 @@ hue_config=plugins['lightning']
 key_config=plugins['audioplayer']
 playlist_config=key_config["playlist"]
 net_config=plugins['net']
+spotify_config=plugins['spotify']
 
 config(
 

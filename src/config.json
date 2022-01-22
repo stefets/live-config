@@ -1,40 +1,45 @@
 {
-  "devices" : {
-      "gt10b" : 16,
-      "hd500" : 9
-  },
-  "inputs" : {
-      "cme" : 1,
-      "q49" : 8,
-      "fcb" : 9,
-      "pk5" : 3
-  },
-  "nav_controller_channel" : 9,
-  "plugins" : {
-    "lightning": {
-      "enable" : true,
-      "ip" : "192.168.1.225",
-      "username" : "kwNE1s6SuSmsWQnJO5IH7qVV6YrEkSmRBjXLtblu",
-      "zone" : "Salle de musique",
-      "cc_transition" : 3
+    "devices": {
+        "gt10b": 16,
+        "hd500": 9
     },
-    "audioplayer": {
-      "enable" : true,
-      "player" : "mpg123",
-      "audiodevice" : "hw:3,0",
-      "playlist" : {
-        "datasource": "/media/pi/mididings/soundlib/",
-        "symlink_target": "/media/pi/mididings/tmp/",
-        "symlink_builder": "./mksymlinks.sh"
-      },
-      "controller" : {
-          "size" : 49,
-          "transpose" : -36,
-          "channel" : 8
-      }  
+    "inputs": {
+        "cme": 1,
+        "q49": 8,
+        "fcb": 9,
+        "pk5": 3
     },
-    "net" : {
-        "enable" : true
+    "nav_controller_channel": 9,
+    "plugins": {
+        "lightning": {
+            "enable": true,
+            "ip": "192.168.1.225",
+            "username": "kwNE1s6SuSmsWQnJO5IH7qVV6YrEkSmRBjXLtblu",
+            "zone": "Salle de musique",
+            "cc_transition": 3
+        },
+        "audioplayer": {
+            "enable": false,
+            "player": "mpg123",
+            "audiodevice": "hw:3,0",
+            "playlist": {
+                "datasource": "/media/pi/mididings/soundlib/",
+                "symlink_target": "/media/pi/mididings/tmp/",
+                "symlink_builder": "./mksymlinks.sh"
+            },
+            "controller": {
+                "size": 49,
+                "transpose": -36,
+                "channel": 8
+            }
+        },
+        "spotify": {
+            "enable": true,
+            "device": "SM-T500",
+            "Medieval": "3zkrx4OGDerC4vYoKWZ7d7"
+        },
+        "net": {
+            "enable": true
+        }
     }
-  }
 }
