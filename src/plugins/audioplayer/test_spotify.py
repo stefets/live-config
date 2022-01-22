@@ -1,14 +1,21 @@
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyOAuth
 
-auth_manager = SpotifyClientCredentials()
-sp = spotipy.Spotify(auth_manager=auth_manager)
+artist = '5vjL05W1AhHwmAjGEkrwZi'
+track = 'spotify:track:0jYZojrjaEYZqdvrF4RVPZ'
 
-playlists = sp.user_playlists('spotify')
-while playlists:
-    for i, playlist in enumerate(playlists['items']):
-        print("%4d %s %s" % (i + 1 + playlists['offset'], playlist['uri'],  playlist['name']))
-    if playlists['next']:
-        playlists = sp.next(playlists)
-    else:
-        playlists = None
+scope = "user-read-playback-state,user-modify-playback-state"
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+
+def show_devices():
+    # Shows playing devices
+    res = sp.devices()
+    for d in res["devices"]:
+        print(f"{d['name']}: {d['id']}")
+
+
+if __name__ == '__main__':
+    show_devices()
+    sp.start_playback(
+        device_id="142d6fbf67dabeb7e40c9ac0594b27e8fb59d296",
+        uris=[track])
