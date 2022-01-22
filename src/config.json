@@ -23,8 +23,8 @@
       "player" : "mpg123",
       "audiodevice" : "hw:3,0",
       "playlist" : {
-        "datasource": "/media/mididings/soundlib/",
-        "symlink_target": "/media/mididings/tmp/",
+        "datasource": "/media/pi/mididings/soundlib/",
+        "symlink_target": "/media/pi/mididings/tmp/",
         "symlink_builder": "./mksymlinks.sh"
       },
       "controller" : {

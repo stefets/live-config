@@ -1111,14 +1111,14 @@ akai_pad = Filter(NOTEON) >> [
 ]
 
 akai_pad_nature = [
-    KeyFilter(notes=[109]) >> LatchNotes(polyphonic=True) >> Key(0) >> Rain,
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[109]) >> LatchNotes(polyphonic=True) >> Key(0) >> Rain,
     KeyFilter(notes=[110]) >> Key(12) >> Thunder,
     KeyFilter(notes=[111]) >> Key(48) >> Dog,
     KeyFilter(notes=[112]) >> Key(24) >> BirdTweet,
     KeyFilter(notes=[113]) >> Key(72) >> Screaming,
     KeyFilter(notes=[114]) >> Key(48) >> Explosion, 
-    KeyFilter(notes=[115]) >> Key(36) >> Stream, 
-    KeyFilter(notes=[116]) >> LatchNotes(polyphonic=True) >> Key(36) >> Applause, 
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[115]) >> Key(12) >> Wind, 
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[116]) >> LatchNotes(polyphonic=True) >> Key(36) >> Applause, 
 ]
 
 #-----------------------------------------------------------------------------------------------
@@ -1243,17 +1243,17 @@ limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=(Special1,1
 # Centurion 
 
 # Init patch 
-i_centurion=Discard()
+i_centurion=[Call(Playlist(playlist_config)), P02A, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2]
 
 # Execution patch
-seq_centurion = (Velocity(fixed=110) >>
-	(
-		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110, pan=32) // 
+seq_centurion = (Velocity(fixed=110) >>	
+    [
+		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110, pan=32),
 		Output('SD90-PART-A', channel=2, program=(Enhanced,82), volume=110, pan=96)
-	))
+	])
 
 # Filter
-p_centurion = (pk5 >> LatchNotes(True,reset='C3') >>
+p_centurion = (LatchNotes(True, reset='C3') >>
 	(
 		(KeyFilter('D3') >> Key('D1')) //
 		(KeyFilter('E3') >> Key('D2')) //
@@ -1451,7 +1451,7 @@ _control = (
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=InitializeSD90, patch=[akai_pad_nature]),
+    1: Scene("Initialize", init_patch=InitializeSD90, patch=Discard()),
     2: SceneGroup("Rush",
         [
             Scene("Subdivisions", init_patch=i_rush_sub, patch=p_rush),
@@ -1469,11 +1469,11 @@ _scenes = {
             Scene("T4F", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
             Scene("Toto", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
         ]),
-    4: SceneGroup("Futur",
+    4: SceneGroup("Free",
         [
-            Scene("Futur", init_patch=Discard(), patch=Discard()),
+            Scene("Free", init_patch=Discard(), patch=Discard()),
         ]),
-    5: SceneGroup("Live",
+    5: SceneGroup("BigCountry",
         [
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
             Scene("In a big country LIVE", init_patch=i_big_country_live, patch=p_big_country // p_big_country_live),
@@ -1502,6 +1502,7 @@ _scenes = {
         ]),
     8: SceneGroup("Compositions",
         [
+            Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
         ]),
     9: SceneGroup("Musique",
@@ -1510,8 +1511,7 @@ _scenes = {
             Scene("Delirium", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Hits", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Middleage", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("NinaHagen", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("NinaHagen", init_patch=Call(Playlist(playlist_config)), patch=Discard()),            
             Scene("SteveMorse", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Timeline", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("TV", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
@@ -1535,7 +1535,7 @@ _scenes = {
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-pre  = ~ChannelFilter(8,9,11)
+pre  = ~ChannelFilter(8, 9, 11)
 post = Pass()
 
 # DEBUG

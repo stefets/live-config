@@ -36,14 +36,14 @@ akai_pad = Filter(NOTEON) >> [
 ]
 
 akai_pad_nature = [
-    KeyFilter(notes=[109]) >> LatchNotes(polyphonic=True) >> Key(0) >> Rain,
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[109]) >> LatchNotes(polyphonic=True) >> Key(0) >> Rain,
     KeyFilter(notes=[110]) >> Key(12) >> Thunder,
     KeyFilter(notes=[111]) >> Key(48) >> Dog,
     KeyFilter(notes=[112]) >> Key(24) >> BirdTweet,
     KeyFilter(notes=[113]) >> Key(72) >> Screaming,
     KeyFilter(notes=[114]) >> Key(48) >> Explosion, 
-    KeyFilter(notes=[115]) >> Key(36) >> Stream, 
-    KeyFilter(notes=[116]) >> LatchNotes(polyphonic=True) >> Key(36) >> Applause, 
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[115]) >> Key(12) >> Wind, 
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[116]) >> LatchNotes(polyphonic=True) >> Key(36) >> Applause, 
 ]
 
 #-----------------------------------------------------------------------------------------------
@@ -164,21 +164,23 @@ limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=(Special1,1
 
 # Band : Moi ----------------------------------------------------
 
-
-# Centurion 
+# Song : Centurion 
 
 # Init patch 
-i_centurion=Discard()
+i_centurion = [
+        Call(Playlist(playlist_config)), 
+        P02A, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2
+]
 
 # Execution patch
-seq_centurion = (Velocity(fixed=110) >>
-	(
-		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110, pan=32) // 
+seq_centurion = (Velocity(fixed=110) >>	
+    [
+		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110, pan=32),
 		Output('SD90-PART-A', channel=2, program=(Enhanced,82), volume=110, pan=96)
-	))
+	])
 
 # Filter
-p_centurion = (pk5 >> LatchNotes(True,reset='C3') >>
+p_centurion = (LatchNotes(True, reset='C3') >>
 	(
 		(KeyFilter('D3') >> Key('D1')) //
 		(KeyFilter('E3') >> Key('D2')) //
@@ -190,7 +192,7 @@ p_centurion = (pk5 >> LatchNotes(True,reset='C3') >>
 
 # Band : Big Country ------------------------------------------
 
-# In a big country
+# Song : In a big country
 
 # Init patch
 i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,40) >> Expr1 , Ctrl(3,127) >> Expr2]

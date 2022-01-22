@@ -15,11 +15,11 @@
             Scene("T4F", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
             Scene("Toto", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
         ]),
-    4: SceneGroup("Futur",
+    4: SceneGroup("Free",
         [
-            Scene("Futur", init_patch=Discard(), patch=Discard()),
+            Scene("Free", init_patch=Discard(), patch=Discard()),
         ]),
-    5: SceneGroup("Live",
+    5: SceneGroup("BigCountry",
         [
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
             Scene("In a big country LIVE", init_patch=i_big_country_live, patch=p_big_country // p_big_country_live),
@@ -48,6 +48,7 @@
         ]),
     8: SceneGroup("Compositions",
         [
+            Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
         ]),
     9: SceneGroup("Musique",
@@ -56,8 +57,7 @@
             Scene("Delirium", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Hits", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Middleage", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("NinaHagen", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("NinaHagen", init_patch=Call(Playlist(playlist_config)), patch=Discard()),            
             Scene("SteveMorse", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Timeline", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("TV", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
