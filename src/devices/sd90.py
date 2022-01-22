@@ -1,8 +1,7 @@
 #
-# EDIROL SD-90 syntaxe
+# The MIDIDINGS syntax for the EDIROL SD-90 Studio Canvas sound module (not fully implemented)
 #
 
-ResetSD90 = SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
 factor = 128
 
 '''
@@ -34,7 +33,7 @@ SoloDrum=106*factor
 EnhancedDrum=107*factor
 
 '''
-Variable
+Variation
 '''
 Var1=1
 Var2=2
@@ -65,6 +64,7 @@ PB_A13 = (Ctrl('SD90-PART-A', 13, 100, 0) // Ctrl('SD90-PART-A', 13, 101, 0) // 
 PB_A14 = (Ctrl('SD90-PART-A', 14, 100, 0) // Ctrl('SD90-PART-A', 14, 101, 0) // Ctrl('SD90-PART-A', 14, 6, 12) // Ctrl('SD90-PART-A', 14, 38, 0))
 PB_A15 = (Ctrl('SD90-PART-A', 15, 100, 0) // Ctrl('SD90-PART-A', 15, 101, 0) // Ctrl('SD90-PART-A', 15, 6, 12) // Ctrl('SD90-PART-A', 15, 38, 0))
 PB_A16 = (Ctrl('SD90-PART-A', 16, 100, 0) // Ctrl('SD90-PART-A', 16, 101, 0) // Ctrl('SD90-PART-A', 16, 6, 12) // Ctrl('SD90-PART-A', 16, 38, 0))
+
 # SD-90 Part B - All Channel
 PB_B01 = (Ctrl('SD90-PART-B', 1, 100, 0) // Ctrl('SD90-PART-B', 1, 101, 0) // Ctrl('SD90-PART-B', 1, 6, 12) // Ctrl('SD90-PART-B', 1, 38, 0))
 PB_B02 = (Ctrl('SD90-PART-B', 2, 100, 0) // Ctrl('SD90-PART-B', 2, 101, 0) // Ctrl('SD90-PART-B', 2, 6, 12) // Ctrl('SD90-PART-B', 2, 38, 0))
@@ -92,6 +92,7 @@ InitPitchBend = (
 # --------------------------------------------
 # SD-90 # DRUM MAPPING
 # --------------------------------------------
+
 # Classical Set
 StandardSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 1))
 RoomSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 9))
@@ -102,6 +103,7 @@ JazzSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 33))
 BrushSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 41))
 OrchestraSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 49))
 SFXSet =  Output('SD90-PART-A', channel=10, program=(ClassicalDrum, 57))
+
 # Contemporary Set
 StandardSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 1))
 RoomSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 9))
@@ -110,6 +112,7 @@ DanceSet =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 25))
 RaveSet =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 26))
 JazzSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 33))
 BrushSet2 =  Output('SD90-PART-A', channel=10, program=(ContemporaryDrum, 41))
+
 # Solo Set
 St_Standard =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 1))
 St_Room =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 9))
@@ -118,6 +121,7 @@ RustSet =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 25))
 Analog2Set =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 26))
 St_Jazz =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 33))
 St_Brush =  Output('SD90-PART-A', channel=10, program=(SoloDrum, 41))
+
 # Enhanced Set
 Amb_Standard =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 1))
 Amb_Room =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 9))
@@ -127,9 +131,50 @@ BullySet =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 26))
 Amb_Jazz =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 33))
 Amb_Brush =  Output('SD90-PART-A', channel=10, program=(EnhancedDrum, 41))
 
-# TODO SD-90 Full Patch implementation 
-BrushingSaw =  Output('SD90-PART-A', channel=1, program=(Special1, 2))
+# WIP SD-90 Full Patch implementation 
+# Special 1 instrument part
+DLAPad=Output('SD90-PART-A', channel=1, program=(Special1, 1))
+BrushingSaw=Output('SD90-PART-A', channel=1, program=(Special1, 2))
+Xtremities=Output('SD90-PART-A', channel=1, program=(Special1, 3))
+Atmostrings=Output('SD90-PART-A', channel=1, program=(Special1, 4))
+NooTongs=Output('SD90-PART-A', channel=1, program=(Special1, 5))
+Mistery=Output('SD90-PART-A', channel=1, program=(Special1, 6))
+EastrnEurope=Output('SD90-PART-A', channel=1, program=(Special1, 7))
+HarpsiAndStr=Output('SD90-PART-A', channel=1, program=(Special1, 8))
+ShoutGt=Output('SD90-PART-A', channel=1, program=(Special1,9))
+CleanChorus=Output('SD90-PART-A', channel=1, program=(Special1, 10))
+MidBoostGt=Output('SD90-PART-A', channel=1, program=(Special1, 11))
+Guitarvibe=Output('SD90-PART-A', channel=1, program=(Special1, 12))
+ClusterSect=Output('SD90-PART-A', channel=1, program=(Special1, 13))
+MariachiTp=Output('SD90-PART-A', channel=1, program=(Special1, 14))
+NYTenor=Output('SD90-PART-A', channel=1, program=(Special1, 15))
+JazzClub=Output('SD90-PART-A', channel=1, program=(Special1, 16))
+MoodyAlto=Output('SD90-PART-A', channel=1, program=(Special1, 17))
+FujiYama=Output('SD90-PART-A', channel=1, program=(Special1, 18))
+
+# Special 2 instrument part
+
+# Classical instrument part
+BirdTweet=Output('SD90-PART-A', channel=1, program=(Classical, 124))
+Applause=Output('SD90-PART-B', channel=1, program=(Classical, 127))
+
+# Classical instrument part - Variation 1
+
+# Classical instrument part - Variation 2
+
+# Classical instrument part - Variation 3
+
+# Classical instrument part - Variation 4
+
+# Classical instrument part - Variation 5
+Siren=Output('SD90-PART-B', channel=1, program=(Classical+Var5, 126))
+
+# Classical instrument part - Variation 6
+Train=Output('SD90-PART-B', channel=1, program=(Classical+Var6, 126))
+
 ### End SD-90 Patch list
 # -------------------------------------------------------------------
 
-InitSoundModule = (ResetSD90 // InitPitchBend)
+ResetSD90 = SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
+
+InitializeSD90 = (ResetSD90 // InitPitchBend)
