@@ -22,6 +22,7 @@ from mididings.engine import scenes, current_scene, switch_scene, current_subsce
 
 from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
+from plugins.audioplayer.spotify import SpotifyPlayer
 
 
 # Setup path
@@ -37,6 +38,7 @@ hue_config=plugins['lightning']
 key_config=plugins['audioplayer']
 playlist_config=key_config["playlist"]
 net_config=plugins['net']
+spotify_config=plugins['spotify']
 
 config(
 
@@ -123,7 +125,7 @@ __CONTROL__
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=InitializeSD90, patch=Port('SD90-PART-A')),
+    1: Scene("Initialize", init_patch=InitializeSD90, patch=Discard()),
 __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------
@@ -133,7 +135,7 @@ __SCENES__
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-pre  = ~ChannelFilter(8,9)
+pre  = ~ChannelFilter(8, 9, 11)
 post = Pass()
 
 # DEBUG

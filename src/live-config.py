@@ -1001,26 +1001,66 @@ NYTenor=Output('SD90-PART-A', channel=1, program=(Special1, 15))
 JazzClub=Output('SD90-PART-A', channel=1, program=(Special1, 16))
 MoodyAlto=Output('SD90-PART-A', channel=1, program=(Special1, 17))
 FujiYama=Output('SD90-PART-A', channel=1, program=(Special1, 18))
+SDPiano=Output('SD90-PART-A', channel=1, program=(Special1, 19))
 
 # Special 2 instrument part
+RichChoir=Output('SD90-PART-A', channel=1, program=(Special2, 18))
+OBBorealis=Output('SD90-PART-A', channel=1, program=(Special2, 80))
+VintagePhase=Output('SD90-PART-A', channel=1, program=(Special2, 82))
+FifthAtmAft=Output('SD90-PART-A', channel=1, program=(Special2, 85))
+Borealis=Output('SD90-PART-A', channel=1, program=(Special2, 106))
+CircularPad=Output('SD90-PART-A', channel=1, program=(Special2, 107))
+Oxigenizer=Output('SD90-PART-A', channel=1, program=(Special2, 108))
+Quasar=Output('SD90-PART-A', channel=1, program=(Special2, 109))
+HellSection=Output('SD90-PART-A', channel=1, program=(Special2, 111))
+
 
 # Classical instrument part
-BirdTweet=Output('SD90-PART-A', channel=1, program=(Classical, 124))
-Applause=Output('SD90-PART-B', channel=1, program=(Classical, 127))
+BirdTweet=Output('SD90-PART-B', channel=4, program=(Classical, 124))
+Applause=Output('SD90-PART-B', channel=8, program=(Classical, 127))
 
 # Classical instrument part - Variation 1
+Itopia=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 92))
+Kalimba=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 109))
+BagPipe=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 110))
+Dog=Output('SD90-PART-B', channel=14, program=(Classical+Var1, 124))
+Telephone2=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 125))
+CarEngine=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 126))
+Laughing=Output('SD90-PART-B', channel=1, program=(Classical+Var1, 127))
 
 # Classical instrument part - Variation 2
+Screaming=Output('SD90-PART-B', channel=13, program=(Classical+Var2, 127))
+DoorCreak=Output('SD90-PART-B', channel=1, program=(Classical+Var2, 125))
+Thunder=Output('SD90-PART-B', channel=15, program=(Classical+Var2, 123))
 
 # Classical instrument part - Variation 3
+Wind=Output('SD90-PART-B', channel=3, program=(Classical+Var3, 123))
+Explosion=Output('SD90-PART-B', channel=7, program=(Classical+Var3, 128))
 
 # Classical instrument part - Variation 4
+Stream=Output('SD90-PART-B', channel=12, program=(Classical+Var4, 123))
+
 
 # Classical instrument part - Variation 5
-Siren=Output('SD90-PART-B', channel=1, program=(Classical+Var5, 126))
+Siren=Output('SD90-PART-B', channel=5, program=(Classical+Var5, 126))
+Bubble=Output('SD90-PART-B', channel=1, program=(Classical+Var5, 123))
 
 # Classical instrument part - Variation 6
-Train=Output('SD90-PART-B', channel=1, program=(Classical+Var6, 126))
+Train=Output('SD90-PART-B', channel=6, program=(Classical+Var6, 126))
+
+# Classical instrument part - Variation 7
+Jetplane=Output('SD90-PART-B', channel=1, program=(Classical+Var7, 126))
+
+# Classical instrument part - Variation 8
+Starship=Output('SD90-PART-B', channel=1, program=(Classical+Var8, 126))
+
+# Contemporary instrument part
+Helicpoter=Output('SD90-PART-B', channel=1, program=(Contemporary, 126))
+Seashore=Output('SD90-PART-B', channel=2, program=(Contemporary, 123))
+
+# Contemporary instrument part - Variation 1
+Rain=Output('SD90-PART-B', channel=1, program=(Contemporary+Var1, 123))
+
 
 ### End SD-90 Patch list
 # -------------------------------------------------------------------
@@ -1056,7 +1096,9 @@ HueDetente=Call(HueScene(hue_config, "Détente"))
 HueVeilleuse=Call(HueScene(hue_config, "Veilleuse"))
 HueLecture=Call(HueScene(hue_config, "Lecture"))
 
-hue_akai_pad = Filter(NOTEON) >> [
+violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
+
+akai_pad = Filter(NOTEON) >> [
     KeyFilter(notes=[101]) >> HueNormal, 
     KeyFilter(notes=[102]) >> HueDetente, 
     KeyFilter(notes=[103]) >> HueLecture, 
@@ -1065,6 +1107,18 @@ hue_akai_pad = Filter(NOTEON) >> [
     KeyFilter(notes=[106]) >> HueGalaxieMax, 
     KeyFilter(notes=[107]) >> HueDemon, 
     KeyFilter(notes=[108]) >> HueOff, 
+
+]
+
+akai_pad_nature = [
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[109]) >> LatchNotes(polyphonic=True) >> Key(0) >> Rain,
+    KeyFilter(notes=[110]) >> Key(12) >> Thunder,
+    KeyFilter(notes=[111]) >> Key(48) >> Dog,
+    KeyFilter(notes=[112]) >> Key(24) >> BirdTweet,
+    KeyFilter(notes=[113]) >> Key(72) >> Screaming,
+    KeyFilter(notes=[114]) >> Key(48) >> Explosion, 
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[115]) >> Key(12) >> Wind, 
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[116]) >> LatchNotes(polyphonic=True) >> Key(36) >> Applause, 
 ]
 
 #-----------------------------------------------------------------------------------------------
@@ -1080,8 +1134,7 @@ CakeStop=Ctrl('SD90-MIDI-OUT-2', 1, 3, 67)
 #-----------------------------------------------------------------------------------------------
 
 
-explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical+Var3,128), volume=100)
-violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
+#explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical+Var3,128), volume=100)
 piano_base =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,1))
 nf_piano = Output('SD90-PART-A', channel=1, program=(Classical,2), volume=100)
 piano =  Output('SD90-PART-A', channel=3, program=(Classical,1), volume=100)
@@ -1190,17 +1243,17 @@ limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=(Special1,1
 # Centurion 
 
 # Init patch 
-i_centurion=Discard()
+i_centurion=[Call(Playlist(playlist_config)), P02A, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2]
 
 # Execution patch
-seq_centurion = (Velocity(fixed=110) >>
-	(
-		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110, pan=32) // 
+seq_centurion = (Velocity(fixed=110) >>	
+    [
+		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110, pan=32),
 		Output('SD90-PART-A', channel=2, program=(Enhanced,82), volume=110, pan=96)
-	))
+	])
 
 # Filter
-p_centurion = (pk5 >> LatchNotes(True,reset='C3') >>
+p_centurion = (LatchNotes(True, reset='C3') >>
 	(
 		(KeyFilter('D3') >> Key('D1')) //
 		(KeyFilter('E3') >> Key('D2')) //
@@ -1238,7 +1291,7 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
 # Band : Rush ------------------------------------------
 
 # Default init patch
-i_rush = [P02A, Ctrl(3,40) >> Expr1]
+i_rush = [P02A, Ctrl(3,50) >> Expr1, Ctrl(3,100) >> Expr2]
 
 # Default patch - tout en paralelle mais séparé par contexte
 p_rush = (pk5 >> Filter(NOTEON) >>
@@ -1258,12 +1311,12 @@ p_rush = (pk5 >> Filter(NOTEON) >>
 # Subdivisions
 
 # Init patch
-i_rush_sub=[P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueGalaxie]
+i_rush_sub=[P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2]
 
 # Grand Designs
 
 # Init patch
-i_rush_gd = [P02A, FS1, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2, HueNormal] 
+i_rush_gd = [P02A, FS1, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2] 
 
 # Execution patch
 p_rush_gd = (pk5 >> 
@@ -1295,7 +1348,7 @@ p_rush_gd = (pk5 >>
 # The Trees
 
 # Init patch
-i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueNormal] 
+i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2] 
 
 # Foot keyboard output
 p_rush_trees_foot = Velocity(fixed=110) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})
@@ -1378,8 +1431,8 @@ key_controller = [
     Filter(NOTEON) >> key_transpose >> [KeyFilter(notes=[0]) >> HueOff, KeyFilter(notes=[48]) >> HueNormal],
 ]
 
-hue_controller_channel = 8
-hue_controller = hue_akai_pad
+hue_controller_channel = 11
+hue_controller = akai_pad
 
 # Collection de controllers
 controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel)
@@ -1398,7 +1451,7 @@ _control = (
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=InitializeSD90, patch=Port('SD90-PART-A')),
+    1: Scene("Initialize", init_patch=InitializeSD90, patch=Discard()),
     2: SceneGroup("Rush",
         [
             Scene("Subdivisions", init_patch=i_rush_sub, patch=p_rush),
@@ -1416,11 +1469,11 @@ _scenes = {
             Scene("T4F", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
             Scene("Toto", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
         ]),
-    4: SceneGroup("Futur",
+    4: SceneGroup("Free",
         [
-            Scene("Futur", init_patch=Discard(), patch=Discard()),
+            Scene("Free", init_patch=Discard(), patch=Discard()),
         ]),
-    5: SceneGroup("Live",
+    5: SceneGroup("BigCountry",
         [
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
             Scene("In a big country LIVE", init_patch=i_big_country_live, patch=p_big_country // p_big_country_live),
@@ -1433,7 +1486,15 @@ _scenes = {
         [
             Scene("Default", init_patch=Discard(), patch=Discard()),
             Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
-            Scene("Explosion", patch=explosion),
+            Scene("Xtremities", Xtremities),
+            Scene("BagPipe", BagPipe),
+            Scene("Borealis", Borealis),
+            Scene("FifthAtmAft", FifthAtmAft),
+            Scene("RichChoir", RichChoir),
+            Scene("CircularPad", CircularPad),
+            Scene("Oxigenizer", Oxigenizer),
+            Scene("Quasar", Quasar),
+            Scene("HellSection", HellSection),
             Scene("Demon", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Jokes", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Tabarnac", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
@@ -1441,6 +1502,7 @@ _scenes = {
         ]),
     8: SceneGroup("Compositions",
         [
+            Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
         ]),
     9: SceneGroup("Musique",
@@ -1449,8 +1511,7 @@ _scenes = {
             Scene("Delirium", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Hits", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Middleage", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("NinaHagen", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("NinaHagen", init_patch=Call(Playlist(playlist_config)), patch=Discard()),            
             Scene("SteveMorse", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Timeline", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("TV", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
@@ -1474,7 +1535,7 @@ _scenes = {
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-pre  = ~ChannelFilter(8,9)
+pre  = ~ChannelFilter(8, 9, 11)
 post = Pass()
 
 # DEBUG

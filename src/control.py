@@ -32,17 +32,21 @@ key_controller = [
     Filter(NOTEON) >> key_transpose >> [KeyFilter(notes=[0]) >> HueOff, KeyFilter(notes=[48]) >> HueNormal],
 ]
 
-hue_controller_channel = 8
-hue_controller = hue_akai_pad
+hue_controller_channel = 11
+hue_controller = akai_pad
 
-# Collection de controllers
-controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel)
+spotify_channel = 12
+spotify_patch = Filter(NOTEON) >> key_transpose >> Call(SpotifyPlayer(spotify_config))
+
+# Collection de controllers par channel
+controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel, spotify_channel)
 _control = (
 	controllers >>
 	ChannelSplit({
 		key_controller_channel: key_controller,
 		nav_controller_channel: nav_controller,
         hue_controller_channel: hue_controller,
+        spotify_channel : spotify_patch
 	})
 )
 

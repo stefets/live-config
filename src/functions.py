@@ -81,3 +81,8 @@ def OnPitchbend(ev, direction):
 def osc2midi_value_converter(ev):
     return ev.data2 * 0.7874015748 / 100
 
+
+''' Set or overwrite an environment variable '''
+def setenv(ev, key, value):
+    os.environ[key] = value
+
