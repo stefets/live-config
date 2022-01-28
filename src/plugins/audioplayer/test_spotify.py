@@ -7,17 +7,16 @@ track = 'spotify:track:0jYZojrjaEYZqdvrF4RVPZ'
 scope = "user-read-playback-state,user-modify-playback-state"
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
-instances = sp.devices()
+#instances = sp.devices()
 #tablet = next(filter(lambda x : x["name"] == "SM-T500", instances["devices"]))
 #print(tablet["id"])
 
-pl = sp.playlist('3zkrx4OGDerC4vYoKWZ7d7', "tracks")
-print(pl)
+#pl = sp.playlist('3zkrx4OGDerC4vYoKWZ7d7', "tracks")
+#print(pl)
 #print(pl["tracks"]["items"][0]['track']['id'])
 
 def show_devices():
     # Shows playing devices
-    return
     res = sp.devices()
     for d in res["devices"]:
         print(d)

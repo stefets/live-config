@@ -35,8 +35,7 @@
         },
         "spotify": {
             "enable": true,
-            "device": "SM-T500",
-            "Medieval": "3zkrx4OGDerC4vYoKWZ7d7"
+            "device": "PC1"
         },
         "net": {
             "enable": true
