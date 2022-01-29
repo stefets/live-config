@@ -22,19 +22,28 @@ class SpotifyPlayer(object):
         self.playlist = None
         self.environ_key = "SPOTIFY_PLAYLIST"
 
-        self.device = None
+        self.device_name = self.configuration["device"]
+        self.device = self.get_device_by_name(self.device_name)
 
     def __call__(self, ev):
+
+        # Device required
+        if not self.device:
+            print(f"Device {0} not connected", self.device_name)
+            return
+
+        if ev.type == _constants.CTRL:
+            if ev.data1 == 7:
+                self.volume(ev)
+            elif ev.data1 == 1:
+                pass
+
+            return
+        
+
         # Playlist required
         pl_id = self.getenv(self.environ_key)
         if not pl_id:
-            return
-
-        # Device required
-        device_name = self.configuration["device"]
-        self.device = self.get_device_by_name(device_name)
-        if not self.device:
-            print(f"Device {0} not connected", device_name)
             return
 
         self.playlist = self.spotify.playlist(pl_id, "tracks")
@@ -51,5 +60,12 @@ class SpotifyPlayer(object):
         return next(devices, None) if devices else None
 
     
+    def volume(self, ev):
+        ''' Instead of MIDI, the Spotify API is not real time - set the volume on 5% step to reduce payload '''
+        if ev.data2 % 5 == 0:
+            self.spotify.volume(ev.data2, self.device["id"])
+
+
     def getenv(self, key):
+        ''' Get the selected playlist from envionment '''
         return os.environ[key] if key in os.environ else None
