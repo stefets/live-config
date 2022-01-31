@@ -18,7 +18,12 @@ class SpotifyPlayer(object):
         scope = "user-read-playback-state,user-modify-playback-state"
         self.spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
-        self.track = "spotify:track:{}"
+        ''' Track object '''
+        self.track_template = "spotify:track:{}"    
+
+        ''' Track Id '''
+        self.track = None
+
         self.playlist = None
         self.environ_key = "SPOTIFY_PLAYLIST"
 
@@ -26,6 +31,7 @@ class SpotifyPlayer(object):
         self.device = self.get_device_by_name(self.device_name)
 
     def __call__(self, ev):
+        print(ev)
 
         # Device required
         if not self.device:
@@ -37,6 +43,8 @@ class SpotifyPlayer(object):
                 self.volume(ev)
             elif ev.data1 == 1:
                 pass
+            elif ev.data1 == 44:
+                self.pause() if ev.data2 == 127 else self.play()
 
             return
         
@@ -51,13 +59,25 @@ class SpotifyPlayer(object):
             return
 
         index = 0 if ev.data1 == 0 else ev.data1 - 1
-        track = self.track.format(self.playlist["tracks"]["items"][index]['track']['id'])
-        self.spotify.start_playback(device_id= self.device["id"], uris=[track])
+        self.track = self.track_template.format(self.playlist["tracks"]["items"][index]['track']['id'])
+        self.play()
+        #self.spotify.start_playback(device_id= self.device["id"], uris=[self.track])
 
 
     def get_device_by_name(self, name):
         devices = filter(lambda x : x["name"] == name, self.spotify.devices()["devices"])
         return next(devices, None) if devices else None
+
+    
+    def play(self):
+        if self.device and self.track:
+            self.spotify.start_playback(device_id= self.device["id"], uris=[self.track])
+
+    
+    def pause(self) -> None:
+        print("OnPause")
+        self.spotify.pause_playback(self.device["id"])
+        print(self.spotify.current_playback())
 
     
     def volume(self, ev):
