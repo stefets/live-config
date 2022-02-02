@@ -1,5 +1,6 @@
     2: SceneGroup("Rush",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Subdivisions", init_patch=i_rush_sub, patch=p_rush),
             Scene("TheTrees", init_patch=i_rush_trees//Call(Playlist(playlist_config)), patch=p_rush_trees),
             Scene("Divers", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
@@ -10,6 +11,7 @@
         ]),
     3: SceneGroup("BassCover",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Default", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
             Scene("Queen", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
             Scene("T4F", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
@@ -17,20 +19,23 @@
         ]),
     4: SceneGroup("Free",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Free", init_patch=Discard(), patch=Discard()),
         ]),
     5: SceneGroup("BigCountry",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
             Scene("In a big country LIVE", init_patch=i_big_country_live, patch=p_big_country // p_big_country_live),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Default", init_patch=Discard(), patch=p_rush_gd),
         ]),
     7: SceneGroup("Demonstrations",
         [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
             Scene("Xtremities", Xtremities),
             Scene("BagPipe", BagPipe),
@@ -48,11 +53,13 @@
         ]),
     8: SceneGroup("Compositions",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
         ]),
     9: SceneGroup("Musique",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Majestyx", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Delirium", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Hits", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
@@ -64,7 +71,7 @@
         ]),
     10: SceneGroup("Éclairage HUE",
         [
-            Scene("Init", init_patch=Discard(), patch=Discard()),
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Normal", init_patch=HueNormal, patch=Discard()),
             Scene("Galaxie", init_patch=HueGalaxie, patch=Discard()),
             Scene("Demon", init_patch=HueDemon, patch=Discard()),
@@ -73,11 +80,13 @@
         ]),
     11: SceneGroup("Spotify", 
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Rush", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "0L1cHmn20fW7KL2DrJlFCL")),
             Scene("BigCountry", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "15d8HFEqWAkcwYpPsI6vgW")),
             Scene("PatMetheny",patch=Discard(),  init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "6WkqCksGxIiCkuKWHMqiMA")),
             Scene("Medieval", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "3zkrx4OGDerC4vYoKWZ7d7")),
             Scene("LilyBurns", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","2rKQYsL2f5iONT7tlAsOuc")),
+            Scene("MichelCusson", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","4kqcWUHZTtfX8rZeILjhdo")),
         ]),
 
 

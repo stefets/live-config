@@ -19,7 +19,7 @@
             "cc_transition": 3
         },
         "audioplayer": {
-            "enable": false,
+            "enable": true,
             "player": "mpg123",
             "audiodevice": "hw:4,0",
             "playlist": {
