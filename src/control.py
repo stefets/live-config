@@ -39,6 +39,7 @@ spotify_channel = 12
 spotify_patch = [
     Filter(NOTEON) >> key_transpose,
     CtrlFilter(7) >> CtrlValueFilter(0, 101), 
+    CtrlFilter(1,44),
     ] >> Call(SpotifyPlayer(spotify_config))
 
 # Collection de controllers par channel
