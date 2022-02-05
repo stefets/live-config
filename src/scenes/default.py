@@ -57,7 +57,7 @@
             Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
         ]),
-    9: SceneGroup("Musique",
+    9: SceneGroup("MP3 Player",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Majestyx", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
@@ -69,16 +69,7 @@
             Scene("Timeline", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("TV", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
         ]),
-    10: SceneGroup("Éclairage HUE",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Normal", init_patch=HueNormal, patch=Discard()),
-            Scene("Galaxie", init_patch=HueGalaxie, patch=Discard()),
-            Scene("Demon", init_patch=HueDemon, patch=Discard()),
-            Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
-            Scene("Off", init_patch=HueOff, patch=Discard()),
-        ]),
-    11: SceneGroup("Spotify", 
+    10: SceneGroup("Spotify", 
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Rush", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "0L1cHmn20fW7KL2DrJlFCL")),
@@ -88,5 +79,13 @@
             Scene("LilyBurns", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","2rKQYsL2f5iONT7tlAsOuc")),
             Scene("MichelCusson", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","4kqcWUHZTtfX8rZeILjhdo")),
         ]),
-
+    11: SceneGroup("Éclairage HUE",
+        [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
+            Scene("Normal", init_patch=HueNormal, patch=Discard()),
+            Scene("Galaxie", init_patch=HueGalaxie, patch=Discard()),
+            Scene("Demon", init_patch=HueDemon, patch=Discard()),
+            Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
+            Scene("Off", init_patch=HueOff, patch=Discard()),
+        ]),
 
