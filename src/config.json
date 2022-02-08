@@ -21,10 +21,10 @@
         "audioplayer": {
             "enable": true,
             "player": "mpg123",
-            "audiodevice": "hw:3,0",
+            "audiodevice": "hw:4,0",
             "playlist": {
-                "datasource": "/media/pi/mididings/soundlib/",
-                "symlink_target": "/media/pi/mididings/tmp/",
+                "datasource": "/media/mididings/soundlib/",
+                "symlink_target": "/media/mididings/tmp/",
                 "symlink_builder": "./mksymlinks.sh"
             },
             "controller": {
