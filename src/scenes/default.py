@@ -57,7 +57,7 @@
             Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
         ]),
-    9: SceneGroup("MP3 Player",
+    9: SceneGroup("MP3Player",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Majestyx", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
