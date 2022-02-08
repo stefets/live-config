@@ -1,4 +1,4 @@
-# My musical ecosystem with MIDIDINGS as the KERNEL
+# My musical companion with MIDIDINGS as the KERNEL
 
 # Notes
 * Script entry point is /src/load.sh sceneFileName
