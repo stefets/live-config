@@ -22,6 +22,8 @@ from mididings.engine import scenes, current_scene, switch_scene, current_subsce
 
 from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
+from plugins.audioplayer.spotify import SpotifyPlayer
+
 
 # Setup path
 sys.path.append(os.path.realpath('.'))
@@ -36,11 +38,12 @@ hue_config=plugins['lightning']
 key_config=plugins['audioplayer']
 playlist_config=key_config["playlist"]
 net_config=plugins['net']
+spotify_config=plugins['spotify']
 
 config(
 
     # Defaults
-    # initial_scene = 2,
+    # initial_scene = 1,
     # backend = 'alsa',
     # client_name = 'mididings',
 
@@ -48,7 +51,7 @@ config(
     #   Device name                     # Description               #
     #  
 
-    # Ports are tokenized and replaced by script_builder.sh
+    # Ports are tokenized and sed/awk by build_script.sh
 
     out_ports = [
 
@@ -74,6 +77,14 @@ config(
         ('UM2-MIDI-IN-1', '__UM-2 MIDI 1__',),
 
         ('Q49', '__Q49 MIDI 1__',),
+
+        ('CME', '__CME M-KEY MIDI 1__',),
+
+        ('MPK1', '__MPK249 MIDI 1__',),
+        ('MPK2', '__MPK249 MIDI 2__',),
+        ('MPK3', '__MPK249 MIDI 3__',),
+        ('MPK4', '__MPK249 MIDI 4__',),
+
     ],
 
 )
@@ -114,7 +125,7 @@ __CONTROL__
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=InitSoundModule, patch=Discard()),
+    1: Scene("Initialize", init_patch=InitializeSD90, patch=Discard()),
 __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------
@@ -124,7 +135,7 @@ __SCENES__
 #-----------------------------------------------------------------------------------------------------------
 # PROD
 # Exclus les controllers
-pre  = ~ChannelFilter(8,9)
+pre  = ~ChannelFilter(8, 9, 11)
 post = Pass()
 
 # DEBUG

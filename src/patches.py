@@ -4,6 +4,7 @@ Notes :
 - L'utilisation du Ctrl(3,value) sert a passer le value dans EVENT_VALUE pour l'unité suivante dans une série d'unité
 - Soit pour assigner une valeur au pédales d'expression du POD HD 500
 - Soit pour déterminer la valeur d'une transition pour le chargement d'une scène du Philips HUE
+- Soit pour contrôler Cakewalk
 
 Controller 3 : ref.: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
 CC      Bin             Hex     Control function    Value       Used as
@@ -13,30 +14,52 @@ CC      Bin             Hex     Control function    Value       Used as
 HueOff=Call(HueBlackout(hue_config))
 HueNormal=Call(HueScene(hue_config, "Normal"))
 HueGalaxie=Call(HueScene(hue_config, "Galaxie"))
+HueGalaxieMax=Call(HueScene(hue_config, "GalaxieMax"))
 HueDemon=Call(HueScene(hue_config, "Demon"))
 HueSoloRed=Call(HueScene(hue_config, "SoloRed"))
+HueDetente=Call(HueScene(hue_config, "Détente"))
+HueVeilleuse=Call(HueScene(hue_config, "Veilleuse"))
+HueLecture=Call(HueScene(hue_config, "Lecture"))
+
+violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
+
+akai_pad = Filter(NOTEON) >> [
+    KeyFilter(notes=[101]) >> HueNormal, 
+    KeyFilter(notes=[102]) >> HueDetente, 
+    KeyFilter(notes=[103]) >> HueLecture, 
+    KeyFilter(notes=[104]) >> HueVeilleuse, 
+    KeyFilter(notes=[105]) >> HueGalaxie, 
+    KeyFilter(notes=[106]) >> HueGalaxieMax, 
+    KeyFilter(notes=[107]) >> HueDemon, 
+    KeyFilter(notes=[108]) >> HueOff, 
+
+]
+
+akai_pad_nature = [
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[109]) >> LatchNotes(polyphonic=True) >> Key(0) >> Rain,
+    KeyFilter(notes=[110]) >> Key(12) >> Thunder,
+    KeyFilter(notes=[111]) >> Key(48) >> Dog,
+    KeyFilter(notes=[112]) >> Key(24) >> BirdTweet,
+    KeyFilter(notes=[113]) >> Key(72) >> Screaming,
+    KeyFilter(notes=[114]) >> Key(48) >> Explosion, 
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[115]) >> Key(12) >> Wind, 
+    ~Filter(PITCHBEND) >> KeyFilter(notes=[116]) >> LatchNotes(polyphonic=True) >> Key(36) >> Applause, 
+]
+
+#-----------------------------------------------------------------------------------------------
+
+# My Cakewalk Generic Control Surface definition -----------------------------------------------
+CakeRecord=Ctrl('SD90-MIDI-OUT-2', 1, 3, 64)
+CakePlay=Ctrl('SD90-MIDI-OUT-2', 1, 3, 66)
+CakeStop=Ctrl('SD90-MIDI-OUT-2', 1, 3, 67)
 #-----------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------
 # Execution patches
 #-----------------------------------------------------------------------------------------------
 
-# TODO Revisiter cela
-# PORTAMENTO 
-#portamento_base=Ctrl(1,1,5,50)
-#portamento_off=Ctrl(1,1,65,0)	# Switch OFF
-#portamento_on=Ctrl(1,1,65,127)  # Switch ON
-#portamento_up=(portamento_base // portamento_on)
-#portamento_off=(portamento_base // portamento_off)
-#legato=Ctrl(1,1,120,0)
 
-d4= Output('SD90-PART-A', channel=10, program=1, volume=100)
-d4_tom= Output('SD90-PART-A', channel=11, program=(Classical+Var1,118), volume=100)
-
-# FX Section
-explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical+Var3,128), volume=100)
-#--------------------------------------------------------------------
-violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
+#explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical+Var3,128), volume=100)
 piano_base =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,1))
 nf_piano = Output('SD90-PART-A', channel=1, program=(Classical,2), volume=100)
 piano =  Output('SD90-PART-A', channel=3, program=(Classical,1), volume=100)
@@ -141,21 +164,23 @@ limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=(Special1,1
 
 # Band : Moi ----------------------------------------------------
 
-
-# Centurion 
+# Song : Centurion 
 
 # Init patch 
-i_centurion=Discard()
+i_centurion = [
+        Call(Playlist(playlist_config)), 
+        P02A, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2
+]
 
 # Execution patch
-seq_centurion = (Velocity(fixed=110) >>
-	(
-		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110, pan=32) // 
+seq_centurion = (Velocity(fixed=110) >>	
+    [
+		Output('SD90-PART-A', channel=1, program=(Enhanced,96), volume=110, pan=32),
 		Output('SD90-PART-A', channel=2, program=(Enhanced,82), volume=110, pan=96)
-	))
+	])
 
 # Filter
-p_centurion = (pk5 >> LatchNotes(True,reset='C3') >>
+p_centurion = (LatchNotes(True, reset='C3') >>
 	(
 		(KeyFilter('D3') >> Key('D1')) //
 		(KeyFilter('E3') >> Key('D2')) //
@@ -167,26 +192,33 @@ p_centurion = (pk5 >> LatchNotes(True,reset='C3') >>
 
 # Band : Big Country ------------------------------------------
 
-# In a big country
+# Song : In a big country
 
 # Init patch
 i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,40) >> Expr1 , Ctrl(3,127) >> Expr2]
 
 # Execution patch
+
+i_big_country_live = [P14D, FS1, FS3, FS4, Ctrl(3,45) >> Expr1 , Ctrl(3,85) >> Expr2]
+p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
+        [
+            Filter(NOTEON) >> [CakePlay],
+            Filter(NOTEOFF) >> HueGalaxieMax, 
+        ])
+
 p_big_country = (pk5 >> Filter(NOTEON) >>
-         (
-             (KeyFilter(notes=[67]) >> [FS4, Ctrl(3, 100) >> Expr2]) //
-             (KeyFilter(notes=[69]) >> FS4) //
-             (KeyFilter(notes=[71]) >> [FS2, Ctrl(3,100) >> Expr2]) //
-             (KeyFilter(notes=[72]) >> [FS2, Ctrl(3,127) >> Expr2])
-         ))
+         [
+             (KeyFilter(notes=[69]) >> FS4),
+             (KeyFilter(notes=[71]) >> [HueGalaxie, FS2, Ctrl(3,85) >> Expr2]),
+             (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> Expr2])
+         ])
 
 # Big Country fin de section ------------------------------------------
 
 # Band : Rush ------------------------------------------
 
 # Default init patch
-i_rush = [P02A, Ctrl(3,40) >> Expr1]
+i_rush = [P02A, Ctrl(3,50) >> Expr1, Ctrl(3,100) >> Expr2]
 
 # Default patch - tout en paralelle mais séparé par contexte
 p_rush = (pk5 >> Filter(NOTEON) >>
@@ -198,15 +230,20 @@ p_rush = (pk5 >> Filter(NOTEON) >>
         ],                
         [
             KeyFilter(notes=[69]) >> FS4,
-            KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100) >> Expr2],
-            KeyFilter(notes=[72]) >> [FS1, FS4, Ctrl(3,120) >> Expr2]
+            KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100) >> Expr2, HueGalaxie],
+            KeyFilter(notes=[72]) >> [FS1, FS4, Ctrl(3,120) >> Expr2, HueSoloRed]
         ]
     ])
+
+# Subdivisions
+
+# Init patch
+i_rush_sub=[P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2]
 
 # Grand Designs
 
 # Init patch
-i_rush_gd = [P02A, FS1, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2, HueNormal] 
+i_rush_gd = [P02A, FS1, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2] 
 
 # Execution patch
 p_rush_gd = (pk5 >> 
@@ -238,10 +275,10 @@ p_rush_gd = (pk5 >>
 # The Trees
 
 # Init patch
-i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2, HueNormal] 
+i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2] 
 
 # Foot keyboard output
-p_rush_trees_foot = Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=100, ctrls={93:75, 91:75})
+p_rush_trees_foot = Velocity(fixed=110) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})
 
 # Execution patch
 p_rush_trees=(pk5 >>
@@ -270,5 +307,16 @@ p_rush_trees=(pk5 >>
 
 # Rush fin de section ------------------------------------------
 
+
+# FUTUR TESTS
+
+# Glissando
 p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, 'SD90-PART-A'))
 
+# PORTAMENTO 
+#portamento_base=Ctrl(1,1,5,50)
+#portamento_off=Ctrl(1,1,65,0)	# Switch OFF
+#portamento_on=Ctrl(1,1,65,127)  # Switch ON
+#portamento_up=(portamento_base // portamento_on)
+#portamento_off=(portamento_base // portamento_off)
+#legato=Ctrl(1,1,120,0)
