@@ -2,6 +2,8 @@ import subprocess
 from subprocess import check_call
 
 from colorama import Fore, Style
+from .frontend import Terminal
+from .controller import Transport
 
 from range_key_dict import RangeKeyDict
 
@@ -29,7 +31,7 @@ class Mp3Player(MPyg321Player):
 
         super().__init__(config["player"], config["audiodevice"] if config["audiodevice"] else None, True)
 
-        self.controller = Controller(config["controller"])
+        self.controller = Transport(config["controller"])
         self.playlist = Playlist(config['playlist'])
 
         self.terminal = Terminal()
@@ -274,20 +276,8 @@ class Playlist():
         return scenes()[current_scene()][1][current_subscene()-1] if self.has_subscene() else None
 
     def listing(self):
-        self.terminal.clear_screen()
-        print("{}{}{}{}".format(Style.BRIGHT, Fore.GREEN, self.get_scene_name(), Style.RESET_ALL))
+        self.terminal.write_line(self.get_scene_name())
         rank = 0
         for song in self.songs:
             rank += 1
-            print("{}{}{} {}{}{}{}".format(Style.BRIGHT, Fore.YELLOW, str(rank).zfill(2), Style.RESET_ALL, Style.BRIGHT, Fore.WHITE, song, Style.RESET_ALL))
-
-
-class Controller():
-    def __init__(self, config):
-        self.size = config['size']
-
-
-class Terminal():
-    def __init__(self) -> None:
-        self.clear_screen = lambda: print("\033c\033[3J", end='')
-        self.spacer = " " * 15
+            self.terminal.write_line2(str(rank).zfill(2), song)
