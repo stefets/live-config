@@ -22,6 +22,7 @@ from mididings.engine import scenes, current_scene, switch_scene, current_subsce
 
 from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
+from plugins.audioplayer.spotify import SpotifyPlayer
 
 
 # Setup path
@@ -37,6 +38,7 @@ hue_config=plugins['lightning']
 key_config=plugins['audioplayer']
 playlist_config=key_config["playlist"]
 net_config=plugins['net']
+spotify_config=plugins['spotify']
 
 config(
 
@@ -53,10 +55,10 @@ config(
 
     out_ports = [
 
-        ('SD90-PART-A', '28:0'),
-        ('SD90-PART-B', '28:1'),
-        ('SD90-MIDI-OUT-1', '28:2',),
-        ('SD90-MIDI-OUT-2', '28:3',),
+        ('SD90-PART-A', '32:0'),
+        ('SD90-PART-B', '32:1'),
+        ('SD90-MIDI-OUT-1', '32:2',),
+        ('SD90-MIDI-OUT-2', '32:3',),
 
         ('GT10B-MIDI-OUT-1', '',),
 
@@ -67,8 +69,8 @@ config(
 
     in_ports = [
 
-        ('SD90-MIDI-IN-1','28:2',),
-        ('SD90-MIDI-IN-2','28:3',),
+        ('SD90-MIDI-IN-1','32:2',),
+        ('SD90-MIDI-IN-2','32:3',),
 
         ('GT10B-MIDI-IN-1', '',),
 
@@ -78,10 +80,10 @@ config(
 
         ('CME', '',),
 
-        ('MPK1', '32:0',),
-        ('MPK2', '32:1',),
-        ('MPK3', '32:2',),
-        ('MPK4', '32:3',),
+        ('MPK1', '28:0',),
+        ('MPK2', '28:1',),
+        ('MPK3', '28:2',),
+        ('MPK4', '28:3',),
 
     ],
 
@@ -177,6 +179,11 @@ def OnPitchbend(ev, direction):
 
 def osc2midi_value_converter(ev):
     return ev.data2 * 0.7874015748 / 100
+
+
+''' Set or overwrite an environment variable '''
+def setenv(ev, key, value):
+    os.environ[key] = value
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -1239,11 +1246,13 @@ limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=(Special1,1
 
 # Band : Moi ----------------------------------------------------
 
-
-# Centurion 
+# Song : Centurion 
 
 # Init patch 
-i_centurion=[Call(Playlist(playlist_config)), P02A, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2]
+i_centurion = [
+        Call(Playlist(playlist_config)), 
+        P02A, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2
+]
 
 # Execution patch
 seq_centurion = (Velocity(fixed=110) >>	
@@ -1265,7 +1274,7 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 
 # Band : Big Country ------------------------------------------
 
-# In a big country
+# Song : In a big country
 
 # Init patch
 i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,40) >> Expr1 , Ctrl(3,127) >> Expr2]
@@ -1280,11 +1289,11 @@ p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >>
         ])
 
 p_big_country = (pk5 >> Filter(NOTEON) >>
-         (
-             (KeyFilter(notes=[69]) >> FS4) //
-             (KeyFilter(notes=[71]) >> [FS2, Ctrl(3,85) >> Expr2]) //
-             (KeyFilter(notes=[72]) >> [FS2, Ctrl(3,127) >> Expr2])
-         ))
+         [
+             (KeyFilter(notes=[69]) >> FS4),
+             (KeyFilter(notes=[71]) >> [HueGalaxie, FS2, Ctrl(3,85) >> Expr2]),
+             (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> Expr2])
+         ])
 
 # Big Country fin de section ------------------------------------------
 
@@ -1434,14 +1443,22 @@ key_controller = [
 hue_controller_channel = 11
 hue_controller = akai_pad
 
-# Collection de controllers
-controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel)
+spotify_channel = 12
+spotify_patch = [
+    Filter(NOTEON) >> key_transpose,
+    CtrlFilter(7) >> CtrlValueFilter(0, 101), 
+    CtrlFilter(1,44),
+    ] >> Call(SpotifyPlayer(spotify_config))
+
+# Collection de controllers par channel
+controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel, spotify_channel)
 _control = (
 	controllers >>
 	ChannelSplit({
 		key_controller_channel: key_controller,
 		nav_controller_channel: nav_controller,
         hue_controller_channel: hue_controller,
+        spotify_channel : spotify_patch
 	})
 )
 
@@ -1454,6 +1471,7 @@ _scenes = {
     1: Scene("Initialize", init_patch=InitializeSD90, patch=Discard()),
     2: SceneGroup("Rush",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Subdivisions", init_patch=i_rush_sub, patch=p_rush),
             Scene("TheTrees", init_patch=i_rush_trees//Call(Playlist(playlist_config)), patch=p_rush_trees),
             Scene("Divers", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
@@ -1464,6 +1482,7 @@ _scenes = {
         ]),
     3: SceneGroup("BassCover",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Default", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
             Scene("Queen", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
             Scene("T4F", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
@@ -1471,20 +1490,23 @@ _scenes = {
         ]),
     4: SceneGroup("Free",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Free", init_patch=Discard(), patch=Discard()),
         ]),
     5: SceneGroup("BigCountry",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
             Scene("In a big country LIVE", init_patch=i_big_country_live, patch=p_big_country // p_big_country_live),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Default", init_patch=Discard(), patch=p_rush_gd),
         ]),
     7: SceneGroup("Demonstrations",
         [
-            Scene("Default", init_patch=Discard(), patch=Discard()),
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
             Scene("Xtremities", Xtremities),
             Scene("BagPipe", BagPipe),
@@ -1502,11 +1524,13 @@ _scenes = {
         ]),
     8: SceneGroup("Compositions",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
         ]),
-    9: SceneGroup("Musique",
+    9: SceneGroup("MP3Player",
         [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Majestyx", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Delirium", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Hits", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
@@ -1516,16 +1540,26 @@ _scenes = {
             Scene("Timeline", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("TV", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
         ]),
-    10: SceneGroup("Éclairage HUE",
+    10: SceneGroup("Spotify", 
         [
-            Scene("Init", init_patch=Discard(), patch=Discard()),
+            Scene("Select", init_patch=Discard(), patch=Discard()),
+            Scene("Rush", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "0L1cHmn20fW7KL2DrJlFCL")),
+            Scene("BigCountry", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "15d8HFEqWAkcwYpPsI6vgW")),
+            Scene("PatMetheny",patch=Discard(),  init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "6WkqCksGxIiCkuKWHMqiMA")),
+            Scene("Medieval", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "3zkrx4OGDerC4vYoKWZ7d7")),
+            Scene("LilyBurns", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","2rKQYsL2f5iONT7tlAsOuc")),
+            Scene("MichelCusson", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","4kqcWUHZTtfX8rZeILjhdo")),
+            Scene("Vola", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","02v48VLu8jtnkeYlfl1Xrt")),
+        ]),
+    11: SceneGroup("Éclairage HUE",
+        [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Normal", init_patch=HueNormal, patch=Discard()),
             Scene("Galaxie", init_patch=HueGalaxie, patch=Discard()),
             Scene("Demon", init_patch=HueDemon, patch=Discard()),
             Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
             Scene("Off", init_patch=HueOff, patch=Discard()),
         ]),
-
 
 }
 #-----------------------------------------------------------------------------------------------------------
