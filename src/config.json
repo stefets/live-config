@@ -19,9 +19,9 @@
             "cc_transition": 3
         },
         "audioplayer": {
-            "enable": false,
+            "enable": true,
             "player": "mpg123",
-            "audiodevice": "hw:3,0",
+            "available_devices" : ["SD90", "GT10B"],
             "playlist": {
                 "datasource": "/media/mididings/soundlib/",
                 "symlink_target": "/media/mididings/tmp/",

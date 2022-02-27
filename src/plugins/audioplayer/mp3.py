@@ -12,6 +12,7 @@ from mpyg321.mpyg321 import MPyg321Player, PlayerStatus
 import mididings.constants as _constants
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 
+import alsaaudio
 
 '''
 This plugin plays mp3 files, it inherits the mpyg321.mpyg321, a mpg123 wrapper
@@ -29,7 +30,16 @@ class Mp3Player(MPyg321Player):
         if not self.enable:
             return
 
-        super().__init__(config["player"], config["audiodevice"] if config["audiodevice"] else None, True)
+        # Check if card is in my available_devices (is connected) or it will use the onboard card
+        card = None
+        cards = alsaaudio.cards()
+
+        for device in config["available_devices"]:
+            if device in cards:
+                card = f"hw:{cards.index(device)},0"
+                break
+
+        super().__init__(config["player"], card if card else None, True)
 
         self.controller = Transport(config["controller"])
         self.playlist = Playlist(config['playlist'])
