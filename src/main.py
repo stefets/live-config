@@ -74,11 +74,11 @@ config(
         ('SD90-MIDI-IN-1','__SD-90 MIDI 1__',),
         ('SD90-MIDI-IN-2','__SD-90 MIDI 2__',),
 
-        ('GT10B-MIDI-IN-1', '__GT-10B MIDI 1__',),
+        #('GT10B-MIDI-IN-1', '__GT-10B MIDI 1__',),
 
         ('UM2-MIDI-IN-1', '__UM-2 MIDI 1__',),
 
-        ('Q49', '__Q49 MIDI 1__',),
+        #('Q49', '__Q49 MIDI 1__',),
 
         ('MPK-MIDI-IN-1', '__MPK249 MIDI 1__',), # USB A ch.1-16
         ('MPK-MIDI-IN-2', '__MPK249 MIDI 2__',), # USB B ch.1-16

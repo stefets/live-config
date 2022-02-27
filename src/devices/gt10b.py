@@ -8,9 +8,9 @@
 GT10BChannel = configuration['devices']['gt10b']
 
 # Output port to use, specified in main.py
-GT10BPort = 'SD90-MIDI-OUT-1'  # 5 pin midi in, recu du SD-90
-#GT10BPort = 'UM2-MIDI-OUT-1'  # 5 pin midi in, recu du UM2
-#GT10BPort = 'GT10B-MIDI-OUT-1'  # USB MODE
+#GT10BPort = 'SD90-MIDI-OUT-1'  # 5 pin midi in, from SD-90 midi out 1
+#GT10BPort = 'UM2-MIDI-OUT-1'  # 5 pin midi in, from  UM2 midi out 1
+GT10BPort = 'GT10B-MIDI-OUT-1'  # USB MODE
 
 # Banks
 GT10B_bank_0 = (Ctrl(GT10BPort, GT10BChannel, 0, 0) // Ctrl(GT10BPort, GT10BChannel, 32, 0))
@@ -538,6 +538,7 @@ P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 
 # Send CC
 GT10B_Ctrl =  Ctrl(GT10BPort, GT10BChannel, EVENT_CTRL, EVENT_VALUE)
+
 # Send CC aliases
 GT10B_Tuner = GT10B_Ctrl    
 GT10B_Volume = GT10B_Ctrl
