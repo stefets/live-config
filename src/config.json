@@ -19,9 +19,9 @@
             "cc_transition": 3
         },
         "audioplayer": {
-            "enable": true,
+            "enable": false,
             "player": "mpg123",
-            "audiodevice": "hw:4,0",
+            "audiodevice": "hw:3,0",
             "playlist": {
                 "datasource": "/media/mididings/soundlib/",
                 "symlink_target": "/media/mididings/tmp/",
@@ -35,7 +35,7 @@
         },
         "spotify": {
             "enable": true,
-            "device": "PC1"
+            "devices" : ["PC1", "SM-T500"]
         },
         "net": {
             "enable": true

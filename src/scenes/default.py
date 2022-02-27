@@ -80,7 +80,7 @@
             Scene("MichelCusson", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","4kqcWUHZTtfX8rZeILjhdo")),
             Scene("Vola", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","02v48VLu8jtnkeYlfl1Xrt")),
         ]),
-    11: SceneGroup("Éclairage HUE",
+    11: SceneGroup("HUE Bridge",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Normal", init_patch=HueNormal, patch=Discard()),
