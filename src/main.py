@@ -65,6 +65,8 @@ config(
         ('UM2-MIDI-OUT-1', '__UM-2 MIDI 1__',),
         ('UM2-MIDI-OUT-2', '__UM-2 MIDI 2__',),
 
+        ('MPK-MIDI-OUT-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI OUT
+
     ],
 
     in_ports = [
@@ -78,12 +80,10 @@ config(
 
         ('Q49', '__Q49 MIDI 1__',),
 
-        ('CME', '__CME M-KEY MIDI 1__',),
-
-        ('MPK1', '__MPK249 MIDI 1__',),
-        ('MPK2', '__MPK249 MIDI 2__',),
-        ('MPK3', '__MPK249 MIDI 3__',),
-        ('MPK4', '__MPK249 MIDI 4__',),
+        ('MPK-MIDI-IN-1', '__MPK249 MIDI 1__',), # USB A ch.1-16
+        ('MPK-MIDI-IN-2', '__MPK249 MIDI 2__',), # USB B ch.1-16
+        ('MPK-MIDI-IN-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI IN 
+        ('MPK-MIDI-IN-4', '__MPK249 MIDI 4__',), # Under investigation, possible internal thru
 
     ],
 
