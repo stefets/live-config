@@ -31,7 +31,7 @@
     6: SceneGroup("GrandDesignsStudio",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Default", init_patch=Discard(), patch=p_rush_gd),
+            Scene("Recorder", init_patch=Discard(), patch=p_recorder),
         ]),
     7: SceneGroup("Demonstrations",
         [

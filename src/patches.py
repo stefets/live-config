@@ -49,9 +49,9 @@ akai_pad_nature = [
 #-----------------------------------------------------------------------------------------------
 
 # My Cakewalk Generic Control Surface definition -----------------------------------------------
-CakeRecord=Ctrl('SD90-MIDI-OUT-2', 1, 3, 64)
-CakePlay=Ctrl('SD90-MIDI-OUT-2', 1, 3, 66)
-CakeStop=Ctrl('SD90-MIDI-OUT-2', 1, 3, 67)
+CakeRecord=Ctrl('MPK-MIDI-OUT-3', 1, 119,127)
+CakePlay=Ctrl('MPK-MIDI-OUT-3', 1, 118, 127)
+CakeStop=Ctrl('MPK-MIDI-OUT-3', 1, 119, 127)
 #-----------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------
@@ -307,6 +307,15 @@ p_rush_trees=(pk5 >>
 
 # Rush fin de section ------------------------------------------
 
+# ---
+# Helpers
+p_recorder = (pk5 >> 
+        [
+            Filter(NOTEON) >> KeyFilter(notes=[60]) >> [CakePlay],
+            Filter(NOTEON) >> KeyFilter(notes=[62]) >> [CakeRecord],
+            Filter(NOTEOFF) >> HueGalaxieMax, 
+        ])
+# ---
 
 # FUTUR TESTS
 
