@@ -21,7 +21,7 @@
         "audioplayer": {
             "enable": true,
             "player": "mpg123",
-            "audiodevice": "hw:4,0",
+            "available_devices" : ["SD90", "GT10B"],
             "playlist": {
                 "datasource": "/media/mididings/soundlib/",
                 "symlink_target": "/media/mididings/tmp/",
@@ -35,7 +35,7 @@
         },
         "spotify": {
             "enable": true,
-            "device": "PC1"
+            "devices" : ["PC1", "SM-T500"]
         },
         "net": {
             "enable": true

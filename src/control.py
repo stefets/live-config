@@ -1,5 +1,6 @@
 # Controlleur 1
 
+# AKAI sliders, knobs and switches
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
     CtrlFilter(1, 2, 7, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
@@ -33,7 +34,7 @@ key_controller = [
 ]
 
 hue_controller_channel = 11
-hue_controller = akai_pad
+hue_patch = p_hue
 
 spotify_channel = 12
 spotify_patch = [
@@ -49,7 +50,7 @@ _control = (
 	ChannelSplit({
 		key_controller_channel: key_controller,
 		nav_controller_channel: nav_controller,
-        hue_controller_channel: hue_controller,
+        hue_controller_channel: hue_patch,
         spotify_channel : spotify_patch
 	})
 )

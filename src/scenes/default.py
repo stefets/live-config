@@ -17,10 +17,18 @@
             Scene("T4F", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
             Scene("Toto", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
         ]),
-    4: SceneGroup("Free",
+    4: SceneGroup("HBR",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Free", init_patch=Discard(), patch=Discard()),
+            Scene("YYZ", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
+            Scene("Limelight", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
+            Scene("FlyByNight", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
+            Scene("TheTrees", init_patch=i_rush_trees//Call(Playlist(playlist_config)), patch=p_rush_trees),
+            Scene("RedBarchetta", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
+            Scene("Freewill", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
+            Scene("SpritOfRadio", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
+            Scene("TomSawyer", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
+            Scene("CloserToTheHeart", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
         ]),
     5: SceneGroup("BigCountry",
         [
@@ -31,7 +39,7 @@
     6: SceneGroup("GrandDesignsStudio",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Default", init_patch=Discard(), patch=p_rush_gd),
+            Scene("Recorder", init_patch=Discard(), patch=p_recorder),
         ]),
     7: SceneGroup("Demonstrations",
         [
@@ -78,8 +86,9 @@
             Scene("Medieval", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "3zkrx4OGDerC4vYoKWZ7d7")),
             Scene("LilyBurns", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","2rKQYsL2f5iONT7tlAsOuc")),
             Scene("MichelCusson", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","4kqcWUHZTtfX8rZeILjhdo")),
+            Scene("Vola", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","02v48VLu8jtnkeYlfl1Xrt")),
         ]),
-    11: SceneGroup("Éclairage HUE",
+    11: SceneGroup("HUE Bridge",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Normal", init_patch=HueNormal, patch=Discard()),

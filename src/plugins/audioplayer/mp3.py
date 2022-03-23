@@ -2,6 +2,8 @@ import subprocess
 from subprocess import check_call
 
 from colorama import Fore, Style
+from .frontend import Terminal
+from .controller import Transport
 
 from range_key_dict import RangeKeyDict
 
@@ -10,6 +12,7 @@ from mpyg321.mpyg321 import MPyg321Player, PlayerStatus
 import mididings.constants as _constants
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 
+import alsaaudio
 
 '''
 This plugin plays mp3 files, it inherits the mpyg321.mpyg321, a mpg123 wrapper
@@ -27,9 +30,18 @@ class Mp3Player(MPyg321Player):
         if not self.enable:
             return
 
-        super().__init__(config["player"], config["audiodevice"] if config["audiodevice"] else None, True)
+        # Check if card is in my available_devices (is connected) or it will use the onboard card
+        card = None
+        cards = alsaaudio.cards()
 
-        self.controller = Controller(config["controller"])
+        for device in config["available_devices"]:
+            if device in cards:
+                card = f"hw:{cards.index(device)},0"
+                break
+
+        super().__init__(config["player"], card if card else None, True)
+
+        self.controller = Transport(config["controller"])
         self.playlist = Playlist(config['playlist'])
 
         self.terminal = Terminal()
@@ -274,20 +286,8 @@ class Playlist():
         return scenes()[current_scene()][1][current_subscene()-1] if self.has_subscene() else None
 
     def listing(self):
-        self.terminal.clear_screen()
-        print("{}{}{}{}".format(Style.BRIGHT, Fore.GREEN, self.get_scene_name(), Style.RESET_ALL))
+        self.terminal.write_line(self.get_scene_name())
         rank = 0
         for song in self.songs:
             rank += 1
-            print("{}{}{} {}{}{}{}".format(Style.BRIGHT, Fore.YELLOW, str(rank).zfill(2), Style.RESET_ALL, Style.BRIGHT, Fore.WHITE, song, Style.RESET_ALL))
-
-
-class Controller():
-    def __init__(self, config):
-        self.size = config['size']
-
-
-class Terminal():
-    def __init__(self) -> None:
-        self.clear_screen = lambda: print("\033c\033[3J", end='')
-        self.spacer = " " * 15
+            self.terminal.write_line2(str(rank).zfill(2), song)
