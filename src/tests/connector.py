@@ -37,20 +37,24 @@ config(
 
 )
 
-#hook(
-#    AutoRestart()
-#)
+hook(
+    AutoRestart()
+)
 
 #piano = Output('PART-A', channel=1, program=((96 * 128), 100))
 _scenes = {
-    1: Scene("Akai", patch=Port('MPK-MIDI3')),
+    1: Scene("Akai", patch=Pass()),
+    #1: Scene("Akai", patch=~Filter() >> Port('MPK-MIDI3')),
     #1: Scene("Piano", init_patch=Ctrl('OUT-2',1,3,67), patch=piano),
 }
 
-_pre = Print('input', portnames='in')
+_pre = ~Filter(SYSRT_CLOCK) #// Print('input', portnames='in')
 _post = Print('output', portnames='out')
 
+_control=Pass()
+
 run(
+    control=_control,
     scenes=_scenes,
     pre=_pre,
     post=_post,

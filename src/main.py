@@ -134,8 +134,7 @@ __SCENES__
 # Run region
 #-----------------------------------------------------------------------------------------------------------
 # PROD
-# Exclus les controllers
-pre  = ~ChannelFilter(8, 9, 11)
+pre  = ~ChannelFilter(8, 9, 11) // ~Filter(SYSRT_CLOCK)
 post = Pass()
 
 # DEBUG
@@ -146,5 +145,5 @@ run(
     control=_control,
     scenes=_scenes,
     pre=pre,
-    post=post,
+    #post=post,
 )

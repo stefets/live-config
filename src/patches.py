@@ -23,7 +23,7 @@ HueLecture=Call(HueScene(hue_config, "Lecture"))
 
 violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
 
-akai_pad = Filter(NOTEON) >> [
+p_hue = Filter(NOTEON) >> [
     KeyFilter(notes=[101]) >> HueNormal, 
     KeyFilter(notes=[102]) >> HueDetente, 
     KeyFilter(notes=[103]) >> HueLecture, 
