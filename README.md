@@ -2,7 +2,7 @@
 
 # Notes
 * Entry point is /src/run.sh SCENE (if SCENE is not specified, default is assumed)
-* ./run.sh create a file called live-config.py (not in the repo)
+* ./run.sh create a file called script.py (in .gitignore)
 * Scenes are located in /src/scenes/*
 * Example : ./load.sh debug
 * You MUST replace @@TOKEN@@ in the main.py template with you own logic
