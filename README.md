@@ -1,12 +1,14 @@
 # My musical companion with MIDIDINGS as the KERNEL
 
 # Notes
-* Script entry point is /src/load.sh sceneFileName
-* Scenes are located in /src/scenes/*.py
-* Example : ./load.sh default
-* The final script is generated at every load and it's /src/live-config.py
+* Entry point is /src/run.sh SCENE (if SCENE is not specified, default is assumed)
+* ./run.sh create a file called script.py (in .gitignore)
+* Scenes are located in /src/scenes/*
+* Example : ./load.sh debug
+* You MUST replace @@TOKEN@@ in the main.py template with you own logic
 
-# Frontend
+# MIDIDINGS USERS
+## HTML5 Frontend (API and Websockets with Flask)
 * I maintain an API and a frontend to drive a MIDIDINGS script
 * https://github.com/stefets/flaskdings - Try it and star it !
 

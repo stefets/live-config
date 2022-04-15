@@ -23,7 +23,7 @@
             Scene("Intro/Chords", Port(1) >> (
             [
                 ChannelSplit({
-                    cme_channel : marathon_intro,
+                    akai_channel : marathon_intro,
                     pk5_channel : marathon_chords,
                 }),
                 ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> 
@@ -34,7 +34,7 @@
             Scene("Bridge/Solo/Ending", 
                 ChannelSplit(
                     {
-                        cme_channel : (marathon_bridge // marathon_bridge_split),
+                        akai_channel : (marathon_bridge // marathon_bridge_split),
                         pk5_channel : marathon_chords,
                     })),
 
