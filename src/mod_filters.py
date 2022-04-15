@@ -2,8 +2,8 @@
 
 # Instruments d'exécution et/ou controlleur
 inputs=configuration["inputs"]
-cme_channel=inputs["cme"]
-cme = ChannelFilter(cme_channel)
+akai_channel=inputs["akai"]
+akai = ChannelFilter(akai_channel)
 
 pk5_channel=inputs["pk5"]
 pk5 = ChannelFilter(pk5_channel)

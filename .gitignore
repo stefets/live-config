@@ -6,4 +6,4 @@ render.py
 .venv
 .vscode
 .cache
-live-config.py
+script.py
