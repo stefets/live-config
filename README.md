@@ -1,19 +1,19 @@
 # My musical companion with MIDIDINGS as the KERNEL
 
 # Notes
-* Entry point is /src/run.sh SCENE (if SCENE is not specified, default is assumed)
+* Entry point is /src/live.sh SCENE (if SCENE is not specified, default is assumed)
 * ./run.sh create a file called script.py (in .gitignore)
 * Scenes are located in /src/scenes/*
-* Example : ./load.sh debug
-* You MUST replace @@TOKEN@@ in the main.py template with you own logic
+* Example : ./live.sh debug
+* You MUST replace tokens in the main.py template with you own logic
 
 # MIDIDINGS USERS
-## HTML5 Frontend (API and Websockets with Flask)
+## HTML5 Frontend (API and websockets with Flask)
 * I maintain an API and a frontend to drive a MIDIDINGS script
 * https://github.com/stefets/flaskdings - Try it and star it !
 
 # Build
-* Check the pages on how I build Mididings and other tools
+* Check the pages on how I build mididings, python, boost and mpg123
 * https://github.com/stefets/live-config/wiki
 
 # Mididings ressources
