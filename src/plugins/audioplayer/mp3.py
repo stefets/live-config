@@ -7,7 +7,8 @@ from .controller import Transport
 
 from range_key_dict import RangeKeyDict
 
-from mpyg321.mpyg321 import MPyg321Player, PlayerStatus
+from mpyg321.MPyg123Player import MPyg123Player
+from mpyg321.consts import PlayerStatus
 
 import mididings.constants as _constants
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
@@ -23,7 +24,7 @@ Inspiré du clavier 'lanceur de chanson' de l'émission Québecoise 'Tout le mon
 '''
 
 
-class Mp3Player(MPyg321Player):
+class Mp3Player(MPyg123Player):
     def __init__(self, config):
 
         self.enable = config["enable"]

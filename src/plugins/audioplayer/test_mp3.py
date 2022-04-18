@@ -1,7 +1,7 @@
 import time
-from mpyg321.mpyg321 import MPyg321Player, PlayerStatus
+from mpyg321.MPyg123Player import MPyg123Player
 
-player = MPyg321Player(audiodevice='hw:1,0')
+player = MPyg123Player(audiodevice='hw:3,0')
 player.quit()
 #player.silence()
 #player.volume(40)
