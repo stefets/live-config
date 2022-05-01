@@ -78,9 +78,11 @@ def OnPitchbend(ev, direction):
 
 # ---------------------------------------------------------------------------------------------------------
 
-def osc2midi_value_converter(ev):
+'''
+    Convert data2 value to 0-1 range for the Soundcraft UI Mixer
+'''
+def data2_to_zero_one_range(ev):    
     return ev.data2 * 0.7874015748 / 100
-
 
 ''' Set or overwrite an environment variable '''
 def setenv(ev, key, value):

@@ -3,17 +3,18 @@
 # AKAI sliders, knobs and switches
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
-    CtrlFilter(1, 2, 7, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
+    CtrlFilter(1, 2, 3, 7, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
     CtrlSplit({
-        1: Expr1,
-        2: Expr2,
-        69: Ctrl('SD90-MIDI-OUT-1', nav_controller_channel, EVENT_CTRL, EVENT_VALUE),
+        1: ui_hd500,
+        2: Expr1,
+        3: ui_gt10b,
+        4: GT10B_Tuner,
+        7: GT10B_Volume,
         20: Call(NavigateToScene),
         21: Discard(),
         22: Discard(),
-        7: GT10B_Volume,
-        4: GT10B_Tuner,
         26: Program('SD90-PART-A', 1, EVENT_VALUE),
+        69: Tuner,
     })
 )
 
