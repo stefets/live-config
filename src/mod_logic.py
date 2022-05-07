@@ -84,7 +84,22 @@ def OnPitchbend(ev, direction):
 def data2_to_zero_one_range(ev):    
     return ev.data2 * 0.7874015748 / 100
 
+def data2_to_mute(ev):
+    return 1 if ev.data2==127 else 0
+
 ''' Set or overwrite an environment variable '''
 def setenv(ev, key, value):
     os.environ[key] = value
+
+''' Soundcraft input '''
+def sc_base(ev, offset=-1):
+    result = ev.ctrl+offset if ev.type == CTRL else -1
+    return result
+
+''' Soundcraft mute logic '''
+def sc_mute(ev):
+    return sc_base(ev, -21)
+
+def debug(ev):
+    print(ev)
 

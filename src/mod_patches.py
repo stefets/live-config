@@ -21,30 +21,6 @@ HueDetente=Call(HueScene(hue_config, "Détente"))
 HueVeilleuse=Call(HueScene(hue_config, "Veilleuse"))
 HueLecture=Call(HueScene(hue_config, "Lecture"))
 
-# Soundcraft UI16 patches ---------------------------------------------------------------------
-# Need osc-soundcraft-bridge running
-
-#ui_master=TODO
-
-ui_mix1=SendOSC(56420, '/mix', 0,  data2_to_zero_one_range)
-ui_mix2=SendOSC(56420, '/mix', 1,  data2_to_zero_one_range)
-ui_mix3=SendOSC(56420, '/mix', 2,  data2_to_zero_one_range)
-ui_mix4=SendOSC(56420, '/mix', 3,  data2_to_zero_one_range)
-ui_mix5=SendOSC(56420, '/mix', 4,  data2_to_zero_one_range)
-ui_mix6=SendOSC(56420, '/mix', 5,  data2_to_zero_one_range)
-ui_mix7=SendOSC(56420, '/mix', 6,  data2_to_zero_one_range)
-ui_mix8=SendOSC(56420, '/mix', 7,  data2_to_zero_one_range)
-ui_mix9=SendOSC(56420, '/mix', 8,  data2_to_zero_one_range)
-ui_mix10=SendOSC(56420, '/mix',9,  data2_to_zero_one_range)
-ui_mix11=SendOSC(56420, '/mix',10, data2_to_zero_one_range)
-ui_mix12=SendOSC(56420, '/mix',11, data2_to_zero_one_range)
-
-#TODO ui_mute1=SendOSC(56420, '/mute', 0, 1)
-
-#TODO ui_sd90=[ui_mix7//ui_mix8]
-ui_hd500=[ui_mix3//ui_mix4]
-ui_gt10b=[ui_mix5//ui_mix6]
-
 # SD90 - Sequencer patches -----------------------------------------------
 violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
 
