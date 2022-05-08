@@ -42,12 +42,16 @@ spotify_patch = [
     CtrlFilter(1,44),
     ] >> Call(SpotifyPlayer(spotify_config))
 
-# My SoundCraft UI series controller logic
+# My SoundCraft UI16 series controller logic
 osb_port = 56420
 scc=configuration["soundcraft_controller_channel"]
 sc_controller= [
-    CtrlFilter(1,2,3,4,5,6,7,8,9,10,11,12) >> SendOSC(osb_port,  '/mix', sc_base, data2_to_zero_one_range),
-    CtrlFilter(21,22) >> SendOSC(osb_port,  '/mute', sc_mute, data2_to_mute)
+    CtrlFilter(1,2,3,4,5,6,7,8,9,10,11,12) >> SendOSC(osb_port,  '/mix', sc_input, data2_to_zero_one_range),
+    #CtrlFilter(13,14) >> SendOSC(osb_port,  '/lmix', sc_base, data2_to_zero_one_range),
+    #CtrlFilter(15,16) >> SendOSC(osb_port,  '/pmix', sc_base, data2_to_zero_one_range),
+    CtrlFilter(21,22,23,24,25,26,27,28,29,30,31,32) >> SendOSC(osb_port,  '/mute', sc_mute, data2_to_mute),
+    #CtrlFilter(33,34) >> SendOSC(osb_port,  '/lmute', sc_mute, data2_to_mute),
+    CtrlFilter(35,36) >> SendOSC(osb_port,  '/pmute', sc_mute, data2_to_mute),
 ]
 
 # Collection de controllers par channel
