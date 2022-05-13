@@ -12,10 +12,10 @@
     3: SceneGroup("BassCover",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Default", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
-            Scene("Queen", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
-            Scene("T4F", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
-            Scene("Toto", init_patch=Call(Playlist(playlist_config)), patch=U01_A),
+            Scene("Default", init_patch=Call(Playlist(playlist_config))//U01_A, patch=Discard()),
+            Scene("Queen", init_patch=Call(Playlist(playlist_config))//U01_A, patch=Discard()),
+            Scene("T4F", init_patch=Call(Playlist(playlist_config))//U01_A, patch=Discard()),
+            Scene("Toto", init_patch=Call(Playlist(playlist_config))//U01_A, patch=Discard()),
         ]),
     4: SceneGroup("HBR",
         [
@@ -68,7 +68,8 @@
     9: SceneGroup("MP3Player",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Majestyx", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Majestyx", init_patch=Call(Playlist(playlist_config))//U01_A, patch=Discard()),
+            Scene("MajestyxBasse", init_patch=Call(Playlist(playlist_config))//U03_A, patch=Discard()),
             Scene("Delirium", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Hits", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Middleage", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
