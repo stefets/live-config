@@ -125,7 +125,7 @@ __CONTROL__
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=InitializeSD90, patch=Discard()),
+    1: Scene("Initialize", init_patch=SD90_Initialize, patch=Discard()),
 __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------
