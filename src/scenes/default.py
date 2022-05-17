@@ -98,4 +98,11 @@
             Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
             Scene("Off", init_patch=HueOff, patch=Discard()),
         ]),
-
+    12: SceneGroup("Maudite Machine",
+        [
+            Scene("Intro+Verse1", init_patch=P06B, patch=p_octobre),
+            Scene("Bridge", init_patch=P06A, patch=p_octobre),
+            Scene("Solo+Verse2", init_patch=P06B, patch=p_octobre),
+            Scene("Bridge", init_patch=P06A, patch=p_octobre),
+            Scene("Final", init_patch=P06B, patch=p_octobre),
+        ]),
