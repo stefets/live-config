@@ -317,6 +317,10 @@ p_recorder = (pk5 >>
             Filter(NOTEOFF) >> HueGalaxieMax, 
         ])
 # ---
+p_octobre = (pk5 >> 
+        [
+            Filter(NOTEON) >> KeyFilter(notes=[60]) >> SubSceneSwitch(offset=1),
+        ])
 
 # FUTUR TESTS
 
