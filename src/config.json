@@ -10,6 +10,19 @@
         "pk5": 3
     },
     "nav_controller_channel": 9,
+    "soundcraft_controller_channel": 7,
+    "controllers" : {
+        "soundcraft" : {
+            "channel" : 7,
+            "osc_port" : 56420
+        },
+        "mpg123" : {
+            "size": 49,
+            "transpose": -36,
+            "channel": 8
+        },
+        "hue" : {}
+    },
     "plugins": {
         "lightning": {
             "enable": true,

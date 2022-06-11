@@ -214,7 +214,9 @@ Rain=Output('SD90-PART-B', channel=1, program=(Contemporary+Var1, 123))
 
 ### End SD-90 Patch list
 # -------------------------------------------------------------------
+# SD Mixer config 
+Reset = '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7'
+MixToAfx = '\xF0\x41\x10\x00\x48\x12\x02\x10\x10\x00\x06\x58\xF7'
+MasterEffect = '\xF0\x41\x10\x00\x48\x12\x02\x10\x20\x00\x78\x56\xF7'
 
-ResetSD90 = SysEx('\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7')
-
-InitializeSD90 = (ResetSD90 // InitPitchBend)
+SD90_Initialize = (SysEx(Reset) // SysEx(MixToAfx) // SysEx(MasterEffect) // InitPitchBend)

@@ -22,5 +22,5 @@
 * https://groups.google.com/g/mididings
 * https://github.com/dsacre/mididings
 
-# Example
-<img src="/doc/live-config.png" />
+# My configuration
+<img src="/doc/layers.png" />

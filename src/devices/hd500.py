@@ -96,7 +96,9 @@ TOE = Ctrl(hd500_port, hd500_channel, 59, 64)
 Expr1 = Ctrl(hd500_port, hd500_channel, 1, EVENT_VALUE)
 Expr2 = Ctrl(hd500_port, hd500_channel, 2, EVENT_VALUE)
 
-# Looper
+# Tuner
+Tuner = Ctrl(hd500_port, hd500_channel, EVENT_CTRL, EVENT_VALUE)
+
 TunerOn = Ctrl(hd500_port, hd500_channel, 69, 127)
 TunerOff = Ctrl(hd500_port, hd500_channel, 69, 0)
 

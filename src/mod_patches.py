@@ -21,6 +21,7 @@ HueDetente=Call(HueScene(hue_config, "Détente"))
 HueVeilleuse=Call(HueScene(hue_config, "Veilleuse"))
 HueLecture=Call(HueScene(hue_config, "Lecture"))
 
+# SD90 - Sequencer patches -----------------------------------------------
 violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
 
 p_hue = Filter(NOTEON) >> [
@@ -316,6 +317,10 @@ p_recorder = (pk5 >>
             Filter(NOTEOFF) >> HueGalaxieMax, 
         ])
 # ---
+p_octobre = (pk5 >> 
+        [
+            Filter(NOTEON) >> KeyFilter(notes=[60]) >> SubSceneSwitch(offset=1),
+        ])
 
 # FUTUR TESTS
 

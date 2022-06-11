@@ -14,8 +14,8 @@ from mididings.extra.inotify import *
 
 config(
     in_ports=[
-        #('IN-1', '24:2'),
-        #('IN-2', '24:3'),
+        ('SD90-IN-1', '32:2'),
+        ('SD90-IN-2', '32:3'),
         ('MPK-MIDI1', '28:0'),
         ('MPK-MIDI2', '28:1'),
         ('MPK-MIDI3', '28:2'),
@@ -27,8 +27,8 @@ config(
         ('MPK-MIDI2', '28:1'),
         ('MPK-MIDI3', '28:2'),
         ('MPK-MIDI4', '28:3'),
-        #('PART-A', '24:0'),
-        #('PART-B', '24:1'),
+        ('PART-A', '32:0'),
+        ('PART-B', '32:1'),
         #('OUT-1', '24:2'),
         #('OUT-2', '24:3'),
         #('GT', '20:0'),
@@ -48,7 +48,8 @@ _scenes = {
     #1: Scene("Piano", init_patch=Ctrl('OUT-2',1,3,67), patch=piano),
 }
 
-_pre = ~Filter(SYSRT_CLOCK) #// Print('input', portnames='in')
+#_pre = ~Filter(SYSRT_CLOCK) 
+_pre =  Print('input', portnames='in')
 _post = Print('output', portnames='out')
 
 _control=Pass()
