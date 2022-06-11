@@ -170,7 +170,7 @@ limelight =  Key('d#6') >> Output('SD90-PART-A', channel=16, program=(Special1,1
 # Init patch 
 i_centurion = [
         Call(Playlist(playlist_config)), 
-        P02A, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2
+        P02A, Ctrl(3,127) >> Expr2
 ]
 
 # Execution patch
@@ -196,11 +196,11 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 # Song : In a big country
 
 # Init patch
-i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,40) >> Expr1 , Ctrl(3,127) >> Expr2]
+i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,127) >> Expr2]
 
 # Execution patch
 
-i_big_country_live = [P14D, FS1, FS3, FS4, Ctrl(3,45) >> Expr1 , Ctrl(3,85) >> Expr2]
+i_big_country_live = [P14D, FS1, FS3, FS4, Ctrl(3,85) >> Expr2]
 p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
         [
             Filter(NOTEON) >> [CakePlay],
@@ -219,7 +219,7 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
 # Band : Rush ------------------------------------------
 
 # Default init patch
-i_rush = [P02A, Ctrl(3,50) >> Expr1, Ctrl(3,100) >> Expr2]
+i_rush = [P02A, Ctrl(3,100) >> Expr2]
 
 # Default patch - tout en paralelle mais séparé par contexte
 p_rush = (pk5 >> Filter(NOTEON) >>
@@ -239,12 +239,12 @@ p_rush = (pk5 >> Filter(NOTEON) >>
 # Subdivisions
 
 # Init patch
-i_rush_sub=[P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2]
+i_rush_sub=[P02A, FS3, Ctrl(3,100) >> Expr2]
 
 # Grand Designs
 
 # Init patch
-i_rush_gd = [P02A, FS1, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,127) >> Expr2] 
+i_rush_gd = [P02A, FS1, FS3, Ctrl(3,127) >> Expr2] 
 
 # Execution patch
 p_rush_gd = (pk5 >> 
@@ -276,7 +276,7 @@ p_rush_gd = (pk5 >>
 # The Trees
 
 # Init patch
-i_rush_trees = [P02A, FS3, Ctrl(3,40) >> Expr1, Ctrl(3,100) >> Expr2] 
+i_rush_trees = [P02A, FS3, Ctrl(3,100) >> Expr2] 
 
 # Foot keyboard output
 p_rush_trees_foot = Velocity(fixed=110) >> Output('SD90-PART-A', channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})
