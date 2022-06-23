@@ -5,7 +5,8 @@ nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
     CtrlFilter(1, 2, 3, 7, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
     CtrlSplit({
-        2: Expr1,
+        1: Expr1,
+        2: Expr2,
         4: GT10B_Tuner,
         7: GT10B_Volume,
         20: Call(NavigateToScene),
