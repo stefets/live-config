@@ -39,7 +39,7 @@
     6: SceneGroup("GrandDesignsStudio",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Recorder", init_patch=Discard(), patch=p_recorder),
+            Scene("Recorder", init_patch=Discard(), patch=p_transport),
         ]),
     7: SceneGroup("Demonstrations",
         [
@@ -98,11 +98,8 @@
             Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
             Scene("Off", init_patch=HueOff, patch=Discard()),
         ]),
-    12: SceneGroup("Maudite Machine",
+    12: SceneGroup("Octobre",
         [
-            Scene("Intro+Verse1", init_patch=P06B, patch=p_octobre),
-            Scene("Bridge", init_patch=P06A, patch=p_octobre),
-            Scene("Solo+Verse2", init_patch=P06B, patch=p_octobre),
-            Scene("Bridge", init_patch=P06A, patch=p_octobre),
-            Scene("Final", init_patch=P06B, patch=p_octobre),
+            Scene("Select", init_patch=Discard(), patch=Discard()),
+            Scene("Maudite Machine", init_patch=i_octobre, patch=p_transport // p_octobre),
         ]),

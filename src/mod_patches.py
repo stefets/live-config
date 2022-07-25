@@ -216,6 +216,24 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
 
 # Big Country fin de section ------------------------------------------
 
+# Band : Octobre ------------------------------------------
+
+# Init patch (Intro)
+i_octobre = [P09A, FS1, FS3, FS4, Ctrl(3,127) >> Expr2]
+
+# Execution patch
+p_octobre = (pk5 >> Filter(NOTEON) >>
+         [
+             (KeyFilter(notes=[64]) >> [FS4, Ctrl(3,120) >> Expr2]),
+             (KeyFilter(notes=[65]) >> [FS1, Ctrl(3,100) >> Expr2]),
+             (KeyFilter(notes=[67]) >> [FS1, FS2, FS4, Ctrl(3,65) >> Expr2]),
+             (KeyFilter(notes=[69]) >> [FS2, Ctrl(3,127) >> Expr2]),
+             (KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100 ) >> Expr2])
+         ])
+
+
+# Octobre fin de secion ------------------------------------------
+
 # Band : Rush ------------------------------------------
 
 # Default init patch
@@ -309,21 +327,15 @@ p_rush_trees=(pk5 >>
 # Rush fin de section ------------------------------------------
 
 # ---
-# Helpers
-p_recorder = (pk5 >> 
+# Daw helper
+p_transport = (pk5 >> 
         [
             Filter(NOTEON) >> KeyFilter(notes=[60]) >> [CakePlay],
             Filter(NOTEON) >> KeyFilter(notes=[62]) >> [CakeRecord],
             Filter(NOTEOFF) >> HueGalaxieMax, 
         ])
+
 # ---
-p_octobre = (pk5 >> 
-        [
-            Filter(NOTEON) >> KeyFilter(notes=[60]) >> SubSceneSwitch(offset=1),
-        ])
-
-# FUTUR TESTS
-
 # Glissando
 p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, 'SD90-PART-A'))
 
