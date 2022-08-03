@@ -6,7 +6,7 @@
 hd500_channel = configuration['devices']['hd500']
 
 # Connecté a quel port MIDI ?
-hd500_port = 'SD90-MIDI-OUT-1'
+hd500_port = 'UM2-MIDI-OUT-1'
 
 # Programmes
 P01A = Program(hd500_port, channel=hd500_channel, program=1)

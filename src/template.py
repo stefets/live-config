@@ -24,7 +24,6 @@ from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
 from plugins.audioplayer.spotify import SpotifyPlayer
 
-
 # Setup path
 sys.path.append(os.path.realpath('.'))
 
@@ -47,12 +46,7 @@ config(
     # backend = 'alsa',
     # client_name = 'mididings',
 
-    # 
-    #   Device name                     # Description               #
-    #  
-
-    # Ports are tokenized and sed/awk by build_script.sh
-
+    # Ports are changed by live.sh with sed/awk
     out_ports = [
 
         ('SD90-PART-A', '__SD-90 Part A__'),
@@ -90,7 +84,7 @@ config(
 )
 
 hook(
-    #AutoRestart(),
+    #AutoRestart(), # Use when debug directly in script.py
     OSCInterface(),
 )
 
@@ -125,7 +119,6 @@ __CONTROL__
 # Scenes body
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
-    1: Scene("Initialize", init_patch=SD90_Initialize, patch=Discard()),
 __SCENES__
 }
 #-----------------------------------------------------------------------------------------------------------

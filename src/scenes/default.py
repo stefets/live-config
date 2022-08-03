@@ -1,3 +1,4 @@
+    1: Scene("Initialize", init_patch=SD90_Initialize, patch=Discard()),
     2: SceneGroup("Rush",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
