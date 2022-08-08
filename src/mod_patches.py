@@ -1,6 +1,6 @@
 '''
 Notes :
-
+- Ctrl #3 est Undefined selon la documentation du protocole MIDI; donc libre d'utilisation.
 - L'utilisation du Ctrl(3,value) sert a passer le value dans EVENT_VALUE pour l'unité suivante dans une série d'unité
 - Soit pour assigner une valeur au pédales d'expression du POD HD 500
 - Soit pour déterminer la valeur d'une transition pour le chargement d'une scène du Philips HUE
@@ -232,7 +232,7 @@ p_octobre = (pk5 >> Filter(NOTEON) >>
          ])
 
 
-# Octobre fin de secion ------------------------------------------
+# Octobre fin de section ------------------------------------------
 
 # Band : Rush ------------------------------------------
 
