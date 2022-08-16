@@ -43,7 +43,8 @@
             "controller": {
                 "size": 49,
                 "transpose": -36,
-                "channel": 8
+                "channel": 8,
+                "port" : "MPK-MIDI-IN-1"                
             }
         },
         "spotify": {

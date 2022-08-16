@@ -12,6 +12,7 @@ from mpyg321.consts import PlayerStatus
 
 import mididings.constants as _constants
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
+from mididings.event import NoteOnEvent
 
 import alsaaudio
 
@@ -42,16 +43,26 @@ class Mp3Player(MPyg123Player):
 
         super().__init__(config["player"], card if card else None, True)
 
+        # For mpg123 >= v1.3*.*
+        self.mpg_outs.append(
+            {
+                "mpg_code" : "@P 3",
+                "action" : "end_of_song",
+                "description" : "Player has reached the end of the song."
+            })
+
         self.controller = Transport(config["controller"])
         self.playlist = Playlist(config['playlist'])
+        self.autonext = False
 
+        # Show things in stdout
         self.terminal = Terminal()
 
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
         self.note_range_mapping = RangeKeyDict({
 
-            (0, 1): self.unassigned,
+            (0, 1): self.toggle_autonext,
 
             (1, 36): self.on_play,
             
@@ -115,6 +126,10 @@ class Mp3Player(MPyg123Player):
     # Unassigned key
     def unassigned(self, ev):
         pass
+
+    def toggle_autonext(self, ev):
+        self.autonext = not self.autonext
+        self.update_display()
 
     # Scenes navigation
     def home_scene(self, ev):
@@ -215,16 +230,22 @@ class Mp3Player(MPyg123Player):
             return "IndexError"
 
     def update_display(self):
-        print(" {}VOL={}% | JMP={}s | {}{}{}".format(Fore.RED, 
-            self.vol, self.jump_offset, self.get_current_song(), self.terminal.spacer, 
+        print(" {}VOL={}% | JMP={}s | AN={} | {}{}{}".format(Fore.RED, 
+            self.vol, self.jump_offset, self.autonext, self.get_current_song(), self.terminal.spacer, 
             Style.RESET_ALL), end="\r", flush=True)
 
     '''
-    mpyg321 callbacks region
+    mpyg321 callbacks
     '''
     def on_any_stop(self):
         if self.status != PlayerStatus.PAUSED:
             self.status = PlayerStatus.STOPPED
+
+    def on_music_end(self):
+        if self.autonext:
+            # Load next entry in playlist with a dummy MIDI event
+            ev = NoteOnEvent(self.controller.port, self.controller.channel, 0, 0)
+            self.next_entry(ev)
 
 
 class Playlist():
