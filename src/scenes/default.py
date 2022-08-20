@@ -40,7 +40,8 @@
     6: SceneGroup("GrandDesignsStudio",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Recorder", init_patch=Discard(), patch=p_transport),
+            Scene("PowerWindows", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Futur", init_patch=Discard(), patch=p_transport),
         ]),
     7: SceneGroup("Demonstrations",
         [

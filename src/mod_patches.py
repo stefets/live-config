@@ -33,6 +33,7 @@ p_hue = Filter(NOTEON) >> [
     KeyFilter(notes=[106]) >> HueGalaxieMax, 
     KeyFilter(notes=[107]) >> HueDemon, 
     KeyFilter(notes=[108]) >> HueOff, 
+    KeyFilter(notes=[109]) >> Ctrl(3, 50) >> HueLecture, 
 
 ]
 

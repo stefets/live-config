@@ -103,7 +103,7 @@ class Mp3Player(MPyg123Player):
         self.jump_offset = 5
         self.current_entry = 0
 
-        self.vol = 10
+        self.vol = 75   # In %
         self.volume(self.vol)
 
         self.current_scene = -1

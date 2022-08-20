@@ -85,7 +85,6 @@ sc_controller= [
           Ctrl(28,EVENT_VALUE) >> SendOSC(osb_port, '/mute', sc_mute, data2_to_zero_one_range)
         ],
 
-
     # Line IN    
     CtrlFilter(13,14) >> 
         [
@@ -109,6 +108,9 @@ sc_controller= [
           Ctrl(35,EVENT_VALUE) >> SendOSC(osb_port, '/pmute', 0, data2_to_zero_one_range),
           Ctrl(36,EVENT_VALUE) >> SendOSC(osb_port, '/pmute', 1, data2_to_zero_one_range)
         ],
+
+    # MASTER
+    CtrlFilter(100) >> SendOSC(osb_port, '/master', data2_to_zero_one_range),
 
 ]
 
