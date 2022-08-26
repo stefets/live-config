@@ -45,72 +45,23 @@ osb_port = 56420
 scc=configuration["soundcraft_controller_channel"]
 sc_controller= [
 
-    CtrlFilter(1,2,9,10,11,12) >> SendOSC(osb_port, '/mix', sc_input, data2_to_zero_one_range),
+    CtrlFilter(1,2,3,4,5,6,7,8,9,10,11,12) >> SendOSC(osb_port, '/mix', sc_input, data2_to_zero_one_range),
+    CtrlFilter(13) >> SendOSC(osb_port, '/lmix', 0, data2_to_zero_one_range),
+    CtrlFilter(14) >> SendOSC(osb_port, '/lmix', 1, data2_to_zero_one_range),
+    CtrlFilter(15) >> SendOSC(osb_port, '/pmix', 0, data2_to_zero_one_range),
+    CtrlFilter(16) >> SendOSC(osb_port, '/pmix', 1, data2_to_zero_one_range),
     
-    CtrlFilter(3,4) >> 
-        [
-          Ctrl(3,EVENT_VALUE) >> SendOSC(osb_port, '/mix', sc_input, data2_to_zero_one_range),
-          Ctrl(4,EVENT_VALUE) >> SendOSC(osb_port, '/mix', sc_input, data2_to_zero_one_range)
-        ],
-    
-    CtrlFilter(5,6) >> 
-        [
-          Ctrl(5,EVENT_VALUE) >> SendOSC(osb_port, '/mix', sc_input, data2_to_zero_one_range),
-          Ctrl(6,EVENT_VALUE) >> SendOSC(osb_port, '/mix', sc_input, data2_to_zero_one_range)
-        ],
-    
-    CtrlFilter(7,8) >> 
-        [
-          Ctrl(7,EVENT_VALUE) >> SendOSC(osb_port, '/mix', sc_input, data2_to_zero_one_range),
-          Ctrl(8,EVENT_VALUE) >> SendOSC(osb_port, '/mix', sc_input, data2_to_zero_one_range)
-        ],
-    
-    CtrlFilter(21,22,29,30,31,32) >> SendOSC(osb_port,  '/mute', sc_mute, data2_to_mute),
-
-        CtrlFilter(23,24) >> 
-        [
-          Ctrl(23,EVENT_VALUE) >> SendOSC(osb_port, '/mute', sc_mute, data2_to_zero_one_range),
-          Ctrl(24,EVENT_VALUE) >> SendOSC(osb_port, '/mute', sc_mute, data2_to_zero_one_range)
-        ],
-    
-    CtrlFilter(25,26) >> 
-        [
-          Ctrl(25,EVENT_VALUE) >> SendOSC(osb_port, '/mute', sc_mute, data2_to_zero_one_range),
-          Ctrl(26,EVENT_VALUE) >> SendOSC(osb_port, '/mute', sc_mute, data2_to_zero_one_range)
-        ],
-    
-    CtrlFilter(27,28) >> 
-        [
-          Ctrl(27,EVENT_VALUE) >> SendOSC(osb_port, '/mute', sc_mute, data2_to_zero_one_range),
-          Ctrl(28,EVENT_VALUE) >> SendOSC(osb_port, '/mute', sc_mute, data2_to_zero_one_range)
-        ],
-
-    # Line IN    
-    CtrlFilter(13,14) >> 
-        [
-          Ctrl(13,EVENT_VALUE) >> SendOSC(osb_port, '/lmix', 0, data2_to_zero_one_range),
-          Ctrl(14,EVENT_VALUE) >> SendOSC(osb_port, '/lmix', 1, data2_to_zero_one_range)
-        ],
-    CtrlFilter(33,34) >> 
-        [
-          Ctrl(33,EVENT_VALUE) >> SendOSC(osb_port, '/lmute', 0, data2_to_zero_one_range),
-          Ctrl(34,EVENT_VALUE) >> SendOSC(osb_port, '/lmute', 1, data2_to_zero_one_range)
-        ],
-
-    # Player IN
-    CtrlFilter(15,16) >> 
-        [
-          Ctrl(15,EVENT_VALUE) >> SendOSC(osb_port, '/pmix', 0, data2_to_zero_one_range),
-          Ctrl(16,EVENT_VALUE) >> SendOSC(osb_port, '/pmix', 1, data2_to_zero_one_range)
-        ],
-    CtrlFilter(35,36) >> 
-        [
-          Ctrl(35,EVENT_VALUE) >> SendOSC(osb_port, '/pmute', 0, data2_to_zero_one_range),
-          Ctrl(36,EVENT_VALUE) >> SendOSC(osb_port, '/pmute', 1, data2_to_zero_one_range)
-        ],
+    CtrlFilter(17,18,19,20,21,22,23,24,25,26,27,28) >> Process(set_input, offset=-16) >> SendOSC(osb_port, '/mute', sc_input, data2_to_mute),
+    CtrlFilter(29) >> SendOSC(osb_port, '/lmute', 0, data2_to_zero_one_range),
+    CtrlFilter(30) >> SendOSC(osb_port, '/lmute', 1, data2_to_zero_one_range),
+    CtrlFilter(31) >> SendOSC(osb_port, '/pmute', 0, data2_to_zero_one_range),
+    CtrlFilter(32) >> SendOSC(osb_port, '/pmute', 1, data2_to_zero_one_range),
 
     # MASTER
     CtrlFilter(100) >> SendOSC(osb_port, '/master', data2_to_zero_one_range),
+
+    # FX
+    CtrlFilter(33) >> Process(set_input, offset=-32) >> SendOSC(osb_port, '/fx', sc_input, data2_to_zero_one_range),
 
 ]
 

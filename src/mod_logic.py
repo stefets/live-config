@@ -93,12 +93,11 @@ def setenv(ev, key, value):
 
 ''' Soundcraft input '''
 def sc_input(ev, offset=-1):
-    result = ev.ctrl+offset if ev.type == CTRL else -1
-    return result
+    return ev.ctrl+offset if ev.type == CTRL else -1
 
-''' Soundcraft mute logic '''
-def sc_mute(ev):
-    return sc_input(ev, -21)
+def set_input(ev, offset):
+    ev.ctrl = ev.ctrl + offset
+    return ev
 
 def debug(ev):
     print(ev)
