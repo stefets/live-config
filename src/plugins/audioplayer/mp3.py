@@ -53,7 +53,7 @@ class Mp3Player(MPyg123Player):
 
         self.controller = Transport(config["controller"])
         self.playlist = Playlist(config['playlist'])
-        self.autonext = False
+        self.autonext = True
 
         # Show things in stdout
         self.terminal = Terminal()

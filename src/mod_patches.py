@@ -292,6 +292,33 @@ p_rush_gd = (pk5 >>
             ],
     ])
 
+# Youtube SoundCraftBridge Demo
+p_rush_gd_demo = (ChannelFilter(16) >> 
+    [
+        Filter(NOTEON) >> [
+                [ 
+                    KeyFilter(notes=[113]) >> Ctrl(3, 50) >> HueLecture,
+                    #KeyFilter(notes=[61]) >> Ctrl(3, 1) >> HueDemon,
+                    #KeyFilter(notes=[62]) >> Ctrl(3, 50) >> HueGalaxie,
+                    #KeyFilter(notes=[64, 72]) >> Ctrl(3, 1) >> HueSoloRed,
+                ],
+                [
+                    #KeyFilter(notes=[67]) >> FS4,
+                    #KeyFilter(notes=[69]) >> [Ctrl(3, 100) >> Expr2, FS4],
+                    #KeyFilter(notes=[71]) >> [Ctrl(3, 127) >> Expr2, FS4],
+                    #KeyFilter(notes=[72]) >>  Ctrl(3, 127) >> Expr2
+                ],
+            ],
+        Filter(NOTEOFF) >> [
+                [
+                    #KeyFilter(notes=[72]) >> Ctrl(3, 1) >> HueGalaxie
+                ],
+                [
+                    #KeyFilter(notes=[72]) >> Ctrl(3, 100) >> Expr2
+                ]
+            ],
+    ])
+
 # The Trees
 
 # Init patch

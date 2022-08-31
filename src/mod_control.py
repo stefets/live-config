@@ -40,7 +40,7 @@ spotify_patch = [
     CtrlFilter(1,44),
     ] >> Call(SpotifyPlayer(spotify_config))
 
-# My SoundCraft UI16 series controller logic
+# My SoundCraft UI16 series controller patch
 osb_port = 56420
 scc=configuration["soundcraft_controller_channel"]
 sc_controller= [
@@ -60,8 +60,8 @@ sc_controller= [
     # MASTER
     CtrlFilter(100) >> SendOSC(osb_port, '/master', data2_to_zero_one_range),
 
-    # FX
-    CtrlFilter(33) >> Process(set_input, offset=-32) >> SendOSC(osb_port, '/fx', sc_input, data2_to_zero_one_range),
+    # Reverb channel 1 to 12
+    CtrlFilter(33,34,35,36,37,38,39,40,41,42,43,44) >> Process(set_input, offset=-32) >> SendOSC(osb_port, '/reverb', sc_input, data2_to_zero_one_range),
 
 ]
 
