@@ -215,6 +215,8 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
              (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> Expr2])
          ])
 
+i_big_country_hs = [P14B, FS1, Ctrl(3, 120) >> Expr2]
+
 # Big Country fin de section ------------------------------------------
 
 # Band : Octobre ------------------------------------------

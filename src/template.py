@@ -131,7 +131,7 @@ pre  = ~ChannelFilter(8, 9, 11) // ~Filter(SYSRT_CLOCK)
 post = Pass()
 
 # DEBUG
-#pre  = Print('input', portnames='in')
+#pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
 #post = Print('output',portnames='out')
 
 run(
