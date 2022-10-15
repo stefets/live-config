@@ -81,6 +81,12 @@ P16D = Program(hd500_port, channel=hd500_channel, program=64)
 #S60C = Program(hd500_port, channel=hd500_channel, program=63)
 #S60D = Program(hd500_port, channel=hd500_channel, program=64)
 
+# Abstract patch (must be chained before by a Ctrl(c,v))
+# Example: 
+#       Ctrl(69, 127) >> CtrlPod will set the tuner on.
+# mean  Ctrl(hd500_port, hd500_channel, 69, 127)
+CtrlPod = Ctrl(hd500_port, hd500_channel, EVENT_CTRL, EVENT_VALUE)
+
 # Footsiwtch
 FS1 = Ctrl(hd500_port, hd500_channel, 51, 64)
 FS2 = Ctrl(hd500_port, hd500_channel, 52, 64)
@@ -96,22 +102,15 @@ TOE = Ctrl(hd500_port, hd500_channel, 59, 64)
 Expr1 = Ctrl(hd500_port, hd500_channel, 1, EVENT_VALUE)
 Expr2 = Ctrl(hd500_port, hd500_channel, 2, EVENT_VALUE)
 
-# Tuner (abstract)
-Tuner = Ctrl(hd500_port, hd500_channel, EVENT_CTRL, EVENT_VALUE)
+# Tuner (shortcut)
+Tuner = CtrlPod
 
-TunerOn = Ctrl(hd500_port, hd500_channel, 69, 127)
+TunerOn  = Ctrl(hd500_port, hd500_channel, 69, 127)
 TunerOff = Ctrl(hd500_port, hd500_channel, 69, 0)
 
-# Looper (abstract)
-# Expected EVENT_CTRL (60,61,62,63,65,67,68,99) EVENT_VALUE see doc
-Looper = Ctrl(hd500_port, hd500_channel, EVENT_CTRL, EVENT_VALUE)
+# Looper
+Looper = CtrlFilter(60, 61, 62, 63, 65, 67, 68, 99) >> CtrlPod
 
 # Tap
 # Expected EVENT_VALUE between 64 and 127
 Tap = Ctrl(hd500_port, hd500_channel, 64, EVENT_VALUE)
-
-# Abstract patch (must be chained before by a Ctrl(c,v))
-# Example: 
-#       Ctrl(69, 127) >> CtrlPod will set the tuner on.
-# mean  Ctrl(hd500_port, hd500_channel, 69, 127)
-CtrlPod = Ctrl(hd500_port, hd500_channel, EVENT_CTRL, EVENT_VALUE)
