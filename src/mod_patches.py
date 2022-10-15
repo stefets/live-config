@@ -215,7 +215,14 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
              (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> Expr2])
          ])
 
-i_big_country_hs = [P14B, FS1, Ctrl(3, 120) >> Expr2]
+
+# Highland Scenery
+i_big_country_hs      = [P14B, FS1, Ctrl(3, 120) >> Expr2]
+i_big_country_hs_live = [P14B, Ctrl(3, 120) >> Expr2]
+p_big_country_hs_live = (pk5 >> Filter(NOTEON) >>
+         [
+             (KeyFilter(notes=[60]) >> FS1),
+         ])
 
 # Big Country fin de section ------------------------------------------
 

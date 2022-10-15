@@ -46,7 +46,7 @@ config(
     # backend = 'alsa',
     # client_name = 'mididings',
 
-    # Ports are changed by live.sh with sed/awk
+    # __Ports__ are changed by live.sh with sed/awk
     out_ports = [
 
         ('SD90-PART-A', '__SD-90 Part A__'),
@@ -55,9 +55,6 @@ config(
         ('SD90-MIDI-OUT-2', '__SD-90 MIDI 2__',),
 
         ('GT10B-MIDI-OUT-1', '__GT-10B MIDI 1__',),
-
-        ('UM2-MIDI-OUT-1', '__UM-2 MIDI 1__',),
-        ('UM2-MIDI-OUT-2', '__UM-2 MIDI 2__',),
 
         ('MPK-MIDI-OUT-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI OUT
 
@@ -68,9 +65,7 @@ config(
         ('SD90-MIDI-IN-1','__SD-90 MIDI 1__',),
         ('SD90-MIDI-IN-2','__SD-90 MIDI 2__',),
 
-        #('GT10B-MIDI-IN-1', '__GT-10B MIDI 1__',),
-
-        ('UM2-MIDI-IN-1', '__UM-2 MIDI 1__',),
+        #('GT10B-MIDI-IN-1', '__GT-10B MIDI 1__',), # Under investigation
 
         #('Q49', '__Q49 MIDI 1__',),
 
