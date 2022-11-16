@@ -46,18 +46,15 @@ config(
     # backend = 'alsa',
     # client_name = 'mididings',
 
-    # Ports are changed by live.sh with sed/awk
+    # __Ports__ are changed by live.sh with sed/awk
     out_ports = [
 
-        ('SD90-PART-A', ''),
-        ('SD90-PART-B', ''),
-        ('SD90-MIDI-OUT-1', '',),
-        ('SD90-MIDI-OUT-2', '',),
+        ('SD90-PART-A', '36:0'),
+        ('SD90-PART-B', '36:1'),
+        ('SD90-MIDI-OUT-1', '36:2',),
+        ('SD90-MIDI-OUT-2', '36:3',),
 
-        ('GT10B-MIDI-OUT-1', '',),
-
-        ('UM2-MIDI-OUT-1', '32:0',),
-        ('UM2-MIDI-OUT-2', '32:1',),
+        ('GT10B-MIDI-OUT-1', '32:0',),
 
         ('MPK-MIDI-OUT-3', '28:2',), # 5 PIN MIDI OUT
 
@@ -65,14 +62,12 @@ config(
 
     in_ports = [
 
-        ('SD90-MIDI-IN-1','',),
-        ('SD90-MIDI-IN-2','',),
+        ('SD90-MIDI-IN-1','36:2',),
+        ('SD90-MIDI-IN-2','36:3',),
 
-        #('GT10B-MIDI-IN-1', '',),
+        #('GT10B-MIDI-IN-1', '32:0',), # Under investigation
 
-        ('UM2-MIDI-IN-1', '32:0',),
-
-        #('Q49', '',),
+        #('Q49', '',),   # My Alesis Q49 as backup or dev controller
 
         ('MPK-MIDI-IN-1', '28:0',), # USB A ch.1-16
         ('MPK-MIDI-IN-2', '28:1',), # USB B ch.1-16
@@ -772,7 +767,7 @@ GT10B_Expression = GT10B_Ctrl
 hd500_channel = configuration['devices']['hd500']
 
 # Connecté a quel port MIDI ?
-hd500_port = 'UM2-MIDI-OUT-1'
+hd500_port = 'MPK-MIDI-OUT-3'
 
 # Programmes
 P01A = Program(hd500_port, channel=hd500_channel, program=1)
@@ -1311,6 +1306,15 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
              (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> Expr2])
          ])
 
+
+# Highland Scenery
+i_big_country_hs      = [P14B, FS1, Ctrl(3, 120) >> Expr2]
+i_big_country_hs_live = [P14B, Ctrl(3, 120) >> Expr2]
+p_big_country_hs_live = (pk5 >> Filter(NOTEON) >>
+         [
+             (KeyFilter(notes=[60]) >> FS1),
+         ])
+
 # Big Country fin de section ------------------------------------------
 
 # Band : Octobre ------------------------------------------
@@ -1598,6 +1602,8 @@ _scenes = {
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
             Scene("In a big country LIVE", init_patch=i_big_country_live, patch=p_big_country // p_big_country_live),
+            Scene("Highland Scenery", init_patch=i_big_country_hs, patch=p_big_country // p_big_country_live),
+            Scene("Highland Scenery LIVE", init_patch=i_big_country_hs_live, patch=p_big_country_hs_live),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
@@ -1677,7 +1683,7 @@ pre  = ~ChannelFilter(8, 9, 11) // ~Filter(SYSRT_CLOCK)
 post = Pass()
 
 # DEBUG
-#pre  = Print('input', portnames='in')
+#pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
 #post = Print('output',portnames='out')
 
 run(

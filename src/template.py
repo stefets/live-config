@@ -67,7 +67,7 @@ config(
 
         #('GT10B-MIDI-IN-1', '__GT-10B MIDI 1__',), # Under investigation
 
-        #('Q49', '__Q49 MIDI 1__',),
+        #('Q49', '__Q49 MIDI 1__',),   # My Alesis Q49 as backup or dev controller
 
         ('MPK-MIDI-IN-1', '__MPK249 MIDI 1__',), # USB A ch.1-16
         ('MPK-MIDI-IN-2', '__MPK249 MIDI 2__',), # USB B ch.1-16
