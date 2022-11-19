@@ -20,8 +20,6 @@ config(
         #('MPK-MIDI2', '28:1'),
         #('MPK-MIDI3', '28:2'),
         #('MPK-MIDI4', '28:3'),
-        ('UM-2EX', '20:0'),
-        #('GT', '20:0'),
     ],
     out_ports=[
         #('MPK-MIDI1', '28:0'),
@@ -30,24 +28,18 @@ config(
         #('MPK-MIDI4', '28:3'),
         #('PART-A', '32:0'),
         #('PART-B', '32:1'),
-        ('UM-2EX-MIDI1', '20:0'),
-        ('UM-2EX-MIDI2', '20:1'),
-
-        #('OUT-1', '24:2'),
-        #('OUT-2', '24:3'),
-        #('GT', '20:0'),
     ],
-
-
 )
 
 hook(
     AutoRestart()
 )
+hd500_port = 'UM2-MIDI-OUT-1'
+FS1 = Ctrl(hd500_port, 9, 51, 64)
 
 #piano = Output('PART-A', channel=1, program=((96 * 128), 100))
 _scenes = {
-    1: Scene("Test", patch=Pass()),
+    1: Scene("Test", patch=Filter(NOTE)>>FS1),
     #1: Scene("Akai", patch=~Filter() >> Port('MPK-MIDI3')),
     #1: Scene("Piano", init_patch=Ctrl('OUT-2',1,3,67), patch=piano),
 }
