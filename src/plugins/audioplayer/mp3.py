@@ -253,8 +253,7 @@ class Playlist():
         self.songs = []
         self.filename = None
         self.datasource = config['datasource']
-        self.target = config['symlink_target']
-        self.builder = config['symlink_builder']
+        self.target = config['working_directory']
         self.terminal = Terminal()
 
     def __call__(self, ev):
@@ -271,12 +270,14 @@ class Playlist():
         
         playlist_fname = self.target + playlist_name + ".txt"
 
-        songs = (p.resolve() for p in Path(source).glob("**/*") if p.suffix.lower() in {".mp3"})
+        songs = (p.resolve() for p in sorted(Path(source).glob("**/*")) if p.suffix.lower() in {".mp3"})
         if songs:
             with open(playlist_fname, 'w') as fd:
                 for song in songs:
-                    Path(self.target + song.name).symlink_to(song) 
-                    fd.write(f"{song}\n")
+                    fd.write(f"{song.name}\n")
+                    fname = self.target + song.name
+                    if not Path(fname).exists():
+                        Path(fname).symlink_to(song) 
             self.load_from_file(playlist_fname)
         else:
             print("No playlist for " + self.get_scene_name())
@@ -315,3 +316,4 @@ class Playlist():
         for song in self.songs:
             rank += 1
             self.terminal.write_line2(str(rank).zfill(2), song)
+

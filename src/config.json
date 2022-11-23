@@ -31,13 +31,13 @@
             "zone": "Salle de musique",
             "cc_transition": 3
         },
-        "audioplayer": {
+        "mp3player": {
             "enable": true,
             "player": "mpg123",
             "available_devices": ["SD90", "GT10B"],
             "playlist": {
                 "datasource": "/media/mididings/soundlib/",
-                "symlink_target": "/media/mididings/tmp/"
+                "working_directory": "/media/mididings/tmp/"
             },
             "controller": {
                 "size": 49,

@@ -34,7 +34,7 @@ with open('config.json') as json_file:
 # Plugins config
 plugins=configuration['plugins']
 hue_config=plugins['lightning']
-key_config=plugins['audioplayer']
+key_config=plugins['mp3player']
 playlist_config=key_config["playlist"]
 net_config=plugins['net']
 spotify_config=plugins['spotify']
