@@ -1,5 +1,5 @@
+from pathlib import Path
 import subprocess
-from subprocess import check_call
 
 from colorama import Fore, Style
 from .frontend import Terminal
@@ -177,7 +177,7 @@ class Mp3Player(MPyg123Player):
             self.current_scene = current_scene()
             self.current_subscene = current_subscene()
             self.playlist.load_from_file()
-        if ev.data1 > self.playlist.length(): 
+        if ev.data1 > self.playlist.len(): 
             return
         self.load_list(ev.data1, self.playlist.filename)
         self.current_entry = ev.data1
@@ -202,7 +202,7 @@ class Mp3Player(MPyg123Player):
         self.jump(value)
 
     def next_entry(self, ev):
-        if self.playlist.length() >= self.current_entry + 1:
+        if self.playlist.len() >= self.current_entry + 1:
             ev.data1 = self.current_entry + 1
             self.on_play(ev)
 
@@ -253,33 +253,36 @@ class Playlist():
         self.songs = []
         self.filename = None
         self.datasource = config['datasource']
-        self.target = config['symlink_target']
-        self.builder = config['symlink_builder']
+        self.target = config['working_directory']
         self.terminal = Terminal()
 
     def __call__(self, ev):
         self.create()
 
     def create(self):
+        scene = self.get_scene_name()
         if self.has_subscene():
-            filedirname = self.get_subscene_name()
-            source = self.datasource + self.get_scene_name() + "/" + self.get_subscene_name()
+            playlist_name = self.get_subscene_name()
+            source = self.datasource + scene + "/" + playlist_name
         else:
-            filedirname =  self.get_scene_name()
-            source = self.datasource + self.get_scene_name()
+            playlist_name = scene
+            source = self.datasource + scene
         
-        full_filename = self.target + filedirname + ".txt"
+        playlist_fname = self.target + playlist_name + ".txt"
 
-        try:
-            check_call([self.builder, source,  self.target, full_filename])
-            self.load_from_file(full_filename)
-        except subprocess.CalledProcessError as cpe:
-            if cpe.returncode == 3:
-                print("Warning: No playlist for " + self.get_scene_name())
-            else:
-                print("Error: " + str(cpe.returncode))
+        songs = (p.resolve() for p in sorted(Path(source).glob("**/*")) if p.suffix.lower() in {".mp3"})
+        if songs:
+            with open(playlist_fname, 'w') as fd:
+                for song in songs:
+                    fd.write(f"{song.name}\n")
+                    fname = self.target + song.name
+                    if not Path(fname).exists():
+                        Path(fname).symlink_to(song) 
+            self.load_from_file(playlist_fname)
+        else:
+            print("No playlist for " + self.get_scene_name())
                     
-    def length(self):
+    def len(self):
         return len(self.songs)
 
     def has_subscene(self):
@@ -313,3 +316,4 @@ class Playlist():
         for song in self.songs:
             rank += 1
             self.terminal.write_line2(str(rank).zfill(2), song)
+
