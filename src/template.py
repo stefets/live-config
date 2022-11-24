@@ -27,7 +27,11 @@ from plugins.audioplayer.spotify import SpotifyPlayer
 # Setup path
 sys.path.append(os.path.realpath('.'))
 
-# Config file
+# Environment
+from dotenv import load_dotenv
+load_dotenv()
+
+# Configuration
 with open('config.json') as json_file:
     configuration = json.load(json_file)
 

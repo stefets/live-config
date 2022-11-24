@@ -2,12 +2,13 @@
     Plugin qui contrôle le Philips Hue via Call()
     La valeur du CC 3 permet de définir la transition
 '''
+import os
 from phue import Bridge
 import mididings.constants as _constants
 
 class HueBase(Bridge):
     def __init__(self, config):
-        super().__init__(config["ip"], config["username"])
+        super().__init__(os.environ["HUE_IP"], os.environ["HUE_USERNAME"])
         
         self.enable = config["enable"]
         self.zone = config["zone"]
