@@ -31,50 +31,39 @@ key_controller = [
 ] >> Call(Mp3Player(key_config))
 
 hue_controller_channel = 11
-hue_patch = p_hue
+hue_controller = p_hue
 
 spotify_channel = 12
-spotify_patch = [
+spotify_controller = [
     Filter(NOTEON) >> key_transpose,
     CtrlFilter(7) >> CtrlValueFilter(0, 101), 
     CtrlFilter(1,44),
     ] >> Call(SpotifyPlayer(spotify_config))
 
+# 
 # My SoundCraft UI16 series controller patch
-osb_port = 56420
-scc=configuration["soundcraft_controller_channel"]
-sc_controller= [
-
-    CtrlFilter(1,2,3,4,5,6,7,8,9,10,11,12) >> SendOSC(osb_port, '/mix', sc_input, data2_to_zero_one_range),
-    CtrlFilter(13) >> SendOSC(osb_port, '/lmix', 0, data2_to_zero_one_range),
-    CtrlFilter(14) >> SendOSC(osb_port, '/lmix', 1, data2_to_zero_one_range),
-    CtrlFilter(15) >> SendOSC(osb_port, '/pmix', 0, data2_to_zero_one_range),
-    CtrlFilter(16) >> SendOSC(osb_port, '/pmix', 1, data2_to_zero_one_range),
-    
-    CtrlFilter(17,18,19,20,21,22,23,24,25,26,27,28) >> Process(set_input, offset=-16) >> SendOSC(osb_port, '/mute', sc_input, data2_to_mute),
-    CtrlFilter(29) >> SendOSC(osb_port, '/lmute', 0, data2_to_zero_one_range),
-    CtrlFilter(30) >> SendOSC(osb_port, '/lmute', 1, data2_to_zero_one_range),
-    CtrlFilter(31) >> SendOSC(osb_port, '/pmute', 0, data2_to_zero_one_range),
-    CtrlFilter(32) >> SendOSC(osb_port, '/pmute', 1, data2_to_zero_one_range),
-
-    # MASTER
-    CtrlFilter(100) >> SendOSC(osb_port, '/master', data2_to_zero_one_range),
-
-    # Reverb channel 1 to 12
-    CtrlFilter(33,34,35,36,37,38,39,40,41,42,43,44) >> Process(set_input, offset=-32) >> SendOSC(osb_port, '/reverb', sc_input, data2_to_zero_one_range),
-
+# UI Server is 0 based
+#
+ui_midi_channel=configuration["soundcraft_controller_channel"]
+ui_controller= [
+    CtrlFilter(100) >> ui_master,
+    CtrlFilter(0, 1, 8, 9, 10, 11) >> ui_mix,
+    CtrlFilter(2, 4, 6) >> ui_stereo_mix,
+    CtrlFilter(12) >> ui_line,
+    CtrlFilter(14) >> ui_player,
+    #CtrlFilter(33,34,35,36,37,38,39,40,41,42,43,44) >> Process(set_input, offset=-32) >> ui_reverb,
 ]
 
 # Collection de controllers par channel
-controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel, spotify_channel, scc)
+controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel, spotify_channel, ui_midi_channel)
 _control = (
 	controllers >>
 	ChannelSplit({
 		key_controller_channel: key_controller,
 		nav_controller_channel: nav_controller,
-        hue_controller_channel: hue_patch,
-        spotify_channel : spotify_patch,
-        scc : sc_controller
+        hue_controller_channel: hue_controller,
+        spotify_channel : spotify_controller,
+        ui_midi_channel : ui_controller
 	})
 )
 
