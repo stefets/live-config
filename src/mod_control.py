@@ -20,10 +20,10 @@ nav_controller = (
 # Keyboard Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player ou le Philips Hue
 # Le CC#7 est en % et le CC#1 en secondes pour Mp3Player
 
-key_controller=key_config["controller"]
-key_transpose=Transpose(key_controller["transpose"])
+key_controller_config=key_config["controller"]
+key_transpose=Transpose(key_controller_config["transpose"])
 
-key_controller_channel=key_controller["channel"]
+key_controller_channel=key_controller_config["channel"]
 key_controller = [
   Filter(NOTEON) >> key_transpose, 
   CtrlFilter(7) >> CtrlValueFilter(0, 101), 
