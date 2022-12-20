@@ -1,5 +1,4 @@
 from pathlib import Path
-import subprocess
 
 from colorama import Fore, Style
 from .frontend import Terminal
@@ -69,7 +68,7 @@ class Mp3Player(MPyg123Player):
             (36, 41): self.navigate_scene,
             (41, 48): self.navigate_player,
 
-            (self.controller.size-1, self.controller.size): self.unassigned,
+            (self.controller.size-1, self.controller.size): self.on_replay,
 
         })
 
@@ -103,7 +102,7 @@ class Mp3Player(MPyg123Player):
         self.jump_offset = 5
         self.current_entry = 0
 
-        self.vol = 75   # In %
+        self.vol = 50   # In %
         self.volume(self.vol)
 
         self.current_scene = -1
@@ -173,7 +172,7 @@ class Mp3Player(MPyg123Player):
         if self.current_entry == 0 or self.current_scene != current_scene() or self.current_subscene != current_subscene():
             ''' The context has externally been changed '''
             ''' Refresh the playlist according the current scene/subscene '''
-            self.stop()
+            self.pause()
             self.current_scene = current_scene()
             self.current_subscene = current_subscene()
             self.playlist.load_from_file()
@@ -233,6 +232,10 @@ class Mp3Player(MPyg123Player):
         print(" {}VOL={}% | JMP={}s | AN={} | {}{}{}".format(Fore.RED, 
             self.vol, self.jump_offset, self.autonext, self.get_current_song(), self.terminal.spacer, 
             Style.RESET_ALL), end="\r", flush=True)
+
+    def on_replay(self, ev):
+        if self.current_entry > 0:
+            self.load_list(self.current_entry, self.playlist.filename)
 
     '''
     mpyg321 callbacks
