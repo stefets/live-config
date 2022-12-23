@@ -11,15 +11,17 @@ CC      Bin             Hex     Control function    Value       Used as
 3	00000011	03	Undefined	    0-127	MSB
 '''
 # Lighting patches -----------------------------------------------------------------------------
-HueOff=Call(HueBlackout(hue_config))
-HueNormal=Call(HueScene(hue_config, "Normal"))
-HueGalaxie=Call(HueScene(hue_config, "Galaxie"))
-HueGalaxieMax=Call(HueScene(hue_config, "GalaxieMax"))
-HueDemon=Call(HueScene(hue_config, "Demon"))
-HueSoloRed=Call(HueScene(hue_config, "SoloRed"))
-HueDetente=Call(HueScene(hue_config, "Détente"))
-HueVeilleuse=Call(HueScene(hue_config, "Veilleuse"))
-HueLecture=Call(HueScene(hue_config, "Lecture"))
+HueOff=Call(HueBlackout(hue_config, 2))
+HueNormal=Call(HueScene(hue_config, 2, "Normal"))
+HueGalaxie=Call(HueScene(hue_config, 2, "Galaxie"))
+HueGalaxieMax=Call(HueScene(hue_config,2, "GalaxieMax"))
+HueDemon=Call(HueScene(hue_config, 2, "Demon"))
+HueSoloRed=Call(HueScene(hue_config, 2, "SoloRed"))
+HueDetente=Call(HueScene(hue_config, 2, "Détente"))
+HueVeilleuse=Call(HueScene(hue_config, 2, "Veilleuse"))
+HueLecture=Call(HueScene(hue_config, 2, "Lecture"))
+
+HueCuisine=Call(HueScene(hue_config, 4, "Minimal"))
 
 # SD90 - Sequencer patches -----------------------------------------------
 violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
@@ -34,6 +36,7 @@ p_hue = Filter(NOTEON) >> [
     KeyFilter(notes=[107]) >> HueDemon, 
     KeyFilter(notes=[108]) >> HueOff, 
     KeyFilter(notes=[109]) >> Ctrl(3, 50) >> HueLecture, 
+    KeyFilter(notes=[116]) >> HueCuisine 
 
 ]
 
