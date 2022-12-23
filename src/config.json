@@ -26,7 +26,7 @@
     "plugins": {
         "lightning": {
             "enable": true,
-            "zone": "Salle de musique",
+            "zones": [2, 4],
             "cc_transition": 3
         },
         "mp3player": {

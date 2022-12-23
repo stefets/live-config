@@ -7,21 +7,28 @@ from phue import Bridge
 import mididings.constants as _constants
 
 class HueBase(Bridge):
-    def __init__(self, config):
+    def __init__(self, config, zone_id):
         super().__init__(os.environ["HUE_IP"], os.environ["HUE_USERNAME"])
         
         self.enable = config["enable"]
-        self.zone = config["zone"]
         self.cc_transition =  config["cc_transition"]
-        self.zone_id = self.get_group_id_by_name(self.zone)
-
+        
+        if zone_id not in config["zones"]:
+            print(f"HuePlugin: Zone {zone_id} not in config")
+            self.enable = False
+            return
+        
+        self.zone_id = zone_id
+        group = self.get_group(self.zone_id)
+        
+        self.zone = group["name"]
 
 '''
     Charge la scène de la zone
 '''
 class HueScene(HueBase):
-    def __init__(self, config, scene, transition=4):
-        super().__init__(config)
+    def __init__(self, config, zone_id, scene, transition=4):
+        super().__init__(config, zone_id)
 
         self.scene = scene
         self.transition = transition
@@ -36,8 +43,8 @@ class HueScene(HueBase):
     Shutdown les lumières de la zone
 '''
 class HueBlackout(HueBase):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, zone_id):
+        super().__init__(config, zone_id)
         self.zone_lights = self.get_group(self.zone_id, 'lights')
 
     def __call__(self, ev):
