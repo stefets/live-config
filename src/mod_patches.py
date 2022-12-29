@@ -20,6 +20,7 @@ HueSoloRed=Call(HueScene(hue_config, 2, "SoloRed"))
 HueDetente=Call(HueScene(hue_config, 2, "Détente"))
 HueVeilleuse=Call(HueScene(hue_config, 2, "Veilleuse"))
 HueLecture=Call(HueScene(hue_config, 2, "Lecture"))
+HueSsFullBlanc=Call(HueScene(hue_config, 2, "SsFullBlanc"))
 
 HueCuisine=Call(HueScene(hue_config, 4, "Minimal"))
 
@@ -222,10 +223,11 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
 # Highland Scenery
 i_big_country_hs      = [P14B, FS1, Ctrl(3, 120) >> Expr2]
 i_big_country_hs_live = [P14B, Ctrl(3, 120) >> Expr2]
-p_big_country_hs_live = (pk5 >> Filter(NOTEON) >>
-         [
-             (KeyFilter(notes=[60]) >> FS1),
-         ])
+p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
+        [
+            Filter(NOTEON) >> [CakePlay],
+            Filter(NOTEOFF) >> HueGalaxieMax, 
+        ])
 
 # Big Country fin de section ------------------------------------------
 
@@ -370,9 +372,10 @@ p_rush_trees=(pk5 >>
 # Daw helper
 p_transport = (pk5 >> 
         [
-            Filter(NOTEON) >> KeyFilter(notes=[60]) >> [CakePlay],
-            Filter(NOTEON) >> KeyFilter(notes=[62]) >> [CakeRecord],
-            Filter(NOTEOFF) >> HueGalaxieMax, 
+            Filter(NOTEON)  >> KeyFilter(notes=[60])    >> [CakePlay],
+            Filter(NOTEON)  >> KeyFilter(notes=[61])    >> [HueOff],
+            Filter(NOTEON)  >> KeyFilter(notes=[62])    >> [CakeRecord],
+            Filter(NOTEOFF) >> KeyFilter(notes=[60,62]) >> [HueSsFullBlanc], 
         ])
 
 # ---

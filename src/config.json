@@ -11,28 +11,24 @@
     },
     "nav_controller_channel": 9,
     "soundcraft_controller_channel": 7,
-    "controllers": {
-        "soundcraft": {
-            "channel": 7,
-            "osc_port": 56420
-        },
-        "mpg123": {
-            "size": 49,
-            "transpose": -36,
-            "channel": 8
-        },
-        "hue": {}
-    },
     "plugins": {
         "lightning": {
             "enable": true,
-            "zones": [2, 4],
+            "zones": [
+                2,
+                4
+            ],
             "cc_transition": 3
         },
         "mp3player": {
             "enable": true,
             "player": "mpg123",
-            "available_devices": ["SD90", "GT10B"],
+            "default_volume": 50,
+            "default_jump": 10,
+            "available_devices": [
+                "SD90",
+                "GT10B"
+            ],
             "playlist": {
                 "datasource": "/media/mididings/soundlib/",
                 "working_directory": "/media/mididings/tmp/"
@@ -46,7 +42,10 @@
         },
         "spotify": {
             "enable": true,
-            "devices": ["PC1", "SM-T500"]
+            "devices": [
+                "PC1",
+                "SM-T500"
+            ]
         },
         "net": {
             "enable": true
