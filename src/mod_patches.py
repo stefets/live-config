@@ -389,3 +389,6 @@ p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, 'SD90-PART
 #portamento_up=(portamento_base // portamento_on)
 #portamento_off=(portamento_base // portamento_off)
 #legato=Ctrl(1,1,120,0)
+
+
+midimix=Filter(NOTEON) >> Process(MidiMix())

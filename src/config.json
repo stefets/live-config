@@ -27,7 +27,8 @@
             "default_jump": 10,
             "available_devices": [
                 "SD90",
-                "GT10B"
+                "GT10B",
+                "U192k"
             ],
             "playlist": {
                 "datasource": "/media/mididings/soundlib/",

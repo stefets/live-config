@@ -79,6 +79,28 @@ ui_line=PortSplit({
     ]
 })
 
+ui_line_mute=[
+        SendOSC(osb_port, "/lmute", 0, ui_mute),    
+        SendOSC(osb_port, "/lmute", 1, ui_mute),
+    ]
+    
+ui_line_mix=[
+        SendOSC(osb_port, linepath, 0, ui_cursor),    
+        SendOSC(osb_port, linepath, 1, ui_cursor),
+    ]
+
+
+# Player patches
+ui_player_mute=[
+        SendOSC(osb_port, "/pmute", 0, ui_mute),    
+        SendOSC(osb_port, "/pmute", 1, ui_mute),
+    ]
+    
+ui_player_mix=[
+        SendOSC(osb_port, playpath, 0, ui_cursor),    
+        SendOSC(osb_port, playpath, 1, ui_cursor),
+    ]
+    
 ui_player=PortSplit({
     "MPK-MIDI-IN-1" : [
         SendOSC(osb_port, playpath, 0, ui_cursor),    

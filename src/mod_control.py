@@ -54,9 +54,9 @@ ui_controller= [
     #CtrlFilter(33,34,35,36,37,38,39,40,41,42,43,44) >> Process(set_input, offset=-32) >> ui_reverb,
 ]
 
-# Collection de controllers par channel
+# Collection of controllers by context
 controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel, spotify_channel, ui_midi_channel)
-_control = (
+_control = ([
 	controllers >>
 	ChannelSplit({
 		key_controller_channel: key_controller,
@@ -64,6 +64,22 @@ _control = (
         hue_controller_channel: hue_controller,
         spotify_channel : spotify_controller,
         ui_midi_channel : ui_controller
-	})
-)
+	}),
+    PortFilter('MIDIMIX') >> [
+        Filter(NOTEON) >> Process(MidiMix()) >> [
+            #KeyFilter(0, 1, 8, 9, 10, 11) >> ui_mix,
+            #KeyFilter(2, 4, 6) >> ui_stereo_mix,
+            KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mutebase,
+            KeyFilter(16) >> ui_line_mute,
+            KeyFilter(19) >> ui_player_mute,
+        ],
+        Filter(CTRL) >> [
+            CtrlFilter(19) >> Ctrl(0, EVENT_VALUE) >> mixbase,
+            CtrlFilter(23) >> Ctrl(1, EVENT_VALUE) >> mixbase,
+            CtrlFilter(53) >> ui_line_mix,
+            CtrlFilter(57) >> ui_player_mix,
+            CtrlFilter(62) >> ui_master,
+        ],
+    ]
+])
 

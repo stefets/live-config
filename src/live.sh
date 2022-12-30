@@ -61,18 +61,19 @@ function setup_script() {
     # https://github.com/danieloneill/alsalist
     ports=$(alsalist)
     sed -i \
-        -e "s/__SD-90 Part A__/$(echo "$ports" | grep 'SD-90 Part A'  | awk '{print $1}')/" \
-        -e "s/__SD-90 Part B__/$(echo "$ports" | grep 'SD-90 Part B'  | awk '{print $1}')/" \
-        -e "s/__SD-90 MIDI 1__/$(echo "$ports" | grep 'SD-90 MIDI 1'  | awk '{print $1}')/" \
-        -e "s/__SD-90 MIDI 2__/$(echo "$ports" | grep 'SD-90 MIDI 2'  | awk '{print $1}')/" \
-        -e "s/__UM-2 MIDI 1__/$(echo "$ports"  | grep 'UM-2 MIDI 1'   | awk '{print $1}')/" \
-        -e "s/__UM-2 MIDI 2__/$(echo "$ports"  | grep 'UM-2 MIDI 2'   | awk '{print $1}')/" \
-        -e "s/__GT-10B MIDI 1__/$(echo "$ports"| grep 'GT-10B MIDI 1' | awk '{print $1}')/" \
-        -e "s/__Q49 MIDI 1__/$(echo "$ports"   | grep 'Q49 MIDI 1'    | awk '{print $1}')/" \
+        -e "s/__SD-90 Part A__/$(echo "$ports"  | grep 'SD-90 Part A'  | awk '{print $1}')/" \
+        -e "s/__SD-90 Part B__/$(echo "$ports"  | grep 'SD-90 Part B'  | awk '{print $1}')/" \
+        -e "s/__SD-90 MIDI 1__/$(echo "$ports"  | grep 'SD-90 MIDI 1'  | awk '{print $1}')/" \
+        -e "s/__SD-90 MIDI 2__/$(echo "$ports"  | grep 'SD-90 MIDI 2'  | awk '{print $1}')/" \
+        -e "s/__UM-2 MIDI 1__/$(echo "$ports"   | grep 'UM-2 MIDI 1'   | awk '{print $1}')/" \
+        -e "s/__UM-2 MIDI 2__/$(echo "$ports"   | grep 'UM-2 MIDI 2'   | awk '{print $1}')/" \
+        -e "s/__GT-10B MIDI 1__/$(echo "$ports" | grep 'GT-10B MIDI 1' | awk '{print $1}')/" \
+        -e "s/__Q49 MIDI 1__/$(echo "$ports"    | grep 'Q49 MIDI 1'    | awk '{print $1}')/" \
         -e "s/__MPK249 MIDI 1__/$(echo "$ports" | grep 'MPK249 MIDI 1' | awk '{print $1}')/" \
         -e "s/__MPK249 MIDI 2__/$(echo "$ports" | grep 'MPK249 MIDI 2' | awk '{print $1}')/" \
         -e "s/__MPK249 MIDI 3__/$(echo "$ports" | grep 'MPK249 MIDI 3' | awk '{print $1}')/" \
         -e "s/__MPK249 MIDI 4__/$(echo "$ports" | grep 'MPK249 MIDI 4' | awk '{print $1}')/" \
+        -e "s/__MIDI Mix MIDI 1__/$(echo "$ports" | grep 'MIDI Mix MIDI 1' | awk '{print $1}')/" \
         $script
 }
 

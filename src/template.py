@@ -24,6 +24,8 @@ from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
 from plugins.audioplayer.spotify import SpotifyPlayer
 
+from controllers.midimix import MidiMix
+
 # Setup path
 sys.path.append(os.path.realpath('.'))
 
@@ -45,40 +47,45 @@ spotify_config=plugins['spotify']
 
 config(
 
-    # Defaults
-    # initial_scene = 1,
-    # backend = 'alsa',
-    # client_name = 'mididings',
+# Defaults
+# initial_scene = 1,
+# backend = 'alsa',
+# client_name = 'mididings',
 
-    # __Ports__ are changed by live.sh with sed/awk
-    out_ports = [
+# __Ports__ are changed by live.sh with sed/awk
+out_ports = [
 
-        ('SD90-PART-A', '__SD-90 Part A__'),
-        ('SD90-PART-B', '__SD-90 Part B__'),
-        ('SD90-MIDI-OUT-1', '__SD-90 MIDI 1__',),
-        ('SD90-MIDI-OUT-2', '__SD-90 MIDI 2__',),
+    ('MIDIMIX', '__MIDI Mix MIDI 1__',),
 
-        ('GT10B-MIDI-OUT-1', '__GT-10B MIDI 1__',),
+    ('SD90-MIDI-OUT-1', '__SD-90 MIDI 1__',),
+    ('SD90-MIDI-OUT-2', '__SD-90 MIDI 2__',),
 
-        ('MPK-MIDI-OUT-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI OUT
+    ('MPK-MIDI-OUT-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI OUT
 
-    ],
+    ('SD90-PART-A', '__SD-90 Part A__'),
+    ('SD90-PART-B', '__SD-90 Part B__'),
 
-    in_ports = [
+    ('GT10B-MIDI-OUT-1', '__GT-10B MIDI 1__',),
 
-        ('SD90-MIDI-IN-1','__SD-90 MIDI 1__',),
-        ('SD90-MIDI-IN-2','__SD-90 MIDI 2__',),
+],
 
-        #('GT10B-MIDI-IN-1', '__GT-10B MIDI 1__',), # Under investigation
+in_ports = [
 
-        ('Q49-MIDI-IN', '__Q49 MIDI 1__',),   # My Alesis Q49 as backup or dev controller
+    ('MIDIMIX', '__MIDI Mix MIDI 1__',),
 
-        ('MPK-MIDI-IN-1', '__MPK249 MIDI 1__',), # USB A ch.1-16
-        ('MPK-MIDI-IN-2', '__MPK249 MIDI 2__',), # USB B ch.1-16
-        ('MPK-MIDI-IN-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI IN 
-        ('MPK-MIDI-IN-4', '__MPK249 MIDI 4__',), # Under investigation, possible internal thru
+    ('SD90-MIDI-IN-1','__SD-90 MIDI 1__',),
+    ('SD90-MIDI-IN-2','__SD-90 MIDI 2__',),
 
-    ],
+    ('MPK-MIDI-IN-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI IN 
+
+    ('Q49-MIDI-IN', '__Q49 MIDI 1__',),   # My Alesis Q49 as backup or dev controller
+
+    ('MPK-MIDI-IN-1', '__MPK249 MIDI 1__',), # USB A ch.1-16
+    ('MPK-MIDI-IN-2', '__MPK249 MIDI 2__',), # USB B ch.1-16
+    ('MPK-MIDI-IN-4', '__MPK249 MIDI 4__',), # Remote 
+    
+
+],
 
 )
 
@@ -130,8 +137,8 @@ pre  = ~ChannelFilter(8, 9, 11) // ~Filter(SYSRT_CLOCK)
 post = Pass()
 
 # DEBUG
-#pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
-#post = Print('output',portnames='out')
+pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
+post = Print('output',portnames='out')
 
 run(
     control=_control,
