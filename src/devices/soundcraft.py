@@ -43,42 +43,24 @@ mutepath    = "/mute"
 # Main volume
 ui_master=SendOSC(osb_port, mainpath, ui_cursor)
 
-# 
-#GENERIC: Stand for ALL XLR+1/4 sockets
+# Input patches / stands for all XLR+1/4 sockets
+#
+
 mixbase  = SendOSC(osb_port, mixpath,  ui_event, ui_cursor)
 mutebase = SendOSC(osb_port, mutepath, ui_event, ui_mute)
 revbase  = SendOSC(osb_port, revpath,  ui_event, ui_cursor)
 
-#CUSTOM: Hardware filter via my Akai mpk249 - thanks to the 32 channel
-# I can use the same control number with 2 different ports
-ui_mix=PortSplit({
-    "MPK-MIDI-IN-1" : mixbase,
-    "MPK-MIDI-IN-2" : mutebase,
-})
-
-# Hard ruled stereo patch with +1 offset for the right channel
-ui_stereo_mix=PortSplit({
-    "MPK-MIDI-IN-1" : [
+mixbase_stereo = [
         SendOSC(osb_port, mixpath, ui_left,  ui_cursor),    
         SendOSC(osb_port, mixpath, ui_right, ui_cursor),
-    ],
-    "MPK-MIDI-IN-2" : [
+    ]
+
+mutebase_stereo = [
         SendOSC(osb_port, mutepath, ui_left,  ui_mute),    
         SendOSC(osb_port, mutepath, ui_right, ui_mute),
     ]
-})
 
-ui_line=PortSplit({
-    "MPK-MIDI-IN-1" : [
-        SendOSC(osb_port, linepath, 0, ui_cursor),    
-        SendOSC(osb_port, linepath, 1, ui_cursor),
-    ],
-    "MPK-MIDI-IN-2" : [
-        SendOSC(osb_port, "/lmute", 0, ui_mute),    
-        SendOSC(osb_port, "/lmute", 1, ui_mute),
-    ]
-})
-
+# Line patches
 ui_line_mute=[
         SendOSC(osb_port, "/lmute", 0, ui_mute),    
         SendOSC(osb_port, "/lmute", 1, ui_mute),
@@ -100,14 +82,3 @@ ui_player_mix=[
         SendOSC(osb_port, playpath, 0, ui_cursor),    
         SendOSC(osb_port, playpath, 1, ui_cursor),
     ]
-    
-ui_player=PortSplit({
-    "MPK-MIDI-IN-1" : [
-        SendOSC(osb_port, playpath, 0, ui_cursor),    
-        SendOSC(osb_port, playpath, 1, ui_cursor),
-    ],
-    "MPK-MIDI-IN-2" : [
-        SendOSC(osb_port, "/pmute", 0, ui_mute),    
-        SendOSC(osb_port, "/pmute", 1, ui_mute),
-    ]
-})

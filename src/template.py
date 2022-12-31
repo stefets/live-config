@@ -24,7 +24,7 @@ from plugins.audioplayer.mp3 import Mp3Player, Playlist
 from plugins.lighting.philips import HueScene, HueBlackout
 from plugins.audioplayer.spotify import SpotifyPlayer
 
-from controllers.midimix import MidiMix
+from controllers.midimix import MidiMix, MidiMixLed
 
 # Setup path
 sys.path.append(os.path.realpath('.'))
@@ -137,8 +137,8 @@ pre  = ~ChannelFilter(8, 9, 11) // ~Filter(SYSRT_CLOCK)
 post = Pass()
 
 # DEBUG
-pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
-post = Print('output',portnames='out')
+#pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
+#post = Print('output',portnames='out')
 
 run(
     control=_control,
