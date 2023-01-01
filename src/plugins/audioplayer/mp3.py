@@ -37,7 +37,7 @@ class Mp3Player(MPyg123Player):
 
         for device in config["available_devices"]:
             if device in cards:
-                card = f"hw:{cards.index(device)},0"
+                card = f"plughw:CARD={device},DEV=0 "
                 break
 
         super().__init__(config["player"], card if card else None, True)
