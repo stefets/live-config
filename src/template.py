@@ -20,11 +20,10 @@ from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
-from plugins.audioplayer.mp3 import Mp3Player, Playlist
-from plugins.lighting.philips import HueScene, HueBlackout
-from plugins.audioplayer.spotify import SpotifyPlayer
-
-from controllers.midimix import MidiMix, MidiMixLed
+from plugins.mp3 import Mp3Player, Playlist
+from plugins.philips import HueScene, HueBlackout
+from plugins.spotify import SpotifyPlayer
+from plugins.midimix import MidiMix, MidiMixLed
 
 # Setup path
 sys.path.append(os.path.realpath('.'))

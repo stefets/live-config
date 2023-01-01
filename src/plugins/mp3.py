@@ -318,13 +318,13 @@ class Playlist():
             rank += 1
             self.terminal.write_line2(str(rank).zfill(2), song)
 
+
 class Transport():
     def __init__(self, config):
         self.size = config['size']
         self.channel = config['channel']
         self.port = config['port']
 
-from colorama import Fore, Style
 
 class Terminal():
     def __init__(self) -> None:
