@@ -1,8 +1,7 @@
 #
-# DEVICE
-# Boss GT-10B
+# The Boss GT-10B definition file for mididings
 # This device has 4 banks, each bank contains 100 programs 
-# TODO : Create a device builder
+#
 
 # Midi channel defined in config.json
 GT10BChannel = configuration['devices']['gt10b']

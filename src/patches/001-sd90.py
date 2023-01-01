@@ -1,5 +1,5 @@
 #
-# The MIDIDINGS syntax for the EDIROL SD-90 Studio Canvas sound module (not fully implemented)
+# The EDIROL SD-90 Studio Canvas sound module definition patches for mididings (not fully implemented)
 #
 
 factor = 128

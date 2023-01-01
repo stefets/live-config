@@ -42,19 +42,16 @@ function setup_scene() {
 function setup_script() {
 
     # Create a devices file
-    devices="/tmp/live-config-devices"
-    cat $DIR/devices/*.py > $devices
+    patches=$(mktemp)
+    cat $DIR/patches/*.py > $patches
+
+    modules=$(mktemp)
+    cat $DIR/modules/*.py > $modules
 
     # Replace __TOKEN__ from various files through $template file to $script
     sed \
-        -e "/__LOGIC__/r   $logic"   \
-        -e "/__FILTERS__/r $filters" \
-        -e "/__CONTROL__/r $control" \
-        -e "/__PATCHES__/r $patches" \
-        -e "/__DEVICES__/r $devices" \
-        -e "/__SCENES__/r  $scenes"  \
-        -e "/__LOGIC__/d"   -e "/__FILTERS__/d" -e "/__CONTROL__/d" \
-        -e "/__DEVICES__/d" -e "/__PATCHES__/d" -e "/__SCENES__/d" \
+        -e "/__MODULES_/r $modules" -e "/__PATCHES__/r $patches" -e "/__SCENES__/r $scenes" \
+        -e "/__MODULES_/d" -e "/__PATCHES__/d" -e "/__SCENES__/d" \
         $template > $script
 
     # Replace __TOKEN__ for the input/output ports with alsalist
@@ -86,3 +83,4 @@ function run() {
 # Main
 setup $1
 run
+

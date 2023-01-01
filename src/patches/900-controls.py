@@ -1,4 +1,6 @@
-# Controlleur 1
+#
+# Patches for the run().control patch
+#
 
 # AKAI sliders, knobs and switches
 nav_controller_channel=configuration["nav_controller_channel"]
@@ -53,6 +55,8 @@ midimix_controller=PortFilter('MIDIMIX') >> [
 
         KeyFilter(16) >> ui_line_mute,
         KeyFilter(19) >> ui_player_mute,
+        
+        KeyFilter(22) >> Discard(),
 
         Process(MidiMixLed())
     ],
@@ -70,17 +74,15 @@ midimix_controller=PortFilter('MIDIMIX') >> [
     ],
 ]
 
-
-# Collection of controllers by context
+# Collection of controllers
 controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel, spotify_channel)
-_control = ([
+control_patch = ([
 	controllers >>
 	ChannelSplit({
-		key_controller_channel: key_controller,
-		nav_controller_channel: nav_controller,
-        hue_controller_channel: hue_controller,
-        spotify_channel : spotify_controller,
+	    key_controller_channel: key_controller,
+	    nav_controller_channel: nav_controller,
+            hue_controller_channel: hue_controller,
+            spotify_channel : spotify_controller,
 	}),
     midimix_controller
 ])
-

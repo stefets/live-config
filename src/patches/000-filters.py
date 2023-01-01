@@ -1,6 +1,7 @@
-# Channel et filtre des inputs
+#
+# Patches for filtering 
+#
 
-# Instruments d'exécution et/ou controlleur
 inputs=configuration["inputs"]
 akai_channel=inputs["akai"]
 akai = ChannelFilter(akai_channel)
@@ -14,3 +15,4 @@ q49 = ChannelFilter(q49_channel)
 fcb_channel=inputs["fcb"]
 fcb = ChannelFilter(fcb_channel)
 
+# -------------------------------

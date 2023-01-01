@@ -7,3 +7,4 @@ __pycache__
 .cache
 script.py
 .env
+memorize_scene.txt

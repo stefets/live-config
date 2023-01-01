@@ -1,17 +1,8 @@
 # --------------------------------------------------------------------
-# Helper functions
+# Helper functions available for patches and controllers
 # --------------------------------------------------------------------
 
-# -------------------------------------------------------------------------------------------
-'''
-Execute un glissando
-'''
-#def glissando(ev, from_note, to_note, vel, duration, direction, port):
-#    note_range = range(from_note,to_note) if direction == 1 else reversed(range(from_note,to_note))
-#    for note in note_range:
-#        output_event(NoteOnEvent(port, ev.channel, note, vel))
-#        sleep(duration)
-#        output_event(NoteOffEvent(port, ev.channel, note))
+# Glissando -------------------------------------------------------------------------------------------
 
 def glissando_process(ev, from_note, to_note, vel, duration, direction, port, on):
     output_event(NoteOnEvent(port, ev.channel, from_note, vel)) if on else output_event(NoteOffEvent(port, ev.channel, from_note))
@@ -62,6 +53,7 @@ def NavigateToScene(ev):
             else:
                 switch_subscene(1)
 
+# ---------------------------------------------------------------------------------------------------------
 
 # Create a pitchbend from a filter logic
 # Params : direction when 1 bend goes UP, when -1 bend goes down
@@ -81,6 +73,9 @@ def OnPitchbend(ev, direction):
 def setenv(ev, key, value):
     os.environ[key] = value
 
-def debug(ev):
+# ---------------------------------------------------------------------------------------------------------
+
+def Debug(ev):
     print(ev)
 
+# ---------------------------------------------------------------------------------------------------------
