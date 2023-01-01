@@ -21,10 +21,8 @@
 * https://github.com/stefets/live-config/wiki
 
 # Mididings ressources
-* http://das.nasophon.de/mididings/
-* http://dsacre.github.io/mididings/doc/
-* https://groups.google.com/g/mididings
-* https://github.com/dsacre/mididings
-
-# My configuration
-<img src="/doc/layers.png" />
+* https://github.com/mididings/mididings (maintained)
+* https://github.com/dsacre/mididings (abandonned)
+* http://das.nasophon.de/mididings/ (official site)
+* http://dsacre.github.io/mididings/doc/ (official documentation)
+* https://groups.google.com/g/mididings (official mailing list)
