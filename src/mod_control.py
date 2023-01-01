@@ -72,7 +72,7 @@ midimix_controller=PortFilter('MIDIMIX') >> [
 
 
 # Collection of controllers by context
-controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel, spotify_channel, ui_midi_channel)
+controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel, spotify_channel)
 _control = ([
 	controllers >>
 	ChannelSplit({
@@ -80,7 +80,6 @@ _control = ([
 		nav_controller_channel: nav_controller,
         hue_controller_channel: hue_controller,
         spotify_channel : spotify_controller,
-        ui_midi_channel : ui_controller
 	}),
     midimix_controller
 ])
