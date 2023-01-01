@@ -62,6 +62,8 @@ out_ports = [
 
     ('MPK-MIDI-OUT-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI OUT
 
+    ('BEHRINGER', '__UMC204HD 192k MIDI 1__'),
+
     ('SD90-PART-A', '__SD-90 Part A__'),
     ('SD90-PART-B', '__SD-90 Part B__'),
 
@@ -77,6 +79,8 @@ in_ports = [
     ('SD90-MIDI-IN-2','__SD-90 MIDI 2__',),
 
     ('MPK-MIDI-IN-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI IN 
+
+    ('BEHRINGER', '__UMC204HD 192k MIDI 1__'),
 
     ('Q49-MIDI-IN', '__Q49 MIDI 1__',),   # My Alesis Q49 as backup or dev controller
 
