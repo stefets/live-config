@@ -1,4 +1,6 @@
 '''
+  Common patches
+
 Notes :
 - Ctrl #3 est Undefined selon la documentation du protocole MIDI; donc libre d'utilisation.
 - L'utilisation du Ctrl(3,value) sert a passer le value dans EVENT_VALUE pour l'unité suivante dans une série d'unité
@@ -21,11 +23,7 @@ HueDetente=Call(HueScene(hue_config, 2, "Détente"))
 HueVeilleuse=Call(HueScene(hue_config, 2, "Veilleuse"))
 HueLecture=Call(HueScene(hue_config, 2, "Lecture"))
 HueSsFullBlanc=Call(HueScene(hue_config, 2, "SsFullBlanc"))
-
 HueCuisine=Call(HueScene(hue_config, 4, "Minimal"))
-
-# SD90 - Sequencer patches -----------------------------------------------
-violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
 
 p_hue = Filter(NOTEON) >> [
     KeyFilter(notes=[101]) >> HueNormal, 
@@ -38,7 +36,6 @@ p_hue = Filter(NOTEON) >> [
     KeyFilter(notes=[108]) >> HueOff, 
     KeyFilter(notes=[109]) >> Ctrl(3, 50) >> HueLecture, 
     KeyFilter(notes=[116]) >> HueCuisine 
-
 ]
 
 akai_pad_nature = [
@@ -64,7 +61,7 @@ CakeStop=Ctrl('MPK-MIDI-OUT-3', 1, 119, 127)
 # Execution patches
 #-----------------------------------------------------------------------------------------------
 
-
+violon = Output('SD90-PART-A', channel=1, program=(Classical,41))
 #explosion = Key(0) >> Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical+Var3,128), volume=100)
 piano_base =  Velocity(fixed=100) >> Output('SD90-PART-A', channel=1, program=(Classical,1))
 nf_piano = Output('SD90-PART-A', channel=1, program=(Classical,2), volume=100)
@@ -389,6 +386,3 @@ p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, 'SD90-PART
 #portamento_up=(portamento_base // portamento_on)
 #portamento_off=(portamento_base // portamento_off)
 #legato=Ctrl(1,1,120,0)
-
-
-midimix=Filter(NOTEON) >> Process(MidiMix())

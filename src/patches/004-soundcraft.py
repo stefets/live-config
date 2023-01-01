@@ -1,35 +1,8 @@
-
 '''
-    My Soundcraft UI 16 definition file for mididings
-    This module use the OSC protocol to communicate with the Osc Soundcraft Bridge daemon
+    The Soundcraft UI 16 patches for mididings
+    Those patches use the OSC protocol to communicate with the Osc Soundcraft Bridge daemon
+    https://github.com/stefets/osc-soundcraft-bridge
 '''
-# 0-127 to 0-1
-ratio=0.7874015748 / 100
-
-def ui_cursor(ev):
-    return ev.data2 * ratio
-
-def ui_knob(ev):
-    return ui_cursor(ev)
-
-def ui_mute(ev):
-    return 1 if ev.data2==127 else 0
-
-''' Return the controller value for SendOsc '''
-def ui_event(ev, offset=0):
-    return ev.ctrl+offset if ev.type == CTRL else -1
-
-''' Wrapper over ui_event '''
-def ui_left(ev):
-    return ui_event(ev)
-
-''' Wrapper over ui_event '''
-def ui_right(ev):
-    return ui_event(ev, 1)
-
-def set_input(ev, offset):
-    ev.ctrl = ev.ctrl + offset
-    return ev
 
 # Osc Soundcraft Bridge definition
 osb_port    = 56420
@@ -71,7 +44,6 @@ ui_line_mix=[
         SendOSC(osb_port, linepath, 1, ui_cursor),
     ]
 
-
 # Player patches
 ui_player_mute=[
         SendOSC(osb_port, "/pmute", 0, ui_mute),    
@@ -82,3 +54,5 @@ ui_player_mix=[
         SendOSC(osb_port, playpath, 0, ui_cursor),    
         SendOSC(osb_port, playpath, 1, ui_cursor),
     ]
+
+# -----------------------------------------------------

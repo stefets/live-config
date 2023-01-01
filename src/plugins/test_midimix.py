@@ -16,25 +16,25 @@ from midimix import *
 
 
 config(
-    in_ports= [('MIDIMIX', '28:0'),],
-    out_ports=[('MIDIMIX', '28:0'),],
+    in_ports= [('MIDIMIX', '40:0'),],
+    out_ports=[('MIDIMIX', '40:0'),],
 )
 
 hook(AutoRestart())
 
-_pre =  Print('input', portnames='in')
-_post = Print('output', portnames='out')
-_control=Pass()
+pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
+post = Print('output', portnames='out')
+control=Pass()
 
 midimix=Filter(NOTEON) >> Process(MidiMix())
 
-_scenes = {
+scenes = {
     1: Scene("Test", patch=midimix),
 }
 
 run(
-    control=_control,
-    scenes=_scenes,
-    pre=_pre,
-    post=_post,
+    control=control,
+    scenes=scenes,
+    pre=pre,
+    post=post,
 )

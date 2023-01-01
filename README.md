@@ -1,20 +1,23 @@
-# My musical companion with MIDIDINGS as the KERNEL
+## My musical companion with MIDIDINGS as the KERNEL
 
-# Notes
+# How it works
 * Entry point is /src/live.sh SCENE (if SCENE is not specified, default is assumed)
-* ./live.sh create a complete file for mididings called script.py (in .gitignore)
-* Scenes are located in /src/scenes/*
-* Example : ./live.sh debug
-* You MUST replace tokens in the main.py template with you own logic
+* live.sh creates a complete file for mididings called script.py (in .gitignore)
+* User must configure in/out ports in template.py
+* scr/scenes contains scenes
+* src/patches contains patches
+* src/modules contains callable functions
+* scr/plugins contains callable objects
+** Plugins to date : Control mpg123, Spotify, Philips Hue, Request
 
-# Mididings users
-## I maintain two UI for mididings
-## Flaskdings 
+# Dependencies
+* See requirements.txt
+* Optional: alsalist to configure the in/out ports in template.py
+
+# Flaskdings 
+## I maintain a HTML5 UI for mididings
 ### It's a UI and a rest API, using websockets and made with Flask
-* https://github.com/stefets/flaskdings - Try it and star it !
-## Node Red Flow Mididings
-### It's a UI made with Node Red. It's a (static and slower) clone of my Flaskdings UI
-* https://github.com/stefets/node-red-flow-mididings - Try it and star it !
+* https://github.com/stefets/flaskdings
 
 # Build
 * Check the pages on how I build mididings, python, boost and mpg123

@@ -20,11 +20,10 @@ from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
-from plugins.audioplayer.mp3 import Mp3Player, Playlist
-from plugins.lighting.philips import HueScene, HueBlackout
-from plugins.audioplayer.spotify import SpotifyPlayer
-
-from controllers.midimix import MidiMix, MidiMixLed
+from plugins.mp3 import Mp3Player, Playlist
+from plugins.philips import HueScene, HueBlackout
+from plugins.spotify import SpotifyPlayer
+from plugins.midimix import MidiMix, MidiMixLed
 
 # Setup path
 sys.path.append(os.path.realpath('.'))
@@ -96,37 +95,22 @@ in_ports = [
 hook(
     #AutoRestart(), # Use when debug directly in script.py
     OSCInterface(),
+    MemorizeScene("memorize_scene.txt")
 )
 
 #-----------------------------------------------------------------------------------------------------------
 # Class and function body
-# functions.py
-__LOGIC__
-
-#-----------------------------------------------------------------------------------------------------------
-# Filters body
-# filters.py
-#-----------------------------------------------------------------------------------------------------------
-__FILTERS__
-
-#-----------------------------------------------------------------------------------------------------------
-# Devices body
-__DEVICES__
+__MODULES__
 
 #-----------------------------------------------------------------------------------------------------------
 # Patches body
-# patches.py
+# patches/*.py
 #-----------------------------------------------------------------------------------------------------------
 __PATCHES__
 
 #-----------------------------------------------------------------------------------------------------------
-# Control body
-# control.py
-__CONTROL__
-#-----------------------------------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------------------
 # Scenes body
+# scenes/*.py
 #-----------------------------------------------------------------------------------------------------------
 _scenes = {
 __SCENES__
@@ -145,7 +129,7 @@ post = Pass()
 #post = Print('output',portnames='out')
 
 run(
-    control=_control,
+    control=control_patch,
     scenes=_scenes,
     pre=pre,
     post=post,

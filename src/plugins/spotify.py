@@ -10,7 +10,6 @@ from spotipy.exceptions import SpotifyException
 import mididings.constants as _constants
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 
-from .frontend import Terminal
 
 class SpotifyPlayer(object):
     def __init__(self, config) -> None:

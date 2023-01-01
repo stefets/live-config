@@ -1,5 +1,5 @@
 #
-# Line 6 POD-HD-500
+# The Line 6 POD-HD-500 definition patches for mididings
 #
 
 # Channel d'écoute
