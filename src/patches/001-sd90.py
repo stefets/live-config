@@ -219,4 +219,10 @@ Reset = '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7'
 MixToAfx = '\xF0\x41\x10\x00\x48\x12\x02\x10\x10\x00\x06\x58\xF7'
 MasterEffect = '\xF0\x41\x10\x00\x48\x12\x02\x10\x20\x00\x78\x56\xF7'
 
-SD90_Initialize = (SysEx(Reset) // SysEx(MixToAfx) // SysEx(MasterEffect) // InitPitchBend)
+port = "SD90-PART-A"
+SD90_Initialize = [
+    SysEx(port, Reset),
+    SysEx(port, MixToAfx),
+    SysEx(port, MasterEffect),
+    InitPitchBend
+]
