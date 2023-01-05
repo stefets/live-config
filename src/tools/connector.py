@@ -20,7 +20,10 @@ config(
         #('MPK-MIDI2', '28:1'),
         #('MPK-MIDI3', '28:2'),
         #('MPK-MIDI4', '28:3'),
-        ('MIDI-MIX', '28:0'),
+        #('MIDI-MIX', '28:0'),
+        ('PART-A', '36:0'),
+        ('PART-B', '36:1'),
+
     ],
     out_ports=[
         #('MPK-MIDI1', '28:0'),
@@ -28,9 +31,8 @@ config(
         #('MPK-MIDI3', '28:2'),
         #('MPK-MIDI4', '28:3'),
 
-        #('PART-A', '32:0'),
-        #('PART-B', '32:1'),
-        ('MIDI-MIX', '28:0'),
+        ('PART-A', '36:0'),
+        ('PART-B', '36:1'),
 
     ],
 )
@@ -59,5 +61,5 @@ run(
     control=_control,
     scenes=_scenes,
     pre=_pre,
-    post=_post,
+    post=_post
 )

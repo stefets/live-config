@@ -1,30 +1,24 @@
 #!/bin/bash
 
-# Setup a configuration file for MIDIDINGS and run it, that's it.
+# Setup a configuration file for MIDIDINGS and exec_mididings it, that's it.
 
-function setup() {
-    setup_base
-    setup_scene $1
-    setup_script
+function configure() {
+    configure_base
+    configure_scene $1
+    configure_script
 }
 
-function setup_base() {
+function configure_base() {
     DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
     # Template
     template="template.py"
 
-    # Modules
-    control="mod_control.py"
-    logic="mod_logic.py"
-    filters="mod_filters.py"
-    patches="mod_patches.py"
-
     # Target script
     script="script.py"
 }
 
-function setup_scene() {
+function configure_scene() {
     # Scene from param or default
     scene=$1
     if [ -z "$scene" ]; then
@@ -39,12 +33,13 @@ function setup_scene() {
     fi
 }
 
-function setup_script() {
+function configure_script() {
 
-    # Create a devices file
+    # Merge patches
     patches=$(mktemp)
     cat $DIR/patches/*.py > $patches
 
+    # Merge modules
     modules=$(mktemp)
     cat $DIR/modules/*.py > $modules
 
@@ -55,15 +50,12 @@ function setup_script() {
         $template > $script
 
     # Replace __TOKEN__ for the input/output ports with alsalist
-    # https://github.com/danieloneill/alsalist
     ports=$(alsalist)
     sed -i \
         -e "s/__SD-90 Part A__/$(echo "$ports"  | grep 'SD-90 Part A'  | awk '{print $1}')/" \
         -e "s/__SD-90 Part B__/$(echo "$ports"  | grep 'SD-90 Part B'  | awk '{print $1}')/" \
         -e "s/__SD-90 MIDI 1__/$(echo "$ports"  | grep 'SD-90 MIDI 1'  | awk '{print $1}')/" \
         -e "s/__SD-90 MIDI 2__/$(echo "$ports"  | grep 'SD-90 MIDI 2'  | awk '{print $1}')/" \
-        -e "s/__UM-2 MIDI 1__/$(echo "$ports"   | grep 'UM-2 MIDI 1'   | awk '{print $1}')/" \
-        -e "s/__UM-2 MIDI 2__/$(echo "$ports"   | grep 'UM-2 MIDI 2'   | awk '{print $1}')/" \
         -e "s/__GT-10B MIDI 1__/$(echo "$ports" | grep 'GT-10B MIDI 1' | awk '{print $1}')/" \
         -e "s/__Q49 MIDI 1__/$(echo "$ports"    | grep 'Q49 MIDI 1'    | awk '{print $1}')/" \
         -e "s/__MPK249 MIDI 1__/$(echo "$ports" | grep 'MPK249 MIDI 1' | awk '{print $1}')/" \
@@ -75,12 +67,13 @@ function setup_script() {
         $script
 }
 
-function run() {
+function exec_mididings() {
     mididings -f $script
 }
 
-# ----
-# Main
-setup $1
-run
+function main() {
+    configure $1
+    exec_mididings
+}
 
+main $1
