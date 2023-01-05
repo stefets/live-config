@@ -2,13 +2,13 @@
 
 # How it works
 * Entry point is /src/live.sh SCENE (if SCENE is not specified, default is assumed)
-* live.sh creates a complete file for mididings called script.py (in .gitignore)
+* live.sh creates a complete file for mididings called script.py (in .gitignore) by replacing tokens in template.py
 * User must configure in/out ports in template.py
 * scr/scenes contains scenes
 * src/patches contains patches
 * src/modules contains callable functions
 * scr/plugins contains callable objects
-** Plugins to date : Control mpg123, Spotify, Philips Hue, Request
+** Plugins are wrappers over mpg123, Spotify, Philips Hue, Request
 
 # Dependencies
 * See requirements.txt
