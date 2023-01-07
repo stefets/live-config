@@ -6,7 +6,7 @@
 hd500_channel = configuration['devices']['hd500']
 
 # Connecté a quel port MIDI ?
-hd500_port = 'MPK-MIDI-OUT-3'
+hd500_port = 'MPK-MIDI-3'
 
 # Programmes
 P01A = Program(hd500_port, channel=hd500_channel, program=1)

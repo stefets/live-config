@@ -19,8 +19,9 @@ nav_controller = (
     })
 )
 
-# Keyboard Controller : Contexte d'utilisation d'un clavier pour controller le plugins Mp3Player ou le Philips Hue
-# Le CC#7 est en % et le CC#1 en secondes pour Mp3Player
+# Each Call(Mp3Player) create a mpg123 process
+mp3_volume=CtrlFilter(7) >> CtrlValueFilter(0, 101)
+mp3_jump=CtrlFilter(1) >> CtrlValueFilter(0, 121)
 
 key_controller_config=key_config["controller"]
 key_transpose=Transpose(key_controller_config["transpose"])
@@ -28,9 +29,16 @@ key_transpose=Transpose(key_controller_config["transpose"])
 key_controller_channel=key_controller_config["channel"]
 key_controller = [
   Filter(NOTEON) >> key_transpose, 
-  CtrlFilter(7) >> CtrlValueFilter(0, 101), 
-  CtrlFilter(1) >> CtrlValueFilter(0, 121), 
-] >> Call(Mp3Player(key_config))
+  mp3_volume, 
+  mp3_jump, 
+] >> Call(Mp3Player(key_config, "SD90"))
+
+pk5_controller_channel=4
+pk5_controller=[PortFilter('MPK-MIDI-3'), PortFilter('MPK-MIDI-2')] >> ChannelFilter(4) >> [
+    Filter(NOTEON) >> key_transpose,
+    mp3_volume, 
+    mp3_jump,
+] >> Call(Mp3Player(key_config, "SD90"))
 
 hue_controller_channel = 11
 hue_controller = p_hue
@@ -61,28 +69,29 @@ midimix_controller=PortFilter('MIDIMIX') >> [
         Process(MidiMixLed())
     ],
     Filter(CTRL) >> [
-        CtrlFilter(19) >> Ctrl(0, EVENT_VALUE) >> mixbase,
-        CtrlFilter(23) >> Ctrl(1, EVENT_VALUE) >> mixbase,
+        CtrlFilter(0,1) >> mixbase,
 
-        CtrlFilter(27) >> Ctrl(2, EVENT_VALUE) >> mixbase_stereo,
-        CtrlFilter(31) >> Ctrl(4, EVENT_VALUE) >> mixbase_stereo,
-        CtrlFilter(49) >> Ctrl(6, EVENT_VALUE) >> mixbase_stereo,
+        CtrlFilter(2) >> mixbase_stereo,
+        CtrlFilter(3) >> Ctrl(4, EVENT_VALUE) >> mixbase_stereo,
+        CtrlFilter(4) >> Ctrl(6, EVENT_VALUE) >> mixbase_stereo,
 
-        CtrlFilter(53) >> ui_line_mix,
-        CtrlFilter(57) >> ui_player_mix,
-        CtrlFilter(62) >> ui_master,
+        CtrlFilter(5) >> ui_line_mix,
+        CtrlFilter(6) >> ui_player_mix,
+        CtrlFilter(7) >> Discard(),
+        CtrlFilter(100) >> ui_master,
     ],
 ]
 
 # Collection of controllers
 controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel, spotify_channel)
-control_patch = ([
+control_patch = [
 	controllers >>
 	ChannelSplit({
 	    key_controller_channel: key_controller,
 	    nav_controller_channel: nav_controller,
-            hue_controller_channel: hue_controller,
-            spotify_channel : spotify_controller,
+        hue_controller_channel: hue_controller,
+        spotify_channel : spotify_controller,
 	}),
-    midimix_controller
-])
+    midimix_controller,
+    pk5_controller
+]
