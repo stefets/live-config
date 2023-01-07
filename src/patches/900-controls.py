@@ -52,14 +52,15 @@ spotify_controller = [
 
 
 # MidiMix controller patch for SoundCraft UI
+
 midimix_controller=PortFilter('MIDIMIX') >> [
     Filter(NOTEON) >> Process(MidiMix()) >> [
-        KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mutebase,
-        KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mutebase,
+        KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mute_mono,
+        KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mute_mono,
 
-        KeyFilter(7)  >> Ctrl(2, EVENT_VALUE) >> mutebase_stereo,
-        KeyFilter(10) >> Ctrl(4, EVENT_VALUE) >> mutebase_stereo,
-        KeyFilter(13) >> Ctrl(6, EVENT_VALUE) >> mutebase_stereo,
+        KeyFilter(7)  >> Ctrl(2, EVENT_VALUE) >> mute_stereo,
+        KeyFilter(10) >> Ctrl(4, EVENT_VALUE) >> mute_stereo,
+        KeyFilter(13) >> Ctrl(6, EVENT_VALUE) >> mute_stereo,
 
         KeyFilter(16) >> ui_line_mute,
         KeyFilter(19) >> ui_player_mute,
@@ -69,14 +70,16 @@ midimix_controller=PortFilter('MIDIMIX') >> [
         Process(MidiMixLed())
     ],
     Filter(CTRL) >> [
-        CtrlFilter(0,1) >> mixbase,
+        CtrlFilter(0,1) >> ui_standard_fx,
+       
+        CtrlFilter(2,3,4) >> CtrlSplit({
+            2 : Pass(),
+            3 : Ctrl(4, EVENT_VALUE),
+            4 : Ctrl(6, EVENT_VALUE),
+        }) >> ui_standard_stereo_eq,
 
-        CtrlFilter(2) >> mixbase_stereo,
-        CtrlFilter(3) >> Ctrl(4, EVENT_VALUE) >> mixbase_stereo,
-        CtrlFilter(4) >> Ctrl(6, EVENT_VALUE) >> mixbase_stereo,
-
-        CtrlFilter(5) >> ui_line_mix,
-        CtrlFilter(6) >> ui_player_mix,
+        CtrlFilter(5) >> ui_line_mix_eq,
+        CtrlFilter(6) >> ui_player_mix_eq,
         CtrlFilter(7) >> Discard(),
         CtrlFilter(100) >> ui_master,
     ],

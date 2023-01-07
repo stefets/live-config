@@ -1,17 +1,16 @@
-'''
-  Common patches
 
-Notes :
-- Ctrl #3 est Undefined selon la documentation du protocole MIDI; donc libre d'utilisation.
-- L'utilisation du Ctrl(3,value) sert a passer le value dans EVENT_VALUE pour l'unité suivante dans une série d'unité
-- Soit pour assigner une valeur au pédales d'expression du POD HD 500
-- Soit pour déterminer la valeur d'une transition pour le chargement d'une scène du Philips HUE
-- Soit pour contrôler Cakewalk
+# Execution patches
+# Notes :
+#- Ctrl #3 est Undefined selon la documentation du protocole MIDI; donc libre d'utilisation.
+#- L'utilisation du Ctrl(3,value) sert a passer le value dans EVENT_VALUE pour l'unité suivante dans une série d'unité
+#- Soit pour assigner une valeur au pédales d'expression du POD HD 500
+#- Soit pour déterminer la valeur d'une transition pour le chargement d'une scène du Philips HUE
+#- Soit pour contrôler Cakewalk
+#
+#Controller 3 : ref.: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
+#CC      Bin             Hex     Control function    Value       Used as
+#3	00000011	03	Undefined	    0-127	MSB
 
-Controller 3 : ref.: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
-CC      Bin             Hex     Control function    Value       Used as
-3	00000011	03	Undefined	    0-127	MSB
-'''
 # Lighting patches -----------------------------------------------------------------------------
 HueOff=Call(HueBlackout(hue_config, 2))
 HueNormal=Call(HueScene(hue_config, 2, "Normal"))
