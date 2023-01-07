@@ -3,19 +3,14 @@
 # Setup a configuration file for MIDIDINGS and exec_mididings it, that's it.
 
 function configure() {
-    configure_base
+
+    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    template="template.py"
+    script="script.py"
+    
     configure_scene $1
     configure_script
-}
-
-function configure_base() {
-    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-    # Template
-    template="template.py"
-
-    # Target script
-    script="script.py"
+    configure_alsa
 }
 
 function configure_scene() {
@@ -65,6 +60,20 @@ function configure_script() {
         -e "s/__MIDI Mix MIDI 1__/$(echo "$ports" | grep 'MIDI Mix MIDI 1' | awk '{print $1}')/" \
         -e "s/__UMC204HD 192k MIDI 1__/$(echo "$ports" | grep 'UMC204HD 192k MIDI 1' | awk '{print $1}')/" \
         $script
+}
+
+function configure_alsa() {
+    # Patch asoundrc.conf, via tmp and copy result to  ~/.asoundrc
+    conf=$(mktemp)
+    cp $DIR/asoundrc.conf $conf
+    cards=$(arecord -l |egrep "carte|card" | awk '{print $2 $3}')
+    sed -i \
+        -e "s/__SD90__/$(echo  "$cards" | grep SD90  | cut -d: -f1)/" \
+        -e "s/__GT10B__/$(echo "$cards" | grep GT10B | cut -d: -f1)/" \
+        -e "s/__U192k__/$(echo "$cards" | grep U192k | cut -d: -f1)/" \
+        $conf
+
+    cp $conf ~/.asoundrc
 }
 
 function exec_mididings() {

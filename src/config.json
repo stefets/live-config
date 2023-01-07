@@ -12,7 +12,7 @@
     "nav_controller_channel": 9,
     "soundcraft_controller_channel": 7,
     "plugins": {
-        "lightning": {
+        "philips": {
             "enable": true,
             "zones": [
                 2,
@@ -20,16 +20,11 @@
             ],
             "cc_transition": 3
         },
-        "mp3player": {
+        "mpg123": {
             "enable": true,
             "player": "mpg123",
             "default_volume": 50,
             "default_jump": 10,
-            "available_devices": [
-                "SD90",
-                "GT10B",
-                "U192k"
-            ],
             "playlist": {
                 "datasource": "/media/mididings/soundlib/",
                 "working_directory": "/media/mididings/tmp/"
@@ -38,7 +33,7 @@
                 "size": 49,
                 "transpose": -36,
                 "channel": 8,
-                "port": "MPK-MIDI-IN-1"
+                "port": "MPK-MIDI-1"
             }
         },
         "spotify": {

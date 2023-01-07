@@ -11,32 +11,19 @@ import mididings.constants as _constants
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene
 from mididings.event import NoteOnEvent
 
-import alsaaudio
 
 '''
 This plugin plays mp3 files, it inherits the mpyg321.mpyg321, a mpg123 wrapper
-
-This is a callable object, __call__ is called via the control patch (src/control.py)
-
-Inspiré du clavier 'lanceur de chanson' de l'émission Québecoise 'Tout le monde en parle'
+Inspiré du clavier 'Lanceur de chanson' de l'émission Québecoise 'Tout le monde en parle'
 '''
 
 
 class Mp3Player(MPyg123Player):
-    def __init__(self, config):
+    def __init__(self, config, card=None):
 
         self.enable = config["enable"]
         if not self.enable:
             return
-
-        # Check if card is in my available_devices (is connected) or it will use the onboard card
-        card = None
-        cards = alsaaudio.cards()
-
-        for device in config["available_devices"]:
-            if device in cards:
-                card = f"plughw:CARD={device},DEV=0 "
-                break
 
         super().__init__(config["player"], card if card else None, True)
 
@@ -50,7 +37,7 @@ class Mp3Player(MPyg123Player):
 
         self.controller = Transport(config["controller"])
         self.playlist = Playlist(config['playlist'])
-        self.autonext = True
+        self.autonext = False
 
         # Show things in stdout
         self.terminal = Terminal()
