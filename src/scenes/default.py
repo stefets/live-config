@@ -58,6 +58,7 @@
             Scene("Oxigenizer", Oxigenizer),
             Scene("Quasar", Quasar),
             Scene("HellSection", HellSection),
+            Scene("Drums", Amb_Room),
             Scene("Demon", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Jokes", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Tabarnac", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
@@ -107,3 +108,4 @@
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Maudite Machine", init_patch=i_octobre, patch=p_transport // p_octobre),
         ]),
+
