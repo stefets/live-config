@@ -128,7 +128,7 @@ __SCENES__
 # Run region
 #-----------------------------------------------------------------------------------------------------------
 # PROD
-pre  = [~ChannelFilter(8, 9, 11), ~Filter(SYSRT_CLOCK)]
+pre  = ~Filter(SYSRT_CLOCK) >> ~ChannelFilter(8, 9, 11) 
 post = Pass()
 
 # DEBUG

@@ -108,4 +108,13 @@
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Maudite Machine", init_patch=i_octobre, patch=p_transport // p_octobre),
         ]),
+    13: SceneGroup("SD90",
+        [
+            Scene("Special1", init_patch=SP1, patch=DLAPad),
+            Scene("Special2", init_patch=SP2, patch=Discard()),
+            Scene("Classical", init_patch=CLASIC, patch=Discard()),
+            Scene("Contemporary", init_patch=CONTEM, patch=Discard()),
+            Scene("Solo", init_patch=SOLO, patch=Discard()),
+            Scene("Enhanced", init_patch=ENHANC, patch=Discard()),
+        ]),
 
