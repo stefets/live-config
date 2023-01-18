@@ -67,10 +67,10 @@ out_ports = [
 
     ('GT10B-MIDI-1', '__GT-10B MIDI 1__',),
     
-    ('MPK-MIDI-1', '__MPK249 MIDI 1__',), # USB A ch.1-16
-    ('MPK-MIDI-2', '__MPK249 MIDI 2__',), # USB B ch.1-16
-    ('MPK-MIDI-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI OUT
-    ('MPK-MIDI-4', '__MPK249 MIDI 4__',), # Remote 
+    ('MPK-MIDI-1', '__MPK249 Port A__',), # USB A ch.1-16
+    ('MPK-MIDI-2', '__MPK249 Port B__',), # USB B ch.1-16
+    ('MPK-MIDI-3', '__MPK249 MIDI__',), # 5 PIN MIDI OUT
+    ('MPK-MIDI-4', '__MPK249 Remote__',), # Remote
 
 ],
 
@@ -89,10 +89,10 @@ in_ports = [
 
     ('GT10B-MIDI-1', '__GT-10B MIDI 1__',),
 
-    ('MPK-MIDI-1', '__MPK249 MIDI 1__',), # USB A ch.1-16
-    ('MPK-MIDI-2', '__MPK249 MIDI 2__',), # USB B ch.1-16
-    ('MPK-MIDI-3', '__MPK249 MIDI 3__',), # 5 PIN MIDI IN 
-    ('MPK-MIDI-4', '__MPK249 MIDI 4__',), # Remote 
+    ('MPK-MIDI-1', '__MPK249 Port A__',), # USB A ch.1-16
+    ('MPK-MIDI-2', '__MPK249 Port B__',), # USB B ch.1-16
+    ('MPK-MIDI-3', '__MPK249 MIDI__',), # 5 PIN MIDI OUT
+    ('MPK-MIDI-4', '__MPK249 Remote__',), # Remote
 
 ],
 
@@ -128,7 +128,7 @@ __SCENES__
 # Run region
 #-----------------------------------------------------------------------------------------------------------
 # PROD
-pre  = [~ChannelFilter(8, 9, 11), ~Filter(SYSRT_CLOCK)]
+pre  = ~Filter(SYSRT_CLOCK) >> ~ChannelFilter(8, 9, 11) 
 post = Pass()
 
 # DEBUG

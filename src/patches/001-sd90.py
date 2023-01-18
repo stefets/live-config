@@ -215,11 +215,20 @@ Rain=Output('SD90-PART-B', channel=1, program=(Contemporary+Var1, 123))
 ### End SD-90 Patch list
 # -------------------------------------------------------------------
 # SD Mixer config 
+port = "SD90-PART-A"
+
 Reset = '\xF0\x41\x10\x00\x48\x12\x00\x00\x00\x00\x00\x00\xF7'
 MixToAfx = '\xF0\x41\x10\x00\x48\x12\x02\x10\x10\x00\x06\x58\xF7'
 MasterEffect = '\xF0\x41\x10\x00\x48\x12\x02\x10\x20\x00\x78\x56\xF7'
 
-port = "SD90-PART-A"
+# SD-90 Bank Patch
+SP1=SysEx(port, "f0,41,10,00,48,12,10,00,20,04,50,00,7d,7f,f7")
+SP2=SysEx(port, "f0,41,10,00,48,12,10,00,20,04,51,00,7d,7e,f7")
+CLASIC=SysEx(port,"f0,41,10,00,48,12,10,00,20,04,60,00,7d,6f,f7")
+CONTEM=SysEx(port,"f0,41,10,00,48,12,10,00,20,04,61,00,7d,6e,f7")
+SOLO=SysEx(port,"f0,41,10,00,48,12,10,00,20,04,62,00,7d,6d,f7")
+ENHANC=SysEx(port,"f0,41,10,00,48,12,10,00,20,04,63,00,7d,6c,f7")
+
 SD90_Initialize = [
     SysEx(port, Reset),
     SysEx(port, MixToAfx),
