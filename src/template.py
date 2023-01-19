@@ -91,7 +91,7 @@ in_ports = [
 
     ('MPK-MIDI-1', '__MPK249 Port A__',), # USB A ch.1-16
     ('MPK-MIDI-2', '__MPK249 Port B__',), # USB B ch.1-16
-    ('MPK-MIDI-3', '__MPK249 MIDI__',), # 5 PIN MIDI OUT
+    ('MPK-MIDI-3', '__MPK249 MIDI__',), # 5 PIN MIDI IN
     ('MPK-MIDI-4', '__MPK249 Remote__',), # Remote
 
 ],
