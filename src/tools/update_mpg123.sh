@@ -5,7 +5,7 @@
 #
 
 # Get the lastest release from the NEWS file in the SVN trunc repository
-news="https://www.mpg123.de/cgi-bin/scm/mpg123/trunk/NEWS"
+news="https://raw.githubusercontent.com/madebr/mpg123/master-with-github-ci/NEWS"
 wget -nv $news
 if [ -f "NEWS" ]; then
 	latest=$(head -1 NEWS)
