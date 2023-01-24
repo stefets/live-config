@@ -33,7 +33,7 @@
                 "size": 49,
                 "transpose": -36,
                 "channel": 8,
-                "port": "MPK-MIDI-1"
+                "port": "mpk_midi"
             }
         },
         "spotify": {

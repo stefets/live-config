@@ -5,7 +5,7 @@
 # AKAI sliders, knobs and switches
 nav_controller_channel=configuration["nav_controller_channel"]
 nav_controller = (
-    CtrlFilter(1, 2, 3, 7, 4, 20, 21, 22, 23, 24, 25, 26, 69) >>
+    CtrlFilter(1, 2, 3, 7, 4, 20, 21, 22, 23, 24, 25, 26, 69, 100, 101, 102, 103) >>
     CtrlSplit({
         1: Expr1,
         2: Expr2,
@@ -14,8 +14,15 @@ nav_controller = (
         20: Call(NavigateToScene),
         21: Discard(),
         22: Discard(),
-        26: Program('SD90-PART-A', 1, EVENT_VALUE),
+        23: Discard(),
+        24: Discard(),
+        25: Discard(),
+        26: Discard(),
         69: Tuner,
+        100: Ctrl(sd90_port_a, 1, 7, EVENT_VALUE),
+        101: Program(sd90_port_a, 1, EVENT_VALUE),
+        102: Ctrl(sd90_port_b, 1, 7, EVENT_VALUE),
+        103: Program(sd90_port_b, 1, EVENT_VALUE),
     })
 )
 
@@ -34,7 +41,8 @@ key_controller = [
 ] >> Call(Mp3Player(key_config, "SD90"))
 
 pk5_controller_channel=4
-pk5_controller=[PortFilter('MPK-MIDI-3'), PortFilter('MPK-MIDI-2')] >> ChannelFilter(4) >> [
+#pk5_controller=[PortFilter(mpk_midi), PortFilter('MPK-MIDI-2')] >> ChannelFilter(4) >> [
+pk5_controller=[PortFilter(mpk_midi)] >> ChannelFilter(4) >> [
     Filter(NOTEON) >> key_transpose,
     mp3_volume, 
     mp3_jump,
@@ -53,7 +61,7 @@ spotify_controller = [
 
 # MidiMix controller patch for SoundCraft UI
 
-midimix_controller=PortFilter('MIDIMIX') >> [
+midimix_controller=PortFilter(midimix_midi) >> [
     Filter(NOTEON) >> Process(MidiMix()) >> [
         KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mute_mono,
         KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mute_mono,

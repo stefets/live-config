@@ -44,6 +44,20 @@ playlist_config=key_config["playlist"]
 net_config=plugins['net']
 spotify_config=plugins['spotify']
 
+# Port names keys
+sd90_port_a = "sd90_port_a"
+sd90_port_b = "sd90_port_b"
+sd90_midi_1 = "sd90_midi_1"
+sd90_midi_2 = "sd90_midi_2"
+behringer="behringer"
+mpk_port_a="mpk_port_a"
+mpk_port_b="mpk_port_b"
+mpk_midi="mpk_midi"
+mpk_remote="mpk_remote"
+q49_midi="q9_midi"
+gt10b_midi="gt10b_midi"
+midimix_midi="midimix"
+
 config(
 
 # Defaults
@@ -54,45 +68,35 @@ config(
 # __Ports__ are changed by live.sh with sed/awk
 out_ports = [
 
-    ('MIDIMIX', '__MIDI Mix MIDI 1__',),  
-
-    ('SD90-PART-A', '__SD-90 Part A__'),
-    ('SD90-PART-B', '__SD-90 Part B__'),
-    ('SD90-MIDI-1', '__SD-90 MIDI 1__',),
-    ('SD90-MIDI-2', '__SD-90 MIDI 2__',),
-
-    ('BEHRINGER', '__UMC204HD 192k MIDI 1__'),
-   
-    ('Q49-MIDI-1', '__Q49 MIDI 1__',),
-
-    ('GT10B-MIDI-1', '__GT-10B MIDI 1__',),
-    
-    ('MPK-MIDI-1', '__MPK249 Port A__',), # USB A ch.1-16
-    ('MPK-MIDI-2', '__MPK249 Port B__',), # USB B ch.1-16
-    ('MPK-MIDI-3', '__MPK249 MIDI__',), # 5 PIN MIDI OUT
-    ('MPK-MIDI-4', '__MPK249 Remote__',), # Remote
+    (midimix_midi,'__MIDI Mix MIDI 1__',),  
+    (sd90_port_a, '__SD-90 Part A__'),
+    (sd90_port_b, '__SD-90 Part B__'),
+    (sd90_midi_1, '__SD-90 MIDI 1__',),
+    (sd90_midi_2, '__SD-90 MIDI 2__',),
+    (behringer,   '__UMC204HD 192k MIDI 1__'),
+    (q49_midi,    '__Q49 MIDI 1__',),
+    (gt10b_midi,  '__GT-10B MIDI 1__',),
+    (mpk_port_a,  '__MPK249 Port A__',),
+    (mpk_port_b,  '__MPK249 Port B__',),
+    (mpk_midi,    '__MPK249 MIDI__',),
+    (mpk_remote,  '__MPK249 Remote__',),
 
 ],
 
 in_ports = [
 
-    ('MIDIMIX', '__MIDI Mix MIDI 1__',),
-
-    ('SD90-PART-A', '__SD-90 Part A__'),
-    ('SD90-PART-B', '__SD-90 Part B__'),
-    ('SD90-MIDI-1','__SD-90 MIDI 1__',),
-    ('SD90-MIDI-2','__SD-90 MIDI 2__',),
-
-    ('BEHRINGER', '__UMC204HD 192k MIDI 1__'),
-
-    ('Q49-MIDI-1', '__Q49 MIDI 1__',),
-
-    ('GT10B-MIDI-1', '__GT-10B MIDI 1__',),
-
-    ('MPK-MIDI-1', '__MPK249 Port A__',), # USB A ch.1-16
-    ('MPK-MIDI-2', '__MPK249 Port B__',), # USB B ch.1-16
-    ('MPK-MIDI-3', '__MPK249 MIDI__',), # 5 PIN MIDI IN
-    ('MPK-MIDI-4', '__MPK249 Remote__',), # Remote
+    (midimix_midi,'__MIDI Mix MIDI 1__',),
+    (sd90_port_a, '__SD-90 Part A__'),
+    (sd90_port_b, '__SD-90 Part B__'),
+    (sd90_midi_1, '__SD-90 MIDI 1__',),
+    (sd90_midi_2, '__SD-90 MIDI 2__',),
+    (behringer,   '__UMC204HD 192k MIDI 1__'),
+    (q49_midi,    '__Q49 MIDI 1__',),
+    (gt10b_midi,  '__GT-10B MIDI 1__',),
+    (mpk_port_a,  '__MPK249 Port A__',),
+    (mpk_port_b,  '__MPK249 Port B__',),
+    (mpk_midi,    '__MPK249 MIDI__',),
+    (mpk_remote,  '__MPK249 Remote__',),
 
 ],
 

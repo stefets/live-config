@@ -57,7 +57,7 @@ pk5_dm_us_mapping = [
 
 # Control patches
 
-pk5_port='MPK-MIDI-3'   # PK5 midi out to mkp249 midi in
+pk5_port=mpk_midi   # PK5 midi out to mkp249 midi in
 
 # PK5 Mode Drums 
 pk5_dm = PortFilter(pk5_port)

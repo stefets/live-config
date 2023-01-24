@@ -2,9 +2,6 @@
 # The EDIROL SD-90 Studio Canvas sound module definition patches for mididings (not fully implemented)
 #
 
-sd90_port_a = "SD90-PART-A"
-sd90_port_b = "SD90-PART-B"
-
 factor = 128
 
 '''
