@@ -105,7 +105,7 @@ in_ports = [
 hook(
     #AutoRestart(), # Use when debug directly in script.py
     OSCInterface(),
-    MemorizeScene("memorize_scene.txt")
+    MemorizeScene(".hook.memorize_scene")
 )
 
 #-----------------------------------------------------------------------------------------------------------
