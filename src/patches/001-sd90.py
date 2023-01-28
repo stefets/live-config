@@ -93,6 +93,9 @@ InitPitchBend = (
 # SD-90 # DRUM MAPPING
 # --------------------------------------------
 
+# Generic 
+Piano = Output(sd90_port_a, channel=1, program=(1))
+
 # Classical Set
 StandardSet =  Output(sd90_port_a, channel=10, program=(ClassicalDrum, 1))
 RoomSet =  Output(sd90_port_a, channel=10, program=(ClassicalDrum, 9))
