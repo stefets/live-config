@@ -3,8 +3,11 @@
 
 '''
 Thanks to the programmer Dominic Sacre for that masterpiece
-http://das.nasophon.de/mididings/
-https://github.com/dsacre
+
+https://github.com/dsacre/mididings (Abandonned)
+
+https://github.com/mididings/mididings (Maintened)
+
 '''
 
 import os
@@ -20,6 +23,7 @@ from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
+# Callable objects via Process() or Call()
 from plugins.mp3 import Mp3Player, Playlist
 from plugins.philips import HueScene, HueBlackout
 from plugins.spotify import SpotifyPlayer
@@ -45,18 +49,18 @@ net_config=plugins['net']
 spotify_config=plugins['spotify']
 
 # Port names keys
-sd90_port_a = "sd90_port_a"
-sd90_port_b = "sd90_port_b"
-sd90_midi_1 = "sd90_midi_1"
-sd90_midi_2 = "sd90_midi_2"
-behringer="behringer"
-mpk_port_a="mpk_port_a"
-mpk_port_b="mpk_port_b"
-mpk_midi="mpk_midi"
-mpk_remote="mpk_remote"
-q49_midi="q9_midi"
-gt10b_midi="gt10b_midi"
-midimix_midi="midimix"
+sd90_port_a  = "sd90_port_a"
+sd90_port_b  = "sd90_port_b"
+sd90_midi_1  = "sd90_midi_1"
+sd90_midi_2  = "sd90_midi_2"
+behringer    = "behringer"
+mpk_port_a   = "mpk_port_a"
+mpk_port_b   = "mpk_port_b"
+mpk_midi     = "mpk_midi"
+mpk_remote   = "mpk_remote"
+q49_midi     = "q9_midi"
+gt10b_midi   = "gt10b_midi"
+midimix_midi = "midimix"
 
 config(
 
