@@ -128,8 +128,8 @@ class Mp3Player(MPyg123Player):
     def on_switch_scene(self, offset):
         index = current_scene() + offset
 
-        # Patch 1 is Initialize, nothing below
-        if index <= 1:
+        # No scene below 1
+        if index < 1:
             return
 
         if index > len(scenes()):

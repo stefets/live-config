@@ -7,4 +7,6 @@ __pycache__
 .cache
 script.py
 .env
-memorize_scene.txt
+.hook.memorize_scene
+NEWS
+mpyg321

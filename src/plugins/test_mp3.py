@@ -1,7 +1,10 @@
 import time
-from mpyg321.MPyg123Player import MPyg123Player
 
-player = MPyg123Player(audiodevice='hw:3,0')
+from mpyg321.MPyg123Player import MPyg123Player
+from mpyg321.consts import PlayerStatus
+
+player = MPyg123Player("mpg123", audiodevice='GT10B')
+time.sleep(3)
 player.quit()
 #player.silence()
 #player.volume(40)
