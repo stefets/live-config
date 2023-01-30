@@ -4,7 +4,7 @@
 #
 
 # Midi channel defined in config.json
-GT10BChannel = configuration['devices']['gt10b']
+GT10BChannel = 16
 
 # Banks
 GT10B_bank_0 = (Ctrl(gt10b_midi, GT10BChannel, 0, 0) // Ctrl(gt10b_midi, GT10BChannel, 32, 0))
@@ -534,6 +534,6 @@ P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 GT10B_Ctrl =  Ctrl(gt10b_midi, GT10BChannel, EVENT_CTRL, EVENT_VALUE)
 
 # Send CC aliases
-GT10B_Tuner = GT10B_Ctrl    
+GT10B_Tuner = Ctrl(gt10b_midi, EVENT_CHANNEL, EVENT_CTRL, EVENT_VALUE)    
 GT10B_Volume = GT10B_Ctrl
 GT10B_Expression = GT10B_Ctrl

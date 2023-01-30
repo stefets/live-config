@@ -25,7 +25,7 @@ class Mp3Player(MPyg123Player):
         if not self.enable:
             return
 
-        super().__init__(config["player"], card if card else None, True)
+        super().__init__("mpg123", card if card else None, True)
 
         # For mpg123 >= v1.3*.*
         self.mpg_outs.append(

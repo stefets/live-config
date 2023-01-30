@@ -74,7 +74,8 @@ keysynth =  Velocity(fixed=80) >> Output(sd90_port_a, channel=3, program=(Classi
 # Patches for Marathon by Rush
 
 # Accept (B4, B3) and E4 => transformed to a chord 
-marathon_intro=(akai>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
+marathon_intro=(mpk_a
+>>LatchNotes(False,reset='c5') >> Velocity(fixed=110) >>
 	( 
 		(KeyFilter('e4') >> Harmonize('e','major',['unison', 'fifth'])) //
 		(KeyFilter(notes=[71, 83])) 
@@ -99,7 +100,8 @@ marathon_chords=(pk5 >> LatchNotes(False, reset='c4') >> Velocity(fixed=80) >>
 
 	) >> Transpose(-24) >> Output(sd90_port_a, channel=4, program=(Classical+Var1,51), volume=100, ctrls={93:75, 91:75}))
 
-marathon_bridge=(akai >>
+marathon_bridge=(mpk_a
+ >>
 	(
 		(KeyFilter('c2') >> Key('b2') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('e2') >> Key('f#3') >> Harmonize('f#','minor',['unison', 'third', 'fifth' ])) //
@@ -107,7 +109,8 @@ marathon_bridge=(akai >>
 	) >> Velocity(fixed=75) >> Output(sd90_port_a, channel=3, program=(Classical,51), volume=110, ctrls={93:75, 91:75}))
 
 # Solo bridge, lower -12
-marathon_bridge_lower=(akai >>
+marathon_bridge_lower=(mpk_a
+ >>
 	(
 		(KeyFilter('c1') >> Key('b1') >> Harmonize('b','minor',['unison', 'third', 'fifth'])) //
 		(KeyFilter('d1') >> Key('e1') >> Harmonize('e','major',['third', 'fifth'])) //
@@ -115,7 +118,8 @@ marathon_bridge_lower=(akai >>
 	) >> Velocity(fixed=90) >>  Output(sd90_port_a, channel=4, program=(Classical,51), volume=75, ctrls={93:75, 91:75}))
 
 # You can take the most
-marathon_cascade=(akai >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output(sd90_port_b, channel=11, program=(Enhanced,99), volume=80))
+marathon_cascade=(mpk_a
+ >> KeyFilter('f3:c#5') >> Transpose(12) >> Velocity(fixed=50) >> Output(sd90_port_b, channel=11, program=(Enhanced,99), volume=80))
 
 marathon_bridge_split= KeySplit('f3', marathon_bridge_lower, marathon_cascade)
 
@@ -171,7 +175,7 @@ limelight =  Key('d#6') >> Output(sd90_port_a, channel=16, program=(Special1,12)
 # Init patch 
 i_centurion = [
         Call(Playlist(playlist_config)), 
-        P02A, Ctrl(3,127) >> Expr2
+        P02A, Ctrl(3,127) >> HD500_Expr2
 ]
 
 # Execution patch
@@ -197,11 +201,11 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 # Song : In a big country
 
 # Init patch
-i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,127) >> Expr2]
+i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,127) >> HD500_Expr2]
 
 # Execution patch
 
-i_big_country_live = [P14D, FS1, FS3, FS4, Ctrl(3,85) >> Expr2]
+i_big_country_live = [P14D, FS1, FS3, FS4, Ctrl(3,85) >> HD500_Expr2]
 p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
         [
             Filter(NOTEON) >> [CakePlay],
@@ -211,14 +215,14 @@ p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >>
 p_big_country = (pk5 >> Filter(NOTEON) >>
          [
              (KeyFilter(notes=[69]) >> FS4),
-             (KeyFilter(notes=[71]) >> [HueGalaxie, FS2, Ctrl(3,85) >> Expr2]),
-             (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> Expr2])
+             (KeyFilter(notes=[71]) >> [HueGalaxie, FS2, Ctrl(3,85) >> HD500_Expr2]),
+             (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> HD500_Expr2])
          ])
 
 
 # Highland Scenery
-i_big_country_hs      = [P14B, FS1, Ctrl(3, 120) >> Expr2]
-i_big_country_hs_live = [P14B, Ctrl(3, 120) >> Expr2]
+i_big_country_hs      = [P14B, FS1, Ctrl(3, 120) >> HD500_Expr2]
+i_big_country_hs_live = [P14B, Ctrl(3, 120) >> HD500_Expr2]
 p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
         [
             Filter(NOTEON) >> [CakePlay],
@@ -230,16 +234,16 @@ p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >>
 # Band : Octobre ------------------------------------------
 
 # Init patch (Intro)
-i_octobre = [P09A, FS1, FS3, FS4, Ctrl(3,127) >> Expr2]
+i_octobre = [P09A, FS1, FS3, FS4, Ctrl(3,127) >> HD500_Expr2]
 
 # Execution patch
 p_octobre = (pk5 >> Filter(NOTEON) >>
          [
-             (KeyFilter(notes=[64]) >> [FS4, Ctrl(3,120) >> Expr2]),
-             (KeyFilter(notes=[65]) >> [FS1, Ctrl(3,100) >> Expr2]),
-             (KeyFilter(notes=[67]) >> [FS1, FS2, FS4, Ctrl(3,65) >> Expr2]),
-             (KeyFilter(notes=[69]) >> [FS2, Ctrl(3,127) >> Expr2]),
-             (KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100 ) >> Expr2])
+             (KeyFilter(notes=[64]) >> [FS4, Ctrl(3,120) >> HD500_Expr2]),
+             (KeyFilter(notes=[65]) >> [FS1, Ctrl(3,100) >> HD500_Expr2]),
+             (KeyFilter(notes=[67]) >> [FS1, FS2, FS4, Ctrl(3,65) >> HD500_Expr2]),
+             (KeyFilter(notes=[69]) >> [FS2, Ctrl(3,127) >> HD500_Expr2]),
+             (KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100 ) >> HD500_Expr2])
          ])
 
 
@@ -248,7 +252,7 @@ p_octobre = (pk5 >> Filter(NOTEON) >>
 # Band : Rush ------------------------------------------
 
 # Default init patch
-i_rush = [P02A, Ctrl(3,100) >> Expr2]
+i_rush = [P02A, Ctrl(3,100) >> HD500_Expr2]
 
 # Default patch - tout en paralelle mais séparé par contexte
 p_rush = (pk5 >> Filter(NOTEON) >>
@@ -260,20 +264,20 @@ p_rush = (pk5 >> Filter(NOTEON) >>
         ],                
         [
             KeyFilter(notes=[69]) >> FS4,
-            KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100) >> Expr2, HueGalaxie],
-            KeyFilter(notes=[72]) >> [FS1, FS4, Ctrl(3,120) >> Expr2, HueSoloRed]
+            KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100) >> HD500_Expr2, HueGalaxie],
+            KeyFilter(notes=[72]) >> [FS1, FS4, Ctrl(3,120) >> HD500_Expr2, HueSoloRed]
         ]
     ])
 
 # Subdivisions
 
 # Init patch
-i_rush_sub=[P02A, FS3, Ctrl(3,100) >> Expr2]
+i_rush_sub=[P02A, FS3, Ctrl(3,100) >> HD500_Expr2]
 
 # Grand Designs
 
 # Init patch
-i_rush_gd = [P02A, FS1, FS3, Ctrl(3,127) >> Expr2] 
+i_rush_gd = [P02A, FS1, FS3, Ctrl(3,127) >> HD500_Expr2] 
 
 # Execution patch
 p_rush_gd = (pk5 >> 
@@ -287,9 +291,9 @@ p_rush_gd = (pk5 >>
                 ],
                 [
                     KeyFilter(notes=[67]) >> FS4,
-                    KeyFilter(notes=[69]) >> [Ctrl(3, 100) >> Expr2, FS4],
-                    KeyFilter(notes=[71]) >> [Ctrl(3, 127) >> Expr2, FS4],
-                    KeyFilter(notes=[72]) >>  Ctrl(3, 127) >> Expr2
+                    KeyFilter(notes=[69]) >> [Ctrl(3, 100) >> HD500_Expr2, FS4],
+                    KeyFilter(notes=[71]) >> [Ctrl(3, 127) >> HD500_Expr2, FS4],
+                    KeyFilter(notes=[72]) >>  Ctrl(3, 127) >> HD500_Expr2
                 ],
             ],
         Filter(NOTEOFF) >> [
@@ -297,7 +301,7 @@ p_rush_gd = (pk5 >>
                     KeyFilter(notes=[72]) >> Ctrl(3, 1) >> HueGalaxie
                 ],
                 [
-                    KeyFilter(notes=[72]) >> Ctrl(3, 100) >> Expr2
+                    KeyFilter(notes=[72]) >> Ctrl(3, 100) >> HD500_Expr2
                 ]
             ],
     ])
@@ -314,9 +318,9 @@ p_rush_gd_demo = (ChannelFilter(16) >>
                 ],
                 [
                     #KeyFilter(notes=[67]) >> FS4,
-                    #KeyFilter(notes=[69]) >> [Ctrl(3, 100) >> Expr2, FS4],
-                    #KeyFilter(notes=[71]) >> [Ctrl(3, 127) >> Expr2, FS4],
-                    #KeyFilter(notes=[72]) >>  Ctrl(3, 127) >> Expr2
+                    #KeyFilter(notes=[69]) >> [Ctrl(3, 100) >> HD500_Expr2, FS4],
+                    #KeyFilter(notes=[71]) >> [Ctrl(3, 127) >> HD500_Expr2, FS4],
+                    #KeyFilter(notes=[72]) >>  Ctrl(3, 127) >> HD500_Expr2
                 ],
             ],
         Filter(NOTEOFF) >> [
@@ -324,7 +328,7 @@ p_rush_gd_demo = (ChannelFilter(16) >>
                     #KeyFilter(notes=[72]) >> Ctrl(3, 1) >> HueGalaxie
                 ],
                 [
-                    #KeyFilter(notes=[72]) >> Ctrl(3, 100) >> Expr2
+                    #KeyFilter(notes=[72]) >> Ctrl(3, 100) >> HD500_Expr2
                 ]
             ],
     ])
@@ -332,7 +336,7 @@ p_rush_gd_demo = (ChannelFilter(16) >>
 # The Trees
 
 # Init patch
-i_rush_trees = [P02A, FS3, Ctrl(3,100) >> Expr2] 
+i_rush_trees = [P02A, FS3, Ctrl(3,100) >> HD500_Expr2] 
 
 # Foot keyboard output
 p_rush_trees_foot = Velocity(fixed=110) >> Output(sd90_port_a, channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})
@@ -349,8 +353,8 @@ p_rush_trees=(pk5 >>
         # Controle du POD HD500 
         Filter(NOTEON) >> [
             KeyFilter(notes=[69]) >> FS4,
-            KeyFilter(notes=[71]) >> [FS1, Ctrl(3,100) >> Expr2],
-            KeyFilter(notes=[72]) >> [FS1, Ctrl(3,120) >> Expr2],
+            KeyFilter(notes=[71]) >> [FS1, Ctrl(3,100) >> HD500_Expr2],
+            KeyFilter(notes=[72]) >> [FS1, Ctrl(3,120) >> HD500_Expr2],
         ],
         # Controle du séquenceur 
         # Il faut laisser passer f3 dans un filtre dummy car il sert de Latch
