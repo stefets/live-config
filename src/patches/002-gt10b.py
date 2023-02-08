@@ -3,7 +3,7 @@
 # This device has 4 banks, each bank contains 100 programs 
 #
 
-# Midi channel defined in config.json
+# Midi channel defined in the GT10B itself
 GT10BChannel = 16
 
 # Banks
@@ -534,6 +534,6 @@ P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
 GT10B_Ctrl =  Ctrl(gt10b_midi, GT10BChannel, EVENT_CTRL, EVENT_VALUE)
 
 # Send CC aliases
-GT10B_Tuner = Ctrl(gt10b_midi, EVENT_CHANNEL, EVENT_CTRL, EVENT_VALUE)    
+GT10B_Tuner = Ctrl(gt10b_midi, GT10BChannel, EVENT_CTRL, EVENT_VALUE)    
 GT10B_Volume = GT10B_Ctrl
 GT10B_Expression = GT10B_Ctrl

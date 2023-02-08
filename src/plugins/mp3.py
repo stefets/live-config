@@ -133,7 +133,7 @@ class Mp3Player(MPyg123Player):
             return
 
         if index > len(scenes()):
-            index = 2
+            index = 1
 
         switch_scene(index)
         self.current_scene = index
