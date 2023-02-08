@@ -23,12 +23,6 @@ from mididings.extra.inotify import *
 from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
-# Callable objects via Process() or Call()
-from plugins.mp3 import Mp3Player, Playlist
-from plugins.philips import HueScene, HueBlackout
-from plugins.spotify import SpotifyPlayer
-from plugins.midimix import MidiMix, MidiMixLed
-
 # Setup path
 sys.path.append(os.path.realpath('.'))
 
@@ -36,19 +30,26 @@ sys.path.append(os.path.realpath('.'))
 from dotenv import load_dotenv
 load_dotenv()
 
-# Configuration
-with open('config.json') as json_file:
-    configuration = json.load(json_file)
-
 # Plugins config
-plugins=configuration['plugins']
-hue_config=plugins['philips']
+with open('./plugins/plugins.json') as json_file:
+    plugins = json.load(json_file)
+
+#from plugins.request import *
+#net_config=plugins['net']
+
+from plugins.mp3 import Mp3Player, Playlist
 key_config=plugins['mpg123']
 playlist_config=key_config["playlist"]
-net_config=plugins['net']
+
+from plugins.philips import HueScene, HueBlackout
+hue_config=plugins['philips']
+
+from plugins.spotify import SpotifyPlayer
 spotify_config=plugins['spotify']
 
-# Port names keys
+from plugins.midimix import MidiMix, MidiMixLed
+
+# Port name alias
 sd90_port_a  = "sd90_port_a"
 sd90_port_b  = "sd90_port_b"
 sd90_midi_1  = "sd90_midi_1"
@@ -64,45 +65,45 @@ midimix_midi = "midimix"
 
 config(
 
-# Defaults
-# initial_scene = 1,
-# backend = 'alsa',
-# client_name = 'mididings',
+    # Defaults
+    # initial_scene = 1,
+    # backend = 'alsa',
+    # client_name = 'mididings',
 
-# __Ports__ are changed by live.sh with sed/awk
-out_ports = [
+    # __Ports__ are changed by live.sh with sed/awk
+    out_ports = [
 
-    (midimix_midi,'__MIDI Mix MIDI 1__',),  
-    (sd90_port_a, '__SD-90 Part A__'),
-    (sd90_port_b, '__SD-90 Part B__'),
-    (sd90_midi_1, '__SD-90 MIDI 1__',),
-    (sd90_midi_2, '__SD-90 MIDI 2__',),
-    (behringer,   '__UMC204HD 192k MIDI 1__'),
-    (q49_midi,    '__Q49 MIDI 1__',),
-    (gt10b_midi,  '__GT-10B MIDI 1__',),
-    (mpk_port_a,  '__MPK249 Port A__',),
-    (mpk_port_b,  '__MPK249 Port B__',),
-    (mpk_midi,    '__MPK249 MIDI__',),
-    (mpk_remote,  '__MPK249 Remote__',),
+        (midimix_midi,'__MIDI Mix MIDI 1__',),  
+        (sd90_port_a, '__SD-90 Part A__'),
+        (sd90_port_b, '__SD-90 Part B__'),
+        (sd90_midi_1, '__SD-90 MIDI 1__',),
+        (sd90_midi_2, '__SD-90 MIDI 2__',),
+        (behringer,   '__UMC204HD 192k MIDI 1__'),
+        (q49_midi,    '__Q49 MIDI 1__',),
+        (gt10b_midi,  '__GT-10B MIDI 1__',),
+        (mpk_port_a,  '__MPK249 Port A__',),
+        (mpk_port_b,  '__MPK249 Port B__',),
+        (mpk_midi,    '__MPK249 MIDI__',),
+        (mpk_remote,  '__MPK249 Remote__',),
 
-],
+    ],
 
-in_ports = [
+    in_ports = [
 
-    (midimix_midi,'__MIDI Mix MIDI 1__',),
-    (sd90_port_a, '__SD-90 Part A__'),
-    (sd90_port_b, '__SD-90 Part B__'),
-    (sd90_midi_1, '__SD-90 MIDI 1__',),
-    (sd90_midi_2, '__SD-90 MIDI 2__',),
-    (behringer,   '__UMC204HD 192k MIDI 1__'),
-    (q49_midi,    '__Q49 MIDI 1__',),
-    (gt10b_midi,  '__GT-10B MIDI 1__',),
-    (mpk_port_a,  '__MPK249 Port A__',),
-    (mpk_port_b,  '__MPK249 Port B__',),
-    (mpk_midi,    '__MPK249 MIDI__',),
-    (mpk_remote,  '__MPK249 Remote__',),
+        (midimix_midi,'__MIDI Mix MIDI 1__',),
+        (sd90_port_a, '__SD-90 Part A__'),
+        (sd90_port_b, '__SD-90 Part B__'),
+        (sd90_midi_1, '__SD-90 MIDI 1__',),
+        (sd90_midi_2, '__SD-90 MIDI 2__',),
+        (behringer,   '__UMC204HD 192k MIDI 1__'),
+        (q49_midi,    '__Q49 MIDI 1__',),
+        (gt10b_midi,  '__GT-10B MIDI 1__',),
+        (mpk_port_a,  '__MPK249 Port A__',),
+        (mpk_port_b,  '__MPK249 Port B__',),
+        (mpk_midi,    '__MPK249 MIDI__',),
+        (mpk_remote,  '__MPK249 Remote__',),
 
-],
+    ],
 
 )
 

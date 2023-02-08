@@ -1,18 +1,10 @@
 #
-# Patches for filtering 
+# Pre-buit filters for patches
 #
 
-inputs=configuration["inputs"]
-akai_channel=inputs["akai"]
-akai = ChannelFilter(akai_channel)
-
-pk5_channel=inputs["pk5"]
-pk5 = ChannelFilter(pk5_channel)
-
-q49_channel=inputs["q49"]
-q49 = ChannelFilter(q49_channel)
-
-fcb_channel=inputs["fcb"]
-fcb = ChannelFilter(fcb_channel)
+mpk_a = PortFilter(mpk_port_a)
+mpk_b = PortFilter(mpk_port_b)
+pk5   = PortFilter(mpk_midi) >> ChannelFilter(3)
+q49   = PortFilter(q49_midi)
 
 # -------------------------------

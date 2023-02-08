@@ -2,23 +2,10 @@
 # Patches for the run().control patch
 #
 
-# AKAI sliders, knobs and switches
-nav_controller_channel=configuration["nav_controller_channel"]
-nav_controller = (
-    CtrlFilter(1, 2, 3, 7, 4, 20, 21, 22, 23, 24, 25, 26, 69, 100, 101, 102, 103) >>
+# TO REWORK
+wip_controller = (Filter(CTRL) >>
     CtrlSplit({
-        1: Expr1,
-        2: Expr2,
-        4: GT10B_Tuner,
-        7: GT10B_Volume,
-        20: Call(NavigateToScene),
-        21: Discard(),
-        22: Discard(),
-        23: Discard(),
-        24: Discard(),
-        25: Discard(),
-        26: Discard(),
-        69: Tuner,
+         20: Call(NavigateToScene),
         100: Ctrl(sd90_port_a, 1, 7, EVENT_VALUE),
         101: Program(sd90_port_a, 1, EVENT_VALUE),
         102: Ctrl(sd90_port_b, 1, 7, EVENT_VALUE),
@@ -26,42 +13,38 @@ nav_controller = (
     })
 )
 
-# Each Call(Mp3Player) create a mpg123 process
-mp3_volume=CtrlFilter(7) >> CtrlValueFilter(0, 101)
-mp3_jump=CtrlFilter(1) >> CtrlValueFilter(0, 121)
+gt10b_control = (Filter(CTRL) >>
+    CtrlSplit({
+          4: GT10B_Tuner,
+          7: GT10B_Volume,
+    }))
 
-key_controller_config=key_config["controller"]
-key_transpose=Transpose(key_controller_config["transpose"])
+hd500_control = (Filter(CTRL) >>
+    CtrlSplit({
+          1: HD500_Expr1,
+          2: HD500_Expr2,
+         69: HD500_Tuner,
+    }))
 
-key_controller_channel=key_controller_config["channel"]
-key_controller = [
-  Filter(NOTEON) >> key_transpose, 
-  mp3_volume, 
-  mp3_jump, 
-] >> Call(Mp3Player(key_config, "SD90"))
+# Transport filter Filter for mp3 and spotify
+jump_filter    = CtrlFilter(1)  >> CtrlValueFilter(0, 121)
+volume_filter  = CtrlFilter(7)  >> CtrlValueFilter(0, 101)
+trigger_filter = Filter(NOTEON) >> Transpose(-36)
+transport_filter = [jump_filter, volume_filter, trigger_filter]
 
-pk5_controller_channel=4
-#pk5_controller=[PortFilter(mpk_midi), PortFilter('MPK-MIDI-2')] >> ChannelFilter(4) >> [
-pk5_controller=[PortFilter(mpk_midi)] >> ChannelFilter(4) >> [
-    Filter(NOTEON) >> key_transpose,
-    mp3_volume, 
-    mp3_jump,
-] >> Call(Mp3Player(key_config, "SD90"))
+mpk_mp3_control = transport_filter >> Call(Mp3Player(key_config, "SD90"))
+pk5_mp3_control = transport_filter >> Call(Mp3Player(key_config, "SD90"))
 
-hue_controller_channel = 11
-hue_controller = p_hue
-
-spotify_channel = 12
-spotify_controller = [
-    Filter(NOTEON) >> key_transpose,
-    CtrlFilter(7) >> CtrlValueFilter(0, 101), 
-    CtrlFilter(1,44),
-    ] >> Call(SpotifyPlayer(spotify_config))
+# Spotify
+spotify_control = [
+  trigger_filter,
+  volume_filter, 
+  CtrlFilter(44),
+] >> Call(SpotifyPlayer(spotify_config))
 
 
-# MidiMix controller patch for SoundCraft UI
-
-midimix_controller=PortFilter(midimix_midi) >> [
+# SoundCraft UI
+soundcraft_control=[
     Filter(NOTEON) >> Process(MidiMix()) >> [
         KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mute_mono,
         KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mute_mono,
@@ -93,16 +76,24 @@ midimix_controller=PortFilter(midimix_midi) >> [
     ],
 ]
 
-# Collection of controllers
-controllers = ChannelFilter(key_controller_channel,nav_controller_channel, hue_controller_channel, spotify_channel)
-control_patch = [
-	controllers >>
-	ChannelSplit({
-	    key_controller_channel: key_controller,
-	    nav_controller_channel: nav_controller,
-        hue_controller_channel: hue_controller,
-        spotify_channel : spotify_controller,
+# Midi input control patch
+control_patch = PortSplit({
+    midimix_midi : soundcraft_control,
+    mpk_midi : ChannelSplit({
+	    4 : pk5_mp3_control,
 	}),
-    midimix_controller,
-    pk5_controller
-]
+    mpk_port_a : ChannelSplit({
+	     8 : mpk_mp3_control,
+        13 : p_hue,
+        14 : spotify_control,
+	    15 : hd500_control,
+        16 : gt10b_control
+	}),
+    mpk_port_b : ChannelSplit({
+	     4 : pk5_mp3_control,
+	}),
+    sd90_midi_1 : Pass(),
+    sd90_midi_2 : Pass(),
+    behringer   : Pass(),
+    q49_midi    : Pass(),
+})

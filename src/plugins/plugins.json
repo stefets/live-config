@@ -1,0 +1,34 @@
+{
+    "philips": {
+        "enable": true,
+        "zones": [
+            2,
+            4
+        ],
+        "cc_transition": 3
+    },
+    "mpg123": {
+        "enable": true,
+        "default_volume": 50,
+        "default_jump": 10,
+        "playlist": {
+            "datasource": "/media/mididings/soundlib/",
+            "working_directory": "/media/mididings/tmp/"
+        },
+        "controller": {
+            "size": 49,
+            "channel": 8,
+            "port": "mpk_midi"
+        }
+    },
+    "spotify": {
+        "enable": true,
+        "devices": [
+            "PC1",
+            "SM-T500"
+        ]
+    },
+    "net": {
+        "enable": true
+    }
+}

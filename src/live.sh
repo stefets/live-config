@@ -11,6 +11,7 @@ function configure() {
     configure_scene $1
     configure_script
     configure_alsa
+    configure_mpg123
 }
 
 function configure_scene() {
@@ -74,6 +75,13 @@ function configure_alsa() {
         $conf
 
     cp $conf ~/.asoundrc
+}
+
+function configure_mpg123() {
+    # Don't know what process bust my link but enough is enough
+    sudo ln -sf /usr/local/lib/libmpg123.so.0 /lib/aarch64-linux-gnu/libmpg123.so.0
+    sudo ln -sf /usr/local/lib/libout123.so.0 /lib/aarch64-linux-gnu/libout123.so.0
+    sudo ln -sf /usr/local/lib/libsyn123.so.0 /lib/aarch64-linux-gnu/libsyn123.so.0
 }
 
 function exec_mididings() {
