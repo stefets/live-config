@@ -46,7 +46,7 @@ class Mp3Player(MPyg123Player):
         # Upper bound is exclusive
         self.note_range_mapping = RangeKeyDict({
 
-            (0, 1): self.toggle_autonext,
+            (0, 1): self.unassigned,
 
             (1, 36): self.on_play,
             
@@ -68,8 +68,8 @@ class Mp3Player(MPyg123Player):
 
             # White keys
             41: self.rewind,
-            43: self.rewind,
-            45: self.forward,
+            43: self.enable_autonext,
+            45: self.disable_autonext,
             47: self.forward,
 
             # Black keys
@@ -103,7 +103,6 @@ class Mp3Player(MPyg123Player):
         self.note_mapping[ev.data1](ev)
 
     def navigate_player(self, ev):
-
         if self.playlist.songs: 
             self.note_mapping[ev.data1](ev)
 
@@ -111,13 +110,25 @@ class Mp3Player(MPyg123Player):
     def unassigned(self, ev):
         pass
 
+    def enable_autonext(self, ev):
+        self.set_autonext(True)
+
+    def disable_autonext(self, ev):
+        self.set_autonext(False)
+
     def toggle_autonext(self, ev):
-        self.autonext = not self.autonext
+        self.set_autonext(not self.autonext)
+
+    def set_autonext(self, value):
+        self.autonext = value
         self.update_display()
 
     # Scenes navigation
     def home_scene(self, ev):
-        switch_scene(0)
+        self.set_scene(1)
+
+    def set_scene(self, index):
+        switch_scene(index)
 
     def next_scene(self, ev):
         self.on_switch_scene(1)
@@ -126,18 +137,16 @@ class Mp3Player(MPyg123Player):
         self.on_switch_scene(-1)
 
     def on_switch_scene(self, offset):
-        index = current_scene() + offset
+        self.current_scene = index = current_scene() + offset
 
-        # No scene below 1
+        # Go to first or last scene
         if index < 1:
-            return
+            self.current_scene = len(scenes())
+        elif index > len(scenes()):
+            self.current_scene = 1
 
-        if index > len(scenes()):
-            index = 1
-
-        switch_scene(index)
-        self.current_scene = index
-
+        switch_scene(self.current_scene)
+        
         self.current_entry = 0
         self.playlist.load_from_file()
 
