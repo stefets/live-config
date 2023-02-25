@@ -378,6 +378,9 @@ p_transport = (pk5 >>
             Filter(NOTEOFF) >> KeyFilter(notes=[60,62]) >> [HueSsFullBlanc], 
         ])
 
+# Interlude patch, between two songs
+interlude = mpk_b >> ChannelFilter(16) >> KeyFilter(notes=[0,49]) >> Velocity(fixed=50) >> LatchNotes(reset=0) >> [Oxigenizer]
+
 # ---
 # Glissando
 p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, sd90_port_a))
