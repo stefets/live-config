@@ -5,8 +5,6 @@
             Scene("Generic", init_patch=Call(Playlist(playlist_config)), patch=interlude//p_rush),
             Scene("Subdivisions", init_patch=i_rush_sub//Call(Playlist(playlist_config)), patch=interlude//p_rush),
             Scene("TheTrees", init_patch=i_rush_trees//Call(Playlist(playlist_config)), patch=interlude//p_rush_trees),
-            Scene("PowerWindows", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
-            Scene("GraceUnderPressure", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
             Scene("Grand Designs", init_patch=i_rush_gd, patch=interlude//p_rush_gd),
             Scene("Marathon", init_patch=i_rush, patch=Discard()),
             Scene("YYZ", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
@@ -81,6 +79,9 @@
             Scene("SteveMorse", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("Timeline", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
             Scene("TV", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("PowerWindows", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
+            Scene("GraceUnderPressure", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
+
         ]),
     10: SceneGroup("Spotify", 
         [
