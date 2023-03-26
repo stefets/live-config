@@ -199,35 +199,34 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 # Band : Big Country ------------------------------------------
 
 # Song : In a big country
-
-# Init patch
 i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,127) >> HD500_Expr2]
-
-# Execution patch
-
-i_big_country_live = [P14D, FS1, FS3, FS4, Ctrl(3,85) >> HD500_Expr2]
-p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
-        [
-            Filter(NOTEON) >> [CakePlay],
-            Filter(NOTEOFF) >> HueGalaxieMax, 
-        ])
-
 p_big_country = (pk5 >> Filter(NOTEON) >>
          [
+             (KeyFilter(notes=[65]) >> FS1),
+             (KeyFilter(notes=[67]) >> FS2),
+             #(KeyFilter(notes=[69]) >> FS3),
              (KeyFilter(notes=[69]) >> FS4),
-             (KeyFilter(notes=[71]) >> [HueGalaxie, FS2, Ctrl(3,85) >> HD500_Expr2]),
+             (KeyFilter(notes=[71]) >> [HueGalaxie, FS2, Ctrl(3,85)  >> HD500_Expr2]),
              (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> HD500_Expr2])
          ])
 
 
-# Highland Scenery
-i_big_country_hs      = [P14B, FS1, Ctrl(3, 120) >> HD500_Expr2]
-i_big_country_hs_live = [P14B, Ctrl(3, 120) >> HD500_Expr2]
-p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
-        [
-            Filter(NOTEON) >> [CakePlay],
-            Filter(NOTEOFF) >> HueGalaxieMax, 
-        ])
+# Song : Highland Scenery
+p_highland_scenery = (pk5 >> Filter(NOTEON) >>
+         [
+             (KeyFilter(notes=[65]) >> FS1),
+             (KeyFilter(notes=[67]) >> FS2),
+             (KeyFilter(notes=[69]) >> FS3),
+             (KeyFilter(notes=[71]) >> FS4),
+             (KeyFilter(notes=[72]) >> [FS3, FS4])
+         ])
+
+# 
+#p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
+#        [
+#            Filter(NOTEON) >> [CakePlay],
+#            Filter(NOTEOFF) >> HueGalaxieMax, 
+#        ])
 
 # Big Country fin de section ------------------------------------------
 
