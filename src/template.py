@@ -108,7 +108,7 @@ config(
 )
 
 hook(
-    #AutoRestart(), # Use when debug directly in script.py
+    AutoRestart(),
     OSCInterface(),
     MemorizeScene(".hook.memorize_scene")
 )
