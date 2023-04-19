@@ -4,8 +4,7 @@ from colorama import Fore, Style
 
 from range_key_dict import RangeKeyDict
 
-from mpyg321.MPyg123Player import MPyg123Player
-from mpyg321.consts import PlayerStatus
+from python_vlc_http import HttpVLC
 
 import mididings.constants as _constants
 from mididings.engine import (
@@ -19,30 +18,34 @@ from mididings.event import NoteOnEvent
 
 
 """
-This plugin plays mp3 files, it inherits the mpyg321.mpyg321, a mpg123 wrapper
-Inspiré du clavier 'Lanceur de chanson' de l'émission Québecoise 'Tout le monde en parle'
+TODO
 """
 
 
-class Mp3Player(MPyg123Player):
-    def __init__(self, config, card=None):
+class VlcPlayer(HttpVLC):
+    def __init__(self, config):
         self.enable = config["enable"]
         if not self.enable:
             return
-
-        super().__init__("mpg123", card if card else None, True)
-
-        # For mpg123 >= v1.3*.*
-        self.mpg_outs.append(
-            {
-                "mpg_code": "@P 3",
-                "action": "end_of_song",
-                "description": "Player has reached the end of the song.",
-            }
-        )
+        
+        try:
+            super().__init__(config["host"], config["username"], config["password"])
+        except:
+            print("warning: VLC server not available. Plugin disabled")
+            self.enable = False
+            return
 
         self.controller = Transport(config["controller"])
-        self.playlist = Playlist(config["playlist"])
+        self.playlist = None
+        playlists = self.fetch_playlist(config["playlist"])
+        if playlists:
+            self.playlist = playlists[0]["children"]
+        else:
+            print("Playlist not found")
+            self.enable = False
+            return
+
+        print(self.playlist)
         self.autonext = False
 
         # Show things in stdout
@@ -52,11 +55,11 @@ class Mp3Player(MPyg123Player):
         # Upper bound is exclusive
         self.note_range_mapping = RangeKeyDict(
             {
-                (0, 1): self.unassigned,
-                (1, 36): self.on_play,
-                (36, 41): self.navigate_scene,
-                (41, 48): self.navigate_player,
-                (self.controller.size - 1, self.controller.size): self.on_replay,
+                #(0, 1): self.unassigned,
+                (0, self.controller.size): self.on_play,
+                #(36, 41): self.navigate_scene,
+                #(41, 48): self.navigate_player,
+                #(self.controller.size - 1, self.controller.size): self.on_replay,
             }
         )
 
@@ -89,7 +92,7 @@ class Mp3Player(MPyg123Player):
         self.current_entry = 0
 
         self.vol = config["default_volume"]  # In %
-        self.volume(self.vol)
+        #self.volume(self.vol)
 
         self.current_scene = -1
         self.current_subscene = -1
@@ -97,6 +100,7 @@ class Mp3Player(MPyg123Player):
     # Invoker
     def __call__(self, ev):
         if self.enable:
+            print("Vlc call")
             self.ctrl_range_mapping[ev.data1](
                 ev
             ) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
@@ -166,6 +170,13 @@ class Mp3Player(MPyg123Player):
         self.playlist.load_from_file()
 
     def on_play(self, ev):
+        #print(ev.data1)
+        #print(len(self.playlist))
+        if ev.data1 > len(self.playlist)-1:
+            return
+        candidate = self.playlist[ev.data1]
+        self.play_playlist_item(candidate["id"])
+        return
         if (
             self.current_entry == 0
             or self.current_scene != current_scene()
@@ -211,11 +222,6 @@ class Mp3Player(MPyg123Player):
             ev.data1 = self.current_entry - 1
             self.on_play(ev)
 
-    def set_volume(self, ev):
-        self.vol = ev.data2
-        self.volume(self.vol)
-        self.update_display()
-
     def set_offset(self, ev):
         jump = int(ev.data2 / 2)
         if jump % 2 == 0:
@@ -249,21 +255,6 @@ class Mp3Player(MPyg123Player):
     def on_replay(self, ev):
         if self.current_entry > 0:
             self.load_list(self.current_entry, self.playlist.filename)
-
-    """
-    mpyg321 callbacks
-    """
-
-    def on_any_stop(self):
-        if self.status != PlayerStatus.PAUSED:
-            self.status = PlayerStatus.STOPPED
-
-    def on_music_end(self):
-        if self.autonext:
-            # Load next entry in playlist with a dummy MIDI event
-            ev = NoteOnEvent(self.controller.port, self.controller.channel, 0, 0)
-            self.next_entry(ev)
-
 
 class Playlist:
     def __init__(self, config):

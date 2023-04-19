@@ -49,6 +49,9 @@ spotify_config=plugins['spotify']
 
 from plugins.midimix import MidiMix, MidiMixLed
 
+from plugins.vlc import VlcPlayer
+vlc_config = plugins['vlc']
+
 # Port name alias
 sd90_port_a  = "sd90_port_a"
 sd90_port_b  = "sd90_port_b"
