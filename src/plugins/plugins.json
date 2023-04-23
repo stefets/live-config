@@ -22,7 +22,7 @@
         }
     },
     "spotify": {
-        "enable": true,
+        "enable": false,
         "devices": [
             "PC1",
             "SM-T500"
@@ -33,7 +33,7 @@
     },
     "vlc": {
         "enable": true,
-        "playlist" : "Liste de lecture",
+        "playlist" : "Playlist",
         "default_volume": 50,
         "default_jump": 10,
         "username": null,

@@ -34,7 +34,7 @@ transport_filter = [jump_filter, volume_filter, trigger_filter]
 
 mpk_mp3_control = transport_filter >> Call(Mp3Player(key_config, "SD90"))
 pk5_mp3_control = transport_filter >> Call(Mp3Player(key_config, "SD90"))
-mpk_vlc_control = transport_filter >> Call(VlcPlayer(vlc_config))
+mpk_vlc_control = Filter(NOTEON) >> Call(VlcPlayer(vlc_config))
 
 # Spotify
 spotify_control = [
@@ -85,7 +85,7 @@ control_patch = PortSplit({
 	}),
     mpk_port_a : ChannelSplit({
 	     8 : mpk_mp3_control,
-	     #8 : mpk_vlc_control,
+	    12 : mpk_vlc_control,
         13 : p_hue,
         14 : spotify_control,
 	    15 : hd500_control,
