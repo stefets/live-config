@@ -17,6 +17,12 @@ from mididings.engine import (
 )
 from mididings.event import NoteOnEvent
 
+from .common import (
+    Transport, 
+    Terminal
+)
+
+
 
 """
 This plugin plays mp3 files, it inherits the mpyg321.mpyg321, a mpg123 wrapper
@@ -25,10 +31,11 @@ Inspiré du clavier 'Lanceur de chanson' de l'émission Québecoise 'Tout le mon
 
 
 class Mp3Player(MPyg123Player):
-    def __init__(self, config, card=None):
-        self.enable = config["enable"]
-        if not self.enable:
+    def __init__(self, config, card = None):
+        if not config["enable"]:
             return
+
+        self.enable = True
 
         super().__init__("mpg123", card if card else None, True)
 
@@ -345,34 +352,3 @@ class Playlist:
         for song in self.songs:
             rank += 1
             self.terminal.write_line2(str(rank).zfill(2), song)
-
-
-class Transport:
-    def __init__(self, config):
-        self.size = config["size"]
-        self.channel = config["channel"]
-        self.port = config["port"]
-
-
-class Terminal:
-    def __init__(self) -> None:
-        self.clear_screen = lambda: print("\033c\033[3J", end="")
-        self.spacer = " " * 80
-
-    def write_line(self, text) -> None:
-        self.clear_screen()
-        print("{}{}{}{}".format(Style.BRIGHT, Fore.GREEN, text, Style.RESET_ALL))
-
-    def write_line2(self, text1, text2) -> None:
-        print(
-            "{}{}{} {}{}{}{}".format(
-                Style.BRIGHT,
-                Fore.YELLOW,
-                text1,
-                Style.RESET_ALL,
-                Style.BRIGHT,
-                Fore.WHITE,
-                text2,
-                Style.RESET_ALL,
-            )
-        )

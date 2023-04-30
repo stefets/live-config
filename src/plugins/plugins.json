@@ -38,11 +38,6 @@
         "default_jump": 10,
         "username": null,
         "password": "vlc2112",
-        "host": "http://localhost:8080",
-        "controller": {
-            "size": 49,
-            "channel": 8,
-            "port": "mpk_midi"
-        }
+        "host": "http://localhost:8080"
     }
 }
