@@ -1,7 +1,5 @@
 from pathlib import Path
 
-from colorama import Fore, Style
-
 from range_key_dict import RangeKeyDict
 
 from mpyg321.MPyg123Player import MPyg123Player
