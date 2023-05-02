@@ -1,3 +1,5 @@
+from colorama import Fore, Style
+
 class Transport:
     def __init__(self, config):
         self.size = config["size"]
