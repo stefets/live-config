@@ -11,7 +11,7 @@ function configure() {
     configure_scene $1
     configure_script
     configure_alsa
-    configure_mpg123
+    #configure_mpg123
 }
 
 function configure_scene() {

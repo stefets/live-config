@@ -210,6 +210,23 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
              (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> HD500_Expr2])
          ])
 
+# Song : In a big country - recording
+i_big_country_live = [P14C]
+p_big_country_live = (pk5 >> Filter(NOTEON) >>
+        [
+            # Daw control
+            KeyFilter(notes=[60]) >> HueOff,
+            KeyFilter(notes=[61]) >> CakeRecord,
+            KeyFilter(notes=[62]) >> HueSsFullBlanc,
+            KeyFilter(notes=[63]) >> Pass(),
+            KeyFilter(notes=[64]) >> HueOff,
+            # Guitar control
+            KeyFilter(notes=[65]) >> FS4,   # F / Delay
+            KeyFilter(notes=[66]) >> Ctrl(3,100) >> HD500_Expr2,   # F#
+            KeyFilter(notes=[67]) >> [FS2],   # G
+            KeyFilter(notes=[68]) >> Ctrl(3,127) >> HD500_Expr2,   # G#
+            KeyFilter(notes=[69]) >> [FS2, Ctrl(3,100) >> HD500_Expr2], # A
+        ])
 
 # Song : Highland Scenery
 p_highland_scenery = (pk5 >> Filter(NOTEON) >>
@@ -221,12 +238,6 @@ p_highland_scenery = (pk5 >> Filter(NOTEON) >>
              (KeyFilter(notes=[72]) >> [FS3, FS4])
          ])
 
-# 
-#p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
-#        [
-#            Filter(NOTEON) >> [CakePlay],
-#            Filter(NOTEOFF) >> HueGalaxieMax, 
-#        ])
 
 # Big Country fin de section ------------------------------------------
 
