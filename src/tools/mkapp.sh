@@ -1,7 +1,17 @@
 #!/bin/bash
 
+# Creates a mididings script from a skeleton
+# Input and output ports are tokenized with sed
+
+# Validate script name
+filename="$1"
+if [[ -z "$filename" || "$filename" = "skeleton" ]]; then
+    echo "usage : ./mkapp.sh SCRIPTNAME"
+    exit 1
+fi
+
 source="skeleton.py"
-target="$1.py"
+target="$filename.py"
 
 cp $source $target
 

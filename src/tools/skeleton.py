@@ -3,16 +3,9 @@
 
 import os
 import sys
-import json
-from threading import Timer
-from time import sleep
 
-#from mididings.extra import *
 from mididings.extra.osc import *
-#from mididings import engine
 from mididings.extra.inotify import *
-#from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
-#from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
 # Setup path
 sys.path.append(os.path.realpath('.'))
