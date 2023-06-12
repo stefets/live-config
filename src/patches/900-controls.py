@@ -32,7 +32,7 @@ volume_filter  = CtrlFilter(7)  >> CtrlValueFilter(0, 101)
 trigger_filter = Filter(NOTEON) >> Transpose(-36)
 transport_filter = [jump_filter, volume_filter, trigger_filter]
 
-mpk_mp3_control = transport_filter >> Call(Mp3Player(key_config, "SD90"))
+key_mp3_control = transport_filter >> Call(Mp3Player(key_config, "SD90"))
 pk5_mp3_control = transport_filter >> Call(Mp3Player(key_config, "SD90"))
 mpk_vlc_control = Filter(NOTEON) >> Call(VlcPlayer(vlc_config))
 
@@ -84,12 +84,15 @@ control_patch = PortSplit({
 	    4 : pk5_mp3_control,
 	}),
     mpk_port_a : ChannelSplit({
-	     8 : mpk_mp3_control,
+	     8 : key_mp3_control,
 	    12 : mpk_vlc_control,
         13 : p_hue,
         14 : spotify_control,
 	    15 : hd500_control,
         16 : gt10b_control
+	}),
+    q49_midi : ChannelSplit({
+	     1 : key_mp3_control,
 	}),
     mpk_port_b : ChannelSplit({
 	     4 : pk5_mp3_control,
@@ -97,5 +100,4 @@ control_patch = PortSplit({
     sd90_midi_1 : Pass(),
     sd90_midi_2 : Pass(),
     behringer   : Pass(),
-    q49_midi    : Pass(),
 })
