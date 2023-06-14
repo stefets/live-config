@@ -28,7 +28,7 @@
             "SM-T500"
         ]
     },
-    "net": {
+    "httpclient": {
         "enable": true
     },
     "vlc": {
