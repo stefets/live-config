@@ -16,9 +16,11 @@
     * VLC Server - API
     * AKAI MIDIMIX - Helper to control the LED of the Akai MIDIMIX
 
+# Example
+Example scripts are available in the examples directory
+
 # Dependencies
 * See requirements.txt
-* alsalist to configure the in/out ports in template.py
 
 # Flaskdings 
 ## I maintain a HTML5 UI for mididings, an alternative of the livedings UI

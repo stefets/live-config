@@ -64,7 +64,7 @@ mpk_port_a   = "mpk_port_a"
 mpk_port_b   = "mpk_port_b"
 mpk_midi     = "mpk_midi"
 mpk_remote   = "mpk_remote"
-q49_midi     = "q9_midi"
+q49_midi     = "q49_midi"
 gt10b_midi   = "gt10b_midi"
 midimix_midi = "midimix"
 
