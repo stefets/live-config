@@ -14,6 +14,11 @@
 from mididings.event import NoteOnEvent
 
 
+'''
+   This class track the state of the LED
+   It must be use at the start of a chain
+   See usage in 900-controls.py  
+'''
 class MidiMix():
     ''' AKAI MIDI Mix MIXER '''
     def __init__(self):
@@ -56,7 +61,7 @@ class Led():
     This class open or close the LED on the MIDI Mix
     It must be use AFTER a Process(MidiMix()) in a chain
     Don't use the class if Process(MidiMix()) is at the end of a chain
-    Usage in mod_control.py
+    See usage in 900-controls.py
 '''
 class MidiMixLed():
     def __init__(self):

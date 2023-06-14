@@ -52,8 +52,6 @@ from plugins.midimix import MidiMix, MidiMixLed
 from plugins.vlc import VlcPlayer
 vlc_config = plugins['vlc']
 
-from plugins.flaskdings import NextScene # Config in .env
-
 # Port name alias
 sd90_port_a  = "sd90_port_a"
 sd90_port_b  = "sd90_port_b"

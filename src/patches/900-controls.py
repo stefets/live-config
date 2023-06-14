@@ -77,6 +77,11 @@ soundcraft_control=[
     ],
 ]
 
+# FlaskDings API control patch
+flaskdings = Filter(NOTEON) >> [
+    KeyFilter(1) >> Call(HttpGet(http_config, "http://127.0.0.1:5555/next_scene/{}"))
+]
+
 # Midi input control patch
 control_patch = PortSplit({
     midimix_midi : soundcraft_control,
