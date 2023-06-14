@@ -2,6 +2,7 @@
     "philips": {
         "enable": true,
         "zones": [
+            1,
             2,
             4
         ],
