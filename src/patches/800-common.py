@@ -23,18 +23,19 @@ HueVeilleuse=Call(HueScene(hue_config, 2, "Veilleuse"))
 HueLecture=Call(HueScene(hue_config, 2, "Lecture"))
 HueSsFullBlanc=Call(HueScene(hue_config, 2, "SsFullBlanc"))
 HueCuisine=Call(HueScene(hue_config, 4, "Minimal"))
+HueChambreMaitre=Call(HueScene(hue_config, 1, "Normal"))
 
 p_hue = Filter(NOTEON) >> [
-    KeyFilter(notes=[101]) >> HueNormal, 
-    KeyFilter(notes=[102]) >> HueDetente, 
-    KeyFilter(notes=[103]) >> HueLecture, 
-    KeyFilter(notes=[104]) >> HueVeilleuse, 
-    KeyFilter(notes=[105]) >> HueGalaxie, 
-    KeyFilter(notes=[106]) >> HueGalaxieMax, 
-    KeyFilter(notes=[107]) >> HueDemon, 
-    KeyFilter(notes=[108]) >> HueOff, 
-    KeyFilter(notes=[109]) >> Ctrl(3, 50) >> HueLecture, 
-    KeyFilter(notes=[116]) >> HueCuisine 
+    KeyFilter(notes=[101]) >> HueNormal,
+    KeyFilter(notes=[102]) >> HueDetente,
+    KeyFilter(notes=[103]) >> HueLecture,
+    KeyFilter(notes=[104]) >> HueVeilleuse,
+    KeyFilter(notes=[105]) >> HueGalaxie,
+    KeyFilter(notes=[106]) >> HueGalaxieMax,
+    KeyFilter(notes=[107]) >> HueDemon,
+    KeyFilter(notes=[108]) >> HueOff,
+    KeyFilter(notes=[109]) >> Ctrl(3, 50) >> HueLecture,
+    KeyFilter(notes=[116]) >> HueCuisine
 ]
 
 akai_pad_nature = [

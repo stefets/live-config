@@ -13,11 +13,11 @@ load_dotenv()
 class HueBase(Bridge):
     def __init__(self):
         super().__init__(os.environ["HUE_IP"], os.environ["HUE_USERNAME"])
-        zones = ["Cuisine", "Salle de musique"]
+        zones = ["Cuisine", "Salle de musique", "ChambreMaitre"]
         for zone in zones:
-            print(self.get_group_id_by_name(zone))
+            print(f"Zone id of {zone} : {self.get_group_id_by_name(zone)}")
 
-        zones = [2,4]
+        #zones = [1]
         for zone in zones:
             print(self.get_group(zone))
         

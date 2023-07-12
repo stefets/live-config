@@ -77,6 +77,13 @@ soundcraft_control=[
     ],
 ]
 
+# FlaskDings API control patch
+flaskdings_uri = os.environ["FLASKDINGS"]
+flaskdings_control = trigger_filter >> [
+    KeyFilter(0) >> Call(HttpGet(flaskdings_uri + "prev_scene")),
+    KeyFilter(2) >> Call(HttpGet(flaskdings_uri + "next_scene")),
+]
+
 # Midi input control patch
 control_patch = PortSplit({
     midimix_midi : soundcraft_control,
@@ -92,7 +99,7 @@ control_patch = PortSplit({
         16 : gt10b_control
 	}),
     q49_midi : ChannelSplit({
-	     1 : key_mp3_control,
+	     1 : flaskdings_control,
 	}),
     mpk_port_b : ChannelSplit({
 	     4 : pk5_mp3_control,

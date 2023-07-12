@@ -34,8 +34,8 @@ load_dotenv()
 with open('./plugins/plugins.json') as json_file:
     plugins = json.load(json_file)
 
-#from plugins.request import *
-#net_config=plugins['net']
+from plugins.httpclient import *
+http_config=plugins['httpclient']
 
 from plugins.mp3 import Mp3Player, Playlist
 key_config=plugins['mpg123']

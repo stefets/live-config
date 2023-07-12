@@ -2,6 +2,7 @@
     "philips": {
         "enable": true,
         "zones": [
+            1,
             2,
             4
         ],
@@ -28,8 +29,7 @@
             "SM-T500"
         ]
     },
-    "net": {
-        "enable": true
+    "httpclient": {
     },
     "vlc": {
         "enable": true,
