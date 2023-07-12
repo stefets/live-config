@@ -30,7 +30,6 @@
         ]
     },
     "httpclient": {
-        "enable": true
     },
     "vlc": {
         "enable": true,
