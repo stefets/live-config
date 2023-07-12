@@ -6,7 +6,7 @@ Thanks to the programmer Dominic Sacre for that masterpiece
 
 https://github.com/dsacre/mididings (Abandonned)
 
-https://github.com/mididings/mididings (Maintened)
+https://github.com/mididings/mididings (Maintained)
 
 '''
 
