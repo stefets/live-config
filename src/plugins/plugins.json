@@ -1,13 +1,4 @@
 {
-    "philips": {
-        "enable": true,
-        "zones": [
-            1,
-            2,
-            4
-        ],
-        "cc_transition": 3
-    },
     "mpg123": {
         "enable": true,
         "default_volume": 50,
