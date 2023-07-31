@@ -12,18 +12,25 @@
 #3	00000011	03	Undefined	    0-127	MSB
 
 # Lighting patches -----------------------------------------------------------------------------
-HueOff=Call(HueBlackout(hue_config, 2))
-HueNormal=Call(HueScene(hue_config, 2, "Normal"))
-HueGalaxie=Call(HueScene(hue_config, 2, "Galaxie"))
-HueGalaxieMax=Call(HueScene(hue_config,2, "GalaxieMax"))
-HueDemon=Call(HueScene(hue_config, 2, "Demon"))
-HueSoloRed=Call(HueScene(hue_config, 2, "SoloRed"))
-HueDetente=Call(HueScene(hue_config, 2, "Détente"))
-HueVeilleuse=Call(HueScene(hue_config, 2, "Veilleuse"))
-HueLecture=Call(HueScene(hue_config, 2, "Lecture"))
-HueSsFullBlanc=Call(HueScene(hue_config, 2, "SsFullBlanc"))
-HueCuisine=Call(HueScene(hue_config, 4, "Minimal"))
-HueChambreMaitre=Call(HueScene(hue_config, 1, "Normal"))
+HueStudioOff=[
+    Call(HueBlackout(2))
+]
+HueAllOff=[
+    Call(HueBlackout(1)),
+    Call(HueBlackout(2)),
+    Call(HueBlackout(4)),
+]
+HueNormal=Call(HueScene(2, "Normal"))
+HueGalaxie=Call(HueScene(2, "Galaxie"))
+HueGalaxieMax=Call(HueScene(2, "GalaxieMax"))
+HueDemon=Call(HueScene(2, "Demon"))
+HueSoloRed=Call(HueScene(2, "SoloRed"))
+HueDetente=Call(HueScene(2, "Détente"))
+HueVeilleuse=Call(HueScene(2, "Veilleuse"))
+HueLecture=Call(HueScene(2, "Lecture"))
+HueSsFullBlanc=Call(HueScene(2, "SsFullBlanc"))
+HueCuisine=Call(HueScene(4, "Minimal"))
+HueChambreMaitre=Ctrl(3, 100) >> Call(HueScene(1, "Normal"))
 
 p_hue = Filter(NOTEON) >> [
     KeyFilter(notes=[101]) >> HueNormal,
@@ -33,7 +40,7 @@ p_hue = Filter(NOTEON) >> [
     KeyFilter(notes=[105]) >> HueGalaxie,
     KeyFilter(notes=[106]) >> HueGalaxieMax,
     KeyFilter(notes=[107]) >> HueDemon,
-    KeyFilter(notes=[108]) >> HueOff,
+    KeyFilter(notes=[108]) >> HueStudioOff,
     KeyFilter(notes=[109]) >> Ctrl(3, 50) >> HueLecture,
     KeyFilter(notes=[116]) >> HueCuisine
 ]
@@ -216,11 +223,11 @@ i_big_country_live = [P14C]
 p_big_country_live = (pk5 >> Filter(NOTEON) >>
         [
             # Daw control
-            KeyFilter(notes=[60]) >> HueOff,
+            KeyFilter(notes=[60]) >> HueStudioOff,
             KeyFilter(notes=[61]) >> CakeRecord,
             KeyFilter(notes=[62]) >> HueSsFullBlanc,
             KeyFilter(notes=[63]) >> Pass(),
-            KeyFilter(notes=[64]) >> HueOff,
+            KeyFilter(notes=[64]) >> HueStudioOff,
             # Guitar control
             KeyFilter(notes=[65]) >> FS4,   # F / Delay
             KeyFilter(notes=[66]) >> Ctrl(3,100) >> HD500_Expr2,   # F#
@@ -269,7 +276,7 @@ i_rush = [P02A, Ctrl(3,100) >> HD500_Expr2]
 p_rush = (pk5 >> Filter(NOTEON) >>
     [
         [
-            KeyFilter(notes=[60]) >> HueOff,
+            KeyFilter(notes=[60]) >> HueStudioOff,
             KeyFilter(notes=[62]) >> HueGalaxie,
             KeyFilter(notes=[64]) >> HueSoloRed
         ],                
@@ -295,7 +302,7 @@ p_rush_gd = (pk5 >>
     [
         Filter(NOTEON) >> [
                 [ 
-                    KeyFilter(notes=[60]) >> HueOff,
+                    KeyFilter(notes=[60]) >> HueStudioOff,
                     KeyFilter(notes=[61]) >> Ctrl(3, 1) >> HueDemon,
                     KeyFilter(notes=[62]) >> Ctrl(3, 50) >> HueGalaxie,
                     KeyFilter(notes=[64, 72]) >> Ctrl(3, 1) >> HueSoloRed,
@@ -384,7 +391,7 @@ p_rush_trees=(pk5 >>
 p_transport = (pk5 >> 
         [
             Filter(NOTEON)  >> KeyFilter(notes=[60])    >> [CakePlay],
-            Filter(NOTEON)  >> KeyFilter(notes=[61])    >> [HueOff],
+            Filter(NOTEON)  >> KeyFilter(notes=[61])    >> [HueStudioOff],
             Filter(NOTEON)  >> KeyFilter(notes=[62])    >> [CakeRecord],
             Filter(NOTEOFF) >> KeyFilter(notes=[60,62]) >> [HueSsFullBlanc], 
         ])

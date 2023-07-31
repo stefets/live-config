@@ -18,7 +18,7 @@ class HttpClientBase():
 
         try:
             r = requests.get(self.uri.format(ev.data1, ev.data2))
-            if r.status_code not in [200, 300]:
+            if r.status_code not in range(200, 301):
                 print(f"HTTP error {r.status_code}") 
         except Exception as ex:
             print(f"HTTP error {ex}") 

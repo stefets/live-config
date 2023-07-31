@@ -20,5 +20,5 @@
             Scene("Galaxie", init_patch=HueGalaxie, patch=Discard()),
             Scene("Demon", init_patch=HueDemon, patch=Discard()),
             Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
-            Scene("Off", init_patch=HueOff, patch=Discard()),
+            Scene("Off", init_patch=HueStudioOff, patch=Discard()),
         ]),

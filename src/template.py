@@ -6,7 +6,7 @@ Thanks to the programmer Dominic Sacre for that masterpiece
 
 https://github.com/dsacre/mididings (Abandonned)
 
-https://github.com/mididings/mididings (Maintened)
+https://github.com/mididings/mididings (Maintained)
 
 '''
 
@@ -42,7 +42,6 @@ key_config=plugins['mpg123']
 playlist_config=key_config["playlist"]
 
 from plugins.philips import HueScene, HueBlackout
-hue_config=plugins['philips']
 
 from plugins.spotify import SpotifyPlayer
 spotify_config=plugins['spotify']
