@@ -102,7 +102,8 @@
             Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
             Scene("HueCuisine", init_patch=HueCuisine, patch=Discard()),
             Scene("ChambreMaitre", init_patch=HueChambreMaitre, patch=Discard()),
-            Scene("Off", init_patch=HueOff, patch=Discard()),
+            Scene("Off", init_patch=HueStudioOff, patch=Discard()),
+            Scene("AllOff", init_patch=HueAllOff, patch=Discard()),
         ]),
     12: SceneGroup("Octobre",
         [
