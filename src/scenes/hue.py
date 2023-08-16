@@ -1,6 +1,6 @@
         2:SceneGroup("Demonstrations", [
 	    Scene("Dimmer",
-                init_patch=Call(Playlist(playlist_config)), 
+                init_patch=Call(Playlist()), 
                 patch=[ Filter(NOTEON|NOTEOFF) >> KeyFilter(notes=[62]) >> Ctrl(3, 50) >> HueGalaxieMax,
                         Filter(CTRL) >> CtrlSplit({
                             7: Pass(),
@@ -8,7 +8,7 @@
                         })
                       ]
                 ),
-            Scene("Off", init_patch=Call(Playlist(playlist_config)),
+            Scene("Off", init_patch=Call(Playlist()),
                 patch=[
                     Pass(),
                 ]),

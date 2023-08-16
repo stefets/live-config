@@ -1,3 +1,4 @@
+import json
 import mididings.constants as _constants
 from mididings.event import NoteOnEvent
 
@@ -25,7 +26,10 @@ This class allow the control of the VLC player API with a mididings callable obj
 
 
 class VlcPlayer(HttpVLC):
-    def __init__(self, config):
+    def __init__(self):
+        with open('./plugins/vlc.json') as json_file:
+            config = json.load(json_file)       
+
         if not config["enable"]:
             return
         
