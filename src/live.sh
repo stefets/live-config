@@ -35,14 +35,14 @@ function configure_script() {
     patches=$(mktemp)
     cat $DIR/patches/*.py > $patches
 
-    # Merge modules
-    modules=$(mktemp)
-    cat $DIR/modules/*.py > $modules
+    # Merge functions
+    functions=$(mktemp)
+    cat $DIR/functions/*.py > $functions
 
     # Replace __TOKEN__ from various files through $template file to $script
     sed \
-        -e "/__MODULES_/r $modules" -e "/__PATCHES__/r $patches" -e "/__SCENES__/r $scenes" \
-        -e "/__MODULES_/d" -e "/__PATCHES__/d" -e "/__SCENES__/d" \
+        -e "/__FUNCTIONS_/r $functions" -e "/__PATCHES__/r $patches" -e "/__SCENES__/r $scenes" \
+        -e "/__FUNCTIONS_/d" -e "/__PATCHES__/d" -e "/__SCENES__/d" \
         $template > $script
 
     # Replace __TOKEN__ for the input/output ports with alsalist

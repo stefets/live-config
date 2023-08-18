@@ -1,0 +1,28 @@
+{
+    "mp3": {
+        "enable": true,
+        "default_volume": 50,
+        "default_jump": 10,
+        "controller": {
+            "size": 49,
+            "channel": 8,
+            "port": "mpk_midi"
+        }
+    },
+    "vlc" : {
+        "enable": true,
+        "playlist" : "Playlist",
+        "default_volume": 50,
+        "default_jump": 10,
+        "username": null,
+        "password": "vlc2112",
+        "host": "http://localhost:8080"
+    },
+    "spotify" : {
+        "enable": false,
+        "devices": [
+            "PC1",
+            "SM-T500"
+        ]
+    }
+}
