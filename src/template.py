@@ -30,13 +30,13 @@ sys.path.append(os.path.realpath('.'))
 from dotenv import load_dotenv
 load_dotenv()
 
-# Plugins
-from plugins.mp3 import *
-from plugins.vlc import *
-from plugins.philips import *
-from plugins.spotify import *
-from plugins.midimix import *
-from plugins.httpclient import *
+# Services
+from services.mp3 import *
+from services.vlc import *
+from services.philips import *
+from services.spotify import *
+from services.midimix import *
+from services.httpclient import *
 
 # Port name alias
 sd90_port_a  = "sd90_port_a"

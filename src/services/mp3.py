@@ -32,7 +32,7 @@ Inspiré du clavier 'Lanceur de chanson' de l'émission Québecoise 'Tout le mon
 
 class Mp3Player(MPyg123Player):
     def __init__(self, card = None):
-        with open('./plugins/mp3.json') as json_file:
+        with open('./services/mp3.json') as json_file:
             config = json.load(json_file)
             
         if not config["enable"]:
