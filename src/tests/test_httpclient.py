@@ -5,7 +5,7 @@
 from mididings.extra.osc import *
 from mididings.extra.inotify import *
 
-from httpclient import HttpGet
+from services.httpclient import HttpGet
 
 config(
      in_ports=[
