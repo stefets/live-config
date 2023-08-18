@@ -6,7 +6,7 @@ Thanks to the programmer Dominic Sacre for that masterpiece
 
 https://github.com/dsacre/mididings (Abandonned)
 
-https://github.com/mididings/mididings (Maintened)
+https://github.com/mididings/mididings (Maintained)
 
 '''
 
@@ -30,27 +30,13 @@ sys.path.append(os.path.realpath('.'))
 from dotenv import load_dotenv
 load_dotenv()
 
-# Plugins config
-with open('./plugins/plugins.json') as json_file:
-    plugins = json.load(json_file)
-
-#from plugins.request import *
-#net_config=plugins['net']
-
-from plugins.mp3 import Mp3Player, Playlist
-key_config=plugins['mpg123']
-playlist_config=key_config["playlist"]
-
-from plugins.philips import HueScene, HueBlackout
-hue_config=plugins['philips']
-
-from plugins.spotify import SpotifyPlayer
-spotify_config=plugins['spotify']
-
-from plugins.midimix import MidiMix, MidiMixLed
-
-from plugins.vlc import VlcPlayer
-vlc_config = plugins['vlc']
+# Services
+from services.mp3 import *
+from services.vlc import *
+from services.philips import *
+from services.spotify import *
+from services.midimix import *
+from services.httpclient import *
 
 # Port name alias
 sd90_port_a  = "sd90_port_a"
@@ -62,7 +48,7 @@ mpk_port_a   = "mpk_port_a"
 mpk_port_b   = "mpk_port_b"
 mpk_midi     = "mpk_midi"
 mpk_remote   = "mpk_remote"
-q49_midi     = "q9_midi"
+q49_midi     = "q49_midi"
 gt10b_midi   = "gt10b_midi"
 midimix_midi = "midimix"
 
@@ -76,35 +62,35 @@ config(
     # __Ports__ are changed by live.sh with sed/awk
     out_ports = [
 
-        (midimix_midi,'44:0',),  
-        (sd90_port_a, '32:0'),
-        (sd90_port_b, '32:1'),
-        (sd90_midi_1, '32:2',),
-        (sd90_midi_2, '32:3',),
-        (behringer,   '28:0'),
-        (q49_midi,    '36:0',),
-        (gt10b_midi,  '40:0',),
-        (mpk_port_a,  '24:0',),
-        (mpk_port_b,  '24:1',),
-        (mpk_midi,    '24:2',),
-        (mpk_remote,  '24:3',),
+        (midimix_midi,'',),  
+        (sd90_port_a, ''),
+        (sd90_port_b, ''),
+        (sd90_midi_1, '',),
+        (sd90_midi_2, '',),
+        (behringer,   ''),
+        (q49_midi,    '',),
+        (gt10b_midi,  '',),
+        (mpk_port_a,  '',),
+        (mpk_port_b,  '',),
+        (mpk_midi,    '',),
+        (mpk_remote,  '',),
 
     ],
 
     in_ports = [
 
-        (midimix_midi,'44:0',),
-        (sd90_port_a, '32:0'),
-        (sd90_port_b, '32:1'),
-        (sd90_midi_1, '32:2',),
-        (sd90_midi_2, '32:3',),
-        (behringer,   '28:0'),
-        (q49_midi,    '36:0',),
-        (gt10b_midi,  '40:0',),
-        (mpk_port_a,  '24:0',),
-        (mpk_port_b,  '24:1',),
-        (mpk_midi,    '24:2',),
-        (mpk_remote,  '24:3',),
+        (midimix_midi,'',),
+        (sd90_port_a, ''),
+        (sd90_port_b, ''),
+        (sd90_midi_1, '',),
+        (sd90_midi_2, '',),
+        (behringer,   ''),
+        (q49_midi,    '',),
+        (gt10b_midi,  '',),
+        (mpk_port_a,  '',),
+        (mpk_port_b,  '',),
+        (mpk_midi,    '',),
+        (mpk_remote,  '',),
 
     ],
 
@@ -118,7 +104,7 @@ hook(
 
 #-----------------------------------------------------------------------------------------------------------
 # Functions body
-# modules/*.py
+# functions/*.py
 # --------------------------------------------------------------------
 # Helper functions available for patches and controllers
 # --------------------------------------------------------------------
@@ -196,7 +182,7 @@ def setenv(ev, key, value):
 
 # ---------------------------------------------------------------------------------------------------------
 
-def Debug(ev):
+def OnDebug(ev):
     print(ev)
 
 # ---------------------------------------------------------------------------------------------------------
@@ -1302,7 +1288,8 @@ ui_player_mix_eq = ChannelSplit({
             2:player_bass,
             3:player_mid,
             4:player_treble,
-        })#
+        })
+#
 # PK5A patches as a controller
 # Implement Roland PK5A Drums Mode default factory set and default user set
 #
@@ -1386,29 +1373,37 @@ pk5_dm_us = pk5_dm >> pk5_dm_us_mapping
 #3	00000011	03	Undefined	    0-127	MSB
 
 # Lighting patches -----------------------------------------------------------------------------
-HueOff=Call(HueBlackout(hue_config, 2))
-HueNormal=Call(HueScene(hue_config, 2, "Normal"))
-HueGalaxie=Call(HueScene(hue_config, 2, "Galaxie"))
-HueGalaxieMax=Call(HueScene(hue_config,2, "GalaxieMax"))
-HueDemon=Call(HueScene(hue_config, 2, "Demon"))
-HueSoloRed=Call(HueScene(hue_config, 2, "SoloRed"))
-HueDetente=Call(HueScene(hue_config, 2, "Détente"))
-HueVeilleuse=Call(HueScene(hue_config, 2, "Veilleuse"))
-HueLecture=Call(HueScene(hue_config, 2, "Lecture"))
-HueSsFullBlanc=Call(HueScene(hue_config, 2, "SsFullBlanc"))
-HueCuisine=Call(HueScene(hue_config, 4, "Minimal"))
+HueStudioOff=[
+    Call(HueBlackout(2))
+]
+HueAllOff=[
+    Call(HueBlackout(1)),
+    Call(HueBlackout(2)),
+    Call(HueBlackout(4)),
+]
+HueNormal=Call(HueScene(2, "Normal"))
+HueGalaxie=Call(HueScene(2, "Galaxie"))
+HueGalaxieMax=Call(HueScene(2, "GalaxieMax"))
+HueDemon=Call(HueScene(2, "Demon"))
+HueSoloRed=Call(HueScene(2, "SoloRed"))
+HueDetente=Call(HueScene(2, "Détente"))
+HueVeilleuse=Call(HueScene(2, "Veilleuse"))
+HueLecture=Call(HueScene(2, "Lecture"))
+HueSsFullBlanc=Call(HueScene(2, "SsFullBlanc"))
+HueCuisine=Call(HueScene(4, "Minimal"))
+HueChambreMaitre=Ctrl(3, 100) >> Call(HueScene(1, "Normal"))
 
 p_hue = Filter(NOTEON) >> [
-    KeyFilter(notes=[101]) >> HueNormal, 
-    KeyFilter(notes=[102]) >> HueDetente, 
-    KeyFilter(notes=[103]) >> HueLecture, 
-    KeyFilter(notes=[104]) >> HueVeilleuse, 
-    KeyFilter(notes=[105]) >> HueGalaxie, 
-    KeyFilter(notes=[106]) >> HueGalaxieMax, 
-    KeyFilter(notes=[107]) >> HueDemon, 
-    KeyFilter(notes=[108]) >> HueOff, 
-    KeyFilter(notes=[109]) >> Ctrl(3, 50) >> HueLecture, 
-    KeyFilter(notes=[116]) >> HueCuisine 
+    KeyFilter(notes=[101]) >> HueNormal,
+    KeyFilter(notes=[102]) >> HueDetente,
+    KeyFilter(notes=[103]) >> HueLecture,
+    KeyFilter(notes=[104]) >> HueVeilleuse,
+    KeyFilter(notes=[105]) >> HueGalaxie,
+    KeyFilter(notes=[106]) >> HueGalaxieMax,
+    KeyFilter(notes=[107]) >> HueDemon,
+    KeyFilter(notes=[108]) >> HueStudioOff,
+    KeyFilter(notes=[109]) >> Ctrl(3, 50) >> HueLecture,
+    KeyFilter(notes=[116]) >> HueCuisine
 ]
 
 akai_pad_nature = [
@@ -1548,7 +1543,7 @@ limelight =  Key('d#6') >> Output(sd90_port_a, channel=16, program=(Special1,12)
 
 # Init patch 
 i_centurion = [
-        Call(Playlist(playlist_config)), 
+        Call(Playlist()), 
         P02A, Ctrl(3,127) >> HD500_Expr2
 ]
 
@@ -1584,6 +1579,23 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
              (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> HD500_Expr2])
          ])
 
+# Song : In a big country - recording
+i_big_country_live = [P14C]
+p_big_country_live = (pk5 >> Filter(NOTEON) >>
+        [
+            # Daw control
+            KeyFilter(notes=[60]) >> HueStudioOff,
+            KeyFilter(notes=[61]) >> CakeRecord,
+            KeyFilter(notes=[62]) >> HueSsFullBlanc,
+            KeyFilter(notes=[63]) >> Pass(),
+            KeyFilter(notes=[64]) >> HueStudioOff,
+            # Guitar control
+            KeyFilter(notes=[65]) >> FS4,   # F / Delay
+            KeyFilter(notes=[66]) >> Ctrl(3,100) >> HD500_Expr2,   # F#
+            KeyFilter(notes=[67]) >> [FS2],   # G
+            KeyFilter(notes=[68]) >> Ctrl(3,127) >> HD500_Expr2,   # G#
+            KeyFilter(notes=[69]) >> [FS2, Ctrl(3,100) >> HD500_Expr2], # A
+        ])
 
 # Song : Highland Scenery
 p_highland_scenery = (pk5 >> Filter(NOTEON) >>
@@ -1595,12 +1607,6 @@ p_highland_scenery = (pk5 >> Filter(NOTEON) >>
              (KeyFilter(notes=[72]) >> [FS3, FS4])
          ])
 
-# 
-#p_big_country_live = (pk5 >> KeyFilter(notes=[60]) >> 
-#        [
-#            Filter(NOTEON) >> [CakePlay],
-#            Filter(NOTEOFF) >> HueGalaxieMax, 
-#        ])
 
 # Big Country fin de section ------------------------------------------
 
@@ -1631,7 +1637,7 @@ i_rush = [P02A, Ctrl(3,100) >> HD500_Expr2]
 p_rush = (pk5 >> Filter(NOTEON) >>
     [
         [
-            KeyFilter(notes=[60]) >> HueOff,
+            KeyFilter(notes=[60]) >> HueStudioOff,
             KeyFilter(notes=[62]) >> HueGalaxie,
             KeyFilter(notes=[64]) >> HueSoloRed
         ],                
@@ -1657,7 +1663,7 @@ p_rush_gd = (pk5 >>
     [
         Filter(NOTEON) >> [
                 [ 
-                    KeyFilter(notes=[60]) >> HueOff,
+                    KeyFilter(notes=[60]) >> HueStudioOff,
                     KeyFilter(notes=[61]) >> Ctrl(3, 1) >> HueDemon,
                     KeyFilter(notes=[62]) >> Ctrl(3, 50) >> HueGalaxie,
                     KeyFilter(notes=[64, 72]) >> Ctrl(3, 1) >> HueSoloRed,
@@ -1746,7 +1752,7 @@ p_rush_trees=(pk5 >>
 p_transport = (pk5 >> 
         [
             Filter(NOTEON)  >> KeyFilter(notes=[60])    >> [CakePlay],
-            Filter(NOTEON)  >> KeyFilter(notes=[61])    >> [HueOff],
+            Filter(NOTEON)  >> KeyFilter(notes=[61])    >> [HueStudioOff],
             Filter(NOTEON)  >> KeyFilter(notes=[62])    >> [CakeRecord],
             Filter(NOTEOFF) >> KeyFilter(notes=[60,62]) >> [HueSsFullBlanc], 
         ])
@@ -1799,16 +1805,16 @@ volume_filter  = CtrlFilter(7)  >> CtrlValueFilter(0, 101)
 trigger_filter = Filter(NOTEON) >> Transpose(-36)
 transport_filter = [jump_filter, volume_filter, trigger_filter]
 
-mpk_mp3_control = transport_filter >> Call(Mp3Player(key_config, "SD90"))
-pk5_mp3_control = transport_filter >> Call(Mp3Player(key_config, "SD90"))
-mpk_vlc_control = Filter(NOTEON) >> Call(VlcPlayer(vlc_config))
+key_mp3_control = transport_filter >> Call(Mp3Player("SD90"))
+pk5_mp3_control = transport_filter >> Call(Mp3Player("SD90"))
+mpk_vlc_control = Filter(NOTEON) >> Call(VlcPlayer())
 
 # Spotify
 spotify_control = [
   trigger_filter,
   volume_filter, 
   CtrlFilter(44),
-] >> Call(SpotifyPlayer(spotify_config))
+] >> Call(SpotifyPlayer())
 
 
 # SoundCraft UI
@@ -1844,6 +1850,13 @@ soundcraft_control=[
     ],
 ]
 
+# FlaskDings API control patch
+flaskdings_uri = os.environ["FLASKDINGS"]
+flaskdings_control = trigger_filter >> [
+    KeyFilter(0) >> Call(HttpGet(flaskdings_uri + "prev_scene")),
+    KeyFilter(2) >> Call(HttpGet(flaskdings_uri + "next_scene")),
+]
+
 # Midi input control patch
 control_patch = PortSplit({
     midimix_midi : soundcraft_control,
@@ -1851,12 +1864,15 @@ control_patch = PortSplit({
 	    4 : pk5_mp3_control,
 	}),
     mpk_port_a : ChannelSplit({
-	     8 : mpk_mp3_control,
+	     8 : key_mp3_control,
 	    12 : mpk_vlc_control,
         13 : p_hue,
         14 : spotify_control,
 	    15 : hd500_control,
         16 : gt10b_control
+	}),
+    q49_midi : ChannelSplit({
+	     1 : flaskdings_control,
 	}),
     mpk_port_b : ChannelSplit({
 	     4 : pk5_mp3_control,
@@ -1864,7 +1880,6 @@ control_patch = PortSplit({
     sd90_midi_1 : Pass(),
     sd90_midi_2 : Pass(),
     behringer   : Pass(),
-    q49_midi    : Pass(),
 })
 
 #-----------------------------------------------------------------------------------------------------------
@@ -1876,27 +1891,27 @@ _scenes = {
     2: SceneGroup("Rush",
         [
             Scene("Select", init_patch=Discard(), patch=interlude),
-            Scene("Generic", init_patch=Call(Playlist(playlist_config)), patch=interlude//p_rush),
-            Scene("Subdivisions", init_patch=i_rush_sub//Call(Playlist(playlist_config)), patch=interlude//p_rush),
-            Scene("TheTrees", init_patch=i_rush_trees//Call(Playlist(playlist_config)), patch=interlude//p_rush_trees),
+            Scene("Generic", init_patch=Call(Playlist()), patch=interlude//p_rush),
+            Scene("Subdivisions", init_patch=i_rush_sub//Call(Playlist()), patch=interlude//p_rush),
+            Scene("TheTrees", init_patch=i_rush_trees//Call(Playlist()), patch=interlude//p_rush_trees),
             Scene("Grand Designs", init_patch=i_rush_gd, patch=interlude//p_rush_gd),
             Scene("Marathon", init_patch=i_rush, patch=Discard()),
-            Scene("YYZ", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
-            Scene("Limelight", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
-            Scene("FlyByNight", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
-            Scene("RedBarchetta", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
-            Scene("Freewill", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
-            Scene("SpritOfRadio", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
-            Scene("TomSawyer", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
-            Scene("CloserToTheHeart", init_patch=i_rush//Call(Playlist(playlist_config)), patch=p_rush),
+            Scene("YYZ", init_patch=i_rush//Call(Playlist()), patch=p_rush),
+            Scene("Limelight", init_patch=i_rush//Call(Playlist()), patch=p_rush),
+            Scene("FlyByNight", init_patch=i_rush//Call(Playlist()), patch=p_rush),
+            Scene("RedBarchetta", init_patch=i_rush//Call(Playlist()), patch=p_rush),
+            Scene("Freewill", init_patch=i_rush//Call(Playlist()), patch=p_rush),
+            Scene("SpritOfRadio", init_patch=i_rush//Call(Playlist()), patch=p_rush),
+            Scene("TomSawyer", init_patch=i_rush//Call(Playlist()), patch=p_rush),
+            Scene("CloserToTheHeart", init_patch=i_rush//Call(Playlist()), patch=p_rush),
         ]),
     3: SceneGroup("BassCover",
         [
             Scene("Select", init_patch=Discard(), patch=interlude),
-            Scene("Default", init_patch=Call(Playlist(playlist_config))//U01_A, patch=Discard()),
-            Scene("Queen", init_patch=Call(Playlist(playlist_config))//U01_A, patch=Discard()),
-            Scene("T4F", init_patch=Call(Playlist(playlist_config))//U01_A, patch=Discard()),
-            Scene("Toto", init_patch=Call(Playlist(playlist_config))//U01_A, patch=Discard()),
+            Scene("Default", init_patch=Call(Playlist())//U01_A, patch=Discard()),
+            Scene("Queen", init_patch=Call(Playlist())//U01_A, patch=Discard()),
+            Scene("T4F", init_patch=Call(Playlist())//U01_A, patch=Discard()),
+            Scene("Toto", init_patch=Call(Playlist())//U01_A, patch=Discard()),
         ]),
     4: SceneGroup("Libre",
         [
@@ -1906,12 +1921,13 @@ _scenes = {
         [
             Scene("Select", init_patch=Discard(), patch=interlude),
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
+            Scene("In a big country REC", init_patch=i_big_country_live, patch=p_big_country_live),
             Scene("Highland Scenery", init_patch=P14B, patch=p_highland_scenery),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
             Scene("Select", init_patch=Discard(), patch=interlude),
-            Scene("PowerWindows", init_patch=Call(Playlist(playlist_config)), patch=p_rush_gd_demo),
+            Scene("PowerWindows", init_patch=Call(Playlist()), patch=p_rush_gd_demo),
             Scene("Futur", init_patch=Discard(), patch=p_transport),
         ]),
     7: SceneGroup("Demonstrations",
@@ -1928,31 +1944,31 @@ _scenes = {
             Scene("Quasar", Quasar),
             Scene("HellSection", HellSection),
             Scene("Drums", Amb_Room),
-            Scene("Demon", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("Jokes", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("Tabarnac", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("TLMEP", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Demon", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("Jokes", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("Tabarnac", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("TLMEP", init_patch=Call(Playlist()), patch=Discard()),
         ]),
     8: SceneGroup("Compositions",
         [
             Scene("Select", init_patch=Discard(), patch=interlude),
-            Scene("Palindrome", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
+            Scene("Palindrome", init_patch=Call(Playlist()), patch=Discard()),
             Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
         ]),
     9: SceneGroup("MP3Player",
         [
             Scene("Select", init_patch=Discard(), patch=interlude),
-            Scene("Majestyx", init_patch=Call(Playlist(playlist_config))//U01_A, patch=Discard()),
-            Scene("MajestyxBasse", init_patch=Call(Playlist(playlist_config))//U03_A, patch=Discard()),
-            Scene("Delirium", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("Hits", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("Middleage", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("NinaHagen", init_patch=Call(Playlist(playlist_config)), patch=Discard()),            
-            Scene("SteveMorse", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("Timeline", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("TV", init_patch=Call(Playlist(playlist_config)), patch=Discard()),
-            Scene("PowerWindows", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
-            Scene("GraceUnderPressure", init_patch=Call(Playlist(playlist_config)), patch=p_rush_trees),
+            Scene("Majestyx", init_patch=Call(Playlist())//U01_A, patch=Discard()),
+            Scene("MajestyxBasse", init_patch=Call(Playlist())//U03_A, patch=Discard()),
+            Scene("Delirium", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("Hits", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("Middleage", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("NinaHagen", init_patch=Call(Playlist()), patch=Discard()),            
+            Scene("SteveMorse", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("Timeline", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("TV", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("PowerWindows", init_patch=Call(Playlist()), patch=p_rush_trees),
+            Scene("GraceUnderPressure", init_patch=Call(Playlist()), patch=p_rush_trees),
 
         ]),
     10: SceneGroup("Spotify", 
@@ -1973,7 +1989,10 @@ _scenes = {
             Scene("Galaxie", init_patch=HueGalaxie, patch=Discard()),
             Scene("Demon", init_patch=HueDemon, patch=Discard()),
             Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
-            Scene("Off", init_patch=HueOff, patch=Discard()),
+            Scene("HueCuisine", init_patch=HueCuisine, patch=Discard()),
+            Scene("ChambreMaitre", init_patch=HueChambreMaitre, patch=Discard()),
+            Scene("Off", init_patch=HueStudioOff, patch=Discard()),
+            Scene("AllOff", init_patch=HueAllOff, patch=Discard()),
         ]),
     12: SceneGroup("Octobre",
         [

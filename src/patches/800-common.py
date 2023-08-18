@@ -182,7 +182,7 @@ limelight =  Key('d#6') >> Output(sd90_port_a, channel=16, program=(Special1,12)
 
 # Init patch 
 i_centurion = [
-        Call(Playlist(playlist_config)), 
+        Call(Playlist()), 
         P02A, Ctrl(3,127) >> HD500_Expr2
 ]
 

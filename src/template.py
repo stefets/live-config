@@ -30,26 +30,13 @@ sys.path.append(os.path.realpath('.'))
 from dotenv import load_dotenv
 load_dotenv()
 
-# Plugins config
-with open('./plugins/plugins.json') as json_file:
-    plugins = json.load(json_file)
-
-from plugins.httpclient import *
-http_config=plugins['httpclient']
-
-from plugins.mp3 import Mp3Player, Playlist
-key_config=plugins['mpg123']
-playlist_config=key_config["playlist"]
-
-from plugins.philips import HueScene, HueBlackout
-
-from plugins.spotify import SpotifyPlayer
-spotify_config=plugins['spotify']
-
-from plugins.midimix import MidiMix, MidiMixLed
-
-from plugins.vlc import VlcPlayer
-vlc_config = plugins['vlc']
+# Services
+from services.mp3 import *
+from services.vlc import *
+from services.philips import *
+from services.spotify import *
+from services.midimix import *
+from services.httpclient import *
 
 # Port name alias
 sd90_port_a  = "sd90_port_a"
@@ -117,8 +104,8 @@ hook(
 
 #-----------------------------------------------------------------------------------------------------------
 # Functions body
-# modules/*.py
-__MODULES__
+# functions/*.py
+__FUNCTIONS_
 
 #-----------------------------------------------------------------------------------------------------------
 # Patches body

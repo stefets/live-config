@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from colorama import Fore, Style
 
@@ -30,7 +31,10 @@ Inspiré du clavier 'Lanceur de chanson' de l'émission Québecoise 'Tout le mon
 
 
 class Mp3Player(MPyg123Player):
-    def __init__(self, config, card = None):
+    def __init__(self, card = None):
+        with open('./services/mp3.json') as json_file:
+            config = json.load(json_file)
+            
         if not config["enable"]:
             return
 
@@ -48,7 +52,7 @@ class Mp3Player(MPyg123Player):
         )
 
         self.controller = Transport(config["controller"])
-        self.playlist = Playlist(config["playlist"])
+        self.playlist = Playlist()
         self.autonext = False
 
         # Show things in stdout
@@ -272,11 +276,11 @@ class Mp3Player(MPyg123Player):
 
 
 class Playlist:
-    def __init__(self, config):
+    def __init__(self):
         self.songs = []
         self.filename = None
-        self.datasource = config["datasource"]
-        self.target = config["working_directory"]
+        self.datasource = "/media/mididings/soundlib/"
+        self.target = "/media/mididings/tmp/"
         self.terminal = Terminal()
 
     def __call__(self, ev):
