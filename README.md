@@ -1,4 +1,4 @@
-## My musical companion with MIDIDINGS as the KERNEL
+## My musical assistant powered by mididings 
 
 # How it works
 * Entry point is /src/live.sh SCENE (if SCENE is not specified, default is assumed)
@@ -22,15 +22,15 @@ Example scripts are available in the examples directory
 # Dependencies
 * See requirements.txt
 
-# Flaskdings 
+# Flaskdings UI
 ## I maintain a HTML5 UI for mididings, an alternative of the livedings UI
 ### It's a UI supporting multiple clients and a Rest API, made with Flask and Flask SocketIO
 * https://github.com/stefets/flaskdings
 
-# Build
+# Build mididings
 * Check the pages on how I configure mididings, boost and mpg123
 * https://github.com/stefets/live-config/wiki
 
-# Mididings ressources
+# mididings ressources
 * https://github.com/mididings/mididings (maintained)
 * https://groups.google.com/g/mididings  (mailing list)
