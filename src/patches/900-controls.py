@@ -47,6 +47,7 @@ spotify_control = [
 # SoundCraft UI
 soundcraft_control=[
     Filter(NOTEON) >> Process(MidiMix()) >> [
+        
         KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mute_mono,
         KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mute_mono,
 
@@ -60,6 +61,7 @@ soundcraft_control=[
         KeyFilter(22) >> Discard(),
 
         Process(MidiMixLed())
+
     ],
     Filter(CTRL) >> [
         CtrlFilter(0,1) >> ui_standard_fx,
