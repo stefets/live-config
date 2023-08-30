@@ -1,8 +1,37 @@
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+
 from mako.template import Template
-from mako.lookup import TemplateLookup
 
 template = Template(filename='template.mako')
+
+body_definition = [
+        "functions/common.py",
+        "functions/soundcraft.py",
+        'patches/000-filters.py', 
+        "patches/001-sd90.py",
+        "patches/002-gt10b.py",
+        "patches/003-hd500.py",
+        "patches/004-soundcraft.py",
+        "patches/800-common.py",
+    ]
+
+scene_definition = "scenes/default.py"
+control_definition = "patches/900-controls.py"
+memorize = ".hook.memorize_scene"
+
 ports = {
     "midimix" : "24:0"
 }
-print(template.render(**ports))
+
+# Generate a mididings script
+source = template.render(
+    **ports, 
+    body_definition=body_definition, 
+    scene_definition=scene_definition,
+    control_definition=control_definition,
+    memorize=memorize,
+    debug=False
+)
+
+print(source)

@@ -59,35 +59,35 @@ config(
     # __Ports__ are changed by live.sh with sed/awk
     out_ports = [
 
-        (midimix_midi,'__MIDI Mix MIDI 1__',),  
-        (sd90_port_a, '__SD-90 Part A__'),
-        (sd90_port_b, '__SD-90 Part B__'),
-        (sd90_midi_1, '__SD-90 MIDI 1__',),
-        (sd90_midi_2, '__SD-90 MIDI 2__',),
-        (behringer,   '__UMC204HD 192k MIDI 1__'),
-        (q49_midi,    '__Q49 MIDI 1__',),
-        (gt10b_midi,  '__GT-10B MIDI 1__',),
-        (mpk_port_a,  '__MPK249 Port A__',),
-        (mpk_port_b,  '__MPK249 Port B__',),
-        (mpk_midi,    '__MPK249 MIDI__',),
-        (mpk_remote,  '__MPK249 Remote__',),
+        (midimix_midi, "${midimix}",),  
+        (sd90_port_a,  '__SD-90 Part A__'),
+        (sd90_port_b,  '__SD-90 Part B__'),
+        (sd90_midi_1,  '__SD-90 MIDI 1__',),
+        (sd90_midi_2,  '__SD-90 MIDI 2__',),
+        (behringer,    '__UMC204HD 192k MIDI 1__'),
+        (q49_midi,     '__Q49 MIDI 1__',),
+        (gt10b_midi,   '__GT-10B MIDI 1__',),
+        (mpk_port_a,   '__MPK249 Port A__',),
+        (mpk_port_b,   '__MPK249 Port B__',),
+        (mpk_midi,     '__MPK249 MIDI__',),
+        (mpk_remote,   '__MPK249 Remote__',),
 
     ],
 
     in_ports = [
 
         (midimix_midi, "${midimix}",),
-        (sd90_port_a, '__SD-90 Part A__'),
-        (sd90_port_b, '__SD-90 Part B__'),
-        (sd90_midi_1, '__SD-90 MIDI 1__',),
-        (sd90_midi_2, '__SD-90 MIDI 2__',),
-        (behringer,   '__UMC204HD 192k MIDI 1__'),
-        (q49_midi,    '__Q49 MIDI 1__',),
-        (gt10b_midi,  '__GT-10B MIDI 1__',),
-        (mpk_port_a,  '__MPK249 Port A__',),
-        (mpk_port_b,  '__MPK249 Port B__',),
-        (mpk_midi,    '__MPK249 MIDI__',),
-        (mpk_remote,  '__MPK249 Remote__',),
+        (sd90_port_a,  '__SD-90 Part A__'),
+        (sd90_port_b,  '__SD-90 Part B__'),
+        (sd90_midi_1,  '__SD-90 MIDI 1__',),
+        (sd90_midi_2,  '__SD-90 MIDI 2__',),
+        (behringer,    '__UMC204HD 192k MIDI 1__'),
+        (q49_midi,     '__Q49 MIDI 1__',),
+        (gt10b_midi,   '__GT-10B MIDI 1__',),
+        (mpk_port_a,   '__MPK249 Port A__',),
+        (mpk_port_b,   '__MPK249 Port B__',),
+        (mpk_midi,     '__MPK249 MIDI__',),
+        (mpk_remote,   '__MPK249 Remote__',),
 
     ],
 
@@ -96,34 +96,24 @@ config(
 hook(
     AutoRestart(),
     OSCInterface(),
-    MemorizeScene(".hook.memorize_scene")
+    MemorizeScene("${memorize}")
 )
 
-#-----------------------------------------------------------------------------------------------------------
-# Functions body
-# functions/*.py
-__FUNCTIONS_
+# Patches and callable functions
+% for element in body_definition:
+    % with open(element, 'r') as file:
+        ${file.read()}
+    % endwith
+% endfor
 
-#-----------------------------------------------------------------------------------------------------------
-# Patches body
-# patches/*.py
-#-----------------------------------------------------------------------------------------------------------
-
-% with open('patches/000-filters.py', 'r') as file:
+# Scenes
+_scenes = {
+% with open(scene_definition, 'r') as file:
     ${file.read()}
 % endwith
-#-----------------------------------------------------------------------------------------------------------
-# Scenes body
-# scenes/*.py
-#-----------------------------------------------------------------------------------------------------------
-_scenes = {
-__SCENES__
 }
-#-----------------------------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------------------------
-# Run region
-#-----------------------------------------------------------------------------------------------------------
+
 # PROD
 pre  = ~Filter(SYSRT_CLOCK) >> ~ChannelFilter(8, 9, 11) 
 post = Pass()
@@ -131,6 +121,10 @@ post = Pass()
 # DEBUG
 #pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
 #post = Print('output',portnames='out')
+
+% with open(control_definition, 'r') as file:
+    ${file.read()}
+% endwith
 
 run(
     control=control_patch,

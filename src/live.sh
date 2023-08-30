@@ -46,6 +46,10 @@ function configure_script() {
         $template > $script
 
     # Replace __TOKEN__ for the input/output ports with alsalist
+    #     
+    pattern="Q49 MIDI 1|SD-90 Part A|SD-90 Part B|SD-90 MIDI 1|SD-90 MIDI 2|GT-10B MIDI 1|MPK249 Port A|MPK249 Port B|MPK249 MIDI|MPK249 Remote|MIDI Mix MIDI 1|UMC204HD 192k MIDI 1" 
+    # TODO alsalist | egrep $pattern | awk '{print $4,":",$1}'
+
     ports=$(alsalist)
     sed -i \
         -e "s/__SD-90 Part A__/$(echo "$ports"  | grep 'SD-90 Part A'  | awk '{print $1}')/" \
