@@ -1,10 +1,23 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
+import alsaaudio
 from mako.template import Template
 
-template = Template(filename='template.mako')
+# Configure ALSA
+card_info = {
+	"U192k" : "",
+	"SD90" : "",
+	"GT10B" : "",
+}
+alsa = Template(filename='asoundrc.mako')
+for device_number, card_name in enumerate(alsaaudio.cards()):
+    card_info[card_name] = f"hw:{device_number},0"
+print(alsa.render(**card_info))
+	
 
+# Configure
+template = Template(filename='template.mako')
 body_definition = [
         "functions/common.py",
         "functions/soundcraft.py",
@@ -34,4 +47,4 @@ source = template.render(
     debug=False
 )
 
-print(source)
+#print(source)
