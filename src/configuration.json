@@ -1,28 +1,61 @@
 {
-    "mp3": {
-        "enable": true,
-        "default_volume": 50,
-        "default_jump": 10,
-        "controller": {
-            "size": 49,
-            "channel": 8,
-            "port": "mpk_midi"
-        }
+    "global": {
+        "scene": "scenes/default.py",
+        "template": "template.mako",
+        "control": "patches/control.py",
+        "memorize": ".hook.memorize_scene"
     },
-    "vlc" : {
-        "enable": true,
-        "playlist" : "Playlist",
-        "default_volume": 50,
-        "default_jump": 10,
-        "username": null,
-        "password": "vlc2112",
-        "host": "http://localhost:8080"
-    },
-    "spotify" : {
-        "enable": false,
-        "devices": [
-            "PC1",
-            "SM-T500"
+    "content": {
+        "scene": "scenes/default.py",
+        "template": "template.mako",
+        "control": "patches/control.py",
+        "memorize": ".hook.memorize_scene",
+        "minimal": [],
+        "complete": [
+            "functions/common.py",
+            "functions/soundcraft.py",
+            "patches/filters.py",
+            "patches/sd90.py",
+            "patches/gt10b.py",
+            "patches/hd500.py",
+            "patches/soundcraft.py",
+            "patches/execution.py"
         ]
+    },
+    "alsa": {
+        "asoundrc": {
+            "U192k": "",
+            "SD90": "",
+            "GT10B": ""
+        },
+        "template": "asoundrc.mako",
+        "mapping": {
+            "Q49 MIDI 1": "q49",
+            "GT-10B MIDI 1": "gt10b_midi_1",
+            "SD-90 Part A": "sd90_part_a",
+            "SD-90 Part B": "sd90_part_B",
+            "SD-90 MIDI 1": "sd90_midi_1",
+            "SD-90 MIDI 2": "sd90_midi_2",
+            "MPK249 Port A": "mpk249_port_a",
+            "MPK249 Port B": "mpk249_port_b",
+            "MPK249 MIDI": "mpk249_midi",
+            "MIDI Mix MIDI 1": "midimix",
+            "MPK249 Remote": "mpk249_remote",
+            "UMC204HD 192k MIDI 1": "umc204hd"
+        },
+        "sequencers": {
+            "midimix": "",
+            "q49": "",
+            "umc204hd": "",
+            "sd90_part_a": "",
+            "sd90_part_B": "",
+            "sd90_midi_1": "",
+            "sd90_midi_2": "",
+            "gt10b_midi_1": "",
+            "mpk249_port_a": "",
+            "mpk249_port_b": "",
+            "mpk249_midi": "",
+            "mpk249_remote": ""
+        }
     }
 }

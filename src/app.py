@@ -1,50 +1,80 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
+import os
+import sys
+import argh
+import json
 import alsaaudio
 from mako.template import Template
+from alsa_midi import SequencerClient, PortType
 
-# Configure ALSA
-card_info = {
-	"U192k" : "",
-	"SD90" : "",
-	"GT10B" : "",
-}
-alsa = Template(filename='asoundrc.mako')
-for device_number, card_name in enumerate(alsaaudio.cards()):
-    card_info[card_name] = f"hw:{device_number},0"
-print(alsa.render(**card_info))
-	
+def configure_asoundrc():
+    audio_devices = alsa["asoundrc"]
+    asoundrc = Template(filename=alsa["template"])
+    for device_number, card_name in enumerate(alsaaudio.cards()):
+        audio_devices[card_name] = f"hw:{device_number},0"
+    with open(os.path.expanduser('~') + "/.asoundrc", "w") as FILE:
+        FILE.write(asoundrc.render(**audio_devices))
 
-# Configure
-template = Template(filename='template.mako')
-body_definition = [
-        "functions/common.py",
-        "functions/soundcraft.py",
-        'patches/000-filters.py', 
-        "patches/001-sd90.py",
-        "patches/002-gt10b.py",
-        "patches/003-hd500.py",
-        "patches/004-soundcraft.py",
-        "patches/800-common.py",
-    ]
+def configure_sequencers():
+    # Map the ALSA client name to a Mako variable ...
+    mapping = alsa["mapping"]
 
-scene_definition = "scenes/default.py"
-control_definition = "patches/900-controls.py"
-memorize = ".hook.memorize_scene"
+    # ... Mako variables that will contains sequencer ids
+    sequencers = alsa["sequencers"]
 
-ports = {
-    "midimix" : "24:0"
-}
+    client = SequencerClient("live")
+    ports = client.list_ports(input=True, type=PortType.MIDI_GENERIC | PortType.HARDWARE)
+    for port in ports:
+        key = mapping[port.name]    # Get the Mako variable name for the template
+        sequencers[key] = f"{port.client_id}:{port.port_id}"
+    return sequencers
 
-# Generate a mididings script
-source = template.render(
-    **ports, 
-    body_definition=body_definition, 
-    scene_definition=scene_definition,
-    control_definition=control_definition,
-    memorize=memorize,
-    debug=False
-)
+def build(kind="complete"):
+    content = config["content"]
+    
+    template = Template(filename=content["template"])
+    
+    body_content = content[kind]
+    memorize = content["memorize"]
+    scene_content = content["scene"]
+    control_content = content["control"]
 
-#print(source)
+    return template.render(
+        **configure_sequencers(), 
+        body_content=body_content, 
+        scene_content=scene_content,
+        control_content=control_content,
+        memorize=memorize,
+        debug=False
+    )
+
+
+def complete():
+    source = build()
+    print(source)
+
+
+def minimal():
+    source = build("minimal")
+    print(source)
+
+
+'''
+    Main
+'''
+global alsa
+global content
+with open('configuration.json') as FILE:
+    config = json.load(FILE)
+alsa = config["alsa"]
+content = config["content"]
+
+parser = argh.ArghParser()
+parser.add_commands([complete, minimal])
+
+configure_asoundrc()
+
+if __name__ == '__main__':
+    parser.dispatch()

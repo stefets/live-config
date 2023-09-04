@@ -2,6 +2,7 @@ pcm.SD90 {
  	type dmix
  	ipc_key 100
  	slave {
+		pcm "${SD90}"
 	}
 	bindings {
 		0 0

@@ -1,20 +1,17 @@
 ## My musical assistant powered by mididings 
 
 # How it works
-* Entry point is /src/live.sh SCENE (if SCENE is not specified, default is assumed)
-* live.sh creates a complete file for mididings called script.py (in .gitignore) by replacing tokens in template.py
-* User must configure in/out ports in template.py
-* scr/scenes  contains your scenes
-* src/patches contains your patches
-* src/modules contains your callable functions
-* scr/plugins contains your callable objects
-  * Optionnal plugins are wrappers or helpers
-    * mpg123 - remote mode
-    * Spotify - API
-    * Philips Hue - API
-    * Request - requests
+* Entry point is /src/app.py 
+  * It configure an ~/.asoundrc for audio devices
+  * It conand it creates a complete file for mididings called script.py (in .gitignore) by replacing tokens in template.mako with the Mako Template Engine.
+* scr/extensions contains callable objects
+  * Those extensions allow mididings to do great stuff like :
+    * mpg123 - in remote mode to play audio files
+    * Spotify - API allow to control a Spotify player
+    * Philips Hue - API allow the control of the Hue Bridge
+    * Request - requests allow to send HTTP requestion
     * VLC Server - API
-    * AKAI MIDIMIX - Helper to control the LED of the Akai MIDIMIX
+    * AKAI MIDIMIX - Helper manage the switch state and the LED of the Akai MIDIMIX
 
 # Example
 Example scripts are available in the examples directory

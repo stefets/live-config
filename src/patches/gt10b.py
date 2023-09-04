@@ -1,3 +1,4 @@
+
 #
 # The Boss GT-10B definition file for mididings
 # This device has 4 banks, each bank contains 100 programs 
