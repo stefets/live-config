@@ -37,7 +37,6 @@ def build(kind="complete"):
     template = Template(filename=content["template"])
     
     body_content = content[kind]
-    memorize = content["memorize"]
     scene_content = content["scene"]
     control_content = content["control"]
 
@@ -46,7 +45,6 @@ def build(kind="complete"):
         body_content=body_content, 
         scene_content=scene_content,
         control_content=control_content,
-        memorize=memorize,
         debug=False
     )
 
