@@ -99,7 +99,7 @@ config(
 hook(
     AutoRestart(),
     OSCInterface(),
-    MemorizeScene("${memorize}")
+    MemorizeScene(".hook.memorize_scene")
 )
 
 # Patches and callable functions

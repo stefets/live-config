@@ -1,34 +1,26 @@
 {
-    "global": {
-        "scene": "scenes/default.py",
-        "template": "template.mako",
-        "control": "patches/control.py",
-        "memorize": ".hook.memorize_scene"
-    },
     "content": {
+        "template": "templates/template.mako",
         "scene": "scenes/default.py",
-        "template": "template.mako",
-        "control": "patches/control.py",
-        "memorize": ".hook.memorize_scene",
+        "control": "static/control.py",
         "minimal": [],
         "complete": [
-            "functions/common.py",
-            "functions/soundcraft.py",
-            "patches/filters.py",
-            "patches/sd90.py",
-            "patches/gt10b.py",
-            "patches/hd500.py",
-            "patches/soundcraft.py",
-            "patches/execution.py"
+            "static/functions.py",
+            "static/filters.py",
+            "static/sd90.py",
+            "static/gt10b.py",
+            "static/hd500.py",
+            "static/soundcraft.py",
+            "static/execution.py"
         ]
     },
     "alsa": {
+        "template": "templates/asoundrc.mako",
         "asoundrc": {
             "U192k": "",
             "SD90": "",
             "GT10B": ""
         },
-        "template": "asoundrc.mako",
         "mapping": {
             "Q49 MIDI 1": "q49",
             "GT-10B MIDI 1": "gt10b_midi_1",

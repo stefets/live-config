@@ -9,7 +9,7 @@ import alsaaudio
 from mako.template import Template
 from alsa_midi import SequencerClient, PortType
 
-def configure_asoundrc():
+def configure_asoundrc():   
     audio_devices = alsa["asoundrc"]
     asoundrc = Template(filename=alsa["template"])
     for device_number, card_name in enumerate(alsaaudio.cards()):
@@ -66,7 +66,7 @@ def minimal():
 '''
 global alsa
 global content
-with open('configuration.json') as FILE:
+with open('app.json') as FILE:
     config = json.load(FILE)
 alsa = config["alsa"]
 content = config["content"]
