@@ -1,45 +1,36 @@
-# This is a mididings script builder application
-## It build a mididings script with a configuration file and Mako templates
+# A mididings script builder, created for my needs, available for yours
+## It build my complex mididings script from a configuration file (app.json) and Mako templates
 
 # How it works
-* Entry point is /src/app.py and load the app.json configuration file
-  * ALSA ports assignation for PCM and MIDI is dynamic
+* Entry point is /src/app.py and load the configuration file
+  * Because ALSA ports assignation for PCM and MIDI is dynamic the script script builder take care of this:
     * Configure an ~/.asoundrc for audio devices with the help of pyalsaaudio
-    * Configure the in_ports and out_ports section with the help of alsa_midi
-  * Finally, it generate a complete or minimal mididings script called script.py (in .gitignore) by replacing tokens in template.mako with the Mako Template Engine.
+    * Configure the in_ports and out_ports in the mididings config() section with the help of alsa_midi
+  * Finally, it render, to stdout, a mididings script by replacing tokens in template.mako with the Mako Template Engine.
 
 # Extensions
   * The scr/extensions direcotry contains callable objects
     * Those extensions allow my mididings configuration to control modules I need like :
-      * mpg123 - in remote mode to play audio files
-        * I can start an instance of mpg123 for each sound card
-      * Spotify - API allow to control a Spotify player
-      * Philips Hue - API allow the control of the Hue Bridge
-      * Request - requests allow to send HTTP requests
-      * VLC Server - Send HTTP requests to VLC server
-      * AKAI MIDIMIX - Helper manage the switch state and the LED of the Akai MIDIMIX
-
-# Example
-Examples are sometime available in the examples directory
+      * mpg123 - in remote mode to play MP3 audio files
+        * It can start an instance of mpg123 for each sound card, each instance of mpg123 can play multiple audio files in parallel, this is possible with an asoundrc configuration that sets my PCM devices as dmix type
+      * Philips Hue - API allow the send requests to a Philips Hue Bridge
+      * Spotify - call their API to control a player
+      * Request - send HTTP requests to any API
+      * VLC Server - Send HTTP requests to a VLC server
+      * AKAI MIDIMIX - Helper to manage the switch state and the LED of the Akai MIDIMIX
 
 # Dependencies
 * mididings, pyliblo, pyinotify
-* pyalsaaudio
-* alsa_midi
-* mpyg321, pexpect
-* Mako
-* python-vlc-http
-* colorama
-* argh
-* phue
+* pyalsaaudio and alsa_midi
+* vlc and python-vlc-http
+* mpg123 and mpyg321
 * python-dotenv
+* colorama
 * requests
 * spotipy
-
-# Flaskdings UI
-## I maintain a HTML5 UI for mididings, an alternative of the livedings UI
-### It's an API supporting multiple clients and a Rest API, made with Flask and Flask SocketIO
-* https://github.com/stefets/flaskdings
+* Mako
+* phue
+* argh
 
 # Build mididings
 * Check the pages on how I build mididings and boost from scratch
@@ -48,3 +39,8 @@ Examples are sometime available in the examples directory
 # mididings ressources
 * https://github.com/mididings/mididings (maintained)
 * https://groups.google.com/g/mididings  (mailing list)
+
+# Flaskdings UI
+## I maintain a HTML5 UI for mididings, an alternative of the livedings UI
+### It's an API supporting multiple clients and a Rest API, made with Flask and Flask SocketIO
+* https://github.com/stefets/flaskdings
