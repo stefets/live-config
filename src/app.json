@@ -1,7 +1,8 @@
 {
-    "content": {
+    "context": {
         "template": "templates/template.mako",
-        "scene": "scenes/default.py",
+        "scene_dir": "scenes/",
+        "default_scene": "default.py",
         "control": "static/control.py",
         "minimal": [],
         "complete": [

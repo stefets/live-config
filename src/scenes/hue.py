@@ -1,3 +1,4 @@
+        1: Scene("Initialize", init_patch=SD90_Initialize, patch=interlude),
         2:SceneGroup("Demonstrations", [
 	    Scene("Dimmer",
                 init_patch=Call(Playlist()), 

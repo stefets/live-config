@@ -2,7 +2,6 @@
 #-*- coding: utf-8 -*-
 
 import os
-import sys
 import argh
 import json
 import alsaaudio
@@ -31,14 +30,13 @@ def configure_sequencers():
         sequencers[key] = f"{port.client_id}:{port.port_id}"
     return sequencers
 
-def build(kind="complete"):
-    content = config["content"]
-    
-    template = Template(filename=content["template"])
-    
-    body_content = content[kind]
-    scene_content = content["scene"]
-    control_content = content["control"]
+def build(key, scene=None):
+
+    template = Template(filename=context["template"])
+
+    body_content = context[key]
+    scene_content = context["scene_dir"] + scene if scene else context["scene_dir"] + context["default_scene"] 
+    control_content = context["control"]
 
     return template.render(
         **configure_sequencers(), 
@@ -49,13 +47,13 @@ def build(kind="complete"):
     )
 
 
-def complete():
-    source = build()
+def complete(scene=None):
+    source = build("complete", scene)
     print(source)
 
 
-def minimal():
-    source = build("minimal")
+def minimal(scene=None):
+    source = build("minimal", scene)
     print(source)
 
 
@@ -63,11 +61,11 @@ def minimal():
     Main
 '''
 global alsa
-global content
+global context
 with open('app.json') as FILE:
     config = json.load(FILE)
 alsa = config["alsa"]
-content = config["content"]
+context = config["context"]
 
 parser = argh.ArghParser()
 parser.add_commands([complete, minimal])
