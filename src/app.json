@@ -1,5 +1,5 @@
 {
-    "context": {
+    "content": {
         "template": "templates/template.mako",
         "scene_dir": "scenes/",
         "default_scene": "default.py",

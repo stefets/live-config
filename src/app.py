@@ -32,11 +32,11 @@ def configure_sequencers():
 
 def build(key, scene=None):
 
-    template = Template(filename=context["template"])
+    template = Template(filename=content["template"])
 
-    body_content = context[key]
-    scene_content = context["scene_dir"] + scene if scene else context["scene_dir"] + context["default_scene"] 
-    control_content = context["control"]
+    body_content = content[key]
+    scene_content = content["scene_dir"] + scene if scene else content["scene_dir"] + content["default_scene"] 
+    control_content = content["control"]
 
     return template.render(
         **configure_sequencers(), 
@@ -62,10 +62,10 @@ def minimal(scene=None):
 '''
 global alsa
 global context
-with open('app.json') as FILE:
-    config = json.load(FILE)
+with open('app.json') as file:
+    config = json.load(file)
 alsa = config["alsa"]
-context = config["context"]
+content = config["content"]
 
 parser = argh.ArghParser()
 parser.add_commands([complete, minimal])
