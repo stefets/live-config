@@ -13,7 +13,7 @@ from mididings.engine import scenes, current_scene, switch_scene, current_subsce
 
 class SpotifyPlayer(object):
     def __init__(self) -> None:
-        with open('./services/spotify.json') as json_file:
+        with open('./extensions/spotify.json') as json_file:
             config = json.load(json_file)        
         self.configuration = config
         if not self.configuration["enable"]:

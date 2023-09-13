@@ -1,3 +1,4 @@
+
 #
 # Patches for the run().control patch
 #
@@ -47,6 +48,7 @@ spotify_control = [
 # SoundCraft UI
 soundcraft_control=[
     Filter(NOTEON) >> Process(MidiMix()) >> [
+        
         KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mute_mono,
         KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mute_mono,
 
@@ -60,6 +62,7 @@ soundcraft_control=[
         KeyFilter(22) >> Discard(),
 
         Process(MidiMixLed())
+
     ],
     Filter(CTRL) >> [
         CtrlFilter(0,1) >> ui_standard_fx,
@@ -88,22 +91,22 @@ flaskdings_control = trigger_filter >> [
 control_patch = PortSplit({
     midimix_midi : soundcraft_control,
     mpk_midi : ChannelSplit({
-	    4 : pk5_mp3_control,
-	}),
+        4 : pk5_mp3_control,
+    }),
     mpk_port_a : ChannelSplit({
-	     8 : key_mp3_control,
-	    12 : mpk_vlc_control,
+         8 : key_mp3_control,
+        12 : mpk_vlc_control,
         13 : p_hue,
         14 : spotify_control,
-	    15 : hd500_control,
+        15 : hd500_control,
         16 : gt10b_control
-	}),
+    }),
     q49_midi : ChannelSplit({
-	     1 : flaskdings_control,
-	}),
+         1 : flaskdings_control,
+    }),
     mpk_port_b : ChannelSplit({
-	     4 : pk5_mp3_control,
-	}),
+         4 : pk5_mp3_control,
+    }),
     sd90_midi_1 : Pass(),
     sd90_midi_2 : Pass(),
     behringer   : Pass(),
