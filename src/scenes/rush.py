@@ -1,3 +1,4 @@
+    1: Scene("Initialize", init_patch=SD90_Initialize, patch=interlude),
     2: Scene("RedBarchetta", init_patch=i_rush, patch=LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     3: Scene("FreeWill", init_patch=i_rush, patch=Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
     4: Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, pk5 >> Transpose(-24) >> closer_base]),

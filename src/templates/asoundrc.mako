@@ -2,7 +2,7 @@ pcm.SD90 {
  	type dmix
  	ipc_key 100
  	slave {
-		pcm "hw:__SD90__,0"
+		pcm "${SD90}"
 	}
 	bindings {
 		0 0
@@ -14,7 +14,7 @@ pcm.GT10B {
  	type dmix
  	ipc_key 200
  	slave {
-		pcm "hw:__GT10B__,0"
+		pcm "${GT10B}"
 	}
 	bindings {
 		0 0
@@ -26,7 +26,7 @@ pcm.U192k {
  	type dmix
  	ipc_key 300
  	slave {
-		pcm "hw:__U192k__,0"
+		pcm "${U192k}"
 	}
 	bindings {
 		0 0

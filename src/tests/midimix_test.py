@@ -7,7 +7,7 @@
 from mididings import *
 from mididings.extra.inotify import *
 
-from services.midimix import MidiMix, MidiMixLed
+from extensions.midimix import MidiMix, MidiMixLed
 
 config(
     in_ports= [('MIDIMIX', '28:0'),],
