@@ -385,6 +385,14 @@ p_rush_trees=(pk5 >>
     ])
 
 # Rush fin de section ------------------------------------------
+p_hd500_base = (pk5 >> Filter(NOTEON) >>
+         [
+             (KeyFilter(notes=[65]) >> FS1),
+             (KeyFilter(notes=[67]) >> FS2),
+             (KeyFilter(notes=[69]) >> FS3),
+             (KeyFilter(notes=[71]) >> FS4),
+             (KeyFilter(notes=[72]) >> [FS3, FS4])
+         ])
 
 # ---
 # Daw helper
