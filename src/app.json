@@ -12,6 +12,8 @@
             "static/gt10b.py",
             "static/hd500.py",
             "static/soundcraft.py",
+            "static/hue.py",
+            "static/daw.py",
             "static/execution.py"
         ]
     },
