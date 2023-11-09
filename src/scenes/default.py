@@ -24,9 +24,9 @@
             Scene("T4F", init_patch=Call(Playlist())//U01_A, patch=Discard()),
             Scene("Toto", init_patch=Call(Playlist())//U01_A, patch=Discard()),
         ]),
-    4: SceneGroup("Libre",
+    4: SceneGroup("Recording",
         [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
+            Scene("Bass", init_patch=Discard(), patch=p_transport),
         ]),
     5: SceneGroup("BigCountry",
         [
@@ -34,7 +34,7 @@
             Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
             Scene("Highland Scenery", init_patch=U01_B // P14B, patch=p_highland_scenery),
             Scene("Inwards", init_patch=U01_B // P14B, patch=p_highland_scenery),
-            Scene("Angle Park", init_patch=U01_B // P14B, patch=p_highland_scenery),
+            Scene("Angle Park", init_patch=U01_B // P14B, patch=p_transport // p_highland_scenery),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
