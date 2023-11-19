@@ -6,7 +6,6 @@ import argh
 import json
 import alsaaudio
 from mako.template import Template
-from alsa_midi import SequencerClient, PortType
 
 def configure_asoundrc():   
     audio_devices = alsa["asoundrc"]
@@ -15,20 +14,6 @@ def configure_asoundrc():
         audio_devices[card_name] = f"hw:{device_number},0"
     with open(os.path.expanduser('~') + "/.asoundrc", "w") as FILE:
         FILE.write(asoundrc.render(**audio_devices))
-
-def configure_sequencers():
-    # Map the ALSA client name to a Mako variable ...
-    mapping = alsa["mapping"]
-
-    # ... Mako variables that will contains sequencer ids
-    sequencers = alsa["sequencers"]
-
-    client = SequencerClient("live")
-    ports = client.list_ports(input=True, type=PortType.MIDI_GENERIC | PortType.HARDWARE)
-    for port in ports:
-        key = mapping[port.name]    # Get the Mako variable name for the template
-        sequencers[key] = f"{port.client_id}:{port.port_id}"
-    return sequencers
 
 def build(key, scene=None):
 
@@ -39,7 +24,6 @@ def build(key, scene=None):
     control_content = content["control"]
 
     return template.render(
-        **configure_sequencers(), 
         body_content=body_content, 
         scene_content=scene_content,
         control_content=control_content,

@@ -23,34 +23,6 @@
             "U192k": "",
             "SD90": "",
             "GT10B": ""
-        },
-        "mapping": {
-            "Q49 MIDI 1": "q49",
-            "GT-10B MIDI 1": "gt10b_midi_1",
-            "SD-90 Part A": "sd90_part_a",
-            "SD-90 Part B": "sd90_part_B",
-            "SD-90 MIDI 1": "sd90_midi_1",
-            "SD-90 MIDI 2": "sd90_midi_2",
-            "MPK249 Port A": "mpk249_port_a",
-            "MPK249 Port B": "mpk249_port_b",
-            "MPK249 MIDI": "mpk249_midi",
-            "MIDI Mix MIDI 1": "midimix",
-            "MPK249 Remote": "mpk249_remote",
-            "UMC204HD 192k MIDI 1": "umc204hd"
-        },
-        "sequencers": {
-            "midimix": "",
-            "q49": "",
-            "umc204hd": "",
-            "sd90_part_a": "",
-            "sd90_part_B": "",
-            "sd90_midi_1": "",
-            "sd90_midi_2": "",
-            "gt10b_midi_1": "",
-            "mpk249_port_a": "",
-            "mpk249_port_b": "",
-            "mpk249_midi": "",
-            "mpk249_remote": ""
         }
     }
 }
