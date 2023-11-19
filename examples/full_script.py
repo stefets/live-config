@@ -3,8 +3,10 @@
 
 '''
 Thanks to the programmer Dominic Sacre for that unbeatable MIDI engine - a true masterpiece
+
 https://github.com/mididings/mididings (Community version! My prayers have been answered)
-https://github.com/dsacre/mididings (Sadly, abandonned since 2012)
+
+(DEPRECATED VERSION) https://github.com/dsacre/mididings (Sadly, abandonned since 2015)
 '''
 
 import os
@@ -62,35 +64,35 @@ config(
 
     out_ports = [
 
-        (midimix_midi, "28:0",),  
-        (sd90_port_a,  '32:0'),
-        (sd90_port_b,  '32:1'),
-        (sd90_midi_1,  '32:2',),
-        (sd90_midi_2,  '32:3',),
-        (behringer,    ''),
-        (q49_midi,     '',),
-        (gt10b_midi,   '36:0',),
-        (mpk_port_a,   '24:0',),
-        (mpk_port_b,   '24:1',),
-        (mpk_midi,     '24:2',),
-        (mpk_remote,   '24:3',),
+        (midimix_midi, ".*MIDI Mix MIDI 1.*",),
+        (sd90_port_a,  '.*SD-90 Part A.*'),
+        (sd90_port_b,  '.*SD-90 Part B.*'),
+        (sd90_midi_1,  '.*SD-90 MIDI 1.*',),
+        (sd90_midi_2,  '.*SD-90 MIDI 2.*',),
+        (behringer,    '.*UMC204HD 192k MIDI 1.*'),
+        (q49_midi,     '.*Q49 MIDI 1.*',),
+        (gt10b_midi,   '.*GT-10B MIDI 1.*',),
+        (mpk_port_a,   '.*MPK249 Port A.*',),
+        (mpk_port_b,   '.*MPK249 Port A.*',),
+        (mpk_midi,     '.*MPK249 MIDI.*',),
+        (mpk_remote,   '.*MPK249 Remote.*',),
 
     ],
 
     in_ports = [
 
-        (midimix_midi, "28:0",),
-        (sd90_port_a,  '32:0'),
-        (sd90_port_b,  '32:1'),
-        (sd90_midi_1,  '32:2',),
-        (sd90_midi_2,  '32:3',),
-        (behringer,    ''),
-        (q49_midi,     '',),
-        (gt10b_midi,   '36:0',),
-        (mpk_port_a,   '24:0',),
-        (mpk_port_b,   '24:1',),
-        (mpk_midi,     '24:2',),
-        (mpk_remote,   '24:3',),
+        (midimix_midi, ".*MIDI Mix MIDI 1.*",),
+        (sd90_port_a,  '.*SD-90 Part A.*'),
+        (sd90_port_b,  '.*SD-90 Part B.*'),
+        (sd90_midi_1,  '.*SD-90 MIDI 1.*',),
+        (sd90_midi_2,  '.*SD-90 MIDI 2.*',),
+        (behringer,    '.*UMC204HD 192k MIDI 1.*'),
+        (q49_midi,     '.*Q49 MIDI 1.*',),
+        (gt10b_midi,   '.*GT-10B MIDI 1.*',),
+        (mpk_port_a,   '.*MPK249 Port A.*',),
+        (mpk_port_b,   '.*MPK249 Port A.*',),
+        (mpk_midi,     '.*MPK249 MIDI.*',),
+        (mpk_remote,   '.*MPK249 Remote.*',),
 
     ],
 
@@ -1714,7 +1716,7 @@ p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, sd90_port_
 # Scenes
 _scenes = {
         1: Scene("Initialize", init_patch=SD90_Initialize, patch=Discard()),
-    2: SceneGroup("Rush",
+    2: SceneGroup("RUSH",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("Generic", init_patch=Call(Playlist()), patch=Discard()//p_rush),
@@ -1746,10 +1748,10 @@ _scenes = {
     5: SceneGroup("BigCountry",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("In a big country", init_patch=i_big_country, patch=p_big_country),
-            Scene("Highland Scenery", init_patch=U01_B // P14B, patch=p_highland_scenery),
+            Scene("InBigCountry", init_patch=i_big_country, patch=p_big_country),
+            Scene("HighlandScenery", init_patch=U01_B // P14B, patch=p_highland_scenery),
             Scene("Inwards", init_patch=U01_B // P14B, patch=p_highland_scenery),
-            Scene("Angle Park", init_patch=U01_B // P14B, patch=p_transport // p_highland_scenery),
+            Scene("AnglePark", init_patch=U01_B // P14B, patch=p_transport // p_highland_scenery),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
@@ -1770,32 +1772,34 @@ _scenes = {
             Scene("Oxigenizer", Oxigenizer),
             Scene("Quasar", Quasar),
             Scene("HellSection", HellSection),
+            Scene("Itopia", Itopia),
+            Scene("Kalimba", Kalimba),
+            Scene("Dog", Dog),
+            Scene("Siren", Siren),
+            Scene("Explosion", Explosion),
+            Scene("Thunder", Thunder),
+            Scene("DoorCreak", DoorCreak),
+            Scene("Laughing", Laughing),
+            Scene("Applause", Applause),
+            Scene("Telephone2", Telephone2),
+            Scene("Rain", Rain),
             Scene("Drums", Amb_Room),
         ]),
-    8: SceneGroup("Compositions",
+    8: SceneGroup("Libre",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Palindrome", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("Centurion", init_patch=i_centurion, patch=p_centurion),
         ]),
     9: SceneGroup("MP3Player",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Majestyx", init_patch=Call(Playlist())//U01_A, patch=Discard()),
-            Scene("MajestyxBasse", init_patch=Call(Playlist())//U03_A, patch=Discard()),
-            Scene("Delirium", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("TV", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("GraceUnderPressure", init_patch=Call(Playlist()), patch=Discard()),
             Scene("Hits", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("Majestyx", init_patch=Call(Playlist())//U01_A, patch=Discard()),
             Scene("Middleage", init_patch=Call(Playlist()), patch=Discard()),
             Scene("NinaHagen", init_patch=Call(Playlist()), patch=Discard()),            
+            Scene("PowerWindows", init_patch=Call(Playlist()), patch=Discard()),
             Scene("SteveMorse", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("Timeline", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("TV", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("PowerWindows", init_patch=Call(Playlist()), patch=p_rush_trees),
-            Scene("GraceUnderPressure", init_patch=Call(Playlist()), patch=p_rush_trees),
-            Scene("Demon", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("Jokes", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("Tabarnac", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("TLMEP", init_patch=Call(Playlist()), patch=Discard()),
         ]),
     10: SceneGroup("Spotify", 
         [
@@ -1823,22 +1827,29 @@ _scenes = {
             Scene("Chambre.Minimal", init_patch=HueChambreMaitre, patch=Discard()),
             Scene("AllOff", init_patch=HueAllOff, patch=Discard()),
         ]),
-    12: SceneGroup("Octobre",
+    12: SceneGroup("Libre",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Maudite Machine", init_patch=i_octobre, patch=p_transport // p_octobre),
         ]),
-    13: SceneGroup("SD90",
+    13: SceneGroup("SD90-BANK",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Special1", init_patch=SP1, patch=DLAPad),
+            Scene("Special1", init_patch=SP1, patch=Discard()),
             Scene("Special2", init_patch=SP2, patch=Discard()),
             Scene("Classical", init_patch=CLASIC, patch=Discard()),
             Scene("Contemporary", init_patch=CONTEM, patch=Discard()),
             Scene("Solo", init_patch=SOLO, patch=Discard()),
             Scene("Enhanced", init_patch=ENHANC, patch=Discard()),
         ]),
-
+    14: SceneGroup("MUSE",
+        [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
+            Scene("Assassin", init_patch=P01A, patch=Discard()),
+            Scene("Hysteria", init_patch=P01A, patch=Discard()),
+            Scene("Cydonia", init_patch=P01A, patch=Discard()),
+            Scene("Starlight", init_patch=P01A, patch=Discard()),
+            Scene("Stockholm", init_patch=P01A, patch=Discard()),
+        ]),
 
 }
 
