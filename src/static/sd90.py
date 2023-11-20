@@ -189,7 +189,7 @@ Thunder=Output(sd90_port_b, channel=15, program=(Classical+Var2, 123))
 
 # Classical instrument part - Variation 3
 Wind=Output(sd90_port_b, channel=3, program=(Classical+Var3, 123))
-Explosion=Output(sd90_port_b, channel=7, program=(Classical+Var3, 128))
+Explosion=Output(sd90_port_b, channel=7, volume=100, program=(Classical+Var3, 128))
 
 # Classical instrument part - Variation 4
 Stream=Output(sd90_port_b, channel=12, program=(Classical+Var4, 123))

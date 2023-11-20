@@ -3,8 +3,10 @@
 
 '''
 Thanks to the programmer Dominic Sacre for that unbeatable MIDI engine - a true masterpiece
+
 https://github.com/mididings/mididings (Community version! My prayers have been answered)
-https://github.com/dsacre/mididings (Sadly, abandonned since 2012)
+
+(DEPRECATED VERSION) https://github.com/dsacre/mididings (Sadly, abandonned since 2015)
 '''
 
 import os
@@ -62,35 +64,35 @@ config(
 
     out_ports = [
 
-        (midimix_midi, "${midimix}",),  
-        (sd90_port_a,  '${sd90_part_a}'),
-        (sd90_port_b,  '${sd90_part_B}'),
-        (sd90_midi_1,  '${sd90_midi_1}',),
-        (sd90_midi_2,  '${sd90_midi_2}',),
-        (behringer,    '${umc204hd}'),
-        (q49_midi,     '${q49}',),
-        (gt10b_midi,   '${gt10b_midi_1}',),
-        (mpk_port_a,   '${mpk249_port_a}',),
-        (mpk_port_b,   '${mpk249_port_b}',),
-        (mpk_midi,     '${mpk249_midi}',),
-        (mpk_remote,   '${mpk249_remote}',),
+        (midimix_midi, ".*MIDI Mix MIDI 1.*",),
+        (sd90_port_a,  '.*SD-90 Part A.*'),
+        (sd90_port_b,  '.*SD-90 Part B.*'),
+        (sd90_midi_1,  '.*SD-90 MIDI 1.*',),
+        (sd90_midi_2,  '.*SD-90 MIDI 2.*',),
+        (behringer,    '.*UMC204HD 192k MIDI 1.*'),
+        (q49_midi,     '.*Q49 MIDI 1.*',),
+        (gt10b_midi,   '.*GT-10B MIDI 1.*',),
+        (mpk_port_a,   '.*MPK249 Port A.*',),
+        (mpk_port_b,   '.*MPK249 Port A.*',),
+        (mpk_midi,     '.*MPK249 MIDI.*',),
+        (mpk_remote,   '.*MPK249 Remote.*',),
 
     ],
 
     in_ports = [
 
-        (midimix_midi, "${midimix}",),
-        (sd90_port_a,  '${sd90_part_a}'),
-        (sd90_port_b,  '${sd90_part_B}'),
-        (sd90_midi_1,  '${sd90_midi_1}',),
-        (sd90_midi_2,  '${sd90_midi_2}',),
-        (behringer,    '${umc204hd}'),
-        (q49_midi,     '${q49}',),
-        (gt10b_midi,   '${gt10b_midi_1}',),
-        (mpk_port_a,   '${mpk249_port_a}',),
-        (mpk_port_b,   '${mpk249_port_b}',),
-        (mpk_midi,     '${mpk249_midi}',),
-        (mpk_remote,   '${mpk249_remote}',),
+        (midimix_midi, ".*MIDI Mix MIDI 1.*",),
+        (sd90_port_a,  '.*SD-90 Part A.*'),
+        (sd90_port_b,  '.*SD-90 Part B.*'),
+        (sd90_midi_1,  '.*SD-90 MIDI 1.*',),
+        (sd90_midi_2,  '.*SD-90 MIDI 2.*',),
+        (behringer,    '.*UMC204HD 192k MIDI 1.*'),
+        (q49_midi,     '.*Q49 MIDI 1.*',),
+        (gt10b_midi,   '.*GT-10B MIDI 1.*',),
+        (mpk_port_a,   '.*MPK249 Port A.*',),
+        (mpk_port_b,   '.*MPK249 Port A.*',),
+        (mpk_midi,     '.*MPK249 MIDI.*',),
+        (mpk_remote,   '.*MPK249 Remote.*',),
 
     ],
 

@@ -1,49 +1,17 @@
 
+# -----------------------------------------------------------------------------------------------
 # Execution patches
+# -----------------------------------------------------------------------------------------------
 # Notes :
-#- Ctrl #3 est Undefined selon la documentation du protocole MIDI; donc libre d'utilisation.
-#- L'utilisation du Ctrl(3,value) sert a passer le value dans EVENT_VALUE pour l'unité suivante dans une série d'unité
-#- Soit pour assigner une valeur au pédales d'expression du POD HD 500
-#- Soit pour déterminer la valeur d'une transition pour le chargement d'une scène du Philips HUE
-#- Soit pour contrôler Cakewalk
+# - Ctrl #3 est Undefined selon la documentation du protocole MIDI; donc libre d'utilisation.
+# - L'utilisation du Ctrl(3,value) sert a passer le value dans EVENT_VALUE pour l'unité suivante dans une série d'unité
+# - Soit pour assigner une valeur au pédales d'expression du POD HD 500
+# - Soit pour déterminer la valeur d'une transition pour le chargement d'une scène du Philips HUE
+# - Soit pour contrôler Cakewalk
 #
-#Controller 3 : ref.: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
-#CC      Bin             Hex     Control function    Value       Used as
-#3	00000011	03	Undefined	    0-127	MSB
-
-# Lighting patches -----------------------------------------------------------------------------
-HueStudioOff=[
-    Call(HueBlackout(2))
-]
-HueAllOff=[
-    Call(HueBlackout(1)),
-    Call(HueBlackout(2)),
-    Call(HueBlackout(4)),
-]
-HueNormal=Call(HueScene(2, "Normal"))
-HueGalaxie=Call(HueScene(2, "Galaxie"))
-HueGalaxieMax=Call(HueScene(2, "GalaxieMax"))
-HueDemon=Call(HueScene(2, "Demon"))
-HueSoloRed=Call(HueScene(2, "SoloRed"))
-HueDetente=Call(HueScene(2, "Détente"))
-HueVeilleuse=Call(HueScene(2, "Veilleuse"))
-HueLecture=Call(HueScene(2, "Lecture"))
-HueSsFullBlanc=Call(HueScene(2, "SsFullBlanc"))
-HueCuisine=Call(HueScene(4, "Minimal"))
-HueChambreMaitre=Ctrl(3, 100) >> Call(HueScene(1, "Normal"))
-
-p_hue = Filter(NOTEON) >> [
-    KeyFilter(notes=[101]) >> HueNormal,
-    KeyFilter(notes=[102]) >> HueDetente,
-    KeyFilter(notes=[103]) >> HueLecture,
-    KeyFilter(notes=[104]) >> HueVeilleuse,
-    KeyFilter(notes=[105]) >> HueGalaxie,
-    KeyFilter(notes=[106]) >> HueGalaxieMax,
-    KeyFilter(notes=[107]) >> HueDemon,
-    KeyFilter(notes=[108]) >> HueStudioOff,
-    KeyFilter(notes=[109]) >> Ctrl(3, 50) >> HueLecture,
-    KeyFilter(notes=[116]) >> HueCuisine
-]
+# Controller 3 : ref.: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
+# CC      Bin             Hex     Control function    Value       Used as
+# 3	00000011	03	Undefined	    0-127	MSB
 
 akai_pad_nature = [
     ~Filter(PITCHBEND) >> KeyFilter(notes=[109]) >> LatchNotes(polyphonic=True) >> Key(0) >> Rain,
@@ -51,29 +19,10 @@ akai_pad_nature = [
     KeyFilter(notes=[111]) >> Key(48) >> Dog,
     KeyFilter(notes=[112]) >> Key(24) >> BirdTweet,
     KeyFilter(notes=[113]) >> Key(72) >> Screaming,
-    KeyFilter(notes=[114]) >> Key(48) >> Explosion, 
+    KeyFilter(notes=[114]) >> Key(48) >> Velocity(fixed=100) >> Explosion, 
     ~Filter(PITCHBEND) >> KeyFilter(notes=[115]) >> Key(12) >> Wind, 
     ~Filter(PITCHBEND) >> KeyFilter(notes=[116]) >> LatchNotes(polyphonic=True) >> Key(36) >> Applause, 
 ]
-
-#-----------------------------------------------------------------------------------------------
-
-# My Cakewalk Generic Control Surface definition -----------------------------------------------
-CakeRecord=Ctrl(mpk_midi, 1, 119,127)
-CakePlay=Ctrl(mpk_midi, 1, 118, 127)
-CakeStop=Ctrl(mpk_midi, 1, 119, 127)
-#-----------------------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------
-# Execution patches
-#-----------------------------------------------------------------------------------------------
-
-violon = Output(sd90_port_a, channel=1, program=(Classical,41))
-#explosion = Key(0) >> Velocity(fixed=100) >> Output(sd90_port_a, channel=1, program=(Classical+Var3,128), volume=100)
-piano_base =  Velocity(fixed=100) >> Output(sd90_port_a, channel=1, program=(Classical,1))
-nf_piano = Output(sd90_port_a, channel=1, program=(Classical,2), volume=100)
-piano =  Output(sd90_port_a, channel=3, program=(Classical,1), volume=100)
-piano2 = Output(sd90_port_a, channel=2, program=(Classical,2), volume=100)
 
 # Patch Synth
 keysynth =  Velocity(fixed=80) >> Output(sd90_port_a, channel=3, program=(Classical,51), volume=100, ctrls={93:75, 91:75})
@@ -385,6 +334,14 @@ p_rush_trees=(pk5 >>
     ])
 
 # Rush fin de section ------------------------------------------
+p_hd500_base = (pk5 >> Filter(NOTEON) >>
+         [
+             (KeyFilter(notes=[65]) >> FS1),
+             (KeyFilter(notes=[67]) >> FS2),
+             (KeyFilter(notes=[69]) >> FS3),
+             (KeyFilter(notes=[71]) >> FS4),
+             (KeyFilter(notes=[72]) >> [FS3, FS4])
+         ])
 
 # ---
 # Daw helper
@@ -399,14 +356,5 @@ p_transport = (pk5 >>
 # Interlude patch, between two songs
 interlude = mpk_b >> ChannelFilter(16) >> KeyFilter(notes=[0,49]) >> Velocity(fixed=50) >> LatchNotes(reset=0) >> [Oxigenizer]
 
-# ---
 # Glissando
 p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, sd90_port_a))
-
-# PORTAMENTO 
-#portamento_base=Ctrl(1,1,5,50)
-#portamento_off=Ctrl(1,1,65,0)	# Switch OFF
-#portamento_on=Ctrl(1,1,65,127)  # Switch ON
-#portamento_up=(portamento_base // portamento_on)
-#portamento_off=(portamento_base // portamento_off)
-#legato=Ctrl(1,1,120,0)

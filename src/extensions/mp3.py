@@ -1,3 +1,4 @@
+import os
 import json
 from pathlib import Path
 from colorama import Fore, Style
@@ -279,8 +280,8 @@ class Playlist:
     def __init__(self):
         self.songs = []
         self.filename = None
-        self.datasource = "/media/mididings/soundlib/"
-        self.target = "/media/mididings/tmp/"
+        self.datasource = self.getenv("MP3_SOUNDLIB")
+        self.target = self.getenv("MP3_TMPDIR")
         self.terminal = Terminal()
 
     def __call__(self, ev):
@@ -355,3 +356,6 @@ class Playlist:
         for song in self.songs:
             rank += 1
             self.terminal.write_line2(str(rank).zfill(2), song)
+
+    def getenv(self, key):
+        return os.environ[key] if key in os.environ else None

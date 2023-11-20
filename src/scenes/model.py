@@ -1,5 +1,4 @@
-	1:Scene("Pass()", patch=Pass()),
-	2:Scene("Pass()", patch=Pass()),
-	3:Scene("Pass()", patch=Pass()),
-    4:Scene("Pass()", patch=Pass()),
-    5:Scene("Pass()", patch=Pass()),
+    1: SceneGroup("SceneName",
+        [
+            Scene("SubSceneName", init_patch=Discard(), patch=Discard()),
+        ]),
