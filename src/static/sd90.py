@@ -222,10 +222,10 @@ Rain=Output(sd90_port_b, channel=1, program=(Contemporary+Var1, 123))
 
 Reset = SysEx(sd90_port_a, "f0,41,10,00,48,12,00,00,00,00,00,00,f7")
 
-MixToAfxOn  = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,01,19,f7")
-MixToAfxOff = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,00,1a,f7")
 
-MasteringEffect = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,20,00,78,56,f7")
+MixToAfx = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,10,00,06,58,f7")
+MasteringEffectOn  = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,01,19,f7")
+MasteringEffectOff = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,00,1a,f7")
 
 # Audio Level Control
 WaveLevel  = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,20,00,3f,f7", 10, 6)
@@ -241,5 +241,5 @@ CONTEM = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,61,00,7d,6e,f7")
 ENHANC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,63,00,7d,6c,f7")
 
 SD90_Initialize = [
-    Reset, MixToAfxOn, MasteringEffect, InitPitchBend
+    Reset, MixToAfx, MasteringEffectOn, InitPitchBend, 
 ]
