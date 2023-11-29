@@ -1,20 +1,20 @@
 {
     "content": {
-        "template": "templates/template.mako",
+        "template": "templates/main.mako",
         "scene_dir": "scenes/",
         "default_scene": "default.py",
-        "control": "static/control.py",
+        "control": "patches/control.py",
         "minimal": [],
         "complete": [
-            "static/functions.py",
-            "static/filters.py",
-            "static/sd90.py",
-            "static/gt10b.py",
-            "static/hd500.py",
-            "static/soundcraft.py",
-            "static/hue.py",
-            "static/daw.py",
-            "static/execution.py"
+            "patches/functions.py",
+            "patches/filters.py",
+            "patches/sd90.py",
+            "patches/gt10b.py",
+            "patches/hd500.py",
+            "patches/soundcraft.py",
+            "patches/hue.py",
+            "patches/cakewalk.py",
+            "patches/execution.py"
         ]
     },
     "alsa": {
