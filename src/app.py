@@ -7,54 +7,40 @@ import json
 import alsaaudio
 from mako.template import Template
 
-def configure_asoundrc():   
-    audio_devices = alsa["asoundrc"]
-    asoundrc = Template(filename=alsa["template"])
+
+def make_asoundrc(config) -> None:
+    audio_devices = config["asoundrc"]
+    asoundrc = Template(filename=config["template"])
     for device_number, card_name in enumerate(alsaaudio.cards()):
         audio_devices[card_name] = f"hw:{device_number},0"
     with open(os.path.expanduser('~') + "/.asoundrc", "w") as FILE:
         FILE.write(asoundrc.render(**audio_devices))
 
-def build(key, scene=None):
+def make_script(config, scene=None, audio_device=None) -> str:
+    # Generates the mididings script code
 
-    template = Template(filename=content["template"])
-
-    body_content = content[key]
-    scene_content = content["scene_dir"] + scene if scene else content["scene_dir"] + content["default_scene"] 
-    control_content = content["control"]
-
-    return template.render(
-        body_content=body_content, 
-        scene_content=scene_content,
-        control_content=control_content,
-        debug=False
+    control = Template(filename=config["control_patch"]).render(
+        audio_device=audio_device,
     )
 
+    return Template(filename=config["template"]).render(
+        scenes  = config["scene_dir"] + scene if scene else config["scene_dir"] + config["default_scene"] ,
+        patches = config["patches"], 
+        control = control,
+    )
 
-def complete(scene=None):
-    source = build("complete", scene)
-    print(source)
+def main(audio_device, scene=None):
+    with open('appSettings.json') as FILE:
+        config = json.load(FILE)
 
+    make_asoundrc(config["alsa"])
+    src = make_script(config, scene, audio_device)
 
-def minimal(scene=None):
-    source = build("minimal", scene)
-    print(source)
+    print(src)
 
 
 '''
-    Main
+    Entry point
 '''
-global alsa
-global context
-with open('app.json') as file:
-    config = json.load(file)
-alsa = config["alsa"]
-content = config["content"]
 
-parser = argh.ArghParser()
-parser.add_commands([complete, minimal])
-
-configure_asoundrc()
-
-if __name__ == '__main__':
-    parser.dispatch()
+argh.dispatch_command(main)
