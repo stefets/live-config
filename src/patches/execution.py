@@ -340,6 +340,7 @@ p_hd500_filter_1 = [
     (KeyFilter(notes=[67]) >> FS2),
     (KeyFilter(notes=[69]) >> FS3),
     (KeyFilter(notes=[71]) >> FS4),
+    (KeyFilter(notes=[72]) >> [FS1, FS4]),
 ]
 
 p_hue_live = [

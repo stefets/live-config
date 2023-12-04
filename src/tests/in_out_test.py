@@ -85,17 +85,19 @@ hook(
     MemorizeScene(".hook.memorize_scene")
 )
 
-# Patches
+
 MixToAfxOff = Filter(NOTEON) >> SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,00,1a,f7")
 MixToAfxOn = Filter(NOTEOFF) >> SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,01,19,f7")
 MixToAfx = [MixToAfxOn, MixToAfxOff]
 
-# DEBUG
+_control = [
+    ChannelFilter(11) >> CtrlMap(11, 7) >> Ctrl(gt10b_midi, 16, EVENT_CTRL, EVENT_VALUE),
+]
+
+_scenes = {1: Scene("Initialize", init_patch=Discard(), patch=MixToAfx),}
+
 pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
 post = Print('output',portnames='out')
-
-_control = Pass()
-_scenes = {1: Scene("Initialize", init_patch=Discard(), patch=MixToAfx),}
 
 run(
     control=_control,

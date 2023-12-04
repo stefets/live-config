@@ -95,17 +95,20 @@ control_patch = PortSplit({
     }),
     mpk_port_a : ChannelSplit({
          8 : key_mp3_control,
+        # Akai MPK249 Expression pedal
+        11 : (Channel(16) >> CtrlMap(11, 7) >> GT10B_Volume),
         12 : mpk_vlc_control,
         13 : p_hue,
         14 : spotify_control,
         15 : hd500_control,
         16 : gt10b_control
     }),
-    q49_midi : ChannelSplit({
-         1 : flaskdings_control,
-    }),
     mpk_port_b : ChannelSplit({
          4 : pk5_mp3_control,
+        11 : HD500_Expr1,             # Akai MPK249 Expression pedal
+    }),
+    q49_midi : ChannelSplit({
+         1 : flaskdings_control,
     }),
     sd90_midi_1 : Pass(),
     sd90_midi_2 : Pass(),
