@@ -221,14 +221,20 @@ Rain=Output(sd90_port_b, channel=1, program=(Contemporary+Var1, 123))
 # SD Mixer config 
 
 Reset = SysEx(sd90_port_a, "f0,41,10,00,48,12,00,00,00,00,00,00,f7")
-MixToAfx = SysEx(sd90_port_a,"f0,41,10,00,48,12,02,10,10,00,06,58,f7")
-MasterEffect = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,20,00,78,56,f7")
+
+
+# Audio FX
+MasteringEffect = SysEx(sd90_port_a,"f0,41,10,00,48,12,02,10,20,00,78,56,f7")
+AfxOn  = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,01,19,f7")
+AfxOff = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,00,1a,f7")
+
+# Audio Mixer
+MixToAfx = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,10,00,06,58,f7")
 
 # Audio Level Control
 WaveLevel  = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,20,00,3f,f7", 10, 6)
 InstLevel  = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,30,00,3f,f7", 10, 6)
 MicGtLevel = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,00,00,3f,f7", 10, 6)
-
 
 # SD-90 Bank Patch
 SP1 = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,50,00,7d,7f,f7")
@@ -239,5 +245,9 @@ CONTEM = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,61,00,7d,6e,f7")
 ENHANC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,63,00,7d,6c,f7")
 
 SD90_Initialize = [
-    Reset, MixToAfx, MasterEffect, InitPitchBend
+    Reset, 
+    MasteringEffect,
+    MixToAfx,
+    AfxOn, 
+    InitPitchBend, 
 ]

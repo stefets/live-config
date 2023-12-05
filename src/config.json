@@ -1,0 +1,25 @@
+{
+    "template": "app.mako",
+    "scene_dir": "scenes/",
+    "control_patch": "patches/control.py.mako",
+    "patches": [
+        "patches/functions.py",
+        "patches/filters.py",
+        "patches/sd90.py",
+        "patches/gt10b.py",
+        "patches/hd500.py",
+        "patches/soundcraft.py",
+        "patches/hue.py",
+        "patches/cakewalk.py",
+        "patches/execution.py"
+    ],
+    "default_scene": "main.py",
+    "alsa": {
+        "template": "asoundrc.mako",
+        "asoundrc": {
+            "U192k": "",
+            "SD90": "",
+            "GT10B": ""
+        }
+    }
+}

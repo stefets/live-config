@@ -105,7 +105,7 @@ hook(
 )
 
 # Patches and callable functions
-% for element in body_content:
+% for element in patches:
     % with open(element, 'r') as file:
         ${file.read()}
     % endwith
@@ -113,7 +113,7 @@ hook(
 
 # Scenes
 _scenes = {
-% with open(scene_content, 'r') as file:
+% with open(scenes, 'r') as file:
     ${file.read()}
 % endwith
 }
@@ -126,9 +126,8 @@ post = Pass()
 #pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
 #post = Print('output',portnames='out')
 
-% with open(control_content, 'r') as file:
-    ${file.read()}
-% endwith
+# Control patch defined in /patches/control.py.mako
+${control}
 
 run(
     control=control_patch,

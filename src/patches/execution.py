@@ -334,21 +334,38 @@ p_rush_trees=(pk5 >>
     ])
 
 # Rush fin de section ------------------------------------------
-p_hd500_base = (pk5 >> Filter(NOTEON) >>
-         [
-             (KeyFilter(notes=[65]) >> FS1),
-             (KeyFilter(notes=[67]) >> FS2),
-             (KeyFilter(notes=[69]) >> FS3),
-             (KeyFilter(notes=[71]) >> FS4),
-             (KeyFilter(notes=[72]) >> [FS3, FS4])
-         ])
+
+p_hd500_filter_1 = [
+    (KeyFilter(notes=[65]) >> FS1),
+    (KeyFilter(notes=[67]) >> FS2),
+    (KeyFilter(notes=[69]) >> FS3),
+    (KeyFilter(notes=[71]) >> FS4),
+    (KeyFilter(notes=[72]) >> [FS1, FS4]),
+]
+
+p_hue_live = [
+    KeyFilter(notes=[61]) >> HueStudioOff,
+    KeyFilter(notes=[63]) >> HueNormal,
+    KeyFilter(notes=[66]) >> HueGalaxie,
+    KeyFilter(notes=[68]) >> HueGalaxieMax,
+    KeyFilter(notes=[70]) >> HueDemon,
+]
+
+p_generic = [
+    p_hue_live,
+    p_hd500_filter_1, 
+]
+
+p_pk5ctrl_generic = pk5 >> Filter(NOTEON) >> p_generic
+p_muse = p_pk5ctrl_generic
+p_rush = p_pk5ctrl_generic
 
 # ---
-# Daw helper
+# Daw + Hue helper for recording
 p_transport = (pk5 >> 
         [
+            p_hue_live,
             Filter(NOTEON)  >> KeyFilter(notes=[60])    >> [CakePlay],
-            Filter(NOTEON)  >> KeyFilter(notes=[61])    >> [HueStudioOff],
             Filter(NOTEON)  >> KeyFilter(notes=[62])    >> [CakeRecord],
             Filter(NOTEOFF) >> KeyFilter(notes=[60,62]) >> [HueSsFullBlanc], 
         ])
