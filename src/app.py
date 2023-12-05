@@ -30,7 +30,7 @@ def make_script(config, scene=None, audio_device=None) -> str:
     )
 
 def main(audio_device, scene=None):
-    with open('appSettings.json') as FILE:
+    with open('config.json') as FILE:
         config = json.load(FILE)
 
     make_asoundrc(config["alsa"])
