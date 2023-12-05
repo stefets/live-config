@@ -21,10 +21,10 @@
 
 # Dependencies
 * mididings, pyliblo, pyinotify
-* pyalsaaudio and alsa_midi
 * vlc and python-vlc-http
 * mpg123 and mpyg321
 * python-dotenv
+* pyalsaaudio
 * colorama
 * requests
 * spotipy
