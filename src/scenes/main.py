@@ -33,8 +33,8 @@
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("InBigCountry", init_patch=i_big_country, patch=p_big_country),
             Scene("HighlandScenery", init_patch=U01_B // P14B, patch=p_highland_scenery),
-            Scene("Inwards", init_patch=U01_B // P14B, patch=p_pk5ctrl_generic),
-            Scene("AnglePark", init_patch=U01_B // P14B, patch=p_pk5ctrl_generic),
+            Scene("Inwards", init_patch=U01_B // P14B, patch=p_pk5ctrl_generic>>p_base),
+            Scene("AnglePark", init_patch=U01_B // P14B, patch=p_pk5ctrl_generic>>p_base),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
