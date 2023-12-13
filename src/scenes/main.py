@@ -131,5 +131,5 @@
             Scene("Hysteria", init_patch=AfxOff  // P01A, patch=p_muse),
             Scene("Cydonia",  init_patch=AfxOff// P01A, patch=p_muse),
             Scene("Starlight", init_patch=AfxOff // P01A, patch=p_muse),
-            Scene("Stockholm", init_patch=AfxOff // P01A, patch=p_muse),
+            Scene("Stockholm", init_patch=AfxOff // P01A, patch=[p_muse_stockholm, p_muse]),
         ]),

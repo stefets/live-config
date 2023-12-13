@@ -368,7 +368,15 @@ p_rush_trees=(pk5 >>
 
 # Rush fin de section ------------------------------------------
 
+# Muse Band
 p_muse = p_pk5ctrl_generic >> p_base
+p_muse_stockholm = pk5 >> [
+    KeyFilter(notes=[60]) >> Key('d3') >> Harmonize('d', 'major', ['unison', 'octave']),
+    KeyFilter(notes=[62]) >> Key('e3') >> Harmonize('e', 'major', ['unison', 'octave']),
+    KeyFilter(notes=[64]) >> Key('f3') >> Harmonize('f', 'major', ['unison', 'octave']),
+] >> Velocity(fixed=127) >> Output(sd90_port_b, channel=14, program=(Special2,106), volume=127, ctrls={93:75, 91:75})
+
+
 p_rush = p_pk5ctrl_generic >> p_base
 
 # ---
