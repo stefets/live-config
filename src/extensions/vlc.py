@@ -58,12 +58,11 @@ class VlcPlayer(HttpVLC):
         # Allow note 0 to 127
         self.note_range_mapping = RangeKeyDict(
             {
-                (0, 128): self.on_play,
+                (0, 36): self.on_play,
+                (48, 49): self.on_toggle_loop,
+                (47, 48): self.on_toggle_repeat,
             }
         )
-
-        # NoteOn mapping
-        self.note_mapping = { }
 
         # Control change mapping
         self.ctrl_range_mapping = RangeKeyDict(
@@ -115,3 +114,9 @@ class VlcPlayer(HttpVLC):
 
     def set_volume(self, ev):
         pass
+
+    def on_toggle_loop(self, ev):
+        self.toggle_loop()
+
+    def on_toggle_repeat(self, ev):
+        self.toggle_repeat()

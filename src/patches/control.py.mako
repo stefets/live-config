@@ -80,7 +80,12 @@ soundcraft_control=[
     ],
 ]
 
-# FlaskDings API control patch
+mpk_soundcraft_control=Filter(CTRL|NOTE) >> [
+        Filter(CTRL) >> Pass(),
+        Filter(NOTE) >> NoteOn(EVENT_NOTE, 127) >> Port(midimix_midi),
+    ] >> soundcraft_control
+
+# Http context API control patch
 flaskdings_uri = os.environ["FLASKDINGS"]
 flaskdings_control = trigger_filter >> [
     KeyFilter(0) >> Call(HttpGet(flaskdings_uri + "prev_scene")),
@@ -94,6 +99,7 @@ control_patch = PortSplit({
         4 : pk5_mp3_control,
     }),
     mpk_port_a : ChannelSplit({
+         1 : mpk_soundcraft_control,
          8 : key_mp3_control,
         # Akai MPK249 Expression pedal
         11 : (Channel(16) >> CtrlMap(11, 7) >> GT10B_Volume),
