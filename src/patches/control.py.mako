@@ -50,7 +50,13 @@ soundcraft_control=[
     Filter(NOTEON) >> Process(MidiMix()) >> [
         
         KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mute_mono,
+        KeyFilter(2) >> Pass(),
+        KeyFilter(3) >> Ctrl(0, EVENT_VALUE) >> mute_reverb_mono,
+
         KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mute_mono,
+        KeyFilter(5) >> Pass(),
+        KeyFilter(6) >> Pass(),
+
 
         KeyFilter(7)  >> Ctrl(2, EVENT_VALUE) >> mute_stereo,
         KeyFilter(10) >> Ctrl(4, EVENT_VALUE) >> mute_stereo,
