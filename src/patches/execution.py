@@ -388,6 +388,10 @@ p_muse_stockholm = pk5 >> [
 
 p_rush = p_pk5ctrl_generic >> p_base
 
+p_wonderland = p_pk5ctrl_generic >> [
+     p_base,
+]
+
 # ---
 # Daw + Hue helper for recording
 p_transport = (pk5 >> [

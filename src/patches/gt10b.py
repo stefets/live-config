@@ -538,3 +538,10 @@ GT10B_Ctrl =  Ctrl(gt10b_midi, GT10BChannel, EVENT_CTRL, EVENT_VALUE)
 GT10B_Tuner = Ctrl(gt10b_midi, GT10BChannel, EVENT_CTRL, EVENT_VALUE)    
 GT10B_Volume = GT10B_Ctrl
 GT10B_Expression = GT10B_Ctrl
+
+# Mididings control patch
+gt10b_control = (Filter(CTRL) >>
+    CtrlSplit({
+          4: GT10B_Tuner,
+          7: GT10B_Volume,
+    }))
