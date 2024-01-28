@@ -38,13 +38,11 @@ mpk_midi     = "mpk_midi"
 mpk_remote   = "mpk_remote"
 
 config(
-
     initial_scene = 1,
     backend = 'alsa',
     client_name = 'mididings',
 
     out_ports = [
-
         (midimix_midi, ".*MIDI Mix MIDI 1.*",),
         (sd90_port_a,  '.*SD-90 Part A.*'),
         (sd90_port_b,  '.*SD-90 Part B.*'),
@@ -57,11 +55,9 @@ config(
         (mpk_port_b,   '.*MPK249 Port A.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-
     ],
 
     in_ports = [
-
         (midimix_midi, ".*MIDI Mix MIDI 1.*",),
         (sd90_port_a,  '.*SD-90 Part A.*'),
         (sd90_port_b,  '.*SD-90 Part B.*'),
@@ -74,9 +70,7 @@ config(
         (mpk_port_b,   '.*MPK249 Port A.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-
     ],
-
 )
 
 hook(
@@ -85,23 +79,24 @@ hook(
     MemorizeScene(".hook.memorize_scene")
 )
 
-
-MixToAfxOff = Filter(NOTEON) >> SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,00,1a,f7")
-MixToAfxOn = Filter(NOTEOFF) >> SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,01,19,f7")
-MixToAfx = [MixToAfxOn, MixToAfxOff]
-
-_control = [
-    ChannelFilter(11) >> CtrlMap(11, 7) >> Ctrl(gt10b_midi, 16, EVENT_CTRL, EVENT_VALUE),
+_control_patch = [ 
+    Pass(),
 ]
 
-_scenes = {1: Scene("Initialize", init_patch=Discard(), patch=MixToAfx),}
+_patch = Pass()
+_init_patch = Discard()
+_scenes = {
+    1: SceneGroup("Group 1", [
+        Scene("Scene 1", init_patch=_init_patch, patch=_patch),
+    ])
+}
 
-pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
-post = Print('output',portnames='out')
+_pre_patch  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
+_post_patch = Print('output',portnames='out')
 
 run(
-    control=_control,
+    control=_control_patch,
     scenes=_scenes,
-    pre=pre,
-    post=post,
+    pre=_pre_patch,
+    post=_post_patch,
 )
