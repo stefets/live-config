@@ -388,6 +388,11 @@ p_muse_stockholm = pk5 >> [
 
 p_rush = p_pk5ctrl_generic >> p_base
 
+p_wonderland_init = [
+    Ctrl(mpk_port_a, 3, 2, 64) >> ui_standard_stereo_fx,
+    U01_B, 
+    P14B
+]
 p_wonderland = p_pk5ctrl_generic >> [
      p_base,
 ]

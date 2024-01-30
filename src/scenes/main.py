@@ -35,7 +35,7 @@
             Scene("HighlandScenery", init_patch=U01_B // P14B, patch=p_highland_scenery),
             Scene("Inwards", init_patch=U01_B // P14B, patch=p_pk5ctrl_generic>>p_base),
             Scene("AnglePark", init_patch=U01_B // P14B, patch=p_pk5ctrl_generic>>p_base),
-            Scene("Wonderland", init_patch=U01_B // P14B, patch=p_wonderland),
+            Scene("Wonderland", init_patch=p_wonderland_init, patch=p_wonderland),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
