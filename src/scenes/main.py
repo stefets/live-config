@@ -68,6 +68,7 @@
             Scene("Telephone2", Telephone2),
             Scene("Rain", Rain),
             Scene("Drums", Amb_Room),
+            Scene("NatureSound", akai_pad_nature),
         ]),
     8: SceneGroup("Libre",
         [
