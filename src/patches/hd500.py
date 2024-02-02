@@ -108,3 +108,12 @@ HD500_Looper = CtrlFilter(60, 61, 62, 63, 65, 67, 68, 99) >> CtrlPod
 # Tap
 # Expected EVENT_VALUE between 64 and 127
 HD500_Tap = Ctrl(hd500_port, hd500_channel, 64, EVENT_VALUE)
+
+# Mididings HD500 control patch
+
+hd500_control = (Filter(CTRL) >>
+    CtrlSplit({
+          1: HD500_Expr1,
+          2: HD500_Expr2,
+         69: HD500_Tuner,
+    }))

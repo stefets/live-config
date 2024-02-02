@@ -422,14 +422,20 @@ Rain=Output(sd90_port_b, channel=1, program=(Contemporary+Var1, 123))
 # SD Mixer config 
 
 Reset = SysEx(sd90_port_a, "f0,41,10,00,48,12,00,00,00,00,00,00,f7")
-MixToAfx = SysEx(sd90_port_a,"f0,41,10,00,48,12,02,10,10,00,06,58,f7")
-MasterEffect = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,20,00,78,56,f7")
+
+
+# Audio FX
+MasteringEffect = SysEx(sd90_port_a,"f0,41,10,00,48,12,02,10,20,00,78,56,f7")
+AfxOn  = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,01,19,f7")
+AfxOff = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,11,43,00,1a,f7")
+
+# Audio Mixer
+MixToAfx = SysEx(sd90_port_a, "f0,41,10,00,48,12,02,10,10,00,06,58,f7")
 
 # Audio Level Control
 WaveLevel  = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,20,00,3f,f7", 10, 6)
 InstLevel  = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,30,00,3f,f7", 10, 6)
 MicGtLevel = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,00,00,3f,f7", 10, 6)
-
 
 # SD-90 Bank Patch
 SP1 = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,50,00,7d,7f,f7")
@@ -440,7 +446,11 @@ CONTEM = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,61,00,7d,6e,f7")
 ENHANC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,63,00,7d,6c,f7")
 
 SD90_Initialize = [
-    Reset, MixToAfx, MasterEffect, InitPitchBend
+    Reset, 
+    MasteringEffect,
+    MixToAfx,
+    AfxOn, 
+    InitPitchBend, 
 ]
 
         
@@ -984,6 +994,12 @@ GT10B_Tuner = Ctrl(gt10b_midi, GT10BChannel, EVENT_CTRL, EVENT_VALUE)
 GT10B_Volume = GT10B_Ctrl
 GT10B_Expression = GT10B_Ctrl
 
+# Mididings control patch
+gt10b_control = (Filter(CTRL) >>
+    CtrlSplit({
+          4: GT10B_Tuner,
+          7: GT10B_Volume,
+    }))
         
 #
 # The Line 6 POD-HD-500 definition patches for mididings
@@ -1095,6 +1111,14 @@ HD500_Looper = CtrlFilter(60, 61, 62, 63, 65, 67, 68, 99) >> CtrlPod
 # Expected EVENT_VALUE between 64 and 127
 HD500_Tap = Ctrl(hd500_port, hd500_channel, 64, EVENT_VALUE)
 
+# Mididings HD500 control patch
+
+hd500_control = (Filter(CTRL) >>
+    CtrlSplit({
+          1: HD500_Expr1,
+          2: HD500_Expr2,
+         69: HD500_Tuner,
+    }))
         
 '''
     The Soundcraft UI 16 patches for mididings
@@ -1111,26 +1135,26 @@ HD500_Tap = Ctrl(hd500_port, hd500_channel, 64, EVENT_VALUE)
 # 0-127 to 0-1
 ratio=0.7874015748 / 100
 
-def ui_cursor(ev):
+def cursor_value_converter(ev):
     return ev.data2 * ratio
 
 def ui_knob(ev):
-    return ui_cursor(ev)
+    return cursor_value_converter(ev)
 
-def ui_mute(ev):
+def mute_value_converter(ev):
     return 1 if ev.data2==127 else 0
 
 ''' Return the controller value for SendOsc '''
-def ui_event(ev, offset=0):
+def event_value_converter(ev, offset=0):
     return ev.ctrl+offset if ev.type == CTRL else -1
 
 ''' Wrapper over ui_event '''
 def ui_left(ev):
-    return ui_event(ev)
+    return event_value_converter(ev)
 
 ''' Wrapper over ui_event '''
 def ui_right(ev):
-    return ui_event(ev, 1)
+    return event_value_converter(ev, 1)
 
 
 # Osc Soundcraft Bridge definition
@@ -1142,120 +1166,134 @@ chorus_path = "/chorus"
 delay_path = "/delay"
 room_path = "/room"
 mute_path = "/mute"
+mute_reverb_path = "/reverb/mute"
+mute_delay_path = "/delay/mute"
+mute_chorus_path = "/chorus/mute"
+mute_room_path = "/room/mute"
 bass_path = "/bass"
 mid_path = "/mid"
 treble_path = "/treble"
 
 
 # Main volume
-ui_master=SendOSC(osb_port, master_path, ui_cursor)
+ui_master=SendOSC(osb_port, master_path, cursor_value_converter)
 
 # Mono patches / stands for all XLR+1/4 sockets
 # Stereo patches must target left channel, right channel will change in the same time
-mix_mono = SendOSC(osb_port, mix_path,  ui_event, ui_cursor, "i")
+mix_mono = SendOSC(osb_port, mix_path,  event_value_converter, cursor_value_converter, "i")
 mix_stereo = [
-        SendOSC(osb_port, mix_path, ui_left,  ui_cursor, "i"),    
-        SendOSC(osb_port, mix_path, ui_right, ui_cursor, "i"),
+        SendOSC(osb_port, mix_path, ui_left,  cursor_value_converter, "i"),    
+        SendOSC(osb_port, mix_path, ui_right, cursor_value_converter, "i"),
     ]
 
-reverb_mono = SendOSC(osb_port, reverb_path,  ui_event, ui_cursor, "i")
+reverb_mono = SendOSC(osb_port, reverb_path,  event_value_converter, cursor_value_converter, "i")
 reverb_stereo = [
-        SendOSC(osb_port, reverb_path, ui_left,  ui_cursor, "i"),    
-        SendOSC(osb_port, reverb_path, ui_right, ui_cursor, "i"),
+        SendOSC(osb_port, reverb_path, ui_left,  cursor_value_converter, "i"),    
+        SendOSC(osb_port, reverb_path, ui_right, cursor_value_converter, "i"),
     ]
 
-chorus_mono = SendOSC(osb_port, chorus_path,  ui_event, ui_cursor, "i")
+chorus_mono = SendOSC(osb_port, chorus_path,  event_value_converter, cursor_value_converter, "i")
 chorus_stereo = [
-        SendOSC(osb_port, chorus_path, ui_left,  ui_cursor, "i"),    
-        SendOSC(osb_port, chorus_path, ui_right, ui_cursor, "i"),
+        SendOSC(osb_port, chorus_path, ui_left,  cursor_value_converter, "i"),    
+        SendOSC(osb_port, chorus_path, ui_right, cursor_value_converter, "i"),
     ]
 
-delay_mono = SendOSC(osb_port, delay_path,  ui_event, ui_cursor, "i")
+delay_mono = SendOSC(osb_port, delay_path,  event_value_converter, cursor_value_converter, "i")
 delay_stereo = [
-        SendOSC(osb_port, delay_path, ui_left,  ui_cursor, "i"),    
-        SendOSC(osb_port, delay_path, ui_right, ui_cursor, "i"),
+        SendOSC(osb_port, delay_path, ui_left,  cursor_value_converter, "i"),    
+        SendOSC(osb_port, delay_path, ui_right, cursor_value_converter, "i"),
     ]
 
-room_mono = SendOSC(osb_port, room_path,  ui_event, ui_cursor, "i")
+room_mono = SendOSC(osb_port, room_path,  event_value_converter, cursor_value_converter, "i")
 room_stereo = [
-        SendOSC(osb_port, room_path, ui_left,  ui_cursor, "i"),    
-        SendOSC(osb_port, room_path, ui_right, ui_cursor, "i"),
+        SendOSC(osb_port, room_path, ui_left,  cursor_value_converter, "i"),    
+        SendOSC(osb_port, room_path, ui_right, cursor_value_converter, "i"),
     ]
 
 
-mute_mono = SendOSC(osb_port, mute_path, ui_event, ui_mute, "i")
+mute_mono = SendOSC(osb_port, mute_path, event_value_converter, mute_value_converter, "i")
 mute_stereo = [
-        SendOSC(osb_port, mute_path, ui_left,  ui_mute, "i"),    
-        SendOSC(osb_port, mute_path, ui_right, ui_mute, "i"),
+        SendOSC(osb_port, mute_path, ui_left,  mute_value_converter, "i"),    
+        SendOSC(osb_port, mute_path, ui_right, mute_value_converter, "i"),
     ]
+
+mute_reverb_mono = SendOSC(osb_port, mute_reverb_path, event_value_converter, mute_value_converter, "i")
+mute_delay_mono = SendOSC(osb_port, mute_delay_path, event_value_converter, mute_value_converter, "i")
+mute_chorus_mono = SendOSC(osb_port, mute_chorus_path, event_value_converter, mute_value_converter, "i")
+mute_room_mono = SendOSC(osb_port, mute_room_path, event_value_converter, mute_value_converter, "i")
+
+mute_delay_stereo = [
+    SendOSC(osb_port, mute_delay_path, ui_left, mute_value_converter, "i"),
+    SendOSC(osb_port, mute_delay_path, ui_right, mute_value_converter, "i"),
+]
 
 # Equalizer
-bass_mono = SendOSC(osb_port, bass_path, ui_event, ui_cursor, "i")
+bass_mono = SendOSC(osb_port, bass_path, event_value_converter, cursor_value_converter, "i")
 bass_stereo = [
-        SendOSC(osb_port, bass_path, ui_left,  ui_cursor, "i"),    
-        SendOSC(osb_port, bass_path, ui_right, ui_cursor, "i"),
+        SendOSC(osb_port, bass_path, ui_left,  cursor_value_converter, "i"),    
+        SendOSC(osb_port, bass_path, ui_right, cursor_value_converter, "i"),
     ]
 
-mid_mono = SendOSC(osb_port, mid_path, ui_event, ui_cursor, "i")
+mid_mono = SendOSC(osb_port, mid_path, event_value_converter, cursor_value_converter, "i")
 mid_stereo = [
-        SendOSC(osb_port, mid_path, ui_left,  ui_cursor, "i"),    
-        SendOSC(osb_port, mid_path, ui_right, ui_cursor, "i"),
+        SendOSC(osb_port, mid_path, ui_left,  cursor_value_converter, "i"),    
+        SendOSC(osb_port, mid_path, ui_right, cursor_value_converter, "i"),
     ]
 
-treble_mono = SendOSC(osb_port, treble_path, ui_event, ui_cursor, "i")
+treble_mono = SendOSC(osb_port, treble_path, event_value_converter, cursor_value_converter, "i")
 treble_stereo = [
-        SendOSC(osb_port, treble_path, ui_left,  ui_cursor, "i"),    
-        SendOSC(osb_port, treble_path, ui_right, ui_cursor, "i"),
+        SendOSC(osb_port, treble_path, ui_left,  cursor_value_converter, "i"),    
+        SendOSC(osb_port, treble_path, ui_right, cursor_value_converter, "i"),
     ]
 
 
 # Static stereo inputs
 # Line patches
 ui_line_mute=[
-        SendOSC(osb_port, mute_path, 0, ui_mute, "l"),    
-        SendOSC(osb_port, mute_path, 1, ui_mute, "l"),
+        SendOSC(osb_port, mute_path, 0, mute_value_converter, "l"),    
+        SendOSC(osb_port, mute_path, 1, mute_value_converter, "l"),
     ]
     
 ui_line_mix=[
-        SendOSC(osb_port, mix_path, 0, ui_cursor, "l"),    
-        SendOSC(osb_port, mix_path, 1, ui_cursor, "l"),
+        SendOSC(osb_port, mix_path, 0, cursor_value_converter, "l"),    
+        SendOSC(osb_port, mix_path, 1, cursor_value_converter, "l"),
     ]
 
 line_bass = [
-        SendOSC(osb_port, bass_path, 0, ui_cursor, "l"),    
-        SendOSC(osb_port, bass_path, 1, ui_cursor, "l"),
+        SendOSC(osb_port, bass_path, 0, cursor_value_converter, "l"),    
+        SendOSC(osb_port, bass_path, 1, cursor_value_converter, "l"),
     ]
 line_mid = [
-        SendOSC(osb_port, mid_path, 0, ui_cursor, "l"),    
-        SendOSC(osb_port, mid_path, 1, ui_cursor, "l"),
+        SendOSC(osb_port, mid_path, 0, cursor_value_converter, "l"),    
+        SendOSC(osb_port, mid_path, 1, cursor_value_converter, "l"),
     ]
 line_treble = [
-        SendOSC(osb_port, treble_path, 0, ui_cursor, "l"),    
-        SendOSC(osb_port, treble_path, 1, ui_cursor, "l"),
+        SendOSC(osb_port, treble_path, 0, cursor_value_converter, "l"),    
+        SendOSC(osb_port, treble_path, 1, cursor_value_converter, "l"),
     ]
 
 # Player patches
 ui_player_mute=[
-        SendOSC(osb_port, mute_path, 0, ui_mute, "p"),    
-        SendOSC(osb_port, mute_path, 1, ui_mute, "p"),
+        SendOSC(osb_port, mute_path, 0, mute_value_converter, "p"),    
+        SendOSC(osb_port, mute_path, 1, mute_value_converter, "p"),
     ]
     
 ui_player_mix=[
-        SendOSC(osb_port, mix_path, 0, ui_cursor, "p"),    
-        SendOSC(osb_port, mix_path, 1, ui_cursor, "p"),
+        SendOSC(osb_port, mix_path, 0, cursor_value_converter, "p"),    
+        SendOSC(osb_port, mix_path, 1, cursor_value_converter, "p"),
     ]
 
 player_bass = [
-        SendOSC(osb_port, bass_path, 0, ui_cursor, "p"),    
-        SendOSC(osb_port, bass_path, 1, ui_cursor, "p"),
+        SendOSC(osb_port, bass_path, 0, cursor_value_converter, "p"),    
+        SendOSC(osb_port, bass_path, 1, cursor_value_converter, "p"),
     ]
 player_mid = [
-        SendOSC(osb_port, mid_path, 0, ui_cursor, "p"),    
-        SendOSC(osb_port, mid_path, 1, ui_cursor, "p"),
+        SendOSC(osb_port, mid_path, 0, cursor_value_converter, "p"),    
+        SendOSC(osb_port, mid_path, 1, cursor_value_converter, "p"),
     ]
 player_treble = [
-        SendOSC(osb_port, treble_path, 0, ui_cursor, "p"),
-        SendOSC(osb_port, treble_path, 1, ui_cursor, "p"),
+        SendOSC(osb_port, treble_path, 0, cursor_value_converter, "p"),
+        SendOSC(osb_port, treble_path, 1, cursor_value_converter, "p"),
     ]
 
 # -----------------------------------------------------
@@ -1295,6 +1333,49 @@ ui_player_mix_eq = ChannelSplit({
             3:player_mid,
             4:player_treble,
         })
+
+# Mididings SoundCraft UI control patch
+soundcraft_control=[Filter(NOTEON) >> 
+                    
+        Process(MidiMix()) >> [
+        
+        KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mute_mono,
+        KeyFilter(2) >> Pass(),
+        KeyFilter(3) >> Pass(),
+
+        KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mute_mono,
+        KeyFilter(5) >> Pass(),
+        KeyFilter(6) >> Pass(),
+
+
+        KeyFilter(7)  >> Ctrl(2, EVENT_VALUE) >> mute_stereo,
+        KeyFilter(9)  >> Ctrl(2, EVENT_VALUE) >> mute_delay_stereo,
+        KeyFilter(10) >> Ctrl(4, EVENT_VALUE) >> mute_stereo,
+        KeyFilter(13) >> Ctrl(6, EVENT_VALUE) >> mute_stereo,
+
+        KeyFilter(16) >> ui_line_mute,
+        KeyFilter(19) >> ui_player_mute,
+        
+        KeyFilter(22) >> Discard(),
+
+        Process(MidiMixLed())
+
+    ],
+    Filter(CTRL) >> [
+        CtrlFilter(0,1) >> ui_standard_fx,
+       
+        CtrlFilter(2,3,4) >> CtrlSplit({
+            2 : Pass(),
+            3 : Ctrl(4, EVENT_VALUE),
+            4 : Ctrl(6, EVENT_VALUE),
+        }) >> ui_standard_stereo_eq,
+
+        CtrlFilter(5) >> ui_line_mix_eq,
+        CtrlFilter(6) >> ui_player_mix_eq,
+        CtrlFilter(7) >> Discard(),
+        CtrlFilter(100) >> ui_master,
+    ],
+]
         
 #
 # Philips Hue Patches
@@ -1365,6 +1446,32 @@ CakeRecord=Ctrl(mpk_midi, 1, 119, 127)
 # Controller 3 : ref.: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
 # CC      Bin             Hex     Control function    Value       Used as
 # 3	00000011	03	Undefined	    0-127	MSB
+
+
+# Base patches (WIP)
+p_hd500_filter_base = [
+    (KeyFilter(notes=[65]) >> FS1),
+    (KeyFilter(notes=[67]) >> FS2),
+    (KeyFilter(notes=[69]) >> FS3),
+    (KeyFilter(notes=[71]) >> FS4),
+]
+
+p_hue_live = [
+    KeyFilter(notes=[61]) >> HueStudioOff,
+    KeyFilter(notes=[63]) >> HueNormal,
+    KeyFilter(notes=[66]) >> HueGalaxie,
+    KeyFilter(notes=[68]) >> HueGalaxieMax,
+    KeyFilter(notes=[70]) >> HueDemon,
+]
+
+p_base = [
+    p_hue_live,
+    p_hd500_filter_base, 
+]
+
+p_pk5ctrl_generic = pk5 >> Filter(NOTEON)
+
+# 
 
 akai_pad_nature = [
     ~Filter(PITCHBEND) >> KeyFilter(notes=[109]) >> LatchNotes(polyphonic=True) >> Key(0) >> Rain,
@@ -1510,6 +1617,7 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 
 # Song : In a big country
 i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,127) >> HD500_Expr2]
+
 p_big_country = (pk5 >> Filter(NOTEON) >>
          [
              (KeyFilter(notes=[65]) >> FS1),
@@ -1519,6 +1627,12 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
              (KeyFilter(notes=[71]) >> [HueGalaxie, FS2, Ctrl(3,85)  >> HD500_Expr2]),
              (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> HD500_Expr2])
          ])
+
+p_big_country = p_pk5ctrl_generic >> [
+    p_base,
+    (KeyFilter(notes=[66]) >> [HueGalaxie, FS2, Ctrl(3,85) >> HD500_Expr2]),
+    (KeyFilter(notes=[67]) >> [HueSoloRed, Ctrl(3,127) >> HD500_Expr2])
+]
 
 # Song : In a big country - recording
 i_big_country_live = [P14C]
@@ -1687,21 +1801,41 @@ p_rush_trees=(pk5 >>
     ])
 
 # Rush fin de section ------------------------------------------
-p_hd500_base = (pk5 >> Filter(NOTEON) >>
-         [
-             (KeyFilter(notes=[65]) >> FS1),
-             (KeyFilter(notes=[67]) >> FS2),
-             (KeyFilter(notes=[69]) >> FS3),
-             (KeyFilter(notes=[71]) >> FS4),
-             (KeyFilter(notes=[72]) >> [FS3, FS4])
-         ])
+
+# Muse Band
+p_muse = p_pk5ctrl_generic >> p_base
+p_muse_stockholm = pk5 >> [
+    KeyFilter(notes=[60]) >> [
+        Key('d2') >> Harmonize('d', 'major', ['unison', 'octave']),
+        HueDemon
+    ],
+    KeyFilter(notes=[62]) >> [
+        Key('e2') >> Harmonize('e', 'major', ['unison', 'octave']),
+        HueGalaxieMax
+    ],
+    KeyFilter(notes=[64]) >> [
+        Key('f2') >> Harmonize('f', 'major', ['unison', 'octave']),
+        HueGalaxie
+    ],
+] >> Velocity(fixed=127) >> Output(sd90_port_b, channel=14, program=(Special2,106), volume=127, ctrls={93:75, 91:75})
+
+
+p_rush = p_pk5ctrl_generic >> p_base
+
+p_wonderland_init = [
+    Ctrl(mpk_port_a, 3, 2, 64) >> ui_standard_stereo_fx,
+    U01_B, 
+    P14B
+]
+p_wonderland = p_pk5ctrl_generic >> [
+     p_base,
+]
 
 # ---
-# Daw helper
-p_transport = (pk5 >> 
-        [
+# Daw + Hue helper for recording
+p_transport = (pk5 >> [
+            p_hue_live,
             Filter(NOTEON)  >> KeyFilter(notes=[60])    >> [CakePlay],
-            Filter(NOTEON)  >> KeyFilter(notes=[61])    >> [HueStudioOff],
             Filter(NOTEON)  >> KeyFilter(notes=[62])    >> [CakeRecord],
             Filter(NOTEOFF) >> KeyFilter(notes=[60,62]) >> [HueSsFullBlanc], 
         ])
@@ -1712,6 +1846,80 @@ interlude = mpk_b >> ChannelFilter(16) >> KeyFilter(notes=[0,49]) >> Velocity(fi
 # Glissando
 p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, sd90_port_a))
 
+        
+'''
+Patches to control somes /extensions/ modules
+Those modules are callable objects (__call__)
+'''
+
+# VLC player - a singleton is enough
+VLC = Call(VlcPlayer())
+
+# MPG123 multiple instances allow me to play sounds in parallal (dmix)
+MPG123_GT10B  = Call(Mp3Player("GT10B"))
+MPG123_SD90_A = Call(Mp3Player("SD90"))
+MPG123_SD90_B = Call(Mp3Player("SD90"))
+# Playlist according to current scene, a singleton is enough
+MPG123_PLAYLIST = Call(Playlist())
+
+        
+#
+# Patches for the run().control patch
+#
+
+# Transport filter Filter for mp3 and spotify
+jump_filter    = CtrlFilter(1)  >> CtrlValueFilter(0, 121)
+volume_filter  = CtrlFilter(7)  >> CtrlValueFilter(0, 101)
+trigger_filter = Filter(NOTEON) >> Transpose(-36)
+transport_filter = [jump_filter, volume_filter, trigger_filter]
+
+key_mp3_control = transport_filter >> MPG123_SD90_A
+pk5_mp3_control = transport_filter >> MPG123_SD90_B
+mpk_vlc_control = Filter(NOTEON) >> VLC
+
+# Spotify
+spotify_control = [
+  trigger_filter,
+  volume_filter, 
+  CtrlFilter(44),
+] >> Call(SpotifyPlayer())
+
+mpk_soundcraft_control=Filter(CTRL|NOTE) >> [
+        Filter(CTRL) >> Pass(),
+        Filter(NOTE) >> NoteOn(EVENT_NOTE, 127) >> Port(midimix_midi),
+    ] >> soundcraft_control
+
+pk5_soundcraft_control=Filter(NOTEON) >> KeyFilter(72) >> NoteOn(9, 127) >> Port(midimix_midi) >> soundcraft_control
+
+# Midi input control patch
+control_patch = PortSplit({
+    midimix_midi : soundcraft_control,
+    mpk_midi : ChannelSplit({
+        4 : pk5_mp3_control,
+        #3 : pk5_soundcraft_control,
+    }),
+    mpk_port_a : ChannelSplit({
+         1 : mpk_soundcraft_control,
+         8 : key_mp3_control,
+        11 : (Channel(16) >> CtrlMap(11, 7) >> GT10B_Volume),  # Akai MPK249 Expression pedal
+        12 : mpk_vlc_control,
+        13 : p_hue,
+        14 : spotify_control,
+        15 : hd500_control,
+        16 : gt10b_control
+    }),
+    mpk_port_b : ChannelSplit({
+         4 : pk5_mp3_control,
+        11 : HD500_Expr1,             # Akai MPK249 Expression pedal
+    }),
+    q49_midi : ChannelSplit({
+         1 : Pass(),
+    }),
+    sd90_midi_1 : Pass(),
+    sd90_midi_2 : Pass(),
+    behringer   : Pass(),
+})
+
 
 # Scenes
 _scenes = {
@@ -1719,27 +1927,27 @@ _scenes = {
     2: SceneGroup("RUSH",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Generic", init_patch=Call(Playlist()), patch=Discard()//p_rush),
-            Scene("Subdivisions", init_patch=i_rush_sub//Call(Playlist()), patch=Discard()//p_rush),
-            Scene("TheTrees", init_patch=i_rush_trees//Call(Playlist()), patch=Discard()//p_rush_trees),
+            Scene("Generic", init_patch=MPG123_PLAYLIST, patch=Discard()//p_rush),
+            Scene("Subdivisions", init_patch=i_rush_sub//MPG123_PLAYLIST, patch=Discard()//p_rush),
+            Scene("TheTrees", init_patch=i_rush_trees//MPG123_PLAYLIST, patch=Discard()//p_rush_trees),
             Scene("Grand Designs", init_patch=i_rush_gd, patch=Discard()//p_rush_gd),
             Scene("Marathon", init_patch=i_rush, patch=Discard()),
-            Scene("YYZ", init_patch=i_rush//Call(Playlist()), patch=p_hd500_base),
-            Scene("Limelight", init_patch=i_rush//Call(Playlist()), patch=p_hd500_base),
-            Scene("FlyByNight", init_patch=i_rush//Call(Playlist()), patch=p_hd500_base),
-            Scene("RedBarchetta", init_patch=i_rush//Call(Playlist()), patch=p_hd500_base),
-            Scene("Freewill", init_patch=i_rush//Call(Playlist()), patch=p_hd500_base),
-            Scene("SpritOfRadio", init_patch=i_rush//Call(Playlist()), patch=p_hd500_base),
-            Scene("TomSawyer", init_patch=i_rush//Call(Playlist()), patch=p_hd500_base),
-            Scene("CloserToTheHeart", init_patch=i_rush//Call(Playlist()), patch=p_hd500_base),
+            Scene("YYZ", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
+            Scene("Limelight", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
+            Scene("FlyByNight", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
+            Scene("RedBarchetta", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
+            Scene("Freewill", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
+            Scene("SpritOfRadio", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
+            Scene("TomSawyer", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
+            Scene("CloserToTheHeart", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
         ]),
     3: SceneGroup("BassCover",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Default", init_patch=Call(Playlist())//U01_A, patch=Discard()),
-            Scene("Queen", init_patch=Call(Playlist())//U01_A, patch=Discard()),
-            Scene("T4F", init_patch=Call(Playlist())//U01_A, patch=Discard()),
-            Scene("Toto", init_patch=Call(Playlist())//U01_A, patch=Discard()),
+            Scene("Default", init_patch=MPG123_PLAYLIST//U01_A, patch=Discard()),
+            Scene("Queen", init_patch=MPG123_PLAYLIST//U01_A, patch=Discard()),
+            Scene("T4F", init_patch=MPG123_PLAYLIST//U01_A, patch=Discard()),
+            Scene("Toto", init_patch=MPG123_PLAYLIST//U01_A, patch=Discard()),
         ]),
     4: SceneGroup("Recording",
         [
@@ -1750,13 +1958,14 @@ _scenes = {
             Scene("Select", init_patch=Discard(), patch=Discard()),
             Scene("InBigCountry", init_patch=i_big_country, patch=p_big_country),
             Scene("HighlandScenery", init_patch=U01_B // P14B, patch=p_highland_scenery),
-            Scene("Inwards", init_patch=U01_B // P14B, patch=p_highland_scenery),
-            Scene("AnglePark", init_patch=U01_B // P14B, patch=p_transport // p_highland_scenery),
+            Scene("Inwards", init_patch=U01_B // P14B, patch=p_pk5ctrl_generic>>p_base),
+            Scene("AnglePark", init_patch=U01_B // P14B, patch=p_pk5ctrl_generic>>p_base),
+            Scene("Wonderland", init_patch=p_wonderland_init, patch=p_wonderland),
         ]),
     6: SceneGroup("GrandDesignsStudio",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("PowerWindows", init_patch=Call(Playlist()), patch=p_rush_gd_demo),
+            Scene("PowerWindows", init_patch=MPG123_PLAYLIST, patch=p_rush_gd_demo),
             Scene("Futur", init_patch=Discard(), patch=p_transport),
         ]),
     7: SceneGroup("Keyboard",
@@ -1784,22 +1993,23 @@ _scenes = {
             Scene("Telephone2", Telephone2),
             Scene("Rain", Rain),
             Scene("Drums", Amb_Room),
+            Scene("NatureSound", akai_pad_nature),
         ]),
-    8: SceneGroup("Libre",
+    8: SceneGroup("Majestyx",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
+            Scene("Setlist", init_patch=MPG123_PLAYLIST//U01_A, patch=Discard()),
         ]),
     9: SceneGroup("MP3Player",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("TV", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("GraceUnderPressure", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("Hits", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("Majestyx", init_patch=Call(Playlist())//U01_A, patch=Discard()),
-            Scene("Middleage", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("NinaHagen", init_patch=Call(Playlist()), patch=Discard()),            
-            Scene("PowerWindows", init_patch=Call(Playlist()), patch=Discard()),
-            Scene("SteveMorse", init_patch=Call(Playlist()), patch=Discard()),
+            Scene("Hits", init_patch=MPG123_PLAYLIST, patch=Discard()),
+            Scene("Middleage", init_patch=MPG123_PLAYLIST, patch=Discard()),
+            Scene("TV", init_patch=MPG123_PLAYLIST, patch=Discard()),
+            Scene("NinaHagen", init_patch=MPG123_PLAYLIST, patch=Discard()),            
+            Scene("PowerWindows", init_patch=MPG123_PLAYLIST, patch=Discard()),
+            Scene("GraceUnderPressure", init_patch=MPG123_PLAYLIST, patch=Discard()),
+            Scene("SteveMorse", init_patch=MPG123_PLAYLIST, patch=Discard()),
         ]),
     10: SceneGroup("Spotify", 
         [
@@ -1844,11 +2054,50 @@ _scenes = {
     14: SceneGroup("MUSE",
         [
             Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Assassin", init_patch=P01A, patch=Discard()),
-            Scene("Hysteria", init_patch=P01A, patch=Discard()),
-            Scene("Cydonia", init_patch=P01A, patch=Discard()),
-            Scene("Starlight", init_patch=P01A, patch=Discard()),
-            Scene("Stockholm", init_patch=P01A, patch=Discard()),
+            Scene("Assassin", init_patch=AfxOff // P01A, patch=p_muse),
+            Scene("Hysteria", init_patch=AfxOff  // P01A, patch=p_muse),
+            Scene("Cydonia",  init_patch=AfxOff// P01A, patch=p_muse),
+            Scene("Starlight", init_patch=AfxOff // P01A, patch=p_muse),
+            Scene("Stockholm", init_patch=AfxOff // P01A, patch=[p_muse_stockholm, p_muse]),
+        ]),
+    15: SceneGroup("MajestyxLive",
+        [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
+            Scene("INTERLUDE", init_patch = NoteOn(0, 0)  >> VLC, patch =Pass()),
+            Scene("1-Rockin Paradise", init_patch = NoteOn(1, 0)  >> VLC, patch =Pass()),
+            Scene("2-BlueCollarMan", init_patch = NoteOn(2, 0)  >> VLC, patch =Pass()),
+            Scene("3-Lorelei", init_patch = NoteOn(1, 0)  >> VLC, patch =Pass()),
+            Scene("04-Too Much Time", init_patch = NoteOn(3, 0)  >> VLC, patch =Pass()),
+            Scene("05-Snowblind", init_patch = NoteOn(4, 0)  >> VLC, patch =Pass()),
+            Scene("06-Come Sail Away", init_patch = NoteOn(5, 0)  >> VLC, patch =Pass()),
+            Scene("07-Queen Of Spades", init_patch = NoteOn(6, 0)  >> VLC, patch =Pass()),
+            Scene("08-Light Up", init_patch = NoteOn(7, 0)  >> VLC, patch =Pass()),
+            Scene("09-The Best of Time", init_patch = NoteOn(8, 0)  >> VLC, patch =Pass()),
+            Scene("10-Lady", init_patch = NoteOn(9, 0)  >> VLC, patch =Pass()),
+            Scene("11-Fooling Yourself", init_patch = NoteOn(10, 0) >> VLC, patch =Pass()),
+            Scene("12-Roboto", init_patch = NoteOn(11, 0) >> VLC, patch =Pass()),
+            Scene("13-Show Me The Way", init_patch = NoteOn(12, 0) >> VLC, patch =Pass()),
+            Scene("14-Lights", init_patch = NoteOn(13, 0) >> VLC, patch =Pass()),
+            Scene("15-Pieces Of Eight", init_patch = NoteOn(14, 0) >> VLC, patch =Pass()),
+            Scene("16-I’m Ok", init_patch =NoteOn(15, 0) >> VLC, patch =Pass()),
+            Scene("17-Miss America", init_patch = NoteOn(16, 0) >> VLC, patch =Pass()),
+            Scene("18-Babe", init_patch = NoteOn(17, 0) >> VLC, patch =Pass()),
+            Scene("19-Renegade", init_patch = NoteOn(18, 0) >> VLC, patch =Pass()),
+            Scene("20-Crystal Ball", init_patch = NoteOn(19, 0) >> VLC, patch =Pass()),
+            Scene("21-Grand Illusion", init_patch = NoteOn(20, 0) >> VLC, patch =Pass()),
+            Scene("22-BoatOnThRiver", init_patch = NoteOn(21, 0) >> VLC, patch =Pass()),
+            Scene("23-SuiteMadameBlue", init_patch = NoteOn(22, 0) >> VLC, patch =Pass()),
+            Scene("Repeat", init_patch = NoteOn(23, 0) >> VLC, patch =Pass()),
+            Scene("NoRepeat", init_patch = NoteOn(24, 0) >> VLC, patch = Pass ()),
+        ]),    
+    16:  SceneGroup("Sampler",
+        [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
+            Scene("Track 1", init_patch =Discard(), patch =Discard()),
+        ]),
+    17:  SceneGroup("Libre",
+        [
+            Scene("Select", init_patch=Discard(), patch=Discard()),
         ]),
 
 }
@@ -1860,121 +2109,6 @@ post = Pass()
 # DEBUG
 #pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
 #post = Print('output',portnames='out')
-
-    
-#
-# Patches for the run().control patch
-#
-
-# TO REWORK
-wip_controller = (Filter(CTRL) >>
-    CtrlSplit({
-         20: Call(NavigateToScene),
-        100: Ctrl(sd90_port_a, 1, 7, EVENT_VALUE),
-        101: Program(sd90_port_a, 1, EVENT_VALUE),
-        102: Ctrl(sd90_port_b, 1, 7, EVENT_VALUE),
-        103: Program(sd90_port_b, 1, EVENT_VALUE),
-    })
-)
-
-gt10b_control = (Filter(CTRL) >>
-    CtrlSplit({
-          4: GT10B_Tuner,
-          7: GT10B_Volume,
-    }))
-
-hd500_control = (Filter(CTRL) >>
-    CtrlSplit({
-          1: HD500_Expr1,
-          2: HD500_Expr2,
-         69: HD500_Tuner,
-    }))
-
-# Transport filter Filter for mp3 and spotify
-jump_filter    = CtrlFilter(1)  >> CtrlValueFilter(0, 121)
-volume_filter  = CtrlFilter(7)  >> CtrlValueFilter(0, 101)
-trigger_filter = Filter(NOTEON) >> Transpose(-36)
-transport_filter = [jump_filter, volume_filter, trigger_filter]
-
-key_mp3_control = transport_filter >> Call(Mp3Player("SD90"))
-pk5_mp3_control = transport_filter >> Call(Mp3Player("SD90"))
-mpk_vlc_control = Filter(NOTEON) >> Call(VlcPlayer())
-
-# Spotify
-spotify_control = [
-  trigger_filter,
-  volume_filter, 
-  CtrlFilter(44),
-] >> Call(SpotifyPlayer())
-
-
-# SoundCraft UI
-soundcraft_control=[
-    Filter(NOTEON) >> Process(MidiMix()) >> [
-        
-        KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mute_mono,
-        KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mute_mono,
-
-        KeyFilter(7)  >> Ctrl(2, EVENT_VALUE) >> mute_stereo,
-        KeyFilter(10) >> Ctrl(4, EVENT_VALUE) >> mute_stereo,
-        KeyFilter(13) >> Ctrl(6, EVENT_VALUE) >> mute_stereo,
-
-        KeyFilter(16) >> ui_line_mute,
-        KeyFilter(19) >> ui_player_mute,
-        
-        KeyFilter(22) >> Discard(),
-
-        Process(MidiMixLed())
-
-    ],
-    Filter(CTRL) >> [
-        CtrlFilter(0,1) >> ui_standard_fx,
-       
-        CtrlFilter(2,3,4) >> CtrlSplit({
-            2 : Pass(),
-            3 : Ctrl(4, EVENT_VALUE),
-            4 : Ctrl(6, EVENT_VALUE),
-        }) >> ui_standard_stereo_eq,
-
-        CtrlFilter(5) >> ui_line_mix_eq,
-        CtrlFilter(6) >> ui_player_mix_eq,
-        CtrlFilter(7) >> Discard(),
-        CtrlFilter(100) >> ui_master,
-    ],
-]
-
-# FlaskDings API control patch
-flaskdings_uri = os.environ["FLASKDINGS"]
-flaskdings_control = trigger_filter >> [
-    KeyFilter(0) >> Call(HttpGet(flaskdings_uri + "prev_scene")),
-    KeyFilter(2) >> Call(HttpGet(flaskdings_uri + "next_scene")),
-]
-
-# Midi input control patch
-control_patch = PortSplit({
-    midimix_midi : soundcraft_control,
-    mpk_midi : ChannelSplit({
-        4 : pk5_mp3_control,
-    }),
-    mpk_port_a : ChannelSplit({
-         8 : key_mp3_control,
-        12 : mpk_vlc_control,
-        13 : p_hue,
-        14 : spotify_control,
-        15 : hd500_control,
-        16 : gt10b_control
-    }),
-    q49_midi : ChannelSplit({
-         1 : flaskdings_control,
-    }),
-    mpk_port_b : ChannelSplit({
-         4 : pk5_mp3_control,
-    }),
-    sd90_midi_1 : Pass(),
-    sd90_midi_2 : Pass(),
-    behringer   : Pass(),
-})
-
 
 run(
     control=control_patch,

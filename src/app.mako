@@ -126,9 +126,6 @@ post = Pass()
 #pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
 #post = Print('output',portnames='out')
 
-# Control patch defined in /patches/control.py.mako
-${control}
-
 run(
     control=control_patch,
     scenes=_scenes,

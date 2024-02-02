@@ -11,7 +11,9 @@
         "patches/soundcraft.py",
         "patches/hue.py",
         "patches/cakewalk.py",
-        "patches/execution.py"
+        "patches/execution.py",
+        "patches/extensions.py",
+        "patches/control.py"
     ],
     "default_scene": "main.py",
     "alsa": {
