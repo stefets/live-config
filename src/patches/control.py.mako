@@ -11,7 +11,7 @@ transport_filter = [jump_filter, volume_filter, trigger_filter]
 
 key_mp3_control = transport_filter >> Call(Mp3Player("${audio_device}"))
 pk5_mp3_control = transport_filter >> Call(Mp3Player("${audio_device}"))
-mpk_vlc_control = Filter(NOTEON) >> Call(VlcPlayer())
+mpk_vlc_control = Filter(NOTEON) >> VLC
 
 # Spotify
 spotify_control = [

@@ -397,6 +397,7 @@ p_wonderland = p_pk5ctrl_generic >> [
      p_base,
 ]
 
+VLC = Call(VlcPlayer())
 # ---
 # Daw + Hue helper for recording
 p_transport = (pk5 >> [
