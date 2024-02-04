@@ -1,4 +1,6 @@
-        1: Scene("Initialize", init_patch=SD90_Initialize, patch=interlude),
+
+_scenes = {
+    1: Scene("Initialize", init_patch=SD90_Initialize, patch=interlude),
         2:SceneGroup("Demonstrations", [
 	    Scene("Dimmer",
                 init_patch=Call(Playlist()), 
@@ -23,3 +25,5 @@
             Scene("SoloRed", init_patch=HueSoloRed, patch=Discard()),
             Scene("Off", init_patch=HueStudioOff, patch=Discard()),
         ]),
+
+}
