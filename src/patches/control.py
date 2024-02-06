@@ -25,14 +25,11 @@ mpk_soundcraft_control=Filter(CTRL|NOTE) >> [
         Filter(NOTE) >> NoteOn(EVENT_NOTE, 127) >> Port(midimix_midi),
     ] >> soundcraft_control
 
-pk5_soundcraft_control=Filter(NOTEON) >> KeyFilter(72) >> NoteOn(9, 127) >> Port(midimix_midi) >> soundcraft_control
-
 # Midi input control patch
 control_patch = PortSplit({
     midimix_midi : soundcraft_control,
     mpk_midi : ChannelSplit({
         4 : pk5_mp3_control,
-        #3 : pk5_soundcraft_control,
     }),
     mpk_port_a : ChannelSplit({
          1 : mpk_soundcraft_control,

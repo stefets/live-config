@@ -395,6 +395,7 @@ p_wonderland_init = [
 ]
 p_wonderland = p_pk5ctrl_generic >> [
      p_base,
+     KeyFilter(72) >> NoteOn(9, 127) >> Port(midimix_midi) >> soundcraft_control,
 ]
 
 # ---
