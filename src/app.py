@@ -16,19 +16,19 @@ def make_asoundrc(config) -> None:
     with open(os.path.expanduser('~') + "/.asoundrc", "w") as FILE:
         FILE.write(asoundrc.render(**audio_devices))
 
-def make_script(config, scene=None, audio_device=None) -> str:
+def make_script(config, scene=None) -> str:
     # Generates the mididings script code
     return Template(filename=config["template"]).render(
         scenes  = config["scene_dir"] + scene if scene else config["scene_dir"] + config["default_scene"] ,
         patches = config["patches"]
     )
 
-def main(audio_device, scene=None):
+def main(scene=None):
     with open('config.json') as FILE:
         config = json.load(FILE)
 
     make_asoundrc(config["alsa"])
-    src = make_script(config, scene, audio_device)
+    src = make_script(config, scene)
 
     print(src)
 
