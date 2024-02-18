@@ -3,7 +3,7 @@
 # Patches for the run().control patch
 #
 
-# Transport filter Filter for mp3 and spotify
+# Transport filter Filter for MPG123 and Spotipy and VLC
 jump_filter    = CtrlFilter(1)  >> CtrlValueFilter(0, 121)
 volume_filter  = CtrlFilter(7)  >> CtrlValueFilter(0, 101)
 trigger_filter = Filter(NOTEON) >> Transpose(-36)
@@ -12,6 +12,7 @@ transport_filter = [jump_filter, volume_filter, trigger_filter]
 key_mp3_control = transport_filter >> MPG123_SD90_A
 pk5_mp3_control = transport_filter >> MPG123_SD90_B
 mpk_vlc_control = Filter(NOTEON) >> VLC
+q49_vlc_control = trigger_filter >> VLC
 
 # Spotify
 spotify_control = [
