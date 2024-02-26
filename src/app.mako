@@ -112,11 +112,9 @@ hook(
 % endfor
 
 # Scenes
-_scenes = {
 % with open(scenes, 'r') as file:
     ${file.read()}
 % endwith
-}
 
 # PROD
 pre  = ~Filter(SYSRT_CLOCK) >> ~ChannelFilter(8, 9, 11) 
@@ -125,9 +123,6 @@ post = Pass()
 # DEBUG
 #pre  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
 #post = Print('output',portnames='out')
-
-# Control patch defined in /patches/control.py.mako
-${control}
 
 run(
     control=control_patch,

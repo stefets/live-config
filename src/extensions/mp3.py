@@ -223,6 +223,8 @@ class Mp3Player(MPyg123Player):
             self.on_play(ev)
 
     def set_volume(self, ev):
+        if ev.data2 % 5 != 0:
+            return
         self.vol = ev.data2
         self.volume(self.vol)
         self.update_display()

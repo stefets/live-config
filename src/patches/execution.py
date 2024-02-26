@@ -13,6 +13,32 @@
 # CC      Bin             Hex     Control function    Value       Used as
 # 3	00000011	03	Undefined	    0-127	MSB
 
+
+# Base patches (WIP)
+p_hd500_filter_base = [
+    (KeyFilter(notes=[65]) >> FS1),
+    (KeyFilter(notes=[67]) >> FS2),
+    (KeyFilter(notes=[69]) >> FS3),
+    (KeyFilter(notes=[71]) >> FS4),
+]
+
+p_hue_live = [
+    KeyFilter(notes=[61]) >> HueStudioOff,
+    KeyFilter(notes=[63]) >> HueNormal,
+    KeyFilter(notes=[66]) >> HueGalaxie,
+    KeyFilter(notes=[68]) >> HueGalaxieMax,
+    KeyFilter(notes=[70]) >> HueDemon,
+]
+
+p_base = [
+    p_hue_live,
+    p_hd500_filter_base, 
+]
+
+p_pk5ctrl_generic = pk5 >> Filter(NOTEON)
+
+# 
+
 akai_pad_nature = [
     ~Filter(PITCHBEND) >> KeyFilter(notes=[109]) >> LatchNotes(polyphonic=True) >> Key(0) >> Rain,
     KeyFilter(notes=[110]) >> Key(12) >> Thunder,
@@ -157,6 +183,7 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 
 # Song : In a big country
 i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,127) >> HD500_Expr2]
+
 p_big_country = (pk5 >> Filter(NOTEON) >>
          [
              (KeyFilter(notes=[65]) >> FS1),
@@ -166,6 +193,12 @@ p_big_country = (pk5 >> Filter(NOTEON) >>
              (KeyFilter(notes=[71]) >> [HueGalaxie, FS2, Ctrl(3,85)  >> HD500_Expr2]),
              (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> HD500_Expr2])
          ])
+
+p_big_country = p_pk5ctrl_generic >> [
+    p_base,
+    (KeyFilter(notes=[66]) >> [HueGalaxie, FS2, Ctrl(3,85) >> HD500_Expr2]),
+    (KeyFilter(notes=[67]) >> [HueSoloRed, Ctrl(3,127) >> HD500_Expr2])
+]
 
 # Song : In a big country - recording
 i_big_country_live = [P14C]
@@ -335,35 +368,39 @@ p_rush_trees=(pk5 >>
 
 # Rush fin de section ------------------------------------------
 
-p_hd500_filter_1 = [
-    (KeyFilter(notes=[65]) >> FS1),
-    (KeyFilter(notes=[67]) >> FS2),
-    (KeyFilter(notes=[69]) >> FS3),
-    (KeyFilter(notes=[71]) >> FS4),
-    (KeyFilter(notes=[72]) >> [FS1, FS4]),
-]
+# Muse Band
+p_muse = p_pk5ctrl_generic >> p_base
+p_muse_stockholm = pk5 >> [
+    KeyFilter(notes=[60]) >> [
+        Key('d2') >> Harmonize('d', 'major', ['unison', 'octave']),
+        HueDemon
+    ],
+    KeyFilter(notes=[62]) >> [
+        Key('e2') >> Harmonize('e', 'major', ['unison', 'octave']),
+        HueGalaxieMax
+    ],
+    KeyFilter(notes=[64]) >> [
+        Key('f2') >> Harmonize('f', 'major', ['unison', 'octave']),
+        HueGalaxie
+    ],
+] >> Velocity(fixed=127) >> Output(sd90_port_b, channel=14, program=(Special2,106), volume=127, ctrls={93:75, 91:75})
 
-p_hue_live = [
-    KeyFilter(notes=[61]) >> HueStudioOff,
-    KeyFilter(notes=[63]) >> HueNormal,
-    KeyFilter(notes=[66]) >> HueGalaxie,
-    KeyFilter(notes=[68]) >> HueGalaxieMax,
-    KeyFilter(notes=[70]) >> HueDemon,
-]
 
-p_generic = [
-    p_hue_live,
-    p_hd500_filter_1, 
-]
+p_rush = p_pk5ctrl_generic >> p_base
 
-p_pk5ctrl_generic = pk5 >> Filter(NOTEON) >> p_generic
-p_muse = p_pk5ctrl_generic
-p_rush = p_pk5ctrl_generic
+p_wonderland_init = [
+    Ctrl(mpk_port_a, 3, 2, 64) >> ui_standard_stereo_fx,
+    U01_B, 
+    P14B
+]
+p_wonderland = p_pk5ctrl_generic >> [
+     p_base,
+     KeyFilter(72) >> NoteOn(9, 127) >> Port(midimix_midi) >> soundcraft_control,
+]
 
 # ---
 # Daw + Hue helper for recording
-p_transport = (pk5 >> 
-        [
+p_transport = (pk5 >> [
             p_hue_live,
             Filter(NOTEON)  >> KeyFilter(notes=[60])    >> [CakePlay],
             Filter(NOTEON)  >> KeyFilter(notes=[62])    >> [CakeRecord],

@@ -1,3 +1,5 @@
+
+_scenes = {
     1: Scene("Initialize", init_patch=SD90_Initialize, patch=interlude),
     2:SceneGroup("Demonstrations", [
     Scene("OneSliderMix",
@@ -30,3 +32,4 @@
                 Filter(NOTEOFF) >> SendOSC(56420, '/mute', 1, 0),
             ]),
     ])
+}    

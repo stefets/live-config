@@ -13,7 +13,7 @@ class MidiMix():
         #self.knobs = []
         #self.cursors = []
         self.switches = []
-        for index in range(1, 27):
+        for index in range(1, 28):
             self.switches.append(Switch(index))
 
     def __call__(self, ev):
