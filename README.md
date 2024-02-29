@@ -1,15 +1,14 @@
-# A mididings script builder, created for my needs, available for yours
-## It build my complex mididings script from a configuration file (app.json) and Mako templates
+# A mididings script builder, created for my needs but adaptable
+## It build my complex mididings script from a configuration file (src/config.json) and a Mako template (app.mako, asoundrc.mako)
 
 # How it works
 * Entry point is /src/app.py and load the configuration file
-  * Because ALSA ports assignation for PCM and MIDI is dynamic the script script builder take care of this:
+  * Because ALSA ports assignation for PCM is dynamic the script script builder take care of this:
     * Configure an ~/.asoundrc for audio devices with the help of pyalsaaudio
-    * Configure the in_ports and out_ports in the mididings config() section with the help of alsa_midi
-  * Finally, it render, to stdout, a mididings script by replacing tokens in template.mako with the Mako Template Engine.
+  * Then, it render to stdout a mididings script by replacing tokens in all Mako templates
 
 # Extensions
-  * The scr/extensions direcotry contains callable objects
+  * The scr/extensions directory contains callable objects
     * Those extensions allow my mididings configuration to control modules I need like :
       * mpg123 - in remote mode to play MP3 audio files
         * It can start an instance of mpg123 for each sound card, each instance of mpg123 can play multiple audio files in parallel, this is possible with an asoundrc configuration that sets my PCM devices as dmix type
