@@ -17,7 +17,7 @@ idna==3.4
 itsdangerous==2.1.2
 Jinja2==3.1.2
 MarkupSafe==2.1.1
-mididings==20221230
+mididings==20230114
 mpyg321==2.1.1
 packaging==22.0
 pep517==0.13.0
@@ -25,7 +25,6 @@ pexpect==4.8.0
 phue==1.1
 ptyprocess==0.7.0
 pyinotify==0.9.6
-pyliblo==0.10.0
 python-dotenv==0.21.0
 python-engineio==4.3.4
 python-socketio==5.7.2
