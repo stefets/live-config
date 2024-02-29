@@ -1,5 +1,4 @@
 {
-    "enable": true,
     "playlist" : "Playlist",
     "default_volume": 50,
     "default_jump": 10,

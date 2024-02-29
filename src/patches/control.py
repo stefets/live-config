@@ -11,7 +11,7 @@ transport_filter = [jump_filter, volume_filter, trigger_filter]
 
 key_mp3_control = transport_filter >> MPG123_SD90_A
 pk5_mp3_control = transport_filter >> MPG123_SD90_B
-mpk_vlc_control = Filter(NOTEON) >> VLC_BASE
+mpk_vlc_control = trigger_filter >> VLC_BASE
 q49_vlc_control = trigger_filter >> VLC_BASE
 
 # Spotify
