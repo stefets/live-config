@@ -79,24 +79,12 @@ hook(
     MemorizeScene(".hook.memorize_scene")
 )
 
-_control_patch = [ 
-    Pass(),
-]
-
-_patch = Pass()
-_init_patch = Discard()
-_scenes = {
-    1: SceneGroup("Group 1", [
-        Scene("Scene 1", init_patch=_init_patch, patch=_patch),
-    ])
-}
-
 _pre_patch  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
 _post_patch = Print('output',portnames='out')
 
 run(
-    control=_control_patch,
-    scenes=_scenes,
+    control=Pass(),
+    scenes = {1:Pass()},
     pre=_pre_patch,
     post=_post_patch,
 )
