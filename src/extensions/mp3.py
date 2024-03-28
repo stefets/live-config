@@ -42,7 +42,6 @@ class Mp3Player():
         self.enable = True
 
         self.mpy123 = MPyg123Player("mpg123", card if card else None, True)
-        #super().__init__("mpg123", card if card else None, True)
 
         # For mpg123 >= v1.3*.*
         self.mpy123.mpg_outs.append(
@@ -106,14 +105,12 @@ class Mp3Player():
         self.current_scene = -1
         self.current_subscene = -1
 
-    # Invoker
     def __call__(self, ev):
         if self.enable:
             self.ctrl_range_mapping[ev.data1](
                 ev
             ) if ev.type == _constants.CTRL else self.note_range_mapping[ev.data1](ev)
 
-    # Logic
     def navigate_scene(self, ev):
         self.note_mapping[ev.data1](ev)
 
@@ -121,7 +118,6 @@ class Mp3Player():
         if self.playlist.songs:
             self.note_mapping[ev.data1](ev)
 
-    # Unassigned key
     def unassigned(self, ev):
         pass
 
@@ -138,7 +134,6 @@ class Mp3Player():
         self.autonext = value
         self.update_display()
 
-    # Scenes navigation
     def home_scene(self, ev):
         self.set_scene(1)
 
