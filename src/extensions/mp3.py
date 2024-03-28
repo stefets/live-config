@@ -31,7 +31,7 @@ Inspiré du clavier 'Lanceur de chanson' de l'émission Québecoise 'Tout le mon
 """
 
 
-class Mp3Player():
+class Mp3Player(MPyg123Player):
     def __init__(self, card = None):
         with open('./extensions/mp3.json') as json_file:
             config = json.load(json_file)
@@ -41,10 +41,10 @@ class Mp3Player():
 
         self.enable = True
 
-        self.mpy123 = MPyg123Player("mpg123", card if card else None, True)
+        super().__init__("mpg123", card if card else None, True)
 
         # For mpg123 >= v1.3*.*
-        self.mpy123.mpg_outs.append(
+        self.mpg_outs.append(
             {
                 "mpg_code": "@P 3",
                 "action": "end_of_song",
@@ -100,7 +100,7 @@ class Mp3Player():
         self.current_entry = 0
 
         self.vol = config["default_volume"]  # In %
-        self.mpy123.volume(self.vol)
+        self.volume(self.vol)
 
         self.current_scene = -1
         self.current_subscene = -1
@@ -180,7 +180,7 @@ class Mp3Player():
         ):
             """The context has externally been changed"""
             """ Refresh the playlist according the current scene/subscene """
-            self.mpy123.pause()
+            self.pause()
             self.current_scene = current_scene()
             self.current_subscene = current_subscene()
             self.playlist.load_from_file()
@@ -191,10 +191,10 @@ class Mp3Player():
         self.update_display()
 
     def on_pause(self, ev):
-        if self.mpy123.status == PlayerStatus.PLAYING:
-            self.mpy123.pause()
-        elif self.mpy123.status == PlayerStatus.PAUSED:
-            self.mpy123.resume()
+        if self.status == PlayerStatus.PLAYING:
+            self.pause()
+        elif self.status == PlayerStatus.PAUSED:
+            self.resume()
 
     def forward(self, ev):
         self.on_jump("+")
@@ -203,10 +203,10 @@ class Mp3Player():
         self.on_jump("-")
 
     def on_jump(self, direction):
-        if not self.mpy123.status in [PlayerStatus.PLAYING, PlayerStatus.PAUSED]:
+        if not self.status in [PlayerStatus.PLAYING, PlayerStatus.PAUSED]:
             return
         value = "{}{} s".format(direction, self.jump_offset)
-        self.mpy123.jump(value)
+        self.jump(value)
 
     def next_entry(self, ev):
         if self.playlist.len() >= self.current_entry + 1:
@@ -222,7 +222,7 @@ class Mp3Player():
         if ev.data2 % 5 != 0:
             return
         self.vol = ev.data2
-        self.mpy123.volume(self.vol)
+        self.volume(self.vol)
         self.update_display()
 
     def set_offset(self, ev):
@@ -264,8 +264,8 @@ class Mp3Player():
     """
 
     def on_any_stop(self):
-        if self.mpy123.status != PlayerStatus.PAUSED:
-            self.mpy123.status = PlayerStatus.STOPPED
+        if self.status != PlayerStatus.PAUSED:
+            self.status = PlayerStatus.STOPPED
 
     def on_music_end(self):
         if self.autonext:
