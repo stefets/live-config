@@ -1,7 +1,7 @@
 
 _scenes = {
     1: Scene("Initialize", init_patch = SD90_Initialize, patch = Discard()),
-    2: SceneGroup("RUSH", [
+    2: SceneGroup("Rush", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
             Scene("Generic", init_patch = MPG123_PLAYLIST, patch = Discard()//p_rush),
             Scene("Subdivisions", init_patch = i_rush_sub//MPG123_PLAYLIST, patch = Discard()//p_rush),
@@ -66,9 +66,7 @@ _scenes = {
             Scene("Drums", Amb_Room),
             Scene("NatureSound", akai_pad_nature),
         ]),
-    8: SceneGroup("Majestyx", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
-            Scene("Setlist", init_patch = MPG123_PLAYLIST//U01_A, patch = Discard()),
+    8: SceneGroup("Libre", [
         ]),
     9: SceneGroup("MP3Player", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
@@ -123,7 +121,7 @@ _scenes = {
             Scene("Starlight", init_patch = AfxOff // P01A, patch = p_muse),
             Scene("Stockholm", init_patch = AfxOff // P01A, patch = [p_muse_stockholm, p_muse]),
         ]),
-    15: SceneGroup("MajestyxLive", [
+    15: SceneGroup("Majestyx", [
             Scene("Stop", init_patch = VLC_STOP, patch = Discard()),
             Scene("Repeat-ON", init_patch =  VLC_REPEAT_ON, patch = Discard()),
             Scene("Repeat-OFF", init_patch = VLC_REPEAT_OFF, patch = Discard()),
@@ -151,6 +149,7 @@ _scenes = {
             Scene("21-Grand Illusion", init_patch = NoteOn(21, 0) >> VLC_PL, patch = Discard()),
             Scene("22-BoatOnThRiver", init_patch = NoteOn(22, 0) >> VLC_PL, patch = Discard()),
             Scene("23-SuiteMadameBlue", init_patch = NoteOn(23, 0) >> VLC_PL, patch = Discard()),
+            Scene("Setlist", init_patch = MPG123_PLAYLIST//U01_A, patch = Discard()),
         ]),    
     16:  SceneGroup("Sampler", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
