@@ -186,7 +186,7 @@ class Mp3Player():
             self.playlist.load_from_file()
         if ev.data1 > self.playlist.len():
             return
-        self.load_list(ev.data1, self.playlist.filename)
+        self.mpy123.load_list(ev.data1, self.playlist.filename)
         self.current_entry = ev.data1
         self.update_display()
 
@@ -257,7 +257,7 @@ class Mp3Player():
 
     def on_replay(self, ev):
         if self.current_entry > 0:
-            self.load_list(self.current_entry, self.playlist.filename)
+            self.mpy123.load_list(self.current_entry, self.playlist.filename)
 
     """
     mpyg321 callbacks
