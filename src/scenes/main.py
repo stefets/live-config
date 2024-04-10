@@ -28,7 +28,7 @@ _scenes = {
             Scene("Bass", init_patch = Discard(), patch = p_transport),
         ]),
     5: SceneGroup("BigCountry", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("BassCover", init_patch = MPG123_PLAYLIST//U01_B, patch = Discard()),
             Scene("InBigCountry", init_patch = i_big_country, patch = p_big_country),
             Scene("HighlandScenery", init_patch = U01_B // P14B, patch = p_highland_scenery),
             Scene("Inwards", init_patch = U01_B // P14B, patch = p_pk5ctrl_generic>>p_base),
