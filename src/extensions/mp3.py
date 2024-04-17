@@ -105,6 +105,12 @@ class Mp3Player(MPyg123Player):
         self.current_scene = -1
         self.current_subscene = -1
 
+        # Events subscriptions
+        self.events.on_user_pause += self.handle_pause
+
+    def handle_pause(self):
+        print("on_user_pause event")
+
     # Invoker
     def __call__(self, ev):
         if self.enable:
