@@ -31,7 +31,7 @@ Inspiré du clavier 'Lanceur de chanson' de l'émission Québecoise 'Tout le mon
 """
 
 
-class Mp3Player(MPyg123Player):
+class Mp3Player():
     def __init__(self, card = None):
         with open('./extensions/mp3.json') as json_file:
             config = json.load(json_file)
@@ -41,10 +41,10 @@ class Mp3Player(MPyg123Player):
 
         self.enable = True
 
-        super().__init__("mpg123", card if card else None, True)
+        self.wrapper = MPyg123Player("mpg123", card if card else None, True)
 
         # For mpg123 >= v1.3*.*
-        self.mpg_outs.append(
+        self.wrapper.mpg_outs.append(
             {
                 "mpg_code": "@P 3",
                 "action": "end_of_song",
@@ -85,7 +85,7 @@ class Mp3Player(MPyg123Player):
             47: self.forward,
             # Black keys
             42: self.prev_entry,
-            44: self.on_pause,
+            44: self.on_toggle_pause,
             46: self.next_entry,
         }
 
@@ -100,16 +100,24 @@ class Mp3Player(MPyg123Player):
         self.current_entry = 0
 
         self.vol = config["default_volume"]  # In %
-        self.volume(self.vol)
+        self.wrapper.volume(self.vol)
 
         self.current_scene = -1
         self.current_subscene = -1
 
         # Events subscriptions
-        self.events.on_user_pause += self.handle_pause
+        self.wrapper.events.on_user_pause += self.handle_pause
+        self.wrapper.events.on_error += self.handle_error
+        self.wrapper.events.on_music_end += self.handle_music_end
 
     def handle_pause(self):
         print("on_user_pause event")
+
+    def handle_error(self, error):
+        print(f"MP3: An error occurs : {error}")
+
+    def handle_music_end(self):
+        print("Music stop")
 
     # Invoker
     def __call__(self, ev):
@@ -190,21 +198,18 @@ class Mp3Player(MPyg123Player):
         ):
             """The context has externally been changed"""
             """ Refresh the playlist according the current scene/subscene """
-            self.pause()
+            self.wrapper.pause()
             self.current_scene = current_scene()
             self.current_subscene = current_subscene()
             self.playlist.load_from_file()
         if ev.data1 > self.playlist.len():
             return
-        self.load_list(ev.data1, self.playlist.filename)
+        self.wrapper.load_list(ev.data1, self.playlist.filename)
         self.current_entry = ev.data1
         self.update_display()
 
-    def on_pause(self, ev):
-        if self.status == PlayerStatus.PLAYING:
-            self.pause()
-        elif self.status == PlayerStatus.PAUSED:
-            self.resume()
+    def on_toggle_pause(self, ev):
+        self.wrapper.toggle_pause()
 
     def forward(self, ev):
         self.on_jump("+")
@@ -213,10 +218,8 @@ class Mp3Player(MPyg123Player):
         self.on_jump("-")
 
     def on_jump(self, direction):
-        if not self.status in [PlayerStatus.PLAYING, PlayerStatus.PAUSED]:
-            return
         value = "{}{} s".format(direction, self.jump_offset)
-        self.jump(value)
+        self.wrapper.jump(value)
 
     def next_entry(self, ev):
         if self.playlist.len() >= self.current_entry + 1:
@@ -232,7 +235,7 @@ class Mp3Player(MPyg123Player):
         if ev.data2 % 5 != 0:
             return
         self.vol = ev.data2
-        self.volume(self.vol)
+        self.wrapper.volume(self.vol)
         self.update_display()
 
     def set_offset(self, ev):
@@ -267,15 +270,15 @@ class Mp3Player(MPyg123Player):
 
     def on_replay(self, ev):
         if self.current_entry > 0:
-            self.load_list(self.current_entry, self.playlist.filename)
+            self.wrapper.load_list(self.current_entry, self.playlist.filename)
 
     """
     mpyg321 callbacks
     """
 
     def on_any_stop(self):
-        if self.status != PlayerStatus.PAUSED:
-            self.status = PlayerStatus.STOPPED
+        if self.wrapper.status != PlayerStatus.PAUSED:
+            self.wrapper.status = PlayerStatus.STOPPED
 
     def on_music_end(self):
         if self.autonext:
