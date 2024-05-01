@@ -77,6 +77,7 @@ _scenes = {
             Scene("PowerWindows", init_patch = MPG123_PLAYLIST, patch = Discard()),
             Scene("GraceUnderPressure", init_patch = MPG123_PLAYLIST, patch = Discard()),
             Scene("SteveMorse", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("Colocs", init_patch = MPG123_PLAYLIST, patch = Discard()),
         ]),
     10: SceneGroup("Spotify", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
