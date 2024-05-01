@@ -106,20 +106,24 @@ class Mp3Player():
         self.current_subscene = -1
 
         # Events subscriptions
-        self.wrapper.events.on_user_pause += self.handle_pause
-        self.wrapper.events.on_error += self.handle_error
-        self.wrapper.events.on_music_end += self.handle_music_end
+        self.wrapper.subscribe_event("user_pause", self.handle_pause)
+        self.wrapper.subscribe_event("any_stop", self.handle_any_stop)
+        self.wrapper.subscribe_event("music_end", self.handle_music_end)
+
+    # Event handlers        
+    def handle_any_stop(self):
+        print("Any stop event")
 
     def handle_pause(self):
-        print("on_user_pause event")
-
+        print("Pause event")
+    
     def handle_error(self, error):
         print(f"MP3: An error occurs : {error}")
 
     def handle_music_end(self):
-        print("Music stop")
+        print("Music end event")
 
-    # Invoker
+    # call from mididings
     def __call__(self, ev):
         if self.enable:
             self.ctrl_range_mapping[ev.data1](
