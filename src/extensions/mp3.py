@@ -118,13 +118,17 @@ class Mp3Player():
         print(f"MP3: An error occurs : {context.error_type} / {context.error_message}")
 
     def handle_any_stop(self, context):
-        pass
+        if self.wrapper.status != PlayerStatus.PAUSED:
+            self.wrapper.status = PlayerStatus.STOPPED
 
     def handle_pause(self, context):
         pass
     
     def handle_music_end(self, context):
-        pass
+        if self.autonext:
+            # Load next entry in playlist with a dummy MIDI event
+            ev = NoteOnEvent(self.controller.port, self.controller.channel, 0, 0)
+            self.next_entry(ev)
 
     # call from mididings
     def __call__(self, ev):
@@ -291,21 +295,6 @@ class Mp3Player():
     def on_replay(self, ev):
         if self.current_entry > 0:
             self.wrapper.load_list(self.current_entry, self.playlist.filename)
-
-    """
-    mpyg321 callbacks
-    """
-
-    def on_any_stop(self):
-        if self.wrapper.status != PlayerStatus.PAUSED:
-            self.wrapper.status = PlayerStatus.STOPPED
-
-    def on_music_end(self):
-        if self.autonext:
-            # Load next entry in playlist with a dummy MIDI event
-            ev = NoteOnEvent(self.controller.port, self.controller.channel, 0, 0)
-            self.next_entry(ev)
-
 
 class Playlist:
     def __init__(self):
