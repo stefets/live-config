@@ -6,7 +6,7 @@ from colorama import Fore, Style
 from range_key_dict import RangeKeyDict
 
 from mpyg321.MPyg123Player import MPyg123Player
-from mpyg321.consts import PlayerStatus
+from mpyg321.consts import PlayerStatus, MPyg321Events
 
 import mididings.constants as _constants
 from mididings.engine import (
@@ -106,22 +106,24 @@ class Mp3Player():
         self.current_subscene = -1
 
         # Events subscriptions
-        self.wrapper.subscribe_event("user_pause", self.handle_pause)
-        self.wrapper.subscribe_event("any_stop", self.handle_any_stop)
-        self.wrapper.subscribe_event("music_end", self.handle_music_end)
+        self.wrapper.subscribe_event(MPyg321Events.ERROR, self.handle_error)
+        self.wrapper.subscribe_event(MPyg321Events.USER_PAUSE, self.handle_pause)
+        self.wrapper.subscribe_event(MPyg321Events.ANY_STOP, self.handle_any_stop)
+        self.wrapper.subscribe_event(MPyg321Events.MUSIC_END, self.handle_music_end)
 
     # Event handlers        
-    def handle_any_stop(self):
-        print("Any stop event")
+    def handle_error(self, context):
+        # TODO Add logger
+        print(f"MP3: An error occurs : {context.error_type} / {context.error_message}")
 
-    def handle_pause(self):
-        print("Pause event")
+    def handle_any_stop(self, context):
+        pass
+
+    def handle_pause(self, context):
+        pass
     
-    def handle_error(self, error):
-        print(f"MP3: An error occurs : {error}")
-
-    def handle_music_end(self):
-        print("Music end event")
+    def handle_music_end(self, context):
+        pass
 
     # call from mididings
     def __call__(self, ev):
@@ -213,7 +215,11 @@ class Mp3Player():
         self.update_display()
 
     def on_toggle_pause(self, ev):
-        self.wrapper.toggle_pause()
+        """Pause if playing, else resume if paused"""
+        if self.wrapper.status == PlayerStatus.PLAYING:
+            self.wrapper.pause()
+        elif self.wrapper.status == PlayerStatus.PAUSED:
+            self.wrapper.resume()
 
     def forward(self, ev):
         self.on_jump("+")
