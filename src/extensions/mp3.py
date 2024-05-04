@@ -55,6 +55,7 @@ class Mp3Player():
         self.controller = Transport(config["controller"])
         self.playlist = Playlist()
         self.autonext = False
+        self.is_muted = False
 
         # Show things in stdout
         self.terminal = Terminal()
@@ -220,6 +221,15 @@ class Mp3Player():
             self.wrapper.pause()
         elif self.wrapper.status == PlayerStatus.PAUSED:
             self.wrapper.resume()
+
+    def on_toggle_mute(self, ev):
+        """Mute or UnMute if playing"""
+        if self.wrapper.status == PlayerStatus.PLAYING:
+            if self.is_muted:
+                self.wrapper.unmute()
+            else:
+                self.wrapper.mute()
+            self.is_muted = not self.is_muted
 
     def forward(self, ev):
         self.on_jump("+")
