@@ -6,7 +6,7 @@ from colorama import Fore, Style
 from range_key_dict import RangeKeyDict
 
 from mpyg321.MPyg123Player import MPyg123Player
-from mpyg321.consts import PlayerStatus
+from mpyg321.consts import PlayerStatus, MPyg321Events
 
 import mididings.constants as _constants
 from mididings.engine import (
@@ -31,7 +31,7 @@ Inspiré du clavier 'Lanceur de chanson' de l'émission Québecoise 'Tout le mon
 """
 
 
-class Mp3Player(MPyg123Player):
+class Mp3Player():
     def __init__(self, card = None):
         with open('./extensions/mp3.json') as json_file:
             config = json.load(json_file)
@@ -41,10 +41,10 @@ class Mp3Player(MPyg123Player):
 
         self.enable = True
 
-        super().__init__("mpg123", card if card else None, True)
+        self.wrapper = MPyg123Player("mpg123", card if card else None, True)
 
         # For mpg123 >= v1.3*.*
-        self.mpg_outs.append(
+        self.wrapper.mpg_outs.append(
             {
                 "mpg_code": "@P 3",
                 "action": "end_of_song",
@@ -55,6 +55,7 @@ class Mp3Player(MPyg123Player):
         self.controller = Transport(config["controller"])
         self.playlist = Playlist()
         self.autonext = False
+        self.is_muted = False
 
         # Show things in stdout
         self.terminal = Terminal()
@@ -85,7 +86,7 @@ class Mp3Player(MPyg123Player):
             47: self.forward,
             # Black keys
             42: self.prev_entry,
-            44: self.on_pause,
+            44: self.on_toggle_pause,
             46: self.next_entry,
         }
 
@@ -100,12 +101,36 @@ class Mp3Player(MPyg123Player):
         self.current_entry = 0
 
         self.vol = config["default_volume"]  # In %
-        self.volume(self.vol)
+        self.wrapper.volume(self.vol)
 
         self.current_scene = -1
         self.current_subscene = -1
 
-    # Invoker
+        # Events subscriptions
+        self.wrapper.subscribe_event(MPyg321Events.ERROR, self.handle_error)
+        self.wrapper.subscribe_event(MPyg321Events.USER_PAUSE, self.handle_pause)
+        self.wrapper.subscribe_event(MPyg321Events.ANY_STOP, self.handle_any_stop)
+        self.wrapper.subscribe_event(MPyg321Events.MUSIC_END, self.handle_music_end)
+
+    # Event handlers        
+    def handle_error(self, context):
+        # TODO Add logger
+        print(f"MP3: An error occurs : {context.error_type} / {context.error_message}")
+
+    def handle_any_stop(self, context):
+        if self.wrapper.status != PlayerStatus.PAUSED:
+            self.wrapper.status = PlayerStatus.STOPPED
+
+    def handle_pause(self, context):
+        pass
+    
+    def handle_music_end(self, context):
+        if self.autonext:
+            # Load next entry in playlist with a dummy MIDI event
+            ev = NoteOnEvent(self.controller.port, self.controller.channel, 0, 0)
+            self.next_entry(ev)
+
+    # call from mididings
     def __call__(self, ev):
         if self.enable:
             self.ctrl_range_mapping[ev.data1](
@@ -184,21 +209,31 @@ class Mp3Player(MPyg123Player):
         ):
             """The context has externally been changed"""
             """ Refresh the playlist according the current scene/subscene """
-            self.pause()
+            self.wrapper.pause()
             self.current_scene = current_scene()
             self.current_subscene = current_subscene()
             self.playlist.load_from_file()
         if ev.data1 > self.playlist.len():
             return
-        self.load_list(ev.data1, self.playlist.filename)
+        self.wrapper.load_list(ev.data1, self.playlist.filename)
         self.current_entry = ev.data1
         self.update_display()
 
-    def on_pause(self, ev):
-        if self.status == PlayerStatus.PLAYING:
-            self.pause()
-        elif self.status == PlayerStatus.PAUSED:
-            self.resume()
+    def on_toggle_pause(self, ev):
+        """Pause if playing, else resume if paused"""
+        if self.wrapper.status == PlayerStatus.PLAYING:
+            self.wrapper.pause()
+        elif self.wrapper.status == PlayerStatus.PAUSED:
+            self.wrapper.resume()
+
+    def on_toggle_mute(self, ev):
+        """Mute or UnMute if playing"""
+        if self.wrapper.status == PlayerStatus.PLAYING:
+            if self.is_muted:
+                self.wrapper.unmute()
+            else:
+                self.wrapper.mute()
+            self.is_muted = not self.is_muted
 
     def forward(self, ev):
         self.on_jump("+")
@@ -207,10 +242,8 @@ class Mp3Player(MPyg123Player):
         self.on_jump("-")
 
     def on_jump(self, direction):
-        if not self.status in [PlayerStatus.PLAYING, PlayerStatus.PAUSED]:
-            return
         value = "{}{} s".format(direction, self.jump_offset)
-        self.jump(value)
+        self.wrapper.jump(value)
 
     def next_entry(self, ev):
         if self.playlist.len() >= self.current_entry + 1:
@@ -226,7 +259,7 @@ class Mp3Player(MPyg123Player):
         if ev.data2 % 5 != 0:
             return
         self.vol = ev.data2
-        self.volume(self.vol)
+        self.wrapper.volume(self.vol)
         self.update_display()
 
     def set_offset(self, ev):
@@ -261,22 +294,7 @@ class Mp3Player(MPyg123Player):
 
     def on_replay(self, ev):
         if self.current_entry > 0:
-            self.load_list(self.current_entry, self.playlist.filename)
-
-    """
-    mpyg321 callbacks
-    """
-
-    def on_any_stop(self):
-        if self.status != PlayerStatus.PAUSED:
-            self.status = PlayerStatus.STOPPED
-
-    def on_music_end(self):
-        if self.autonext:
-            # Load next entry in playlist with a dummy MIDI event
-            ev = NoteOnEvent(self.controller.port, self.controller.channel, 0, 0)
-            self.next_entry(ev)
-
+            self.wrapper.load_list(self.current_entry, self.playlist.filename)
 
 class Playlist:
     def __init__(self):
