@@ -1,6 +1,6 @@
 {
     "enable": true,
-    "default_volume": 50,
+    "default_volume": 100,
     "default_jump": 10,
     "controller": {
         "size": 49,
