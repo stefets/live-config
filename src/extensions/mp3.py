@@ -81,8 +81,8 @@ class Mp3Player():
             40: self.next_scene,
             # White keys
             41: self.rewind,
-            43: self.enable_autonext,
-            45: self.disable_autonext,
+            43: self.toggle_autonext,
+            45: self.on_toggle_mute,
             47: self.forward,
             # Black keys
             42: self.prev_entry,
@@ -221,19 +221,11 @@ class Mp3Player():
 
     def on_toggle_pause(self, ev):
         """Pause if playing, else resume if paused"""
-        if self.wrapper.status == PlayerStatus.PLAYING:
-            self.wrapper.pause()
-        elif self.wrapper.status == PlayerStatus.PAUSED:
-            self.wrapper.resume()
+        self.wrapper.toggle_pause()
 
     def on_toggle_mute(self, ev):
         """Mute or UnMute if playing"""
-        if self.wrapper.status == PlayerStatus.PLAYING:
-            if self.is_muted:
-                self.wrapper.unmute()
-            else:
-                self.wrapper.mute()
-            self.is_muted = not self.is_muted
+        self.wrapper.toggle_mute()
 
     def forward(self, ev):
         self.on_jump("+")
