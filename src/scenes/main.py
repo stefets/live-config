@@ -2,7 +2,7 @@
 _scenes = {
     1: Scene("Initialize", init_patch = SD90_Initialize, patch = Discard()),
     2: SceneGroup("Rush", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Generic", init_patch = MPG123_PLAYLIST, patch = Discard()//p_rush),
             Scene("Subdivisions", init_patch = i_rush_sub//MPG123_PLAYLIST, patch = Discard()//p_rush),
             Scene("TheTrees", init_patch = i_rush_trees//MPG123_PLAYLIST, patch = Discard()//p_rush_trees),
@@ -18,11 +18,11 @@ _scenes = {
             Scene("CloserToTheHeart", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
         ]),
     3: SceneGroup("BassCover", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
-            Scene("Default", init_patch = MPG123_PLAYLIST//U01_A, patch = Discard()),
-            Scene("Queen", init_patch = MPG123_PLAYLIST//U01_A, patch = Discard()),
-            Scene("T4F", init_patch = MPG123_PLAYLIST//U01_A, patch = Discard()),
-            Scene("Toto", init_patch = MPG123_PLAYLIST//U01_A, patch = Discard()),
+            Scene("Select a Subscene", init_patch = U01_B, patch = Discard()),
+            Scene("Default", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("Queen", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("T4F", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("Toto", init_patch = MPG123_PLAYLIST, patch = Discard()),
         ]),
     4: SceneGroup("Recording", [
             Scene("Bass", init_patch = Discard(), patch = p_transport),
@@ -36,12 +36,12 @@ _scenes = {
             Scene("Wonderland", init_patch = p_wonderland_init, patch = p_wonderland),
         ]),
     6: SceneGroup("GrandDesignsStudio", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("PowerWindows", init_patch = MPG123_PLAYLIST, patch = p_rush_gd_demo),
             Scene("Futur", init_patch = Discard(), patch = p_transport),
         ]),
     7: SceneGroup("Keyboard", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
             Scene("Xtremities", Xtremities),
             Scene("BagPipe", BagPipe),
@@ -69,7 +69,7 @@ _scenes = {
     8: SceneGroup("Libre", [
         ]),
     9: SceneGroup("MP3Player", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Hits", init_patch = MPG123_PLAYLIST, patch = Discard()),
             Scene("Middleage", init_patch = MPG123_PLAYLIST, patch = Discard()),
             Scene("TV", init_patch = MPG123_PLAYLIST, patch = Discard()),
@@ -80,7 +80,7 @@ _scenes = {
             Scene("Colocs", init_patch = MPG123_PLAYLIST, patch = Discard()),
         ]),
     10: SceneGroup("Spotify", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Rush", patch = Discard(), init_patch = Call(setenv, "SPOTIFY_PLAYLIST", "0L1cHmn20fW7KL2DrJlFCL")),
             Scene("BigCountry", patch = Discard(), init_patch = Call(setenv, "SPOTIFY_PLAYLIST", "15d8HFEqWAkcwYpPsI6vgW")),
             Scene("PatMetheny",patch = Discard(),  init_patch = Call(setenv, "SPOTIFY_PLAYLIST", "6WkqCksGxIiCkuKWHMqiMA")),
@@ -90,7 +90,7 @@ _scenes = {
             Scene("Vola", patch = Discard(), init_patch = Call(setenv, "SPOTIFY_PLAYLIST","02v48VLu8jtnkeYlfl1Xrt")),
         ]),
     11: SceneGroup("HUE", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Studio.Normal", init_patch = HueNormal, patch = Discard()),
             Scene("Studio.Galaxie", init_patch = HueGalaxie, patch = Discard()),
             Scene("Studio.Demon", init_patch = HueDemon, patch = Discard()),
@@ -106,7 +106,7 @@ _scenes = {
     12: SceneGroup("Libre", [
         ]),
     13: SceneGroup("SD90-BANK", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Special1", init_patch = SP1, patch = Discard()),
             Scene("Special2", init_patch = SP2, patch = Discard()),
             Scene("Classical", init_patch = CLASIC, patch = Discard()),
@@ -115,7 +115,7 @@ _scenes = {
             Scene("Enhanced", init_patch = ENHANC, patch = Discard()),
         ]),
     14: SceneGroup("MUSE", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Assassin", init_patch = AfxOff // P01A, patch = p_muse),
             Scene("Hysteria", init_patch = AfxOff  // P01A, patch = p_muse),
             Scene("Cydonia",  init_patch = AfxOff// P01A, patch = p_muse),
@@ -153,16 +153,16 @@ _scenes = {
             Scene("Setlist", init_patch = MPG123_PLAYLIST//U01_A, patch = Discard()),
         ]),    
     16:  SceneGroup("Sampler", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Track1", init_patch = Discard(), patch = Discard()),
         ]),
     17:  SceneGroup("POC", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("INTERLUDE", patch = pk5 >> Filter(NOTEON) >> NoteOn(0, 0) >> VLC_PL, init_patch = Pass()),
 
         ]),
     18:  SceneGroup("VLC", [
-            Scene("Select", init_patch = Discard(), patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Stop", init_patch = VLC_STOP, patch = Discard()),
             Scene("Play", init_patch = VLC_PLAY, patch = Discard()),
             Scene("Pause", init_patch = VLC_PAUSE, patch = Discard()),
