@@ -1,6 +1,6 @@
 
 _scenes = {
-    1: Scene("Initialize", init_patch = SD90_Initialize, patch = Discard()),
+    1: Scene("Initialize All", init_patch = SD90_Initialize, patch = Discard()),
     2: SceneGroup("Rush", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Generic", init_patch = MPG123_PLAYLIST, patch = Discard()//p_rush),
@@ -42,6 +42,7 @@ _scenes = {
         ]),
     7: SceneGroup("Keyboard", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Init SD90", init_patch = SD90_Initialize, patch = Discard()),
             Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
             Scene("Xtremities", Xtremities),
             Scene("BagPipe", BagPipe),
@@ -105,8 +106,9 @@ _scenes = {
         ]),
     12: SceneGroup("Libre", [
         ]),
-    13: SceneGroup("SD90-BANK", [
+    13: SceneGroup("SD90", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Init SD90", init_patch = SD90_Initialize, patch = Discard()),
             Scene("Special1", init_patch = SP1, patch = Discard()),
             Scene("Special2", init_patch = SP2, patch = Discard()),
             Scene("Classical", init_patch = CLASIC, patch = Discard()),
@@ -122,46 +124,16 @@ _scenes = {
             Scene("Starlight", init_patch = AfxOff // P01A, patch = p_muse),
             Scene("Stockholm", init_patch = AfxOff // P01A, patch = [p_muse_stockholm, p_muse]),
         ]),
-    15: SceneGroup("Majestyx", [
-            Scene("Stop", init_patch = VLC_STOP, patch = Discard()),
-            Scene("Repeat-ON", init_patch =  VLC_REPEAT_ON, patch = Discard()),
-            Scene("Repeat-OFF", init_patch = VLC_REPEAT_OFF, patch = Discard()),
-            Scene("Interlude", init_patch = NoteOn(0, 0) >> VLC_PL, patch = Discard()),
-            Scene("01-Rockin Paradise", init_patch = Ctrl(1, 0) >> VLC_PL, patch = Discard()),
-            Scene("02-BlueCollarMan", init_patch = NoteOn(2, 0) >> VLC_PL, patch = Discard()),
-            Scene("03-Lorelei", init_patch = NoteOn(3, 0) >> VLC_PL, patch = Discard()),
-            Scene("04-Too Much Time", init_patch = NoteOn(4, 0) >> VLC_PL, patch = Discard()),
-            Scene("05-Snowblind", init_patch = NoteOn(5, 0) >> VLC_PL, patch = Discard()),
-            Scene("06-Come Sail Away", init_patch = NoteOn(6, 0) >> VLC_PL, patch = Discard()),
-            Scene("07-Queen Of Spades", init_patch = NoteOn(7, 0) >> VLC_PL, patch = Discard()),
-            Scene("08-Light Up", init_patch = NoteOn(8, 0) >> VLC_PL, patch = Discard()),
-            Scene("09-The Best of Time", init_patch = NoteOn(9, 0) >> VLC_PL, patch = Discard()),
-            Scene("10-Lady", init_patch = NoteOn(10, 0) >> VLC_PL, patch = Discard()),
-            Scene("11-Fooling Yourself", init_patch = NoteOn(11, 0) >> VLC_PL, patch = Discard()),
-            Scene("12-Roboto", init_patch = NoteOn(12, 0) >> VLC_PL, patch = Discard()),
-            Scene("13-Show Me The Way", init_patch = NoteOn(13, 0) >> VLC_PL, patch = Discard()),
-            Scene("14-Lights", init_patch = NoteOn(14, 0) >> VLC_PL, patch = Discard()),
-            Scene("15-Pieces Of Eight", init_patch = NoteOn(15, 0) >> VLC_PL, patch = Discard()),
-            Scene("16-I’m Ok", init_patch = NoteOn(16, 0) >> VLC_PL, patch = Discard()),
-            Scene("17-Miss America", init_patch = NoteOn(17, 0) >> VLC_PL, patch = Discard()),
-            Scene("18-Babe", init_patch = NoteOn(18, 0) >> VLC_PL, patch = Discard()),
-            Scene("19-Renegade", init_patch = NoteOn(19, 0) >> VLC_PL, patch = Discard()),
-            Scene("20-Crystal Ball", init_patch = NoteOn(20, 0) >> VLC_PL, patch = Discard()),
-            Scene("21-Grand Illusion", init_patch = NoteOn(21, 0) >> VLC_PL, patch = Discard()),
-            Scene("22-BoatOnThRiver", init_patch = NoteOn(22, 0) >> VLC_PL, patch = Discard()),
-            Scene("23-SuiteMadameBlue", init_patch = NoteOn(23, 0) >> VLC_PL, patch = Discard()),
-            Scene("Setlist", init_patch = MPG123_PLAYLIST//U01_A, patch = Discard()),
-        ]),    
-    16:  SceneGroup("Sampler", [
+    15:  SceneGroup("Sampler", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Track1", init_patch = Discard(), patch = Discard()),
         ]),
-    17:  SceneGroup("POC", [
+    16:  SceneGroup("POC", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("INTERLUDE", patch = pk5 >> Filter(NOTEON) >> NoteOn(0, 0) >> VLC_PL, init_patch = Pass()),
 
         ]),
-    18:  SceneGroup("VLC", [
+    17:  SceneGroup("VLC", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Stop", init_patch = VLC_STOP, patch = Discard()),
             Scene("Play", init_patch = VLC_PLAY, patch = Discard()),
@@ -170,5 +142,7 @@ _scenes = {
             Scene("Repeat-OFF", init_patch = VLC_REPEAT_OFF, patch = Pass ()),
             Scene("Toggle-Loop", init_patch = VLC_TOGGLE_LOOP, patch = Pass ()),
             Scene("Toggle-Repeat", init_patch = VLC_TOGGLE_REPEAT, patch = Pass ()),
+            Scene("Playlist item 1", init_patch = NoteOn(0, 0) >> VLC_PL, patch = Discard()),
+            Scene("Playlist item 2", init_patch = Ctrl(1, 0) >> VLC_PL, patch = Discard()),
         ]),        
 }
