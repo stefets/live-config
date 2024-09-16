@@ -237,12 +237,12 @@ InstLevel  = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,30,
 MicGtLevel = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,00,00,3f,f7", 10, 6)
 
 # SD-90 Bank Patch
-SP1 = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,50,00,7d,7f,f7")
-SP2 = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,51,00,7d,7e,f7")
-SOLO = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,62,00,7d,6d,f7")
-CLASIC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,60,00,7d,6f,f7")
-CONTEM = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,61,00,7d,6e,f7")
-ENHANC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,63,00,7d,6c,f7")
+SP1  =   SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,50,00,00,7c,f7")
+SP2  =   SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,51,00,00,7b,f7")
+CLASIC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,60,00,00,6c,f7")
+CONTEM = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,61,00,00,6b,f7")
+SOLO =   SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,62,00,00,6a,f7")
+ENHANC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,63,00,00,69,f7")
 
 SD90_Initialize = [
     Reset, 
