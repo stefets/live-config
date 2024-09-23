@@ -72,6 +72,8 @@ _scenes = {
             Scene("Play", init_patch = CakePlay, patch = Discard()),
             Scene("Stop", init_patch = CakeStop, patch = Discard()),
             Scene("Record", init_patch = CakeRecord, patch = Discard()),
+            Scene("Rewind", init_patch = CakeRewind, patch = Discard()),
+            Scene("Forward", init_patch = CakeForward, patch = Discard()),
         ]),
     9: SceneGroup("MP3Player", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
