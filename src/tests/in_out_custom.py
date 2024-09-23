@@ -59,8 +59,8 @@ config(
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
         (graviton,     '.*Graviton USB-MIDI MIDI 1.*',),
-        (virtual,      '.*VirMIDI 31-0.*',),
-        (rt_midi,      '.*RtMidi output.*',),
+        #(virtual,      '.*VirMIDI 31-0.*',),
+        #(rt_midi,      '.*RtMidi output.*',),
     ],
 
     in_ports = [
@@ -77,8 +77,8 @@ config(
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
         (graviton,     '.*Graviton USB-MIDI MIDI 1.*',),
-        (virtual,      '.*VirMIDI 31-0.*',),
-        (rt_midi,      '.*RtMidi output.*',),
+        #(virtual,      '.*VirMIDI 31-0.*',),
+        #(rt_midi,      '.*RtMidi output.*',),
     ],
 )
 
@@ -91,9 +91,13 @@ hook(
 _pre_patch  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
 _post_patch = Print('output',portnames='out')
 
+# TODO Not working fine
+EQ_Low = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,20,21,08,00,00,00,25,f7", 13, 6)
+
 run(
     control=Pass(),
-    scenes = {1:Pass()},
+    scenes = {1:Scene("Debug", init_patch=Pass(), patch=Pass())},
     pre=_pre_patch,
     post=_post_patch,
 )
+
