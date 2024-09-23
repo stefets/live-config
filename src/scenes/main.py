@@ -110,7 +110,10 @@ _scenes = {
             Scene("Chambre.Minimal", init_patch = HueChambreMaitre, patch = Discard()),
             Scene("AllOff", init_patch = HueAllOff, patch = Discard()),
         ]),
-    12: SceneGroup("Libre", [
+    12: SceneGroup("SoundcraftUI", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Record", init_patch = ui_rectoggle, patch = Discard()),
+        
         ]),
     13: SceneGroup("SD90", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),

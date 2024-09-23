@@ -38,17 +38,22 @@ def ui_right(ev):
 
 # Osc Soundcraft Bridge definition
 osb_port = 56420
-master_path = "/master"
 mix_path = "/mix"
-reverb_path = "/reverb"
-chorus_path = "/chorus"
-delay_path = "/delay"
-room_path = "/room"
 mute_path = "/mute"
-mute_reverb_path = "/reverb/mute"
+master_path = "/master"
+
+mute_room_path = "/room/mute"
 mute_delay_path = "/delay/mute"
 mute_chorus_path = "/chorus/mute"
-mute_room_path = "/room/mute"
+mute_reverb_path = "/reverb/mute"
+
+room_path = "/room"
+delay_path = "/delay"
+chorus_path = "/chorus"
+reverb_path = "/reverb"
+
+rectoggle_path= "/rectoggle"
+
 bass_path = "/bass"
 mid_path = "/mid"
 treble_path = "/treble"
@@ -88,7 +93,6 @@ room_stereo = [
         SendOSC(osb_port, room_path, ui_left,  cursor_value_converter, "i"),    
         SendOSC(osb_port, room_path, ui_right, cursor_value_converter, "i"),
     ]
-
 
 mute_mono = SendOSC(osb_port, mute_path, event_value_converter, mute_value_converter, "i")
 mute_stereo = [
@@ -212,6 +216,8 @@ ui_player_mix_eq = ChannelSplit({
             3:player_mid,
             4:player_treble,
         })
+
+ui_rectoggle = SendOSC(osb_port, rectoggle_path) 
 
 # Mididings SoundCraft UI control patch
 soundcraft_control=[Filter(NOTEON) >> 
