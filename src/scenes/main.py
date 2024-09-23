@@ -67,7 +67,11 @@ _scenes = {
             Scene("Drums", Amb_Room),
             Scene("NatureSound", akai_pad_nature),
         ]),
-    8: SceneGroup("Libre", [
+    8: SceneGroup("Cakewalk", [ 
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Play", init_patch = CakePlay, patch = Discard()),
+            Scene("Stop", init_patch = CakeStop, patch = Discard()),
+            Scene("Record", init_patch = CakeRecord, patch = Discard()),
         ]),
     9: SceneGroup("MP3Player", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
