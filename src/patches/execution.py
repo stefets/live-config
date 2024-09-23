@@ -404,7 +404,7 @@ p_transport = (pk5 >> [
             p_hue_live,
             Filter(NOTEON)  >> KeyFilter(notes=[60])    >> [CakePlay],
             Filter(NOTEON)  >> KeyFilter(notes=[62])    >> [CakeRecord],
-            Filter(NOTEOFF) >> KeyFilter(notes=[60,62]) >> [HueSsFullBlanc], 
+            Filter(NOTEOFF) >> KeyFilter(notes=[60,62]) >> [HueGalaxieMax], 
         ])
 
 # Interlude patch, between two songs

@@ -32,6 +32,7 @@ control_patch = PortSplit({
     midimix_midi : soundcraft_control,
     mpk_midi : ChannelSplit({
         4 : pk5_mp3_control,
+       15 : Pass(),     # FCB1010 to MPK249-Midi IN and MPK OUT to POD HD500 IN
     }),
     mpk_port_a : ChannelSplit({
          1 : mpk_soundcraft_control,
@@ -39,7 +40,7 @@ control_patch = PortSplit({
         11 : (Channel(16) >> CtrlMap(11, 7) >> GT10B_Volume),  # Akai MPK249 Expression pedal
         12 : mpk_vlc_control,
         13 : p_hue,
-        14 : spotify_control,
+        #14 : spotify_control,
         15 : hd500_control,
         16 : gt10b_control
     }),
