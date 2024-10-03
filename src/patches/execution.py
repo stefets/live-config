@@ -182,8 +182,10 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 # Band : Big Country ------------------------------------------
 
 # Song : In a big country
-i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,127) >> HD500_Expr2]
+# Init patch - set GT10B and HD500 bank
+i_big_country = [U01_A, P14A]
 
+# Execution patch
 p_big_country = (pk5 >> Filter(NOTEON) >>
          [
              (KeyFilter(notes=[65]) >> FS1),
