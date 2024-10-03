@@ -31,10 +31,10 @@ mpk_soundcraft_control=Filter(CTRL|NOTE) >> [
 fcb1010_control = [
     (CtrlFilter(1, 2, 51, 52, 53, 54, 69) >> CtrlPod),
     (CtrlFilter(20) >> CtrlValueSplit({
-          1: CakePlay,
-          2: CakeStop,
-          3: CakeRecord,
-          4: Discard(),
+          1: [CakePlay, HueGalaxie],
+          2: [CakeStop, HueNormal],
+          3: [CakeRecord, HueGalaxie],
+          4: [CakeRecord, HueGalaxieMax],
     }))
 ]
 
