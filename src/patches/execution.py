@@ -158,7 +158,6 @@ limelight =  Key('d#6') >> Output(sd90_port_a, channel=16, program=(Special1,12)
 # Init patch 
 i_centurion = [
         Call(Playlist()), 
-        P02A, Ctrl(3,127) >> HD500_Expr2
 ]
 
 # Execution patch
@@ -182,8 +181,8 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 # Band : Big Country ------------------------------------------
 
 # Song : In a big country
-# Init patch - set GT10B and HD500 bank
-i_big_country = [P14A]
+# Init patch - set HD500 to patch 14A
+i_big_country = [Program(53) >> HD500ProgramSelector]
 
 # Execution patch
 p_big_country = (pk5 >> Filter(NOTEON) >>
@@ -203,7 +202,7 @@ p_big_country = p_pk5ctrl_generic >> [
 ]
 
 # Song : In a big country - recording
-i_big_country_live = [P14C]
+i_big_country_live = []
 p_big_country_live = (pk5 >> Filter(NOTEON) >>
         [
             # Daw control
@@ -236,7 +235,7 @@ p_highland_scenery = (pk5 >> Filter(NOTEON) >>
 # Band : Octobre ------------------------------------------
 
 # Init patch (Intro)
-i_octobre = [P09A, FS1, FS3, FS4, Ctrl(3,127) >> HD500_Expr2]
+i_octobre = []
 
 # Execution patch
 p_octobre = (pk5 >> Filter(NOTEON) >>
@@ -254,7 +253,7 @@ p_octobre = (pk5 >> Filter(NOTEON) >>
 # Band : Rush ------------------------------------------
 
 # Default init patch
-i_rush = [P02A, Ctrl(3,100) >> HD500_Expr2]
+i_rush = [Program(5) >> HD500ProgramSelector, Ctrl(3,100) >> HD500_Expr2]
 
 # Default patch - tout en paralelle mais séparé par contexte
 p_rush = (pk5 >> Filter(NOTEON) >>
@@ -274,12 +273,12 @@ p_rush = (pk5 >> Filter(NOTEON) >>
 # Subdivisions
 
 # Init patch
-i_rush_sub=[P02A, FS3, Ctrl(3,100) >> HD500_Expr2]
+i_rush_sub=[Program(5) >> HD500ProgramSelector, FS3, Ctrl(3,100) >> HD500_Expr2]
 
 # Grand Designs
 
 # Init patch
-i_rush_gd = [P02A, FS1, FS3, Ctrl(3,127) >> HD500_Expr2] 
+i_rush_gd = [Program(5) >> HD500ProgramSelector, FS1, FS3, Ctrl(3,127) >> HD500_Expr2] 
 
 # Execution patch
 p_rush_gd = (pk5 >> 
@@ -338,7 +337,7 @@ p_rush_gd_demo = (ChannelFilter(16) >>
 # The Trees
 
 # Init patch
-i_rush_trees = [P02A, FS3, Ctrl(3,100) >> HD500_Expr2] 
+i_rush_trees = [Program(5) >> HD500ProgramSelector, FS3, Ctrl(3,100) >> HD500_Expr2] 
 
 # Foot keyboard output
 p_rush_trees_foot = Velocity(fixed=110) >> Output(sd90_port_a, channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})
@@ -392,7 +391,7 @@ p_rush = p_pk5ctrl_generic >> p_base
 
 p_wonderland_init = [
     Ctrl(mpk_port_a, 3, 2, 64) >> ui_standard_stereo_fx,
-    P14D
+    Program(56) >> HD500ProgramSelector
 ]
 p_wonderland = p_pk5ctrl_generic >> [
      p_base,
