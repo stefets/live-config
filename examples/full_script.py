@@ -55,6 +55,7 @@ mpk_port_a   = "mpk_port_a"
 mpk_port_b   = "mpk_port_b"
 mpk_midi     = "mpk_midi"
 mpk_remote   = "mpk_remote"
+graviton     = "graviton"
 
 config(
 
@@ -76,7 +77,7 @@ config(
         (mpk_port_b,   '.*MPK249 Port A.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-
+        (graviton,     '.*Graviton USB-MIDI MIDI 1.*',),
     ],
 
     in_ports = [
@@ -93,7 +94,7 @@ config(
         (mpk_port_b,   '.*MPK249 Port A.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-
+        (graviton,     '.*Graviton USB-MIDI MIDI 1.*',),
     ],
 
 )
@@ -438,12 +439,12 @@ InstLevel  = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,30,
 MicGtLevel = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,11,00,00,3f,f7", 10, 6)
 
 # SD-90 Bank Patch
-SP1 = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,50,00,7d,7f,f7")
-SP2 = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,51,00,7d,7e,f7")
-SOLO = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,62,00,7d,6d,f7")
-CLASIC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,60,00,7d,6f,f7")
-CONTEM = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,61,00,7d,6e,f7")
-ENHANC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,63,00,7d,6c,f7")
+SP1  =   SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,50,00,00,7c,f7")
+SP2  =   SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,51,00,00,7b,f7")
+CLASIC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,60,00,00,6c,f7")
+CONTEM = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,61,00,00,6b,f7")
+SOLO =   SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,62,00,00,6a,f7")
+ENHANC = SysEx(sd90_port_a, "f0,41,10,00,48,12,10,00,20,04,63,00,00,69,f7")
 
 SD90_Initialize = [
     Reset, 
@@ -459,532 +460,19 @@ SD90_Initialize = [
 # This device has 4 banks, each bank contains 100 programs 
 #
 
-# Midi channel defined in the GT10B itself
+# Internal Midi channel configured in the GT10B USB options
 GT10BChannel = 16
 
-# Banks
-GT10B_bank_0 = (Ctrl(gt10b_midi, GT10BChannel, 0, 0) // Ctrl(gt10b_midi, GT10BChannel, 32, 0))
-GT10B_bank_1 = (Ctrl(gt10b_midi, GT10BChannel, 0, 1) // Ctrl(gt10b_midi, GT10BChannel, 32, 0))
-GT10B_bank_2 = (Ctrl(gt10b_midi, GT10BChannel, 0, 2) // Ctrl(gt10b_midi, GT10BChannel, 32, 0))
-GT10B_bank_3 = (Ctrl(gt10b_midi, GT10BChannel, 0, 3) // Ctrl(gt10b_midi, GT10BChannel, 32, 0))
+GT10BankSelector = CtrlValueFilter(0, 3) >> [
+      Ctrl(gt10b_midi, GT10BChannel, EVENT_CTRL, EVENT_VALUE), 
+      Ctrl(gt10b_midi, GT10BChannel, 32, 0),
+]
+GT10Bank0 = Ctrl(0, 0) >> GT10BankSelector
+GT10Bank1 = Ctrl(0, 1) >> GT10BankSelector
+GT10Bank2 = Ctrl(0, 2) >> GT10BankSelector
+GT10Bank3 = Ctrl(0, 3) >> GT10BankSelector
 
-# Program (same for the 4 banks)
-GT10B_pgrm_1 = Program(gt10b_midi, channel=GT10BChannel, program=1)
-GT10B_pgrm_2 = Program(gt10b_midi, channel=GT10BChannel, program=2)
-GT10B_pgrm_3 = Program(gt10b_midi, channel=GT10BChannel, program=3)
-GT10B_pgrm_4 = Program(gt10b_midi, channel=GT10BChannel, program=4)
-GT10B_pgrm_5 = Program(gt10b_midi, channel=GT10BChannel, program=5)
-GT10B_pgrm_6 = Program(gt10b_midi, channel=GT10BChannel, program=6)
-GT10B_pgrm_7 = Program(gt10b_midi, channel=GT10BChannel, program=7)
-GT10B_pgrm_8 = Program(gt10b_midi, channel=GT10BChannel, program=8)
-GT10B_pgrm_9 = Program(gt10b_midi, channel=GT10BChannel, program=9)
-GT10B_pgrm_10 = Program(gt10b_midi, channel=GT10BChannel, program=10)
-GT10B_pgrm_11 = Program(gt10b_midi, channel=GT10BChannel, program=11)
-GT10B_pgrm_12 = Program(gt10b_midi, channel=GT10BChannel, program=12)
-GT10B_pgrm_13 = Program(gt10b_midi, channel=GT10BChannel, program=13)
-GT10B_pgrm_14 = Program(gt10b_midi, channel=GT10BChannel, program=14)
-GT10B_pgrm_15 = Program(gt10b_midi, channel=GT10BChannel, program=15)
-GT10B_pgrm_16 = Program(gt10b_midi, channel=GT10BChannel, program=16)
-GT10B_pgrm_17 = Program(gt10b_midi, channel=GT10BChannel, program=17)
-GT10B_pgrm_18 = Program(gt10b_midi, channel=GT10BChannel, program=18)
-GT10B_pgrm_19 = Program(gt10b_midi, channel=GT10BChannel, program=19)
-GT10B_pgrm_20 = Program(gt10b_midi, channel=GT10BChannel, program=20)
-GT10B_pgrm_21 = Program(gt10b_midi, channel=GT10BChannel, program=21)
-GT10B_pgrm_22 = Program(gt10b_midi, channel=GT10BChannel, program=22)
-GT10B_pgrm_23 = Program(gt10b_midi, channel=GT10BChannel, program=23)
-GT10B_pgrm_24 = Program(gt10b_midi, channel=GT10BChannel, program=24)
-GT10B_pgrm_25 = Program(gt10b_midi, channel=GT10BChannel, program=25)
-GT10B_pgrm_26 = Program(gt10b_midi, channel=GT10BChannel, program=26)
-GT10B_pgrm_27 = Program(gt10b_midi, channel=GT10BChannel, program=27)
-GT10B_pgrm_28 = Program(gt10b_midi, channel=GT10BChannel, program=28)
-GT10B_pgrm_29 = Program(gt10b_midi, channel=GT10BChannel, program=29)
-GT10B_pgrm_30 = Program(gt10b_midi, channel=GT10BChannel, program=30)
-GT10B_pgrm_31 = Program(gt10b_midi, channel=GT10BChannel, program=31)
-GT10B_pgrm_32 = Program(gt10b_midi, channel=GT10BChannel, program=32)
-GT10B_pgrm_33 = Program(gt10b_midi, channel=GT10BChannel, program=33)
-GT10B_pgrm_34 = Program(gt10b_midi, channel=GT10BChannel, program=34)
-GT10B_pgrm_35 = Program(gt10b_midi, channel=GT10BChannel, program=35)
-GT10B_pgrm_36 = Program(gt10b_midi, channel=GT10BChannel, program=36)
-GT10B_pgrm_37 = Program(gt10b_midi, channel=GT10BChannel, program=37)
-GT10B_pgrm_38 = Program(gt10b_midi, channel=GT10BChannel, program=38)
-GT10B_pgrm_39 = Program(gt10b_midi, channel=GT10BChannel, program=39)
-GT10B_pgrm_40 = Program(gt10b_midi, channel=GT10BChannel, program=40)
-GT10B_pgrm_41 = Program(gt10b_midi, channel=GT10BChannel, program=41)
-GT10B_pgrm_42 = Program(gt10b_midi, channel=GT10BChannel, program=42)
-GT10B_pgrm_43 = Program(gt10b_midi, channel=GT10BChannel, program=43)
-GT10B_pgrm_44 = Program(gt10b_midi, channel=GT10BChannel, program=44)
-GT10B_pgrm_45 = Program(gt10b_midi, channel=GT10BChannel, program=45)
-GT10B_pgrm_46 = Program(gt10b_midi, channel=GT10BChannel, program=46)
-GT10B_pgrm_47 = Program(gt10b_midi, channel=GT10BChannel, program=47)
-GT10B_pgrm_48 = Program(gt10b_midi, channel=GT10BChannel, program=48)
-GT10B_pgrm_49 = Program(gt10b_midi, channel=GT10BChannel, program=49)
-GT10B_pgrm_50 = Program(gt10b_midi, channel=GT10BChannel, program=50)
-GT10B_pgrm_51 = Program(gt10b_midi, channel=GT10BChannel, program=51)
-GT10B_pgrm_52 = Program(gt10b_midi, channel=GT10BChannel, program=52)
-GT10B_pgrm_53 = Program(gt10b_midi, channel=GT10BChannel, program=53)
-GT10B_pgrm_54 = Program(gt10b_midi, channel=GT10BChannel, program=54)
-GT10B_pgrm_55 = Program(gt10b_midi, channel=GT10BChannel, program=55)
-GT10B_pgrm_56 = Program(gt10b_midi, channel=GT10BChannel, program=56)
-GT10B_pgrm_57 = Program(gt10b_midi, channel=GT10BChannel, program=57)
-GT10B_pgrm_58 = Program(gt10b_midi, channel=GT10BChannel, program=58)
-GT10B_pgrm_59 = Program(gt10b_midi, channel=GT10BChannel, program=59)
-GT10B_pgrm_60 = Program(gt10b_midi, channel=GT10BChannel, program=60)
-GT10B_pgrm_61 = Program(gt10b_midi, channel=GT10BChannel, program=61)
-GT10B_pgrm_62 = Program(gt10b_midi, channel=GT10BChannel, program=62)
-GT10B_pgrm_63 = Program(gt10b_midi, channel=GT10BChannel, program=63)
-GT10B_pgrm_64 = Program(gt10b_midi, channel=GT10BChannel, program=64)
-GT10B_pgrm_65 = Program(gt10b_midi, channel=GT10BChannel, program=65)
-GT10B_pgrm_66 = Program(gt10b_midi, channel=GT10BChannel, program=66)
-GT10B_pgrm_67 = Program(gt10b_midi, channel=GT10BChannel, program=67)
-GT10B_pgrm_68 = Program(gt10b_midi, channel=GT10BChannel, program=68)
-GT10B_pgrm_69 = Program(gt10b_midi, channel=GT10BChannel, program=69)
-GT10B_pgrm_70 = Program(gt10b_midi, channel=GT10BChannel, program=70)
-GT10B_pgrm_71 = Program(gt10b_midi, channel=GT10BChannel, program=71)
-GT10B_pgrm_72 = Program(gt10b_midi, channel=GT10BChannel, program=72)
-GT10B_pgrm_73 = Program(gt10b_midi, channel=GT10BChannel, program=73)
-GT10B_pgrm_74 = Program(gt10b_midi, channel=GT10BChannel, program=74)
-GT10B_pgrm_75 = Program(gt10b_midi, channel=GT10BChannel, program=75)
-GT10B_pgrm_76 = Program(gt10b_midi, channel=GT10BChannel, program=76)
-GT10B_pgrm_77 = Program(gt10b_midi, channel=GT10BChannel, program=77)
-GT10B_pgrm_78 = Program(gt10b_midi, channel=GT10BChannel, program=78)
-GT10B_pgrm_79 = Program(gt10b_midi, channel=GT10BChannel, program=79)
-GT10B_pgrm_80 = Program(gt10b_midi, channel=GT10BChannel, program=80)
-GT10B_pgrm_81 = Program(gt10b_midi, channel=GT10BChannel, program=81)
-GT10B_pgrm_82 = Program(gt10b_midi, channel=GT10BChannel, program=82)
-GT10B_pgrm_83 = Program(gt10b_midi, channel=GT10BChannel, program=83)
-GT10B_pgrm_84 = Program(gt10b_midi, channel=GT10BChannel, program=84)
-GT10B_pgrm_85 = Program(gt10b_midi, channel=GT10BChannel, program=85)
-GT10B_pgrm_86 = Program(gt10b_midi, channel=GT10BChannel, program=86)
-GT10B_pgrm_87 = Program(gt10b_midi, channel=GT10BChannel, program=87)
-GT10B_pgrm_88 = Program(gt10b_midi, channel=GT10BChannel, program=88)
-GT10B_pgrm_89 = Program(gt10b_midi, channel=GT10BChannel, program=89)
-GT10B_pgrm_90 = Program(gt10b_midi, channel=GT10BChannel, program=90)
-GT10B_pgrm_91 = Program(gt10b_midi, channel=GT10BChannel, program=91)
-GT10B_pgrm_92 = Program(gt10b_midi, channel=GT10BChannel, program=92)
-GT10B_pgrm_93 = Program(gt10b_midi, channel=GT10BChannel, program=93)
-GT10B_pgrm_94 = Program(gt10b_midi, channel=GT10BChannel, program=94)
-GT10B_pgrm_95 = Program(gt10b_midi, channel=GT10BChannel, program=95)
-GT10B_pgrm_96 = Program(gt10b_midi, channel=GT10BChannel, program=96)
-GT10B_pgrm_97 = Program(gt10b_midi, channel=GT10BChannel, program=97)
-GT10B_pgrm_98 = Program(gt10b_midi, channel=GT10BChannel, program=98)
-GT10B_pgrm_99 = Program(gt10b_midi, channel=GT10BChannel, program=99)
-GT10B_pgrm_100 = Program(gt10b_midi, channel=GT10BChannel, program=100)
-
-# GT10B_bank 0
-#U01_A = [
-#       Ctrl(gt10b_midi, GT10BChannel,10, 127),
-#       Ctrl(gt10b_midi, GT10BChannel,10, 0),
-#       Ctrl(gt10b_midi, GT10BChannel,11, 127),
-#       Ctrl(gt10b_midi, GT10BChannel,11, 0),
-#       Ctrl(gt10b_midi, GT10BChannel,7, 127),
-#       ]
-
-#U01_A = (GT10B_bank_0 // GT10B_pgrm_1 // Ctrl(gt10b_midi, GT10BChannel, 7,127))
-U01_A = (GT10B_bank_0 // GT10B_pgrm_1)
-U01_B = (GT10B_bank_0 // GT10B_pgrm_2)
-U01_C = (GT10B_bank_0 // GT10B_pgrm_3)
-U01_D = (GT10B_bank_0 // GT10B_pgrm_4)
-U02_A = (GT10B_bank_0 // GT10B_pgrm_5)
-U02_B = (GT10B_bank_0 // GT10B_pgrm_6)
-U02_C = (GT10B_bank_0 // GT10B_pgrm_7)
-U02_D = (GT10B_bank_0 // GT10B_pgrm_8)
-U03_A = (GT10B_bank_0 // GT10B_pgrm_9)
-U03_B = (GT10B_bank_0 // GT10B_pgrm_10)
-U03_C = (GT10B_bank_0 // GT10B_pgrm_11)
-U03_D = (GT10B_bank_0 // GT10B_pgrm_12)
-U04_A = (GT10B_bank_0 // GT10B_pgrm_13)
-U04_B = (GT10B_bank_0 // GT10B_pgrm_14)
-U04_C = (GT10B_bank_0 // GT10B_pgrm_15)
-U04_D = (GT10B_bank_0 // GT10B_pgrm_16)
-U05_A = (GT10B_bank_0 // GT10B_pgrm_17)
-U05_B = (GT10B_bank_0 // GT10B_pgrm_18)
-U05_C = (GT10B_bank_0 // GT10B_pgrm_19)
-U05_D = (GT10B_bank_0 // GT10B_pgrm_20)
-U06_A = (GT10B_bank_0 // GT10B_pgrm_21)
-U06_B = (GT10B_bank_0 // GT10B_pgrm_22)
-U06_C = (GT10B_bank_0 // GT10B_pgrm_23)
-U06_D = (GT10B_bank_0 // GT10B_pgrm_24)
-U07_A = (GT10B_bank_0 // GT10B_pgrm_25)
-U07_B = (GT10B_bank_0 // GT10B_pgrm_26)
-U07_C = (GT10B_bank_0 // GT10B_pgrm_27)
-U07_D = (GT10B_bank_0 // GT10B_pgrm_28)
-U08_A = (GT10B_bank_0 // GT10B_pgrm_29)
-U08_B = (GT10B_bank_0 // GT10B_pgrm_30)
-U08_C = (GT10B_bank_0 // GT10B_pgrm_31)
-U08_D = (GT10B_bank_0 // GT10B_pgrm_32)
-U09_A = (GT10B_bank_0 // GT10B_pgrm_33)
-U09_B = (GT10B_bank_0 // GT10B_pgrm_34)
-U09_C = (GT10B_bank_0 // GT10B_pgrm_35)
-U09_D = (GT10B_bank_0 // GT10B_pgrm_36)
-U10_A = (GT10B_bank_0 // GT10B_pgrm_37)
-U10_B = (GT10B_bank_0 // GT10B_pgrm_38)
-U10_C = (GT10B_bank_0 // GT10B_pgrm_39)
-U10_D = (GT10B_bank_0 // GT10B_pgrm_40)
-U11_A = (GT10B_bank_0 // GT10B_pgrm_41)
-U11_B = (GT10B_bank_0 // GT10B_pgrm_42)
-U11_C = (GT10B_bank_0 // GT10B_pgrm_43)
-U11_D = (GT10B_bank_0 // GT10B_pgrm_44)
-U12_A = (GT10B_bank_0 // GT10B_pgrm_45)
-U12_B = (GT10B_bank_0 // GT10B_pgrm_46)
-U12_C = (GT10B_bank_0 // GT10B_pgrm_47)
-U12_D = (GT10B_bank_0 // GT10B_pgrm_48)
-U13_A = (GT10B_bank_0 // GT10B_pgrm_49)
-U13_B = (GT10B_bank_0 // GT10B_pgrm_50)
-U13_C = (GT10B_bank_0 // GT10B_pgrm_51)
-U13_D = (GT10B_bank_0 // GT10B_pgrm_52)
-U14_A = (GT10B_bank_0 // GT10B_pgrm_53)
-U14_B = (GT10B_bank_0 // GT10B_pgrm_54)
-U14_C = (GT10B_bank_0 // GT10B_pgrm_55)
-U14_D = (GT10B_bank_0 // GT10B_pgrm_56)
-U15_A = (GT10B_bank_0 // GT10B_pgrm_57)
-U15_B = (GT10B_bank_0 // GT10B_pgrm_58)
-U15_C = (GT10B_bank_0 // GT10B_pgrm_59)
-U15_D = (GT10B_bank_0 // GT10B_pgrm_60)
-U16_A = (GT10B_bank_0 // GT10B_pgrm_61)
-U16_B = (GT10B_bank_0 // GT10B_pgrm_62)
-U16_C = (GT10B_bank_0 // GT10B_pgrm_63)
-U16_D = (GT10B_bank_0 // GT10B_pgrm_64)
-U17_A = (GT10B_bank_0 // GT10B_pgrm_65)
-U17_B = (GT10B_bank_0 // GT10B_pgrm_66)
-U17_C = (GT10B_bank_0 // GT10B_pgrm_67)
-U17_D = (GT10B_bank_0 // GT10B_pgrm_68)
-U18_A = (GT10B_bank_0 // GT10B_pgrm_69)
-U18_B = (GT10B_bank_0 // GT10B_pgrm_70)
-U18_C = (GT10B_bank_0 // GT10B_pgrm_71)
-U18_D = (GT10B_bank_0 // GT10B_pgrm_72)
-U19_A = (GT10B_bank_0 // GT10B_pgrm_73)
-U19_B = (GT10B_bank_0 // GT10B_pgrm_74)
-U19_C = (GT10B_bank_0 // GT10B_pgrm_75)
-U19_D = (GT10B_bank_0 // GT10B_pgrm_76)
-U20_A = (GT10B_bank_0 // GT10B_pgrm_77)
-U20_B = (GT10B_bank_0 // GT10B_pgrm_78)
-U20_C = (GT10B_bank_0 // GT10B_pgrm_79)
-U20_D = (GT10B_bank_0 // GT10B_pgrm_80)
-U21_A = (GT10B_bank_0 // GT10B_pgrm_81)
-U21_B = (GT10B_bank_0 // GT10B_pgrm_82)
-U21_C = (GT10B_bank_0 // GT10B_pgrm_83)
-U21_D = (GT10B_bank_0 // GT10B_pgrm_84)
-U22_A = (GT10B_bank_0 // GT10B_pgrm_85)
-U22_B = (GT10B_bank_0 // GT10B_pgrm_86)
-U22_C = (GT10B_bank_0 // GT10B_pgrm_87)
-U22_D = (GT10B_bank_0 // GT10B_pgrm_88)
-U23_A = (GT10B_bank_0 // GT10B_pgrm_89)
-U23_B = (GT10B_bank_0 // GT10B_pgrm_90)
-U23_C = (GT10B_bank_0 // GT10B_pgrm_91)
-U23_D = (GT10B_bank_0 // GT10B_pgrm_92)
-U24_A = (GT10B_bank_0 // GT10B_pgrm_93)
-U24_B = (GT10B_bank_0 // GT10B_pgrm_94)
-U24_C = (GT10B_bank_0 // GT10B_pgrm_95)
-U24_D = (GT10B_bank_0 // GT10B_pgrm_96)
-U25_A = (GT10B_bank_0 // GT10B_pgrm_97)
-U25_B = (GT10B_bank_0 // GT10B_pgrm_98)
-U25_C = (GT10B_bank_0 // GT10B_pgrm_99)
-U25_D = (GT10B_bank_0 // GT10B_pgrm_100)
-
-# GT10B_bank 1
-U26_A = (GT10B_bank_1 // GT10B_pgrm_1)
-U26_B = (GT10B_bank_1 // GT10B_pgrm_2)
-U26_C = (GT10B_bank_1 // GT10B_pgrm_3)
-U26_D = (GT10B_bank_1 // GT10B_pgrm_4)
-U27_A = (GT10B_bank_1 // GT10B_pgrm_5)
-U27_B = (GT10B_bank_1 // GT10B_pgrm_6)
-U27_C = (GT10B_bank_1 // GT10B_pgrm_7)
-U27_D = (GT10B_bank_1 // GT10B_pgrm_8)
-U28_A = (GT10B_bank_1 // GT10B_pgrm_9)
-U28_B = (GT10B_bank_1 // GT10B_pgrm_10)
-U28_C = (GT10B_bank_1 // GT10B_pgrm_11)
-U28_D = (GT10B_bank_1 // GT10B_pgrm_12)
-U29_A = (GT10B_bank_1 // GT10B_pgrm_13)
-U29_B = (GT10B_bank_1 // GT10B_pgrm_14)
-U29_C = (GT10B_bank_1 // GT10B_pgrm_15)
-U29_D = (GT10B_bank_1 // GT10B_pgrm_16)
-U30_A = (GT10B_bank_1 // GT10B_pgrm_17)
-U30_B = (GT10B_bank_1 // GT10B_pgrm_18)
-U30_C = (GT10B_bank_1 // GT10B_pgrm_19)
-U30_D = (GT10B_bank_1 // GT10B_pgrm_20)
-U31_A = (GT10B_bank_1 // GT10B_pgrm_21)
-U31_B = (GT10B_bank_1 // GT10B_pgrm_22)
-U31_C = (GT10B_bank_1 // GT10B_pgrm_23)
-U31_D = (GT10B_bank_1 // GT10B_pgrm_24)
-U32_A = (GT10B_bank_1 // GT10B_pgrm_25)
-U32_B = (GT10B_bank_1 // GT10B_pgrm_26)
-U32_C = (GT10B_bank_1 // GT10B_pgrm_27)
-U32_D = (GT10B_bank_1 // GT10B_pgrm_28)
-U33_A = (GT10B_bank_1 // GT10B_pgrm_29)
-U33_B = (GT10B_bank_1 // GT10B_pgrm_30)
-U33_C = (GT10B_bank_1 // GT10B_pgrm_31)
-U33_D = (GT10B_bank_1 // GT10B_pgrm_32)
-U34_A = (GT10B_bank_1 // GT10B_pgrm_33)
-U34_B = (GT10B_bank_1 // GT10B_pgrm_34)
-U34_C = (GT10B_bank_1 // GT10B_pgrm_35)
-U34_D = (GT10B_bank_1 // GT10B_pgrm_36)
-U35_A = (GT10B_bank_1 // GT10B_pgrm_37)
-U35_B = (GT10B_bank_1 // GT10B_pgrm_38)
-U35_C = (GT10B_bank_1 // GT10B_pgrm_39)
-U35_D = (GT10B_bank_1 // GT10B_pgrm_40)
-U36_A = (GT10B_bank_1 // GT10B_pgrm_41)
-U36_B = (GT10B_bank_1 // GT10B_pgrm_42)
-U36_C = (GT10B_bank_1 // GT10B_pgrm_43)
-U36_D = (GT10B_bank_1 // GT10B_pgrm_44)
-U37_A = (GT10B_bank_1 // GT10B_pgrm_45)
-U37_B = (GT10B_bank_1 // GT10B_pgrm_46)
-U37_C = (GT10B_bank_1 // GT10B_pgrm_47)
-U37_D = (GT10B_bank_1 // GT10B_pgrm_48)
-U38_A = (GT10B_bank_1 // GT10B_pgrm_49)
-U38_B = (GT10B_bank_1 // GT10B_pgrm_50)
-U38_C = (GT10B_bank_1 // GT10B_pgrm_51)
-U38_D = (GT10B_bank_1 // GT10B_pgrm_52)
-U39_A = (GT10B_bank_1 // GT10B_pgrm_53)
-U39_B = (GT10B_bank_1 // GT10B_pgrm_54)
-U39_C = (GT10B_bank_1 // GT10B_pgrm_55)
-U39_D = (GT10B_bank_1 // GT10B_pgrm_56)
-U40_A = (GT10B_bank_1 // GT10B_pgrm_57)
-U40_B = (GT10B_bank_1 // GT10B_pgrm_58)
-U40_C = (GT10B_bank_1 // GT10B_pgrm_59)
-U40_D = (GT10B_bank_1 // GT10B_pgrm_60)
-U41_A = (GT10B_bank_1 // GT10B_pgrm_61)
-U41_B = (GT10B_bank_1 // GT10B_pgrm_62)
-U41_C = (GT10B_bank_1 // GT10B_pgrm_63)
-U41_D = (GT10B_bank_1 // GT10B_pgrm_64)
-U42_A = (GT10B_bank_1 // GT10B_pgrm_65)
-U42_B = (GT10B_bank_1 // GT10B_pgrm_66)
-U42_C = (GT10B_bank_1 // GT10B_pgrm_67)
-U42_D = (GT10B_bank_1 // GT10B_pgrm_68)
-U43_A = (GT10B_bank_1 // GT10B_pgrm_69)
-U43_B = (GT10B_bank_1 // GT10B_pgrm_70)
-U43_C = (GT10B_bank_1 // GT10B_pgrm_71)
-U43_D = (GT10B_bank_1 // GT10B_pgrm_72)
-U44_A = (GT10B_bank_1 // GT10B_pgrm_73)
-U44_B = (GT10B_bank_1 // GT10B_pgrm_74)
-U44_C = (GT10B_bank_1 // GT10B_pgrm_75)
-U44_D = (GT10B_bank_1 // GT10B_pgrm_76)
-U45_A = (GT10B_bank_1 // GT10B_pgrm_77)
-U45_B = (GT10B_bank_1 // GT10B_pgrm_78)
-U45_C = (GT10B_bank_1 // GT10B_pgrm_79)
-U45_D = (GT10B_bank_1 // GT10B_pgrm_80)
-U46_A = (GT10B_bank_1 // GT10B_pgrm_81)
-U46_B = (GT10B_bank_1 // GT10B_pgrm_82)
-U46_C = (GT10B_bank_1 // GT10B_pgrm_83)
-U46_D = (GT10B_bank_1 // GT10B_pgrm_84)
-U47_A = (GT10B_bank_1 // GT10B_pgrm_85)
-U47_B = (GT10B_bank_1 // GT10B_pgrm_86)
-U47_C = (GT10B_bank_1 // GT10B_pgrm_87)
-U47_D = (GT10B_bank_1 // GT10B_pgrm_88)
-U48_A = (GT10B_bank_1 // GT10B_pgrm_89)
-U48_B = (GT10B_bank_1 // GT10B_pgrm_90)
-U48_C = (GT10B_bank_1 // GT10B_pgrm_91)
-U48_D = (GT10B_bank_1 // GT10B_pgrm_92)
-U49_A = (GT10B_bank_1 // GT10B_pgrm_93)
-U49_B = (GT10B_bank_1 // GT10B_pgrm_94)
-U49_C = (GT10B_bank_1 // GT10B_pgrm_95)
-U49_D = (GT10B_bank_1 // GT10B_pgrm_96)
-U50_A = (GT10B_bank_1 // GT10B_pgrm_97)
-U50_B = (GT10B_bank_1 // GT10B_pgrm_98)
-U50_C = (GT10B_bank_1 // GT10B_pgrm_99)
-U50_D = (GT10B_bank_1 // GT10B_pgrm_100)
-
-# GT10B_bank 2
-P01_A = (GT10B_bank_2 // GT10B_pgrm_1)
-P01_B = (GT10B_bank_2 // GT10B_pgrm_2)
-P01_C = (GT10B_bank_2 // GT10B_pgrm_3)
-P01_D = (GT10B_bank_2 // GT10B_pgrm_4)
-P02_A = (GT10B_bank_2 // GT10B_pgrm_5)
-P02_B = (GT10B_bank_2 // GT10B_pgrm_6)
-P02_C = (GT10B_bank_2 // GT10B_pgrm_7)
-P02_D = (GT10B_bank_2 // GT10B_pgrm_8)
-P03_A = (GT10B_bank_2 // GT10B_pgrm_9)
-P03_B = (GT10B_bank_2 // GT10B_pgrm_10)
-P03_C = (GT10B_bank_2 // GT10B_pgrm_11)
-P03_D = (GT10B_bank_2 // GT10B_pgrm_12)
-P04_A = (GT10B_bank_2 // GT10B_pgrm_13)
-P04_B = (GT10B_bank_2 // GT10B_pgrm_14)
-P04_C = (GT10B_bank_2 // GT10B_pgrm_15)
-P04_D = (GT10B_bank_2 // GT10B_pgrm_16)
-P05_A = (GT10B_bank_2 // GT10B_pgrm_17)
-P05_B = (GT10B_bank_2 // GT10B_pgrm_18)
-P05_C = (GT10B_bank_2 // GT10B_pgrm_19)
-P05_D = (GT10B_bank_2 // GT10B_pgrm_20)
-P06_A = (GT10B_bank_2 // GT10B_pgrm_21)
-P06_B = (GT10B_bank_2 // GT10B_pgrm_22)
-P06_C = (GT10B_bank_2 // GT10B_pgrm_23)
-P06_D = (GT10B_bank_2 // GT10B_pgrm_24)
-P07_A = (GT10B_bank_2 // GT10B_pgrm_25)
-P07_B = (GT10B_bank_2 // GT10B_pgrm_26)
-P07_C = (GT10B_bank_2 // GT10B_pgrm_27)
-P07_D = (GT10B_bank_2 // GT10B_pgrm_28)
-P08_A = (GT10B_bank_2 // GT10B_pgrm_29)
-P08_B = (GT10B_bank_2 // GT10B_pgrm_30)
-P08_C = (GT10B_bank_2 // GT10B_pgrm_31)
-P08_D = (GT10B_bank_2 // GT10B_pgrm_32)
-P09_A = (GT10B_bank_2 // GT10B_pgrm_33)
-P09_B = (GT10B_bank_2 // GT10B_pgrm_34)
-P09_C = (GT10B_bank_2 // GT10B_pgrm_35)
-P09_D = (GT10B_bank_2 // GT10B_pgrm_36)
-P10_A = (GT10B_bank_2 // GT10B_pgrm_37)
-P10_B = (GT10B_bank_2 // GT10B_pgrm_38)
-P10_C = (GT10B_bank_2 // GT10B_pgrm_39)
-P10_D = (GT10B_bank_2 // GT10B_pgrm_40)
-P11_A = (GT10B_bank_2 // GT10B_pgrm_41)
-P11_B = (GT10B_bank_2 // GT10B_pgrm_42)
-P11_C = (GT10B_bank_2 // GT10B_pgrm_43)
-P11_D = (GT10B_bank_2 // GT10B_pgrm_44)
-P12_A = (GT10B_bank_2 // GT10B_pgrm_45)
-P12_B = (GT10B_bank_2 // GT10B_pgrm_46)
-P12_C = (GT10B_bank_2 // GT10B_pgrm_47)
-P12_D = (GT10B_bank_2 // GT10B_pgrm_48)
-P13_A = (GT10B_bank_2 // GT10B_pgrm_49)
-P13_B = (GT10B_bank_2 // GT10B_pgrm_50)
-P13_C = (GT10B_bank_2 // GT10B_pgrm_51)
-P13_D = (GT10B_bank_2 // GT10B_pgrm_52)
-P14_A = (GT10B_bank_2 // GT10B_pgrm_53)
-P14_B = (GT10B_bank_2 // GT10B_pgrm_54)
-P14_C = (GT10B_bank_2 // GT10B_pgrm_55)
-P14_D = (GT10B_bank_2 // GT10B_pgrm_56)
-P15_A = (GT10B_bank_2 // GT10B_pgrm_57)
-P15_B = (GT10B_bank_2 // GT10B_pgrm_58)
-P15_C = (GT10B_bank_2 // GT10B_pgrm_59)
-P15_D = (GT10B_bank_2 // GT10B_pgrm_60)
-P16_A = (GT10B_bank_2 // GT10B_pgrm_61)
-P16_B = (GT10B_bank_2 // GT10B_pgrm_62)
-P16_C = (GT10B_bank_2 // GT10B_pgrm_63)
-P16_D = (GT10B_bank_2 // GT10B_pgrm_64)
-P17_A = (GT10B_bank_2 // GT10B_pgrm_65)
-P17_B = (GT10B_bank_2 // GT10B_pgrm_66)
-P17_C = (GT10B_bank_2 // GT10B_pgrm_67)
-P17_D = (GT10B_bank_2 // GT10B_pgrm_68)
-P18_A = (GT10B_bank_2 // GT10B_pgrm_69)
-P18_B = (GT10B_bank_2 // GT10B_pgrm_70)
-P18_C = (GT10B_bank_2 // GT10B_pgrm_71)
-P18_D = (GT10B_bank_2 // GT10B_pgrm_72)
-P19_A = (GT10B_bank_2 // GT10B_pgrm_73)
-P19_B = (GT10B_bank_2 // GT10B_pgrm_74)
-P19_C = (GT10B_bank_2 // GT10B_pgrm_75)
-P19_D = (GT10B_bank_2 // GT10B_pgrm_76)
-P20_A = (GT10B_bank_2 // GT10B_pgrm_77)
-P20_B = (GT10B_bank_2 // GT10B_pgrm_78)
-P20_C = (GT10B_bank_2 // GT10B_pgrm_79)
-P20_D = (GT10B_bank_2 // GT10B_pgrm_80)
-P21_A = (GT10B_bank_2 // GT10B_pgrm_81)
-P21_B = (GT10B_bank_2 // GT10B_pgrm_82)
-P21_C = (GT10B_bank_2 // GT10B_pgrm_83)
-P21_D = (GT10B_bank_2 // GT10B_pgrm_84)
-P22_A = (GT10B_bank_2 // GT10B_pgrm_85)
-P22_B = (GT10B_bank_2 // GT10B_pgrm_86)
-P22_C = (GT10B_bank_2 // GT10B_pgrm_87)
-P22_D = (GT10B_bank_2 // GT10B_pgrm_88)
-P23_A = (GT10B_bank_2 // GT10B_pgrm_89)
-P23_B = (GT10B_bank_2 // GT10B_pgrm_90)
-P23_C = (GT10B_bank_2 // GT10B_pgrm_91)
-P23_D = (GT10B_bank_2 // GT10B_pgrm_92)
-P24_A = (GT10B_bank_2 // GT10B_pgrm_93)
-P24_B = (GT10B_bank_2 // GT10B_pgrm_94)
-P24_C = (GT10B_bank_2 // GT10B_pgrm_95)
-P24_D = (GT10B_bank_2 // GT10B_pgrm_96)
-P25_A = (GT10B_bank_2 // GT10B_pgrm_97)
-P25_B = (GT10B_bank_2 // GT10B_pgrm_98)
-P25_C = (GT10B_bank_2 // GT10B_pgrm_99)
-P25_D = (GT10B_bank_2 // GT10B_pgrm_100)
-# GT10B_bank 3
-P26_A = (GT10B_bank_3 // GT10B_pgrm_1)
-P26_B = (GT10B_bank_3 // GT10B_pgrm_2)
-P26_C = (GT10B_bank_3 // GT10B_pgrm_3)
-P26_D = (GT10B_bank_3 // GT10B_pgrm_4)
-P27_A = (GT10B_bank_3 // GT10B_pgrm_5)
-P27_B = (GT10B_bank_3 // GT10B_pgrm_6)
-P27_C = (GT10B_bank_3 // GT10B_pgrm_7)
-P27_D = (GT10B_bank_3 // GT10B_pgrm_8)
-P28_A = (GT10B_bank_3 // GT10B_pgrm_9)
-P28_B = (GT10B_bank_3 // GT10B_pgrm_10)
-P28_C = (GT10B_bank_3 // GT10B_pgrm_11)
-P28_D = (GT10B_bank_3 // GT10B_pgrm_12)
-P29_A = (GT10B_bank_3 // GT10B_pgrm_13)
-P29_B = (GT10B_bank_3 // GT10B_pgrm_14)
-P29_C = (GT10B_bank_3 // GT10B_pgrm_15)
-P29_D = (GT10B_bank_3 // GT10B_pgrm_16)
-P30_A = (GT10B_bank_3 // GT10B_pgrm_17)
-P30_B = (GT10B_bank_3 // GT10B_pgrm_18)
-P30_C = (GT10B_bank_3 // GT10B_pgrm_19)
-P30_D = (GT10B_bank_3 // GT10B_pgrm_20)
-P31_A = (GT10B_bank_3 // GT10B_pgrm_21)
-P31_B = (GT10B_bank_3 // GT10B_pgrm_22)
-P31_C = (GT10B_bank_3 // GT10B_pgrm_23)
-P31_D = (GT10B_bank_3 // GT10B_pgrm_24)
-P32_A = (GT10B_bank_3 // GT10B_pgrm_25)
-P32_B = (GT10B_bank_3 // GT10B_pgrm_26)
-P32_C = (GT10B_bank_3 // GT10B_pgrm_27)
-P32_D = (GT10B_bank_3 // GT10B_pgrm_28)
-P33_A = (GT10B_bank_3 // GT10B_pgrm_29)
-P33_B = (GT10B_bank_3 // GT10B_pgrm_30)
-P33_C = (GT10B_bank_3 // GT10B_pgrm_31)
-P33_D = (GT10B_bank_3 // GT10B_pgrm_32)
-P34_A = (GT10B_bank_3 // GT10B_pgrm_33)
-P34_B = (GT10B_bank_3 // GT10B_pgrm_34)
-P34_C = (GT10B_bank_3 // GT10B_pgrm_35)
-P34_D = (GT10B_bank_3 // GT10B_pgrm_36)
-P35_A = (GT10B_bank_3 // GT10B_pgrm_37)
-P35_B = (GT10B_bank_3 // GT10B_pgrm_38)
-P35_C = (GT10B_bank_3 // GT10B_pgrm_39)
-P35_D = (GT10B_bank_3 // GT10B_pgrm_40)
-P36_A = (GT10B_bank_3 // GT10B_pgrm_41)
-P36_B = (GT10B_bank_3 // GT10B_pgrm_42)
-P36_C = (GT10B_bank_3 // GT10B_pgrm_43)
-P36_D = (GT10B_bank_3 // GT10B_pgrm_44)
-P37_A = (GT10B_bank_3 // GT10B_pgrm_45)
-P37_B = (GT10B_bank_3 // GT10B_pgrm_46)
-P37_C = (GT10B_bank_3 // GT10B_pgrm_47)
-P37_D = (GT10B_bank_3 // GT10B_pgrm_48)
-P38_A = (GT10B_bank_3 // GT10B_pgrm_49)
-P38_B = (GT10B_bank_3 // GT10B_pgrm_50)
-P38_C = (GT10B_bank_3 // GT10B_pgrm_51)
-P38_D = (GT10B_bank_3 // GT10B_pgrm_52)
-P39_A = (GT10B_bank_3 // GT10B_pgrm_53)
-P39_B = (GT10B_bank_3 // GT10B_pgrm_54)
-P39_C = (GT10B_bank_3 // GT10B_pgrm_55)
-P39_D = (GT10B_bank_3 // GT10B_pgrm_56)
-P40_A = (GT10B_bank_3 // GT10B_pgrm_57)
-P40_B = (GT10B_bank_3 // GT10B_pgrm_58)
-P40_C = (GT10B_bank_3 // GT10B_pgrm_59)
-P40_D = (GT10B_bank_3 // GT10B_pgrm_60)
-P41_A = (GT10B_bank_3 // GT10B_pgrm_61)
-P41_B = (GT10B_bank_3 // GT10B_pgrm_62)
-P41_C = (GT10B_bank_3 // GT10B_pgrm_63)
-P41_D = (GT10B_bank_3 // GT10B_pgrm_64)
-P42_A = (GT10B_bank_3 // GT10B_pgrm_65)
-P42_B = (GT10B_bank_3 // GT10B_pgrm_66)
-P42_C = (GT10B_bank_3 // GT10B_pgrm_67)
-P42_D = (GT10B_bank_3 // GT10B_pgrm_68)
-P43_A = (GT10B_bank_3 // GT10B_pgrm_69)
-P43_B = (GT10B_bank_3 // GT10B_pgrm_70)
-P43_C = (GT10B_bank_3 // GT10B_pgrm_71)
-P43_D = (GT10B_bank_3 // GT10B_pgrm_72)
-P44_A = (GT10B_bank_3 // GT10B_pgrm_73)
-P44_B = (GT10B_bank_3 // GT10B_pgrm_74)
-P44_C = (GT10B_bank_3 // GT10B_pgrm_75)
-P44_D = (GT10B_bank_3 // GT10B_pgrm_76)
-P45_A = (GT10B_bank_3 // GT10B_pgrm_77)
-P45_B = (GT10B_bank_3 // GT10B_pgrm_78)
-P45_C = (GT10B_bank_3 // GT10B_pgrm_79)
-P45_D = (GT10B_bank_3 // GT10B_pgrm_80)
-P46_A = (GT10B_bank_3 // GT10B_pgrm_81)
-P46_B = (GT10B_bank_3 // GT10B_pgrm_82)
-P46_C = (GT10B_bank_3 // GT10B_pgrm_83)
-P46_D = (GT10B_bank_3 // GT10B_pgrm_84)
-P47_A = (GT10B_bank_3 // GT10B_pgrm_85)
-P47_B = (GT10B_bank_3 // GT10B_pgrm_86)
-P47_C = (GT10B_bank_3 // GT10B_pgrm_87)
-P47_D = (GT10B_bank_3 // GT10B_pgrm_88)
-P48_A = (GT10B_bank_3 // GT10B_pgrm_89)
-P48_B = (GT10B_bank_3 // GT10B_pgrm_90)
-P48_C = (GT10B_bank_3 // GT10B_pgrm_91)
-P48_D = (GT10B_bank_3 // GT10B_pgrm_92)
-P49_A = (GT10B_bank_3 // GT10B_pgrm_93)
-P49_B = (GT10B_bank_3 // GT10B_pgrm_94)
-P49_C = (GT10B_bank_3 // GT10B_pgrm_95)
-P49_D = (GT10B_bank_3 // GT10B_pgrm_96)
-P50_A = (GT10B_bank_3 // GT10B_pgrm_97)
-P50_B = (GT10B_bank_3 // GT10B_pgrm_98)
-P50_C = (GT10B_bank_3 // GT10B_pgrm_99)
-P50_D = (GT10B_bank_3 // GT10B_pgrm_100)
+GT10BProgramSelector = Program(gt10b_midi, channel = GT10BChannel, program = EVENT_VALUE)
 
 # Send CC
 GT10B_Ctrl =  Ctrl(gt10b_midi, GT10BChannel, EVENT_CTRL, EVENT_VALUE)
@@ -995,129 +483,67 @@ GT10B_Volume = GT10B_Ctrl
 GT10B_Expression = GT10B_Ctrl
 
 # Mididings control patch
-gt10b_control = (Filter(CTRL) >>
+gt10b_control = (Filter(CTRL) >> 
     CtrlSplit({
           4: GT10B_Tuner,
           7: GT10B_Volume,
+         20: GT10BProgramSelector
     }))
         
 #
 # The Line 6 POD-HD-500 definition patches for mididings
 #
 
-# Channel d'écoute
+# Listen channel
 hd500_channel = 15
 
 # Connecté a quel port MIDI ?
 hd500_port = mpk_midi
 
 # Programmes
-P01A = Program(hd500_port, channel=hd500_channel, program=1)
-P01B = Program(hd500_port, channel=hd500_channel, program=2)
-P01C = Program(hd500_port, channel=hd500_channel, program=3)
-P01D = Program(hd500_port, channel=hd500_channel, program=4)
-P02A = Program(hd500_port, channel=hd500_channel, program=5)
-P02B = Program(hd500_port, channel=hd500_channel, program=6)
-P02C = Program(hd500_port, channel=hd500_channel, program=7)
-P02D = Program(hd500_port, channel=hd500_channel, program=8)
-P03A = Program(hd500_port, channel=hd500_channel, program=9)
-P03B = Program(hd500_port, channel=hd500_channel, program=10)
-P03C = Program(hd500_port, channel=hd500_channel, program=11)
-P03D = Program(hd500_port, channel=hd500_channel, program=12)
-P04A = Program(hd500_port, channel=hd500_channel, program=13)
-P04B = Program(hd500_port, channel=hd500_channel, program=14)
-P04C = Program(hd500_port, channel=hd500_channel, program=15)
-P04D = Program(hd500_port, channel=hd500_channel, program=16)
-P05A = Program(hd500_port, channel=hd500_channel, program=17)
-P05B = Program(hd500_port, channel=hd500_channel, program=18)
-P05C = Program(hd500_port, channel=hd500_channel, program=19)
-P05D = Program(hd500_port, channel=hd500_channel, program=20)
-P06A = Program(hd500_port, channel=hd500_channel, program=21)
-P06B = Program(hd500_port, channel=hd500_channel, program=22)
-P06C = Program(hd500_port, channel=hd500_channel, program=23)
-P06D = Program(hd500_port, channel=hd500_channel, program=24)
-P07A = Program(hd500_port, channel=hd500_channel, program=25)
-P07B = Program(hd500_port, channel=hd500_channel, program=26)
-P07C = Program(hd500_port, channel=hd500_channel, program=27)
-P07D = Program(hd500_port, channel=hd500_channel, program=28)
-P08A = Program(hd500_port, channel=hd500_channel, program=29)
-P08B = Program(hd500_port, channel=hd500_channel, program=30)
-P08C = Program(hd500_port, channel=hd500_channel, program=31)
-P08D = Program(hd500_port, channel=hd500_channel, program=32)
-P09A = Program(hd500_port, channel=hd500_channel, program=33)
-P09B = Program(hd500_port, channel=hd500_channel, program=34)
-P09C = Program(hd500_port, channel=hd500_channel, program=35)
-P09D = Program(hd500_port, channel=hd500_channel, program=36)
-P10A = Program(hd500_port, channel=hd500_channel, program=37)
-P10B = Program(hd500_port, channel=hd500_channel, program=38)
-P10C = Program(hd500_port, channel=hd500_channel, program=39)
-P10D = Program(hd500_port, channel=hd500_channel, program=40)
-P11A = Program(hd500_port, channel=hd500_channel, program=41)
-P11B = Program(hd500_port, channel=hd500_channel, program=42)
-P11C = Program(hd500_port, channel=hd500_channel, program=43)
-P11D = Program(hd500_port, channel=hd500_channel, program=44)
-P12A = Program(hd500_port, channel=hd500_channel, program=45)
-P12B = Program(hd500_port, channel=hd500_channel, program=46)
-P12C = Program(hd500_port, channel=hd500_channel, program=47)
-P12D = Program(hd500_port, channel=hd500_channel, program=48)
-P13A = Program(hd500_port, channel=hd500_channel, program=49)
-P13B = Program(hd500_port, channel=hd500_channel, program=50)
-P13C = Program(hd500_port, channel=hd500_channel, program=51)
-P13D = Program(hd500_port, channel=hd500_channel, program=52)
-P14A = Program(hd500_port, channel=hd500_channel, program=53)
-P14B = Program(hd500_port, channel=hd500_channel, program=54)
-P14C = Program(hd500_port, channel=hd500_channel, program=55)
-P14D = Program(hd500_port, channel=hd500_channel, program=56)
-P15A = Program(hd500_port, channel=hd500_channel, program=57)
-P15B = Program(hd500_port, channel=hd500_channel, program=58)
-P15C = Program(hd500_port, channel=hd500_channel, program=59)
-P15D = Program(hd500_port, channel=hd500_channel, program=60)
-P16A = Program(hd500_port, channel=hd500_channel, program=61)
-P16B = Program(hd500_port, channel=hd500_channel, program=62)
-P16C = Program(hd500_port, channel=hd500_channel, program=63)
-P16D = Program(hd500_port, channel=hd500_channel, program=64)
+HD500ProgramSelector = Program(hd500_port, channel = hd500_channel, program = EVENT_VALUE)
 
 # Abstract patch (must be chained before by a Ctrl(c,v))
 # Example: 
 #       Ctrl(69, 127) >> CtrlPod will set the tuner on.
 # mean  Ctrl(hd500_port, hd500_channel, 69, 127)
-CtrlPod = Ctrl(hd500_port, hd500_channel, EVENT_CTRL, EVENT_VALUE)
+CtrlPodBase = Ctrl(hd500_port, hd500_channel, EVENT_CTRL, EVENT_VALUE)
 
-# Footsiwtch
-FS1 = Ctrl(hd500_port, hd500_channel, 51, 64)
-FS2 = Ctrl(hd500_port, hd500_channel, 52, 64)
-FS3 = Ctrl(hd500_port, hd500_channel, 53, 64)
-FS4 = Ctrl(hd500_port, hd500_channel, 54, 64)
-FS5 = Ctrl(hd500_port, hd500_channel, 55, 64)
-FS6 = Ctrl(hd500_port, hd500_channel, 56, 64)
-FS7 = Ctrl(hd500_port, hd500_channel, 57, 64)
-FS8 = Ctrl(hd500_port, hd500_channel, 58, 64)
-TOE = Ctrl(hd500_port, hd500_channel, 59, 64)
+# Footswitch
+FS1 = Ctrl(51, 64) >> CtrlPodBase
+FS2 = Ctrl(52, 64) >> CtrlPodBase
+FS3 = Ctrl(53, 64) >> CtrlPodBase
+FS4 = Ctrl(54, 64) >> CtrlPodBase
+FS5 = Ctrl(55, 64) >> CtrlPodBase
+FS6 = Ctrl(56, 64) >> CtrlPodBase
+FS7 = Ctrl(57, 64) >> CtrlPodBase
+FS8 = Ctrl(58, 64) >> CtrlPodBase
+TOE = Ctrl(59, 64) >> CtrlPodBase
 
 # Exp1 et Exp2
-HD500_Expr1 = Ctrl(hd500_port, hd500_channel, 1, EVENT_VALUE)
-HD500_Expr2 = Ctrl(hd500_port, hd500_channel, 2, EVENT_VALUE)
+HD500_Expr1 = Ctrl(1, EVENT_VALUE) >> CtrlPodBase
+HD500_Expr2 = Ctrl(2, EVENT_VALUE) >> CtrlPodBase
 
 # HD500_Tuner (shortcut)
-HD500_Tuner = CtrlPod
+HD500_Tuner = CtrlPodBase
 
 HD500_TunerOn  = Ctrl(hd500_port, hd500_channel, 69, 127)
 HD500_TunerOff = Ctrl(hd500_port, hd500_channel, 69, 0)
 
 # Looper
-HD500_Looper = CtrlFilter(60, 61, 62, 63, 65, 67, 68, 99) >> CtrlPod
+HD500_Looper = CtrlFilter(60, 61, 62, 63, 65, 67, 68, 99) >> CtrlPodBase
 
 # Tap
 # Expected EVENT_VALUE between 64 and 127
 HD500_Tap = Ctrl(hd500_port, hd500_channel, 64, EVENT_VALUE)
 
 # Mididings HD500 control patch
-
 hd500_control = (Filter(CTRL) >>
     CtrlSplit({
           1: HD500_Expr1,
           2: HD500_Expr2,
          69: HD500_Tuner,
+         20: HD500ProgramSelector
     }))
         
 '''
@@ -1159,17 +585,22 @@ def ui_right(ev):
 
 # Osc Soundcraft Bridge definition
 osb_port = 56420
-master_path = "/master"
 mix_path = "/mix"
-reverb_path = "/reverb"
-chorus_path = "/chorus"
-delay_path = "/delay"
-room_path = "/room"
 mute_path = "/mute"
-mute_reverb_path = "/reverb/mute"
+master_path = "/master"
+
+mute_room_path = "/room/mute"
 mute_delay_path = "/delay/mute"
 mute_chorus_path = "/chorus/mute"
-mute_room_path = "/room/mute"
+mute_reverb_path = "/reverb/mute"
+
+room_path = "/room"
+delay_path = "/delay"
+chorus_path = "/chorus"
+reverb_path = "/reverb"
+
+rectoggle_path= "/rectoggle"
+
 bass_path = "/bass"
 mid_path = "/mid"
 treble_path = "/treble"
@@ -1209,7 +640,6 @@ room_stereo = [
         SendOSC(osb_port, room_path, ui_left,  cursor_value_converter, "i"),    
         SendOSC(osb_port, room_path, ui_right, cursor_value_converter, "i"),
     ]
-
 
 mute_mono = SendOSC(osb_port, mute_path, event_value_converter, mute_value_converter, "i")
 mute_stereo = [
@@ -1334,6 +764,8 @@ ui_player_mix_eq = ChannelSplit({
             4:player_treble,
         })
 
+ui_rectoggle = SendOSC(osb_port, rectoggle_path) 
+
 # Mididings SoundCraft UI control patch
 soundcraft_control=[Filter(NOTEON) >> 
                     
@@ -1428,9 +860,39 @@ p_hue = Filter(NOTEON) >> [
 #
 # Cakewalk Generic Control Surface definition -----------------------------------------------
 #
-CakePlay=Ctrl(mpk_midi, 1, 118, 127)
-CakeStop=Ctrl(mpk_midi, 1, 119, 127)
-CakeRecord=Ctrl(mpk_midi, 1, 119, 127)
+
+# Setup controllers
+cw_rew  = 115
+cw_fwd  = 116
+cw_stop = 117
+cw_play = 118
+cw_rec  = 119
+
+# Allowed controllers
+ctrls = [cw_rec, cw_stop, cw_play, cw_rec, cw_fwd]
+
+# Trigger value
+cw_trigger_value = 127
+
+# Listen channel
+cw_channel = 1
+
+# Output port
+cw_port = sd90_midi_2
+
+# ---------------
+
+# Execution patches
+CakewalkController = CtrlFilter(ctrls) >> Ctrl(cw_port, cw_channel, EVENT_CTRL, cw_trigger_value) 
+
+# Direct DAW patch
+CakeStop   = Ctrl(cw_stop, EVENT_VALUE) >> CakewalkController
+CakePlay   = Ctrl(cw_play, EVENT_VALUE) >> CakewalkController
+CakeRecord = Ctrl(cw_rec,  EVENT_VALUE) >> CakewalkController
+
+# WIP
+CakeRewind = Ctrl(cw_rew, EVENT_VALUE) >> CakewalkController
+CakeForward= Ctrl(cw_fwd, EVENT_VALUE) >> CakewalkController
 
         
 # -----------------------------------------------------------------------------------------------
@@ -1592,7 +1054,6 @@ limelight =  Key('d#6') >> Output(sd90_port_a, channel=16, program=(Special1,12)
 # Init patch 
 i_centurion = [
         Call(Playlist()), 
-        P02A, Ctrl(3,127) >> HD500_Expr2
 ]
 
 # Execution patch
@@ -1616,8 +1077,10 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 # Band : Big Country ------------------------------------------
 
 # Song : In a big country
-i_big_country = [U01_A, P14A, FS1, FS3, Ctrl(3,127) >> HD500_Expr2]
+# Init patch - set HD500 to patch 14A
+i_big_country = [Program(53) >> HD500ProgramSelector]
 
+# Execution patch
 p_big_country = (pk5 >> Filter(NOTEON) >>
          [
              (KeyFilter(notes=[65]) >> FS1),
@@ -1635,7 +1098,7 @@ p_big_country = p_pk5ctrl_generic >> [
 ]
 
 # Song : In a big country - recording
-i_big_country_live = [P14C]
+i_big_country_live = []
 p_big_country_live = (pk5 >> Filter(NOTEON) >>
         [
             # Daw control
@@ -1668,7 +1131,7 @@ p_highland_scenery = (pk5 >> Filter(NOTEON) >>
 # Band : Octobre ------------------------------------------
 
 # Init patch (Intro)
-i_octobre = [P09A, FS1, FS3, FS4, Ctrl(3,127) >> HD500_Expr2]
+i_octobre = []
 
 # Execution patch
 p_octobre = (pk5 >> Filter(NOTEON) >>
@@ -1686,7 +1149,7 @@ p_octobre = (pk5 >> Filter(NOTEON) >>
 # Band : Rush ------------------------------------------
 
 # Default init patch
-i_rush = [P02A, Ctrl(3,100) >> HD500_Expr2]
+i_rush = [Program(5) >> HD500ProgramSelector, Ctrl(3,100) >> HD500_Expr2]
 
 # Default patch - tout en paralelle mais séparé par contexte
 p_rush = (pk5 >> Filter(NOTEON) >>
@@ -1706,12 +1169,12 @@ p_rush = (pk5 >> Filter(NOTEON) >>
 # Subdivisions
 
 # Init patch
-i_rush_sub=[P02A, FS3, Ctrl(3,100) >> HD500_Expr2]
+i_rush_sub=[Program(5) >> HD500ProgramSelector, FS3, Ctrl(3,100) >> HD500_Expr2]
 
 # Grand Designs
 
 # Init patch
-i_rush_gd = [P02A, FS1, FS3, Ctrl(3,127) >> HD500_Expr2] 
+i_rush_gd = [Program(5) >> HD500ProgramSelector, FS1, FS3, Ctrl(3,127) >> HD500_Expr2] 
 
 # Execution patch
 p_rush_gd = (pk5 >> 
@@ -1770,7 +1233,7 @@ p_rush_gd_demo = (ChannelFilter(16) >>
 # The Trees
 
 # Init patch
-i_rush_trees = [P02A, FS3, Ctrl(3,100) >> HD500_Expr2] 
+i_rush_trees = [Program(5) >> HD500ProgramSelector, FS3, Ctrl(3,100) >> HD500_Expr2] 
 
 # Foot keyboard output
 p_rush_trees_foot = Velocity(fixed=110) >> Output(sd90_port_a, channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})
@@ -1824,11 +1287,11 @@ p_rush = p_pk5ctrl_generic >> p_base
 
 p_wonderland_init = [
     Ctrl(mpk_port_a, 3, 2, 64) >> ui_standard_stereo_fx,
-    U01_B, 
-    P14B
+    Program(56) >> HD500ProgramSelector
 ]
 p_wonderland = p_pk5ctrl_generic >> [
      p_base,
+     KeyFilter(72) >> NoteOn(9, 127) >> Port(midimix_midi) >> soundcraft_control,
 ]
 
 # ---
@@ -1837,7 +1300,7 @@ p_transport = (pk5 >> [
             p_hue_live,
             Filter(NOTEON)  >> KeyFilter(notes=[60])    >> [CakePlay],
             Filter(NOTEON)  >> KeyFilter(notes=[62])    >> [CakeRecord],
-            Filter(NOTEOFF) >> KeyFilter(notes=[60,62]) >> [HueSsFullBlanc], 
+            Filter(NOTEOFF) >> KeyFilter(notes=[60,62]) >> [HueGalaxieMax], 
         ])
 
 # Interlude patch, between two songs
@@ -1852,11 +1315,24 @@ Patches to control somes /extensions/ modules
 Those modules are callable objects (__call__)
 '''
 
-# VLC player - a singleton is enough
-VLC = Call(VlcPlayer())
+# VLC player - Singleton
+VLC_BASE = Filter(NOTEON) >> Call(VlcPlayer())
+
+# Playlist
+VLC_PL   = NoteOn(EVENT_DATA1, 0) >> VLC_BASE
+
+# Commands
+VLC_STOP  = NoteOn(37, 0) >> VLC_BASE
+VLC_PLAY  = NoteOn(39, 0) >> VLC_BASE
+VLC_PAUSE = NoteOn(44, 0) >> VLC_BASE
+VLC_REPEAT_ON     = NoteOn(43, 0)  >> VLC_BASE
+VLC_REPEAT_OFF    = NoteOn(45, 0)  >> VLC_BASE
+VLC_TOGGLE_LOOP   = NoteOn(127, 0) >> VLC_BASE
+VLC_TOGGLE_REPEAT = NoteOn(126, 0) >> VLC_BASE
 
 # MPG123 multiple instances allow me to play sounds in parallal (dmix)
-MPG123_GT10B  = Call(Mp3Player("GT10B"))
+#MPG123_GT10B  = Call(Mp3Player("GT10B"))
+MPG123_U192k  = Call(Mp3Player("U192k"))
 MPG123_SD90_A = Call(Mp3Player("SD90"))
 MPG123_SD90_B = Call(Mp3Player("SD90"))
 # Playlist according to current scene, a singleton is enough
@@ -1867,7 +1343,7 @@ MPG123_PLAYLIST = Call(Playlist())
 # Patches for the run().control patch
 #
 
-# Transport filter Filter for mp3 and spotify
+# Transport filter Filter for MPG123 and Spotipy and VLC
 jump_filter    = CtrlFilter(1)  >> CtrlValueFilter(0, 121)
 volume_filter  = CtrlFilter(7)  >> CtrlValueFilter(0, 101)
 trigger_filter = Filter(NOTEON) >> Transpose(-36)
@@ -1875,7 +1351,9 @@ transport_filter = [jump_filter, volume_filter, trigger_filter]
 
 key_mp3_control = transport_filter >> MPG123_SD90_A
 pk5_mp3_control = transport_filter >> MPG123_SD90_B
-mpk_vlc_control = Filter(NOTEON) >> VLC
+q49_mp3_control = transport_filter >> MPG123_U192k
+mpk_vlc_control = trigger_filter >> VLC_BASE
+q49_vlc_control = trigger_filter >> VLC_BASE
 
 # Spotify
 spotify_control = [
@@ -1889,14 +1367,23 @@ mpk_soundcraft_control=Filter(CTRL|NOTE) >> [
         Filter(NOTE) >> NoteOn(EVENT_NOTE, 127) >> Port(midimix_midi),
     ] >> soundcraft_control
 
-pk5_soundcraft_control=Filter(NOTEON) >> KeyFilter(72) >> NoteOn(9, 127) >> Port(midimix_midi) >> soundcraft_control
+# FCB1010 to MPK249-Midi IN and MPK OUT to POD HD500 IN
+fcb1010_control = [
+    (CtrlFilter(1, 2, 51, 52, 53, 54, 69) >> CtrlPodBase),
+    (CtrlFilter(20) >> CtrlValueSplit({
+          1: [CakePlay, HueGalaxie],
+          2: [CakeStop, HueNormal],
+          3: [CakeRecord, HueGalaxie],
+          4: [CakeRecord, HueGalaxieMax],
+    }))
+]
 
 # Midi input control patch
 control_patch = PortSplit({
     midimix_midi : soundcraft_control,
     mpk_midi : ChannelSplit({
         4 : pk5_mp3_control,
-        #3 : pk5_soundcraft_control,
+        15 : fcb1010_control
     }),
     mpk_port_a : ChannelSplit({
          1 : mpk_soundcraft_control,
@@ -1904,16 +1391,17 @@ control_patch = PortSplit({
         11 : (Channel(16) >> CtrlMap(11, 7) >> GT10B_Volume),  # Akai MPK249 Expression pedal
         12 : mpk_vlc_control,
         13 : p_hue,
-        14 : spotify_control,
+        #14 : spotify_control,
         15 : hd500_control,
         16 : gt10b_control
     }),
     mpk_port_b : ChannelSplit({
+         1 : CakewalkController,                # patches/cakewalk.py
          4 : pk5_mp3_control,
         11 : HD500_Expr1,             # Akai MPK249 Expression pedal
     }),
     q49_midi : ChannelSplit({
-         1 : Pass(),
+         1 : q49_mp3_control,
     }),
     sd90_midi_1 : Pass(),
     sd90_midi_2 : Pass(),
@@ -1922,55 +1410,51 @@ control_patch = PortSplit({
 
 
 # Scenes
+    
 _scenes = {
-        1: Scene("Initialize", init_patch=SD90_Initialize, patch=Discard()),
-    2: SceneGroup("RUSH",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Generic", init_patch=MPG123_PLAYLIST, patch=Discard()//p_rush),
-            Scene("Subdivisions", init_patch=i_rush_sub//MPG123_PLAYLIST, patch=Discard()//p_rush),
-            Scene("TheTrees", init_patch=i_rush_trees//MPG123_PLAYLIST, patch=Discard()//p_rush_trees),
-            Scene("Grand Designs", init_patch=i_rush_gd, patch=Discard()//p_rush_gd),
-            Scene("Marathon", init_patch=i_rush, patch=Discard()),
-            Scene("YYZ", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
-            Scene("Limelight", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
-            Scene("FlyByNight", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
-            Scene("RedBarchetta", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
-            Scene("Freewill", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
-            Scene("SpritOfRadio", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
-            Scene("TomSawyer", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
-            Scene("CloserToTheHeart", init_patch=i_rush//MPG123_PLAYLIST, patch=p_rush),
+    1: Scene("Initialize All", init_patch = SD90_Initialize, patch = Discard()),
+    2: SceneGroup("Rush", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Generic", init_patch = MPG123_PLAYLIST, patch = Discard()//p_rush),
+            Scene("Subdivisions", init_patch = i_rush_sub//MPG123_PLAYLIST, patch = Discard()//p_rush),
+            Scene("TheTrees", init_patch = i_rush_trees//MPG123_PLAYLIST, patch = Discard()//p_rush_trees),
+            Scene("Grand Designs", init_patch = i_rush_gd, patch = Discard()//p_rush_gd),
+            Scene("Marathon", init_patch = i_rush, patch = Discard()),
+            Scene("YYZ", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
+            Scene("Limelight", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
+            Scene("FlyByNight", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
+            Scene("RedBarchetta", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
+            Scene("Freewill", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
+            Scene("SpritOfRadio", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
+            Scene("TomSawyer", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
+            Scene("CloserToTheHeart", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
         ]),
-    3: SceneGroup("BassCover",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Default", init_patch=MPG123_PLAYLIST//U01_A, patch=Discard()),
-            Scene("Queen", init_patch=MPG123_PLAYLIST//U01_A, patch=Discard()),
-            Scene("T4F", init_patch=MPG123_PLAYLIST//U01_A, patch=Discard()),
-            Scene("Toto", init_patch=MPG123_PLAYLIST//U01_A, patch=Discard()),
+    3: SceneGroup("BassCover", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Default", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("Queen", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("T4F", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("Toto", init_patch = MPG123_PLAYLIST, patch = Discard()),
         ]),
-    4: SceneGroup("Recording",
-        [
-            Scene("Bass", init_patch=Discard(), patch=p_transport),
+    4: SceneGroup("Recording", [
+            Scene("Bass", init_patch = Discard(), patch = p_transport),
         ]),
-    5: SceneGroup("BigCountry",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("InBigCountry", init_patch=i_big_country, patch=p_big_country),
-            Scene("HighlandScenery", init_patch=U01_B // P14B, patch=p_highland_scenery),
-            Scene("Inwards", init_patch=U01_B // P14B, patch=p_pk5ctrl_generic>>p_base),
-            Scene("AnglePark", init_patch=U01_B // P14B, patch=p_pk5ctrl_generic>>p_base),
-            Scene("Wonderland", init_patch=p_wonderland_init, patch=p_wonderland),
+    5: SceneGroup("BigCountry", [
+            Scene("BassCover", init_patch = MPG123_PLAYLIST//Discard(), patch = Discard()),
+            Scene("InBigCountry", init_patch = i_big_country, patch = p_big_country),
+            Scene("HighlandScenery", init_patch = Discard(), patch = p_highland_scenery),
+            Scene("Inwards", init_patch = Discard(), patch = p_pk5ctrl_generic>>p_base),
+            Scene("AnglePark", init_patch = Discard(), patch = p_pk5ctrl_generic>>p_base),
+            Scene("Wonderland", init_patch = p_wonderland_init, patch = p_wonderland),
         ]),
-    6: SceneGroup("GrandDesignsStudio",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("PowerWindows", init_patch=MPG123_PLAYLIST, patch=p_rush_gd_demo),
-            Scene("Futur", init_patch=Discard(), patch=p_transport),
+    6: SceneGroup("GrandDesignsStudio", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("PowerWindows", init_patch = MPG123_PLAYLIST, patch = p_rush_gd_demo),
+            Scene("Futur", init_patch = Discard(), patch = p_transport),
         ]),
-    7: SceneGroup("Keyboard",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
+    7: SceneGroup("Keyboard", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Init SD90", init_patch = SD90_Initialize, patch = Discard()),
             Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
             Scene("Xtremities", Xtremities),
             Scene("BagPipe", BagPipe),
@@ -1995,112 +1479,108 @@ _scenes = {
             Scene("Drums", Amb_Room),
             Scene("NatureSound", akai_pad_nature),
         ]),
-    8: SceneGroup("Majestyx",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Setlist", init_patch=MPG123_PLAYLIST//U01_A, patch=Discard()),
+    8: SceneGroup("Cakewalk", [ 
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Play", init_patch = CakePlay, patch = Discard()),
+            Scene("Stop", init_patch = CakeStop, patch = Discard()),
+            Scene("Record", init_patch = CakeRecord, patch = Discard()),
+            Scene("Rewind", init_patch = CakeRewind, patch = Discard()),
+            Scene("Forward", init_patch = CakeForward, patch = Discard()),
         ]),
-    9: SceneGroup("MP3Player",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Hits", init_patch=MPG123_PLAYLIST, patch=Discard()),
-            Scene("Middleage", init_patch=MPG123_PLAYLIST, patch=Discard()),
-            Scene("TV", init_patch=MPG123_PLAYLIST, patch=Discard()),
-            Scene("NinaHagen", init_patch=MPG123_PLAYLIST, patch=Discard()),            
-            Scene("PowerWindows", init_patch=MPG123_PLAYLIST, patch=Discard()),
-            Scene("GraceUnderPressure", init_patch=MPG123_PLAYLIST, patch=Discard()),
-            Scene("SteveMorse", init_patch=MPG123_PLAYLIST, patch=Discard()),
+    9: SceneGroup("MP3Player", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Hits", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("Middleage", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("TV", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("NinaHagen", init_patch = MPG123_PLAYLIST, patch = Discard()),            
+            Scene("PowerWindows", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("GraceUnderPressure", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("SteveMorse", init_patch = MPG123_PLAYLIST, patch = Discard()),
+            Scene("Colocs", init_patch = MPG123_PLAYLIST, patch = Discard()),
         ]),
-    10: SceneGroup("Spotify", 
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Rush", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "0L1cHmn20fW7KL2DrJlFCL")),
-            Scene("BigCountry", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "15d8HFEqWAkcwYpPsI6vgW")),
-            Scene("PatMetheny",patch=Discard(),  init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "6WkqCksGxIiCkuKWHMqiMA")),
-            Scene("Medieval", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST", "3zkrx4OGDerC4vYoKWZ7d7")),
-            Scene("LilyBurns", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","2rKQYsL2f5iONT7tlAsOuc")),
-            Scene("MichelCusson", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","4kqcWUHZTtfX8rZeILjhdo")),
-            Scene("Vola", patch=Discard(), init_patch=Call(setenv, "SPOTIFY_PLAYLIST","02v48VLu8jtnkeYlfl1Xrt")),
+    10: SceneGroup("Spotify", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Rush", patch = Discard(), init_patch = Call(setenv, "SPOTIFY_PLAYLIST", "0L1cHmn20fW7KL2DrJlFCL")),
+            Scene("BigCountry", patch = Discard(), init_patch = Call(setenv, "SPOTIFY_PLAYLIST", "15d8HFEqWAkcwYpPsI6vgW")),
+            Scene("PatMetheny",patch = Discard(),  init_patch = Call(setenv, "SPOTIFY_PLAYLIST", "6WkqCksGxIiCkuKWHMqiMA")),
+            Scene("Medieval", patch = Discard(), init_patch = Call(setenv, "SPOTIFY_PLAYLIST", "3zkrx4OGDerC4vYoKWZ7d7")),
+            Scene("LilyBurns", patch = Discard(), init_patch = Call(setenv, "SPOTIFY_PLAYLIST","2rKQYsL2f5iONT7tlAsOuc")),
+            Scene("MichelCusson", patch = Discard(), init_patch = Call(setenv, "SPOTIFY_PLAYLIST","4kqcWUHZTtfX8rZeILjhdo")),
+            Scene("Vola", patch = Discard(), init_patch = Call(setenv, "SPOTIFY_PLAYLIST","02v48VLu8jtnkeYlfl1Xrt")),
         ]),
-    11: SceneGroup("HUE",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Studio.Normal", init_patch=HueNormal, patch=Discard()),
-            Scene("Studio.Galaxie", init_patch=HueGalaxie, patch=Discard()),
-            Scene("Studio.Demon", init_patch=HueDemon, patch=Discard()),
-            Scene("Studio.SoloRed", init_patch=HueSoloRed, patch=Discard()),
-            Scene("Studio.Detente", init_patch=HueDetente, patch=Discard()),
-            Scene("Studio.Veilleuse", init_patch=HueVeilleuse, patch=Discard()),
-            Scene("Studio.Lecture", init_patch=HueLecture, patch=Discard()),
-            Scene("Studio.FullBlanc", init_patch=HueSsFullBlanc, patch=Discard()),
-            Scene("Cuisine.Minimal", init_patch=HueCuisine, patch=Discard()),
-            Scene("Chambre.Minimal", init_patch=HueChambreMaitre, patch=Discard()),
-            Scene("AllOff", init_patch=HueAllOff, patch=Discard()),
+    11: SceneGroup("HUE", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Studio.Normal", init_patch = HueNormal, patch = Discard()),
+            Scene("Studio.Galaxie", init_patch = HueGalaxie, patch = Discard()),
+            Scene("Studio.Demon", init_patch = HueDemon, patch = Discard()),
+            Scene("Studio.SoloRed", init_patch = HueSoloRed, patch = Discard()),
+            Scene("Studio.Detente", init_patch = HueDetente, patch = Discard()),
+            Scene("Studio.Veilleuse", init_patch = HueVeilleuse, patch = Discard()),
+            Scene("Studio.Lecture", init_patch = HueLecture, patch = Discard()),
+            Scene("Studio.FullBlanc", init_patch = HueSsFullBlanc, patch = Discard()),
+            Scene("Cuisine.Minimal", init_patch = HueCuisine, patch = Discard()),
+            Scene("Chambre.Minimal", init_patch = HueChambreMaitre, patch = Discard()),
+            Scene("AllOff", init_patch = HueAllOff, patch = Discard()),
         ]),
-    12: SceneGroup("Libre",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
+    12: SceneGroup("SoundcraftUI", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Record", init_patch = ui_rectoggle, patch = Discard()),
+        
         ]),
-    13: SceneGroup("SD90-BANK",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Special1", init_patch=SP1, patch=Discard()),
-            Scene("Special2", init_patch=SP2, patch=Discard()),
-            Scene("Classical", init_patch=CLASIC, patch=Discard()),
-            Scene("Contemporary", init_patch=CONTEM, patch=Discard()),
-            Scene("Solo", init_patch=SOLO, patch=Discard()),
-            Scene("Enhanced", init_patch=ENHANC, patch=Discard()),
+    13: SceneGroup("SD90", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Init SD90", init_patch = SD90_Initialize, patch = Discard()),
+            Scene("Special1", init_patch = SP1, patch = Discard()),
+            Scene("Special2", init_patch = SP2, patch = Discard()),
+            Scene("Classical", init_patch = CLASIC, patch = Discard()),
+            Scene("Contemporary", init_patch = CONTEM, patch = Discard()),
+            Scene("Solo", init_patch = SOLO, patch = Discard()),
+            Scene("Enhanced", init_patch = ENHANC, patch = Discard()),
         ]),
-    14: SceneGroup("MUSE",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Assassin", init_patch=AfxOff // P01A, patch=p_muse),
-            Scene("Hysteria", init_patch=AfxOff  // P01A, patch=p_muse),
-            Scene("Cydonia",  init_patch=AfxOff// P01A, patch=p_muse),
-            Scene("Starlight", init_patch=AfxOff // P01A, patch=p_muse),
-            Scene("Stockholm", init_patch=AfxOff // P01A, patch=[p_muse_stockholm, p_muse]),
+    14: SceneGroup("MUSE", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Assassin", init_patch = Discard(), patch = p_muse),
+            Scene("Hysteria", init_patch = Discard(), patch = p_muse),
+            Scene("Cydonia",  init_patch = Discard(), patch = p_muse),
+            Scene("Starlight", init_patch = Discard(), patch = p_muse),
+            Scene("Stockholm", init_patch = Discard(), patch = [p_muse_stockholm, p_muse]),
         ]),
-    15: SceneGroup("MajestyxLive",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("INTERLUDE", init_patch = NoteOn(0, 0)  >> VLC, patch =Pass()),
-            Scene("1-Rockin Paradise", init_patch = NoteOn(1, 0)  >> VLC, patch =Pass()),
-            Scene("2-BlueCollarMan", init_patch = NoteOn(2, 0)  >> VLC, patch =Pass()),
-            Scene("3-Lorelei", init_patch = NoteOn(1, 0)  >> VLC, patch =Pass()),
-            Scene("04-Too Much Time", init_patch = NoteOn(3, 0)  >> VLC, patch =Pass()),
-            Scene("05-Snowblind", init_patch = NoteOn(4, 0)  >> VLC, patch =Pass()),
-            Scene("06-Come Sail Away", init_patch = NoteOn(5, 0)  >> VLC, patch =Pass()),
-            Scene("07-Queen Of Spades", init_patch = NoteOn(6, 0)  >> VLC, patch =Pass()),
-            Scene("08-Light Up", init_patch = NoteOn(7, 0)  >> VLC, patch =Pass()),
-            Scene("09-The Best of Time", init_patch = NoteOn(8, 0)  >> VLC, patch =Pass()),
-            Scene("10-Lady", init_patch = NoteOn(9, 0)  >> VLC, patch =Pass()),
-            Scene("11-Fooling Yourself", init_patch = NoteOn(10, 0) >> VLC, patch =Pass()),
-            Scene("12-Roboto", init_patch = NoteOn(11, 0) >> VLC, patch =Pass()),
-            Scene("13-Show Me The Way", init_patch = NoteOn(12, 0) >> VLC, patch =Pass()),
-            Scene("14-Lights", init_patch = NoteOn(13, 0) >> VLC, patch =Pass()),
-            Scene("15-Pieces Of Eight", init_patch = NoteOn(14, 0) >> VLC, patch =Pass()),
-            Scene("16-I’m Ok", init_patch =NoteOn(15, 0) >> VLC, patch =Pass()),
-            Scene("17-Miss America", init_patch = NoteOn(16, 0) >> VLC, patch =Pass()),
-            Scene("18-Babe", init_patch = NoteOn(17, 0) >> VLC, patch =Pass()),
-            Scene("19-Renegade", init_patch = NoteOn(18, 0) >> VLC, patch =Pass()),
-            Scene("20-Crystal Ball", init_patch = NoteOn(19, 0) >> VLC, patch =Pass()),
-            Scene("21-Grand Illusion", init_patch = NoteOn(20, 0) >> VLC, patch =Pass()),
-            Scene("22-BoatOnThRiver", init_patch = NoteOn(21, 0) >> VLC, patch =Pass()),
-            Scene("23-SuiteMadameBlue", init_patch = NoteOn(22, 0) >> VLC, patch =Pass()),
-            Scene("Repeat", init_patch = NoteOn(23, 0) >> VLC, patch =Pass()),
-            Scene("NoRepeat", init_patch = NoteOn(24, 0) >> VLC, patch = Pass ()),
-        ]),    
-    16:  SceneGroup("Sampler",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-            Scene("Track 1", init_patch =Discard(), patch =Discard()),
+    15:  SceneGroup("Sampler", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Track1", init_patch = Discard(), patch = Discard()),
         ]),
-    17:  SceneGroup("Libre",
-        [
-            Scene("Select", init_patch=Discard(), patch=Discard()),
-        ]),
+    16:  SceneGroup("POC", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("INTERLUDE", patch = pk5 >> Filter(NOTEON) >> NoteOn(0, 0) >> VLC_PL, init_patch = Pass()),
 
+        ]),
+    17:  SceneGroup("VLC", [
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
+            Scene("Stop", init_patch = VLC_STOP, patch = Discard()),
+            Scene("Play", init_patch = VLC_PLAY, patch = Discard()),
+            Scene("Pause", init_patch = VLC_PAUSE, patch = Discard()),
+            Scene("Repeat-ON", init_patch =  VLC_REPEAT_ON, patch = Pass()),
+            Scene("Repeat-OFF", init_patch = VLC_REPEAT_OFF, patch = Pass ()),
+            Scene("Toggle-Loop", init_patch = VLC_TOGGLE_LOOP, patch = Pass ()),
+            Scene("Toggle-Repeat", init_patch = VLC_TOGGLE_REPEAT, patch = Pass ()),
+            Scene("Playlist item 1", init_patch = NoteOn(0, 0) >> VLC_PL, patch = Discard()),
+            Scene("Playlist item 2", init_patch = Ctrl(1, 0) >> VLC_PL, patch = Discard()),
+        ]),        
+    18:  SceneGroup("GT10B", [
+            Scene("Select a Bank", init_patch = Discard(), patch = Discard()),
+            Scene("U01_A", init_patch = [GT10Bank0, Program(1) >> GT10BProgramSelector], patch = Discard()),
+            Scene("U01_B", init_patch = [GT10Bank0, Program(2) >> GT10BProgramSelector], patch = Discard()),
+    ]),
+    19:  SceneGroup("HD500", [
+            Scene("Select option", init_patch = Discard(), patch = Discard()),
+            Scene("FS1", init_patch = [FS1], patch = Discard()),
+            Scene("FS2", init_patch = [FS2], patch = Discard()),
+    ]),    
+    20:  SceneGroup("Futur", [
+            Scene("Select", init_patch = Discard(), patch = Discard()),
+    ]),    
 }
+
 
 # PROD
 pre  = ~Filter(SYSRT_CLOCK) >> ~ChannelFilter(8, 9, 11) 
