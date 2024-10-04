@@ -183,7 +183,7 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 
 # Song : In a big country
 # Init patch - set GT10B and HD500 bank
-i_big_country = [U01_A, P14A]
+i_big_country = [P14A]
 
 # Execution patch
 p_big_country = (pk5 >> Filter(NOTEON) >>
@@ -392,7 +392,6 @@ p_rush = p_pk5ctrl_generic >> p_base
 
 p_wonderland_init = [
     Ctrl(mpk_port_a, 3, 2, 64) >> ui_standard_stereo_fx,
-    U01_B, 
     P14D
 ]
 p_wonderland = p_pk5ctrl_generic >> [
