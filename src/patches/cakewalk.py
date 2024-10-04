@@ -16,13 +16,16 @@ ctrls = [cw_rec, cw_stop, cw_play, cw_rec, cw_fwd]
 # Trigger value
 cw_trigger_value = 127
 
+# Listen channel
+cw_channel = 1
+
 # Output port
 cw_port = sd90_midi_2
 
 # ---------------
 
 # Execution patches
-CakewalkController = CtrlFilter(ctrls) >> Ctrl(cw_port, EVENT_CHANNEL, EVENT_CTRL, cw_trigger_value) 
+CakewalkController = CtrlFilter(ctrls) >> Ctrl(cw_port, cw_channel, EVENT_CTRL, cw_trigger_value) 
 
 # Direct DAW patch
 CakeStop   = Ctrl(cw_stop, EVENT_VALUE) >> CakewalkController

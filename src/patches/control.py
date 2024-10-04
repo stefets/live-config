@@ -27,12 +27,23 @@ mpk_soundcraft_control=Filter(CTRL|NOTE) >> [
         Filter(NOTE) >> NoteOn(EVENT_NOTE, 127) >> Port(midimix_midi),
     ] >> soundcraft_control
 
+# FCB1010 to MPK249-Midi IN and MPK OUT to POD HD500 IN
+fcb1010_control = [
+    (CtrlFilter(1, 2, 51, 52, 53, 54, 69) >> CtrlPodBase),
+    (CtrlFilter(20) >> CtrlValueSplit({
+          1: [CakePlay, HueGalaxie],
+          2: [CakeStop, HueNormal],
+          3: [CakeRecord, HueGalaxie],
+          4: [CakeRecord, HueGalaxieMax],
+    }))
+]
+
 # Midi input control patch
 control_patch = PortSplit({
     midimix_midi : soundcraft_control,
     mpk_midi : ChannelSplit({
         4 : pk5_mp3_control,
-       15 : Pass(),     # FCB1010 to MPK249-Midi IN and MPK OUT to POD HD500 IN
+        15 : fcb1010_control
     }),
     mpk_port_a : ChannelSplit({
          1 : mpk_soundcraft_control,

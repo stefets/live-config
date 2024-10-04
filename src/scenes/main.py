@@ -18,7 +18,7 @@ _scenes = {
             Scene("CloserToTheHeart", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
         ]),
     3: SceneGroup("BassCover", [
-            Scene("Select a Subscene", init_patch = U01_B, patch = Discard()),
+            Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Default", init_patch = MPG123_PLAYLIST, patch = Discard()),
             Scene("Queen", init_patch = MPG123_PLAYLIST, patch = Discard()),
             Scene("T4F", init_patch = MPG123_PLAYLIST, patch = Discard()),
@@ -28,11 +28,11 @@ _scenes = {
             Scene("Bass", init_patch = Discard(), patch = p_transport),
         ]),
     5: SceneGroup("BigCountry", [
-            Scene("BassCover", init_patch = MPG123_PLAYLIST//U01_B, patch = Discard()),
+            Scene("BassCover", init_patch = MPG123_PLAYLIST//Discard(), patch = Discard()),
             Scene("InBigCountry", init_patch = i_big_country, patch = p_big_country),
-            Scene("HighlandScenery", init_patch = U01_B // P14B, patch = p_highland_scenery),
-            Scene("Inwards", init_patch = U01_B // P14B, patch = p_pk5ctrl_generic>>p_base),
-            Scene("AnglePark", init_patch = U01_B // P14B, patch = p_pk5ctrl_generic>>p_base),
+            Scene("HighlandScenery", init_patch = Discard(), patch = p_highland_scenery),
+            Scene("Inwards", init_patch = Discard(), patch = p_pk5ctrl_generic>>p_base),
+            Scene("AnglePark", init_patch = Discard(), patch = p_pk5ctrl_generic>>p_base),
             Scene("Wonderland", init_patch = p_wonderland_init, patch = p_wonderland),
         ]),
     6: SceneGroup("GrandDesignsStudio", [
@@ -127,11 +127,11 @@ _scenes = {
         ]),
     14: SceneGroup("MUSE", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
-            Scene("Assassin", init_patch = AfxOff // P01A, patch = p_muse),
-            Scene("Hysteria", init_patch = AfxOff  // P01A, patch = p_muse),
-            Scene("Cydonia",  init_patch = AfxOff// P01A, patch = p_muse),
-            Scene("Starlight", init_patch = AfxOff // P01A, patch = p_muse),
-            Scene("Stockholm", init_patch = AfxOff // P01A, patch = [p_muse_stockholm, p_muse]),
+            Scene("Assassin", init_patch = Discard(), patch = p_muse),
+            Scene("Hysteria", init_patch = Discard(), patch = p_muse),
+            Scene("Cydonia",  init_patch = Discard(), patch = p_muse),
+            Scene("Starlight", init_patch = Discard(), patch = p_muse),
+            Scene("Stockholm", init_patch = Discard(), patch = [p_muse_stockholm, p_muse]),
         ]),
     15:  SceneGroup("Sampler", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
@@ -154,4 +154,17 @@ _scenes = {
             Scene("Playlist item 1", init_patch = NoteOn(0, 0) >> VLC_PL, patch = Discard()),
             Scene("Playlist item 2", init_patch = Ctrl(1, 0) >> VLC_PL, patch = Discard()),
         ]),        
+    18:  SceneGroup("GT10B", [
+            Scene("Select a Bank", init_patch = Discard(), patch = Discard()),
+            Scene("U01_A", init_patch = [GT10Bank0, Program(1) >> GT10BProgramSelector], patch = Discard()),
+            Scene("U01_B", init_patch = [GT10Bank0, Program(2) >> GT10BProgramSelector], patch = Discard()),
+    ]),
+    19:  SceneGroup("HD500", [
+            Scene("Select option", init_patch = Discard(), patch = Discard()),
+            Scene("FS1", init_patch = [FS1], patch = Discard()),
+            Scene("FS2", init_patch = [FS2], patch = Discard()),
+    ]),    
+    20:  SceneGroup("Futur", [
+            Scene("Select", init_patch = Discard(), patch = Discard()),
+    ]),    
 }
