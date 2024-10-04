@@ -29,7 +29,7 @@ mpk_soundcraft_control=Filter(CTRL|NOTE) >> [
 
 # FCB1010 to MPK249-Midi IN and MPK OUT to POD HD500 IN
 fcb1010_control = [
-    (CtrlFilter(1, 2, 51, 52, 53, 54, 69) >> CtrlPod),
+    (CtrlFilter(1, 2, 51, 52, 53, 54, 69) >> CtrlPodBase),
     (CtrlFilter(20) >> CtrlValueSplit({
           1: [CakePlay, HueGalaxie],
           2: [CakeStop, HueNormal],
