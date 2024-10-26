@@ -1,6 +1,10 @@
 
+global_init = [
+    SD90_Initialize,
+    HueNormal,
+]
 _scenes = {
-    1: Scene("Initialize All", init_patch = SD90_Initialize, patch = Discard()),
+    1: Scene("Initialize", init_patch = global_init, patch = Discard()),
     2: SceneGroup("Rush", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Generic", init_patch = MPG123_PLAYLIST, patch = Discard()//p_rush),
@@ -74,6 +78,7 @@ _scenes = {
             Scene("Record", init_patch = CakeRecord, patch = Discard()),
             Scene("Rewind", init_patch = CakeRewind, patch = Discard()),
             Scene("Forward", init_patch = CakeForward, patch = Discard()),
+            Scene("Drum", init_patch = SP1, patch = Output(sd90_midi_2, channel=10, program=(ClassicalDrum, 1))),
         ]),
     9: SceneGroup("MP3Player", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
@@ -164,7 +169,13 @@ _scenes = {
             Scene("FS1", init_patch = [FS1], patch = Discard()),
             Scene("FS2", init_patch = [FS2], patch = Discard()),
     ]),    
-    20:  SceneGroup("Futur", [
+    20:  SceneGroup("ID20:Unsed", [
+            Scene("Select", init_patch = Discard(), patch = Discard()),
+    ]),    
+    21:  SceneGroup("ID21:Unsed", [
+            Scene("Select", init_patch = Discard(), patch = Discard()),
+    ]),    
+    22:  SceneGroup("ID22:Unsed", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
     ]),    
 }
