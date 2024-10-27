@@ -1,6 +1,7 @@
 
 #
-# The Line 6 POD-HD-500 definition patches for mididings
+# The Line 6 POD-HD-500 execution patches for mididings
+# See extension/hd500.py for a helper to select patch by name, useful for init_patch in a scene.
 #
 
 # Listen channel
@@ -8,9 +9,6 @@ hd500_channel = 15
 
 # Connecté a quel port MIDI ?
 hd500_port = mpk_midi
-
-# Programs
-HD500ProgramSelector = Program(hd500_port, channel = hd500_channel, program = EVENT_VALUE)
 
 # Abstract patch (must be chained before by a Ctrl(c,v))
 # Example: 
@@ -52,5 +50,4 @@ hd500_control = (Filter(CTRL) >>
           1: HD500_Expr1,
           2: HD500_Expr2,
          69: HD500_Tuner,
-         20: HD500ProgramSelector
     }))

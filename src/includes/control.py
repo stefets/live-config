@@ -33,8 +33,8 @@ fcb1010_control = [
     (CtrlFilter(20) >> CtrlValueSplit({
           1: [CakePlay, HueGalaxie],
           2: [CakeStop, HueNormal],
-          3: [CakeRecord, HueGalaxie],
-          4: [CakeRecord, HueGalaxieMax],
+          3: [CakeRecord, HueSsFullBlanc],
+          4: [HueStudioOff],
     }))
 ]
 

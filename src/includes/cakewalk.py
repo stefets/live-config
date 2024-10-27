@@ -29,7 +29,7 @@ CakewalkController = CtrlFilter(ctrls) >> Ctrl(cw_port, cw_channel, EVENT_CTRL, 
 
 # Direct DAW patch
 CakeStop   = Ctrl(cw_stop, EVENT_VALUE) >> CakewalkController
-CakePlay   = Ctrl(cw_play, EVENT_VALUE) >> CakewalkController
+CakePlay   = [CakeStop, Ctrl(cw_play, EVENT_VALUE)] >> CakewalkController
 CakeRecord = Ctrl(cw_rec,  EVENT_VALUE) >> CakewalkController
 
 # WIP
