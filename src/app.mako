@@ -106,17 +106,12 @@ hook(
     MemorizeScene(".hook.memorize_scene")
 )
 
-# Patches and callable functions
-% for element in patches:
+# Load includes files inplace
+% for element in includes:
     % with open(element, 'r') as file:
         ${file.read()}
     % endwith
 % endfor
-
-# Scenes
-% with open(scenes, 'r') as file:
-    ${file.read()}
-% endwith
 
 # PROD
 pre  = ~Filter(SYSRT_CLOCK) >> ~ChannelFilter(8, 9, 11) 

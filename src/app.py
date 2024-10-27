@@ -19,8 +19,7 @@ def make_asoundrc(config) -> None:
 def make_script(config, scene=None) -> str:
     # Generates the mididings script code
     return Template(filename=config["template"]).render(
-        scenes  = config["scene_dir"] + scene if scene else config["scene_dir"] + config["default_scene"] ,
-        patches = config["patches"]
+        includes = config["includes"]
     )
 
 def main(scene=None):

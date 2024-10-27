@@ -11,17 +11,17 @@
 # Helper functions used by the Soundcraft UI patches
 #
 
-# 0-127 to 0-1
-ratio=0.7874015748 / 100
+# Precompute lookup table for values 1 to 127
+ratio_lookup = [i / 127 for i in range(128)]
 
 def cursor_value_converter(ev):
-    return ev.data2 * ratio
+    return ratio_lookup[ev.data2]
 
 def ui_knob(ev):
     return cursor_value_converter(ev)
 
 def mute_value_converter(ev):
-    return 1 if ev.data2==127 else 0
+    return 1 if ev.data2 == 127 else 0
 
 ''' Return the controller value for SendOsc '''
 def event_value_converter(ev, offset=0):
@@ -37,6 +37,7 @@ def ui_right(ev):
 
 
 # Osc Soundcraft Bridge definition
+
 osb_port = 56420
 mix_path = "/mix"
 mute_path = "/mute"

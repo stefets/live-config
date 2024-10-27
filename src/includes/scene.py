@@ -20,6 +20,36 @@ _scenes = {
             Scene("SpritOfRadio", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
             Scene("TomSawyer", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
             Scene("CloserToTheHeart", init_patch = i_rush//MPG123_PLAYLIST, patch = p_rush),
+            Scene("RedBarchetta", init_patch=i_rush, patch=LatchNotes(False,reset='C3') >> Transpose(-12) >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+            Scene("FreeWill", init_patch=i_rush, patch=Transpose(0) >> LatchNotes(False,reset='E3')  >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+            Scene("CloserToTheHeart", [ChannelFilter(1) >> closer_main, pk5 >> Transpose(-24) >> closer_base]),
+            Scene("Time Stand Still", [ChannelFilter(1) >> tss_keyboard_main, pk5 >> LatchNotes(False, reset='c4') >> tss_foot_main]),
+            Scene("Analog Kid", init_patch=i_rush, patch=analogkid_main),
+            Scene("Analog Kid Keyboard", analogkid_main),
+            Scene("Time Stand Still Keyboard",
+            [
+                ChannelFilter(1) >> tss_keyboard_main,
+                ChannelFilter(2) >> LatchNotes(False, reset='c4') >> tss_foot_main
+            ]),
+            Scene("KidGloves Keyboard", Transpose(0) >> LatchNotes(False,reset='F3') >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+            Scene("FreeWill Keyboards", Transpose(0) >> LatchNotes(False,reset='E3') >> Harmonize('c', 'major', ['unison', 'octave']) >> keysynth),
+            # Scene("Marathon/Intro/Chords", Port(1) >> (
+            #     [
+            #         ChannelSplit({
+            #             akai_channel : marathon_intro,
+            #             pk5_channel : marathon_chords,
+            #         }),
+            #         ChannelFilter(9) >> Filter(CTRL) >> CtrlFilter(1,2) >> Port(1) >> 
+            #             Fork([Channel(3),Channel(4)]) >>
+            #             Fork([(CtrlFilter(2) >> Process(OnPitchbend,direction=-1))],
+            #                 [(CtrlFilter(1) >> CtrlMap(1,7))])
+            #     ])),
+            # Scene("Marathon/Bridge/Solo/Ending", 
+            #     ChannelSplit(
+            #         {
+            #             akai_channel : (marathon_bridge // marathon_bridge_split),
+            #             pk5_channel : marathon_chords,
+            #         })),
         ]),
     3: SceneGroup("BassCover", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
@@ -114,7 +144,37 @@ _scenes = {
             Scene("Cuisine.Minimal", init_patch = HueCuisine, patch = Discard()),
             Scene("Chambre.Minimal", init_patch = HueChambreMaitre, patch = Discard()),
             Scene("AllOff", init_patch = HueAllOff, patch = Discard()),
-        ]),
+                Scene("OneSliderMix",
+            init_patch=Call(Playlist()), 
+            patch=[ Filter(NOTEON|NOTEOFF) >> KeyFilter(notes=[62]) >> Ctrl(3, 50) >> HueGalaxieMax,
+                    Filter(CTRL) >> CtrlSplit({
+                        7: SendOSC(56420, '/mix', 0, cursor_value_converter),
+                        1: SendOSC(56420, '/mix', 1, cursor_value_converter),
+                    })
+                    ]
+            ),
+            Scene("MultiSlidersMix", init_patch=Call(Playlist()),
+                    patch=Filter(CTRL) >> CtrlFilter(1,7) >> 
+                        [ 
+                            SendOSC(56420, '/mix', 0,  cursor_value_converter),
+                            SendOSC(56420, '/mix', 1,  cursor_value_converter),
+                            SendOSC(56420, '/mix', 2,  cursor_value_converter),
+                            SendOSC(56420, '/mix', 3,  cursor_value_converter),
+                            SendOSC(56420, '/mix', 6,  cursor_value_converter),
+                            SendOSC(56420, '/mix', 7,  cursor_value_converter),
+                            SendOSC(56420, '/mix', 8,  cursor_value_converter),
+                            SendOSC(56420, '/mix', 9,  cursor_value_converter),
+                            SendOSC(56420, '/mix', 10, cursor_value_converter),
+                        ]),
+                Scene("ToggleMute", init_patch=Call(Playlist()),
+                    patch=[
+                        Filter(NOTEON)  >> SendOSC(56420, '/mute', 0, 1),
+                        Filter(NOTEON)  >> SendOSC(56420, '/mute', 1, 1),
+                        Filter(NOTEOFF) >> SendOSC(56420, '/mute', 0, 0),
+                        Filter(NOTEOFF) >> SendOSC(56420, '/mute', 1, 0),
+                    ]),
+                ]),
+                
     12: SceneGroup("SoundcraftUI", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Record", init_patch = ui_rectoggle, patch = Discard()),
@@ -171,13 +231,13 @@ _scenes = {
             Scene("FS1", init_patch = [FS1], patch = Discard()),
             Scene("FS2", init_patch = [FS2], patch = Discard()),
     ]),    
-    20:  SceneGroup("ID20:Unsed", [
+    20:  SceneGroup("ID20:Free", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
     ]),    
-    21:  SceneGroup("ID21:Unsed", [
+    21:  SceneGroup("ID21:Free", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
     ]),    
-    22:  SceneGroup("ID22:Unsed", [
+    22:  SceneGroup("ID22:Free", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
     ]),    
 }
