@@ -166,6 +166,8 @@ _scenes = {
     ]),
     19:  SceneGroup("HD500", [
             Scene("Select option", init_patch = Discard(), patch = Discard()),
+            Scene("TunerOn", init_patch = [HD500_TunerOn], patch = Discard()),
+            Scene("TunerOff", init_patch = [HD500_TunerOff], patch = Discard()),
             Scene("FS1", init_patch = [FS1], patch = Discard()),
             Scene("FS2", init_patch = [FS2], patch = Discard()),
     ]),    
