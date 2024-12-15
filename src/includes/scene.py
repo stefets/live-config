@@ -68,6 +68,7 @@ _scenes = {
             Scene("Inwards", init_patch = Discard(), patch = p_pk5ctrl_generic>>p_base),
             Scene("AnglePark", init_patch = Discard(), patch = p_pk5ctrl_generic>>p_base),
             Scene("Wonderland", init_patch = p_wonderland_init, patch = p_wonderland),
+            Scene("RecWonderland", init_patch = Call(HD500PC("14D")), patch = p_wonderland_rec),
         ]),
     6: SceneGroup("GrandDesignsStudio", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),

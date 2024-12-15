@@ -17,9 +17,13 @@
 # Base patches (WIP)
 p_hd500_filter_base = [
     (KeyFilter(notes=[65]) >> FS1),
+    (KeyFilter(notes=[66]) >> CakePlay),
     (KeyFilter(notes=[67]) >> FS2),
+    (KeyFilter(notes=[68]) >> CakeStop),
     (KeyFilter(notes=[69]) >> FS3),
+    (KeyFilter(notes=[70]) >> CakeRecord),
     (KeyFilter(notes=[71]) >> FS4),
+    (KeyFilter(notes=[71]) >> Discard()),
 ]
 
 p_hue_live = [
@@ -391,11 +395,14 @@ p_rush = p_pk5ctrl_generic >> p_base
 
 p_wonderland_init = [
     Ctrl(mpk_port_a, 3, 2, 64) >> ui_standard_stereo_fx,
-    Call(HD500PC("16D"))
+    Call(HD500PC("14D"))
 ]
 p_wonderland = p_pk5ctrl_generic >> [
      p_base,
      KeyFilter(72) >> NoteOn(9, 127) >> Port(midimix_midi) >> soundcraft_control,
+]
+p_wonderland_rec = p_pk5ctrl_generic >> [
+     p_hd500_filter_base,
 ]
 
 # ---
