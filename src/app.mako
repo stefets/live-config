@@ -54,8 +54,7 @@ mpk_port_a   = "mpk_port_a"
 mpk_port_b   = "mpk_port_b"
 mpk_midi     = "mpk_midi"
 mpk_remote   = "mpk_remote"
-graviton     = "graviton"
-
+ 
 config(
 
     initial_scene = 1,
@@ -75,7 +74,6 @@ config(
         (mpk_port_b,   '.*MPK249 Port A.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-        (graviton,     '.*Graviton USB-MIDI MIDI 1.*',),
     ],
 
     in_ports = [
@@ -90,8 +88,7 @@ config(
         (mpk_port_a,   '.*MPK249 Port A.*',),
         (mpk_port_b,   '.*MPK249 Port A.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
-        (mpk_remote,   '.*MPK249 Remote.*',),
-        (graviton,     '.*Graviton USB-MIDI MIDI 1.*',),
+        (mpk_remote,   '.*MPK249 Remote.*',)
     ],
 
 )
