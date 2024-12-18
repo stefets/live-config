@@ -10,18 +10,6 @@ pcm.SD90 {
 	}
 }
 
-pcm.GT10B {
- 	type dmix
- 	ipc_key 200
- 	slave {
-		pcm "${GT10B}"
-	}
-	bindings {
-		0 0
-		1 1
-	}
-}
-
 pcm.U192k {
  	type dmix
  	ipc_key 300

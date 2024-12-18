@@ -48,12 +48,10 @@ control_patch = PortSplit({
     mpk_port_a : ChannelSplit({
          1 : mpk_soundcraft_control,
          8 : key_mp3_control,
-        11 : (Channel(16) >> CtrlMap(11, 7) >> GT10B_Volume),  # Akai MPK249 Expression pedal
         12 : mpk_vlc_control,
         13 : p_hue,
         #14 : spotify_control,
         15 : hd500_control,
-        16 : gt10b_control
     }),
     mpk_port_b : ChannelSplit({
          1 : CakewalkController,                # patches/cakewalk.py

@@ -220,10 +220,8 @@ _scenes = {
             Scene("Playlist item 1", init_patch = NoteOn(0, 0) >> VLC_PL, patch = Discard()),
             Scene("Playlist item 2", init_patch = Ctrl(1, 0) >> VLC_PL, patch = Discard()),
         ]),        
-    18:  SceneGroup("GT10B", [
+    18:  SceneGroup("SceneId18:Free", [
             Scene("Select a Bank", init_patch = Discard(), patch = Discard()),
-            Scene("U01_A", init_patch = [GT10Bank0, Program(1) >> GT10BProgramSelector], patch = Discard()),
-            Scene("U01_B", init_patch = [GT10Bank0, Program(2) >> GT10BProgramSelector], patch = Discard()),
     ]),
     19:  SceneGroup("HD500", [
             Scene("Select option", init_patch = Discard(), patch = Discard()),
@@ -232,13 +230,13 @@ _scenes = {
             Scene("FS1", init_patch = [FS1], patch = Discard()),
             Scene("FS2", init_patch = [FS2], patch = Discard()),
     ]),    
-    20:  SceneGroup("ID20:Free", [
+    20:  SceneGroup("SceneId20:Free", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
     ]),    
-    21:  SceneGroup("ID21:Free", [
+    21:  SceneGroup("SceneId21:Free", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
     ]),    
-    22:  SceneGroup("ID22:Free", [
+    22:  SceneGroup("SceneId22:Free", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
     ]),    
 }
