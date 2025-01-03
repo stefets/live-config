@@ -68,7 +68,6 @@ _scenes = {
             Scene("Inwards", init_patch = Discard(), patch = p_pk5ctrl_generic>>p_base),
             Scene("AnglePark", init_patch = Discard(), patch = p_pk5ctrl_generic>>p_base),
             Scene("Wonderland", init_patch = p_wonderland_init, patch = p_wonderland),
-            Scene("RecWonderland", init_patch = Call(HD500PC("14D")), patch = p_wonderland_rec),
         ]),
     6: SceneGroup("GrandDesignsStudio", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
@@ -223,12 +222,8 @@ _scenes = {
     18:  SceneGroup("SceneId18:Free", [
             Scene("Select a Bank", init_patch = Discard(), patch = Discard()),
     ]),
-    19:  SceneGroup("HD500", [
+    19:  SceneGroup("ScendId19:Free", [
             Scene("Select option", init_patch = Discard(), patch = Discard()),
-            Scene("TunerOn", init_patch = [HD500_TunerOn], patch = Discard()),
-            Scene("TunerOff", init_patch = [HD500_TunerOff], patch = Discard()),
-            Scene("FS1", init_patch = [FS1], patch = Discard()),
-            Scene("FS2", init_patch = [FS2], patch = Discard()),
     ]),    
     20:  SceneGroup("SceneId20:Free", [
             Scene("Select", init_patch = Discard(), patch = Discard()),

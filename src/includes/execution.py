@@ -15,16 +15,16 @@
 
 
 # Base patches (WIP)
-p_hd500_filter_base = [
-    (KeyFilter(notes=[65]) >> FS1),
-    (KeyFilter(notes=[66]) >> CakePlay),
-    (KeyFilter(notes=[67]) >> FS2),
-    (KeyFilter(notes=[68]) >> CakeStop),
-    (KeyFilter(notes=[69]) >> FS3),
-    (KeyFilter(notes=[70]) >> CakeRecord),
-    (KeyFilter(notes=[71]) >> FS4),
-    (KeyFilter(notes=[71]) >> Discard()),
-]
+# p_hd500_filter_base = [
+#     (KeyFilter(notes=[65]) >> FS1),
+#     (KeyFilter(notes=[66]) >> CakePlay),
+#     (KeyFilter(notes=[67]) >> FS2),
+#     (KeyFilter(notes=[68]) >> CakeStop),
+#     (KeyFilter(notes=[69]) >> FS3),
+#     (KeyFilter(notes=[70]) >> CakeRecord),
+#     (KeyFilter(notes=[71]) >> FS4),
+#     (KeyFilter(notes=[71]) >> Discard()),
+# ]
 
 p_hue_live = [
     KeyFilter(notes=[61]) >> HueStudioOff,
@@ -36,7 +36,7 @@ p_hue_live = [
 
 p_base = [
     p_hue_live,
-    p_hd500_filter_base, 
+    # p_hd500_filter_base, 
 ]
 
 p_pk5ctrl_generic = pk5 >> Filter(NOTEON)
@@ -185,53 +185,15 @@ p_centurion = (LatchNotes(True, reset='C3') >>
 # Band : Big Country ------------------------------------------
 
 # Song : In a big country
-# Init patch - set HD500 to patch 14A
-i_big_country = [Call(HD500PC("14A"))]
-
-# Execution patch
-p_big_country = (pk5 >> Filter(NOTEON) >>
-         [
-             (KeyFilter(notes=[65]) >> FS1),
-             (KeyFilter(notes=[67]) >> FS2),
-             #(KeyFilter(notes=[69]) >> FS3),
-             (KeyFilter(notes=[69]) >> FS4),
-             (KeyFilter(notes=[71]) >> [HueGalaxie, FS2, Ctrl(3,85)  >> HD500_Expr2]),
-             (KeyFilter(notes=[72]) >> [HueSoloRed, FS2, Ctrl(3,127) >> HD500_Expr2])
-         ])
-
-p_big_country = p_pk5ctrl_generic >> [
-    p_base,
-    (KeyFilter(notes=[66]) >> [HueGalaxie, FS2, Ctrl(3,85) >> HD500_Expr2]),
-    (KeyFilter(notes=[67]) >> [HueSoloRed, Ctrl(3,127) >> HD500_Expr2])
-]
+i_big_country = Pass()
+p_big_country = Pass()
 
 # Song : In a big country - recording
-i_big_country_live = []
-p_big_country_live = (pk5 >> Filter(NOTEON) >>
-        [
-            # Daw control
-            KeyFilter(notes=[60]) >> HueStudioOff,
-            KeyFilter(notes=[61]) >> CakeRecord,
-            KeyFilter(notes=[62]) >> HueSsFullBlanc,
-            KeyFilter(notes=[63]) >> Pass(),
-            KeyFilter(notes=[64]) >> HueStudioOff,
-            # Guitar control
-            KeyFilter(notes=[65]) >> FS4,   # F / Delay
-            KeyFilter(notes=[66]) >> Ctrl(3,100) >> HD500_Expr2,   # F#
-            KeyFilter(notes=[67]) >> [FS2],   # G
-            KeyFilter(notes=[68]) >> Ctrl(3,127) >> HD500_Expr2,   # G#
-            KeyFilter(notes=[69]) >> [FS2, Ctrl(3,100) >> HD500_Expr2], # A
-        ])
+i_big_country_live =  Pass()
+p_big_country_live =  Pass()
 
 # Song : Highland Scenery
-p_highland_scenery = (pk5 >> Filter(NOTEON) >>
-         [
-             (KeyFilter(notes=[65]) >> FS1),
-             (KeyFilter(notes=[67]) >> FS2),
-             (KeyFilter(notes=[69]) >> FS3),
-             (KeyFilter(notes=[71]) >> FS4),
-             (KeyFilter(notes=[72]) >> [FS3, FS4])
-         ])
+p_highland_scenery =  Pass()
 
 
 # Big Country fin de section ------------------------------------------
@@ -242,134 +204,44 @@ p_highland_scenery = (pk5 >> Filter(NOTEON) >>
 i_octobre = []
 
 # Execution patch
-p_octobre = (pk5 >> Filter(NOTEON) >>
-         [
-             (KeyFilter(notes=[64]) >> [FS4, Ctrl(3,120) >> HD500_Expr2]),
-             (KeyFilter(notes=[65]) >> [FS1, Ctrl(3,100) >> HD500_Expr2]),
-             (KeyFilter(notes=[67]) >> [FS1, FS2, FS4, Ctrl(3,65) >> HD500_Expr2]),
-             (KeyFilter(notes=[69]) >> [FS2, Ctrl(3,127) >> HD500_Expr2]),
-             (KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100 ) >> HD500_Expr2])
-         ])
-
+p_octobre =  Pass()
 
 # Octobre fin de section ------------------------------------------
 
 # Band : Rush ------------------------------------------
 
 # Default init patch
-i_rush = [Call(HD500PC("2A")), Ctrl(3,100) >> HD500_Expr2]
+i_rush =  Pass()
 
 # Default patch - tout en paralelle mais séparé par contexte
-p_rush = (pk5 >> Filter(NOTEON) >>
-    [
-        [
-            KeyFilter(notes=[60]) >> HueStudioOff,
-            KeyFilter(notes=[62]) >> HueGalaxie,
-            KeyFilter(notes=[64]) >> HueSoloRed
-        ],                
-        [
-            KeyFilter(notes=[69]) >> FS4,
-            KeyFilter(notes=[71]) >> [FS1, FS4, Ctrl(3,100) >> HD500_Expr2, HueGalaxie],
-            KeyFilter(notes=[72]) >> [FS1, FS4, Ctrl(3,120) >> HD500_Expr2, HueSoloRed]
-        ]
-    ])
+p_rush = Pass()
 
 # Subdivisions
 
 # Init patch
-i_rush_sub=[Call(HD500PC("2A")), FS3, Ctrl(3,100) >> HD500_Expr2]
+i_rush_sub =  Pass()
 
 # Grand Designs
 
 # Init patch
-i_rush_gd = [Call(HD500PC("2A")), FS1, FS3, Ctrl(3,127) >> HD500_Expr2] 
+i_rush_gd =  Pass()
 
 # Execution patch
-p_rush_gd = (pk5 >> 
-    [
-        Filter(NOTEON) >> [
-                [ 
-                    KeyFilter(notes=[60]) >> HueStudioOff,
-                    KeyFilter(notes=[61]) >> Ctrl(3, 1) >> HueDemon,
-                    KeyFilter(notes=[62]) >> Ctrl(3, 50) >> HueGalaxie,
-                    KeyFilter(notes=[64, 72]) >> Ctrl(3, 1) >> HueSoloRed,
-                ],
-                [
-                    KeyFilter(notes=[67]) >> FS4,
-                    KeyFilter(notes=[69]) >> [Ctrl(3, 100) >> HD500_Expr2, FS4],
-                    KeyFilter(notes=[71]) >> [Ctrl(3, 127) >> HD500_Expr2, FS4],
-                    KeyFilter(notes=[72]) >>  Ctrl(3, 127) >> HD500_Expr2
-                ],
-            ],
-        Filter(NOTEOFF) >> [
-                [
-                    KeyFilter(notes=[72]) >> Ctrl(3, 1) >> HueGalaxie
-                ],
-                [
-                    KeyFilter(notes=[72]) >> Ctrl(3, 100) >> HD500_Expr2
-                ]
-            ],
-    ])
+p_rush_gd =  Pass()
 
 # Youtube SoundCraftBridge Demo
-p_rush_gd_demo = (ChannelFilter(16) >> 
-    [
-        Filter(NOTEON) >> [
-                [ 
-                    KeyFilter(notes=[113]) >> Ctrl(3, 50) >> HueLecture,
-                    #KeyFilter(notes=[61]) >> Ctrl(3, 1) >> HueDemon,
-                    #KeyFilter(notes=[62]) >> Ctrl(3, 50) >> HueGalaxie,
-                    #KeyFilter(notes=[64, 72]) >> Ctrl(3, 1) >> HueSoloRed,
-                ],
-                [
-                    #KeyFilter(notes=[67]) >> FS4,
-                    #KeyFilter(notes=[69]) >> [Ctrl(3, 100) >> HD500_Expr2, FS4],
-                    #KeyFilter(notes=[71]) >> [Ctrl(3, 127) >> HD500_Expr2, FS4],
-                    #KeyFilter(notes=[72]) >>  Ctrl(3, 127) >> HD500_Expr2
-                ],
-            ],
-        Filter(NOTEOFF) >> [
-                [
-                    #KeyFilter(notes=[72]) >> Ctrl(3, 1) >> HueGalaxie
-                ],
-                [
-                    #KeyFilter(notes=[72]) >> Ctrl(3, 100) >> HD500_Expr2
-                ]
-            ],
-    ])
+p_rush_gd_demo = Pass()
 
 # The Trees
 
 # Init patch
-i_rush_trees = [Call(HD500PC("2A")), FS3, Ctrl(3,100) >> HD500_Expr2] 
+i_rush_trees =  Pass()
 
 # Foot keyboard output
 p_rush_trees_foot = Velocity(fixed=110) >> Output(sd90_port_a, channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})
 
 # Execution patch
-p_rush_trees=(pk5 >>
-    [
-        # Controle de l'éclairage
-        Filter(NOTEON) >> [
-            KeyFilter('C3') >> HueGalaxie,
-            KeyFilter(notes=[71]) >> HueGalaxie,
-            KeyFilter(notes=[72]) >> HueSoloRed,
-        ],
-        # Controle du POD HD500 
-        Filter(NOTEON) >> [
-            KeyFilter(notes=[69]) >> FS4,
-            KeyFilter(notes=[71]) >> [FS1, Ctrl(3,100) >> HD500_Expr2],
-            KeyFilter(notes=[72]) >> [FS1, Ctrl(3,120) >> HD500_Expr2],
-        ],
-        # Controle du séquenceur 
-        # Il faut laisser passer f3 dans un filtre dummy car il sert de Latch
-        [
-            KeyFilter('C3') >> Key('A0'),
-            KeyFilter('D3') >> Key('B0'),
-            KeyFilter('E3') >> Key('D1'),
-            KeyFilter('f3') >> Pass(),
-        ] >> LatchNotes(False, reset='f3') >> p_rush_trees_foot
-    ])
+p_rush_trees= Pass()
 
 # Rush fin de section ------------------------------------------
 
@@ -395,14 +267,12 @@ p_rush = p_pk5ctrl_generic >> p_base
 
 p_wonderland_init = [
     Ctrl(mpk_port_a, 3, 2, 64) >> ui_standard_stereo_fx,
-    Call(HD500PC("14D"))
 ]
 p_wonderland = p_pk5ctrl_generic >> [
      p_base,
      KeyFilter(72) >> NoteOn(9, 127) >> Port(midimix_midi) >> soundcraft_control,
 ]
 p_wonderland_rec = p_pk5ctrl_generic >> [
-     p_hd500_filter_base,
 ]
 
 # ---

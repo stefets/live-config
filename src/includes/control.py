@@ -29,7 +29,6 @@ mpk_soundcraft_control=Filter(CTRL|NOTE) >> [
 
 # FCB1010 to MPK249-Midi IN and MPK OUT to POD HD500 IN
 fcb1010_control = [
-    (CtrlFilter(1, 2, 51, 52, 53, 54, 69) >> CtrlPodBase),
     (CtrlFilter(20) >> CtrlValueSplit({
           1: [CakePlay, HueGalaxie],
           2: [CakeStop, HueNormal],
@@ -51,12 +50,10 @@ control_patch = PortSplit({
         12 : mpk_vlc_control,
         13 : p_hue,
         #14 : spotify_control,
-        15 : hd500_control,
     }),
     mpk_port_b : ChannelSplit({
          1 : CakewalkController,                # patches/cakewalk.py
          4 : pk5_mp3_control,
-        11 : HD500_Expr1,             # Akai MPK249 Expression pedal
     }),
     q49_midi : ChannelSplit({
          1 : q49_mp3_control,
