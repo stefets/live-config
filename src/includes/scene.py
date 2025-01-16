@@ -174,7 +174,6 @@ _scenes = {
                         Filter(NOTEOFF) >> SendOSC(56420, '/mute', 1, 0),
                     ]),
                 ]),
-                
     12: SceneGroup("SoundcraftUI", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Record", init_patch = ui_rectoggle, patch = Discard()),
@@ -219,8 +218,12 @@ _scenes = {
             Scene("Playlist item 1", init_patch = NoteOn(0, 0) >> VLC_PL, patch = Discard()),
             Scene("Playlist item 2", init_patch = Ctrl(1, 0) >> VLC_PL, patch = Discard()),
         ]),        
-    18:  SceneGroup("SceneId18:Free", [
-            Scene("Select a Bank", init_patch = Discard(), patch = Discard()),
+    18:  SceneGroup("GT-1000 USB", [
+            Scene("Select option", init_patch = Discard(), patch = Discard()),
+            Scene("01-1", init_patch = Program(gt1000_midi_1, 9, 1), patch = Discard()),
+            Scene("01-2", init_patch = Program(gt1000_midi_1, 9, 2), patch = Discard()),
+            Scene("01-3", init_patch = Program(gt1000_midi_1, 9, 3), patch = Discard()),
+            Scene("01-4", init_patch = Program(gt1000_midi_1, 9, 4), patch = Discard()),
     ]),
     19:  SceneGroup("ScendId19:Free", [
             Scene("Select option", init_patch = Discard(), patch = Discard()),

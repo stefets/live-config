@@ -37,6 +37,9 @@ mpk_remote   = "mpk_remote"
 virtual      = "virtual"
 rt_midi      = "rt_midi"
 
+gt1000_midi_1 = "gt1000_midi_1"
+gt1000_midi_2 = "gt1000_midi_2"
+
 config(
     initial_scene = 1,
     backend = 'alsa',
@@ -56,6 +59,8 @@ config(
         (mpk_remote,   '.*MPK249 Remote.*',),
         #(virtual,      '.*VirMIDI 31-0.*',),
         #(rt_midi,      '.*RtMidi output.*',),
+        (gt1000_midi_1,'.*GT-1000 MIDI 1.*',),
+        (gt1000_midi_2,'.*GT-1000 MIDI 2.*',),        
     ],
 
     in_ports = [
@@ -72,6 +77,8 @@ config(
         (mpk_remote,   '.*MPK249 Remote.*',),
         #(virtual,      '.*VirMIDI 31-0.*',),
         #(rt_midi,      '.*RtMidi output.*',),
+        (gt1000_midi_1,'.*GT-1000 MIDI 1.*',),
+        (gt1000_midi_2,'.*GT-1000 MIDI 2.*',),        
     ],
 )
 
@@ -81,7 +88,7 @@ hook(
     MemorizeScene(".hook.memorize_scene")
 )
 
-_pre_patch  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
+_pre_patch  = Print('input', portnames='in') 
 _post_patch = Print('output',portnames='out')
 
 # TODO Not working fine
@@ -89,7 +96,9 @@ EQ_Low = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,20,21,08,0
 
 run(
     control=Pass(),
-    scenes = {1:Scene("Debug", init_patch=Pass(), patch=Pass())},
+    scenes = {
+        1 : Scene("Empty", init_patch = Discard(), patch = Pass()),
+    },
     pre=_pre_patch,
     post=_post_patch,
 )
