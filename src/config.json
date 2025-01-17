@@ -16,7 +16,8 @@
         "template": "asoundrc.mako",
         "asoundrc": {
             "U192k": "",
-            "SD90": ""
+            "SD90": "",
+            "GT1000" : ""
         }
     }
 }
