@@ -1,7 +1,6 @@
 
 global_init = [
     SD90_Initialize,
-    HueNormal,
 ]
 _scenes = {
     1: Scene("Initialize", init_patch = global_init, patch = Discard()),
