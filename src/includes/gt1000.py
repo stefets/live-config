@@ -7,7 +7,7 @@
 # Internal Midi channel configured in the gt1k USB options
 gt1k_channel = 9
 
-gt1kBankSelector = CtrlValueFilter(0, 3) >> [
+gt1kBankSelector = CtrlValueFilter(0, 4) >> [
       Ctrl(gt1000_midi_1, gt1k_channel, EVENT_CTRL, EVENT_VALUE), 
       Ctrl(gt1000_midi_1, gt1k_channel, 32, 0),
 ]
