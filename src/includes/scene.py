@@ -218,7 +218,6 @@ _scenes = {
             Scene("Playlist item 2", init_patch = Ctrl(1, 0) >> VLC_PL, patch = Discard()),
         ]),        
     18: SceneGroup("GT-1000", [
-            Scene("Select option", init_patch = Discard(), patch = Discard()),
             Scene("Bank-1", init_patch = gt1kBank1, patch = Discard()),
             Scene("Bank-2", init_patch = gt1kBank2, patch = Discard()),
             Scene("Bank-3", init_patch = gt1kBank3, patch = Discard()),
@@ -227,8 +226,6 @@ _scenes = {
             Scene("Pgrm-2", init_patch = Program(gt1000_midi_1, 9, 2), patch = Discard()),
             Scene("Pgrm-3", init_patch = Program(gt1000_midi_1, 9, 3), patch = Discard()),
             Scene("Pgrm-4", init_patch = Program(gt1000_midi_1, 9, 4), patch = Discard()),
-            Scene("Pgrm-5", init_patch = Program(gt1000_midi_1, 9, 5), patch = Discard()),
-            Scene("Pgrm-125", init_patch = Program(gt1000_midi_1, 9, 125), patch = Discard()),
     ]),
     19: SceneGroup("ScendId19:Free", [
             Scene("Select option", init_patch = Discard(), patch = Discard()),
