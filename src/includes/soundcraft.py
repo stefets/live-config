@@ -217,48 +217,46 @@ ui_player_mix_eq = ChannelSplit({
             3:player_mid,
             4:player_treble,
         })
+        
 
 ui_rectoggle = SendOSC(osb_port, rectoggle_path) 
 
 # Mididings SoundCraft UI control patch
-soundcraft_control=[Filter(NOTEON) >> 
+soundcraft_control=[
+    Filter(NOTEON) >> 
                     
         Process(MidiMix()) >> [
         
-        KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mute_mono,
-        KeyFilter(2) >> Pass(),
-        KeyFilter(3) >> Pass(),
+        KeyFilter(notes=[2,3,5,6,]) >> Pass(),  # Ignore theses notes
 
-        KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mute_mono,
-        KeyFilter(5) >> Pass(),
-        KeyFilter(6) >> Pass(),
-
+        KeyFilter(1) >> Ctrl(0, EVENT_VALUE) >> mute_mono, # Mute channel 1
+        KeyFilter(4) >> Ctrl(1, EVENT_VALUE) >> mute_mono, # Mute channel 2
 
         KeyFilter(7)  >> Ctrl(2, EVENT_VALUE) >> mute_stereo,
         KeyFilter(9)  >> Ctrl(2, EVENT_VALUE) >> mute_delay_stereo,
         KeyFilter(10) >> Ctrl(4, EVENT_VALUE) >> mute_stereo,
         KeyFilter(13) >> Ctrl(6, EVENT_VALUE) >> mute_stereo,
-
-        KeyFilter(16) >> ui_line_mute,
-        KeyFilter(19) >> ui_player_mute,
+        KeyFilter(16) >> Ctrl(8, EVENT_VALUE) >> mute_stereo,
+        KeyFilter(19) >> Ctrl(10,EVENT_VALUE) >> mute_stereo,
+        KeyFilter(22) >> [ui_player_mute, ui_line_mute],
         
-        KeyFilter(22) >> Discard(),
-
         Process(MidiMixLed())
 
     ],
     Filter(CTRL) >> [
+
         CtrlFilter(0,1) >> ui_standard_fx,
-       
-        CtrlFilter(2,3,4) >> CtrlSplit({
+
+        CtrlFilter(2,3,4,5,6) >> CtrlSplit({
             2 : Pass(),
             3 : Ctrl(4, EVENT_VALUE),
             4 : Ctrl(6, EVENT_VALUE),
-        }) >> ui_standard_stereo_eq,
+            5 : Ctrl(8, EVENT_VALUE),
+            6 : Ctrl(10,EVENT_VALUE),
+        }) >> [ui_standard_stereo_eq],
 
-        CtrlFilter(5) >> ui_line_mix_eq,
-        CtrlFilter(6) >> ui_player_mix_eq,
-        CtrlFilter(7) >> Discard(),
+        CtrlFilter(7) >> [ui_player_mix_eq, ui_line_mix_eq],
+
         CtrlFilter(100) >> ui_master,
     ],
 ]
