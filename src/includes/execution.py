@@ -241,7 +241,23 @@ i_rush_trees =  Pass()
 p_rush_trees_foot = Velocity(fixed=110) >> Output(sd90_port_a, channel=1, program=(Classical,51), volume=110, ctrls={93:75, 91:75})
 
 # Execution patch
-p_rush_trees= Pass()
+p_rush_trees=(pk5_filter >>
+    [
+        # Controle de l'éclairage
+        #Filter(NOTEON) >> [
+        #    KeyFilter('C3') >> HueGalaxie,
+        #    KeyFilter(notes=[71]) >> HueGalaxie,
+        #    KeyFilter(notes=[72]) >> HueSoloRed,
+        #],
+        # Controle du séquenceur 
+        # Il faut laisser passer f3 dans un filtre dummy car il sert de Latch
+        [
+            KeyFilter('C3') >> Key('A0'),
+            KeyFilter('D3') >> Key('B0'),
+            KeyFilter('E3') >> Key('D1'),
+            KeyFilter('f3') >> Pass(),
+        ] >> LatchNotes(False, reset='f3') >> p_rush_trees_foot
+    ])
 
 # Rush fin de section ------------------------------------------
 
