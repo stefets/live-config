@@ -218,8 +218,8 @@ _scenes = {
             Scene("Playlist item 2", init_patch = Ctrl(1, 0) >> VLC_PL, patch = Discard()),
         ]),        
     18: SceneGroup("GT-1000", [
-            Scene("U01-1", init_patch = Call(GT1000Patch("U01-3")), patch = Discard()),
-            Scene("U26-3", init_patch = Call(GT1000Patch("U26-3")), patch = Discard()),
+            Scene("U01-1", init_patch = Call(GT1000Patch("U01-1")), patch = Discard()),
+            Scene("U09-3", init_patch = Call(GT1000Patch("U09-3")), patch = Discard()),
             Scene("P01-3", init_patch = Call(GT1000Patch("P01-3")), patch = Discard()),
             Scene("P26-3", init_patch = Call(GT1000Patch("P26-3")), patch = Discard()),
     ]),
