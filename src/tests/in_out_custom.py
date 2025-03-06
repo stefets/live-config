@@ -23,8 +23,6 @@ midimix_midi = "midimix"
 
 q49_midi     = "q49_midi"
 
-gt10b_midi   = "gt10b_midi"
-
 behringer    = "behringer"
 
 sd90_port_a  = "sd90_port_a"
@@ -36,9 +34,11 @@ mpk_port_a   = "mpk_port_a"
 mpk_port_b   = "mpk_port_b"
 mpk_midi     = "mpk_midi"
 mpk_remote   = "mpk_remote"
-graviton     = "graviton"
 virtual      = "virtual"
 rt_midi      = "rt_midi"
+
+gt1000_midi_1 = "gt1000_midi_1"
+gt1000_midi_2 = "gt1000_midi_2"
 
 config(
     initial_scene = 1,
@@ -53,14 +53,14 @@ config(
         (sd90_midi_2,  '.*SD-90 MIDI 2.*',),
         (behringer,    '.*UMC204HD 192k MIDI 1.*'),
         (q49_midi,     '.*Q49 MIDI 1.*',),
-        (gt10b_midi,   '.*GT-10B MIDI 1.*',),
         (mpk_port_a,   '.*MPK249 Port A.*',),
-        (mpk_port_b,   '.*MPK249 Port A.*',),
+        (mpk_port_b,   '.*MPK249 Port B.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-        (graviton,     '.*Graviton USB-MIDI MIDI 1.*',),
         #(virtual,      '.*VirMIDI 31-0.*',),
         #(rt_midi,      '.*RtMidi output.*',),
+        (gt1000_midi_1,'.*GT-1000 MIDI 1.*',),
+        (gt1000_midi_2,'.*GT-1000 MIDI 2.*',),        
     ],
 
     in_ports = [
@@ -71,14 +71,14 @@ config(
         (sd90_midi_2,  '.*SD-90 MIDI 2.*',),
         (behringer,    '.*UMC204HD 192k MIDI 1.*'),
         (q49_midi,     '.*Q49 MIDI 1.*',),
-        (gt10b_midi,   '.*GT-10B MIDI 1.*',),
         (mpk_port_a,   '.*MPK249 Port A.*',),
-        (mpk_port_b,   '.*MPK249 Port A.*',),
+        (mpk_port_b,   '.*MPK249 Port B.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-        (graviton,     '.*Graviton USB-MIDI MIDI 1.*',),
         #(virtual,      '.*VirMIDI 31-0.*',),
         #(rt_midi,      '.*RtMidi output.*',),
+        (gt1000_midi_1,'.*GT-1000 MIDI 1.*',),
+        (gt1000_midi_2,'.*GT-1000 MIDI 2.*',),        
     ],
 )
 
@@ -88,7 +88,7 @@ hook(
     MemorizeScene(".hook.memorize_scene")
 )
 
-_pre_patch  = ~Filter(SYSRT_CLOCK) >> Print('input', portnames='in') 
+_pre_patch  = Print('input', portnames='in') 
 _post_patch = Print('output',portnames='out')
 
 # TODO Not working fine
@@ -96,7 +96,9 @@ EQ_Low = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,20,21,08,0
 
 run(
     control=Pass(),
-    scenes = {1:Scene("Debug", init_patch=Pass(), patch=Pass())},
+    scenes = {
+        1 : Scene("Empty", init_patch = Discard(), patch = Pass()),
+    },
     pre=_pre_patch,
     post=_post_patch,
 )

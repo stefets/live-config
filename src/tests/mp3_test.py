@@ -3,7 +3,7 @@ import time
 from mpyg321.MPyg123Player import MPyg123Player
 from mpyg321.consts import PlayerStatus
 
-player = MPyg123Player("mpg123", audiodevice='GT10B')
+player = MPyg123Player("mpg123", audiodevice='SD90')
 time.sleep(3)
 player.quit()
 #player.silence()

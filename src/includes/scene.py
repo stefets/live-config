@@ -1,11 +1,10 @@
 
 global_init = [
     SD90_Initialize,
-    HueNormal,
 ]
 _scenes = {
-    1: Scene("Initialize", init_patch = global_init, patch = Discard()),
-    2: SceneGroup("Rush", [
+     1: Scene("Initialize", init_patch = global_init, patch = Discard()),
+     2: SceneGroup("Rush", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Generic", init_patch = MPG123_PLAYLIST, patch = Discard()//p_rush),
             Scene("Subdivisions", init_patch = i_rush_sub//MPG123_PLAYLIST, patch = Discard()//p_rush),
@@ -51,17 +50,17 @@ _scenes = {
             #             pk5_channel : marathon_chords,
             #         })),
         ]),
-    3: SceneGroup("BassCover", [
+     3: SceneGroup("BassCover", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Default", init_patch = MPG123_PLAYLIST, patch = Discard()),
             Scene("Queen", init_patch = MPG123_PLAYLIST, patch = Discard()),
             Scene("T4F", init_patch = MPG123_PLAYLIST, patch = Discard()),
             Scene("Toto", init_patch = MPG123_PLAYLIST, patch = Discard()),
         ]),
-    4: SceneGroup("Recording", [
+     4: SceneGroup("Recording", [
             Scene("Bass", init_patch = Discard(), patch = p_transport),
         ]),
-    5: SceneGroup("BigCountry", [
+     5: SceneGroup("BigCountry", [
             Scene("BassCover", init_patch = MPG123_PLAYLIST//Discard(), patch = Discard()),
             Scene("InBigCountry", init_patch = i_big_country, patch = p_big_country),
             Scene("HighlandScenery", init_patch = Discard(), patch = p_highland_scenery),
@@ -69,12 +68,12 @@ _scenes = {
             Scene("AnglePark", init_patch = Discard(), patch = p_pk5ctrl_generic>>p_base),
             Scene("Wonderland", init_patch = p_wonderland_init, patch = p_wonderland),
         ]),
-    6: SceneGroup("GrandDesignsStudio", [
+     6: SceneGroup("GrandDesignsStudio", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("PowerWindows", init_patch = MPG123_PLAYLIST, patch = p_rush_gd_demo),
             Scene("Futur", init_patch = Discard(), patch = p_transport),
         ]),
-    7: SceneGroup("Keyboard", [
+     7: SceneGroup("Keyboard", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Init SD90", init_patch = SD90_Initialize, patch = Discard()),
             Scene("BrushingSaw", LatchNotes(False, reset='f3') >> Transpose(-24) >> BrushingSaw),
@@ -101,7 +100,7 @@ _scenes = {
             Scene("Drums", Amb_Room),
             Scene("NatureSound", akai_pad_nature),
         ]),
-    8: SceneGroup("Cakewalk", [ 
+     8: SceneGroup("Cakewalk", [ 
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Play", init_patch = CakePlay, patch = Discard()),
             Scene("Stop", init_patch = CakeStop, patch = Discard()),
@@ -110,7 +109,7 @@ _scenes = {
             Scene("Forward", init_patch = CakeForward, patch = Discard()),
             Scene("Drum", init_patch = SP1, patch = Output(sd90_midi_2, channel=10, program=(ClassicalDrum, 1))),
         ]),
-    9: SceneGroup("MP3Player", [
+     9: SceneGroup("MP3Player", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Hits", init_patch = MPG123_PLAYLIST, patch = Discard()),
             Scene("Middleage", init_patch = MPG123_PLAYLIST, patch = Discard()),
@@ -174,7 +173,6 @@ _scenes = {
                         Filter(NOTEOFF) >> SendOSC(56420, '/mute', 1, 0),
                     ]),
                 ]),
-                
     12: SceneGroup("SoundcraftUI", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Record", init_patch = ui_rectoggle, patch = Discard()),
@@ -198,16 +196,16 @@ _scenes = {
             Scene("Starlight", init_patch = Discard(), patch = p_muse),
             Scene("Stockholm", init_patch = Discard(), patch = [p_muse_stockholm, p_muse]),
         ]),
-    15:  SceneGroup("Sampler", [
+    15: SceneGroup("Sampler", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Track1", init_patch = Discard(), patch = Discard()),
         ]),
-    16:  SceneGroup("POC", [
+    16: SceneGroup("POC", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("INTERLUDE", patch = pk5 >> Filter(NOTEON) >> NoteOn(0, 0) >> VLC_PL, init_patch = Pass()),
 
         ]),
-    17:  SceneGroup("VLC", [
+    17: SceneGroup("VLC", [
             Scene("Select a Subscene", init_patch = Discard(), patch = Discard()),
             Scene("Stop", init_patch = VLC_STOP, patch = Discard()),
             Scene("Play", init_patch = VLC_PLAY, patch = Discard()),
@@ -219,25 +217,22 @@ _scenes = {
             Scene("Playlist item 1", init_patch = NoteOn(0, 0) >> VLC_PL, patch = Discard()),
             Scene("Playlist item 2", init_patch = Ctrl(1, 0) >> VLC_PL, patch = Discard()),
         ]),        
-    18:  SceneGroup("GT10B", [
-            Scene("Select a Bank", init_patch = Discard(), patch = Discard()),
-            Scene("U01_A", init_patch = [GT10Bank0, Program(1) >> GT10BProgramSelector], patch = Discard()),
-            Scene("U01_B", init_patch = [GT10Bank0, Program(2) >> GT10BProgramSelector], patch = Discard()),
+    18: SceneGroup("GT-1000", [
+            Scene("U01-1", init_patch = Call(GT1000Patch("U01-1")), patch = Discard()),
+            Scene("U09-3", init_patch = Call(GT1000Patch("U09-3")), patch = Discard()),
+            Scene("P01-3", init_patch = Call(GT1000Patch("P01-3")), patch = Discard()),
+            Scene("P26-3", init_patch = Call(GT1000Patch("P26-3")), patch = Discard()),
     ]),
-    19:  SceneGroup("HD500", [
+    19: SceneGroup("ScendId19:Free", [
             Scene("Select option", init_patch = Discard(), patch = Discard()),
-            Scene("TunerOn", init_patch = [HD500_TunerOn], patch = Discard()),
-            Scene("TunerOff", init_patch = [HD500_TunerOff], patch = Discard()),
-            Scene("FS1", init_patch = [FS1], patch = Discard()),
-            Scene("FS2", init_patch = [FS2], patch = Discard()),
     ]),    
-    20:  SceneGroup("ID20:Free", [
+    20: SceneGroup("SceneId20:Free", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
     ]),    
-    21:  SceneGroup("ID21:Free", [
+    21: SceneGroup("SceneId21:Free", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
     ]),    
-    22:  SceneGroup("ID22:Free", [
+    22: SceneGroup("SceneId22:Free", [
             Scene("Select", init_patch = Discard(), patch = Discard()),
     ]),    
 }

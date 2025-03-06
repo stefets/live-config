@@ -4,8 +4,7 @@
         "includes/functions.py",
         "includes/filters.py",
         "includes/sd90.py",
-        "includes/gt10b.py",
-        "includes/hd500.py",
+        "includes/gt1000.py",
         "includes/soundcraft.py",
         "includes/hue.py",
         "includes/cakewalk.py",
@@ -19,7 +18,7 @@
         "asoundrc": {
             "U192k": "",
             "SD90": "",
-            "GT10B": ""
+            "GT1000" : ""
         }
     }
 }

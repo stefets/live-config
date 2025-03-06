@@ -36,14 +36,12 @@ from extensions.philips import *
 from extensions.spotify import *
 from extensions.midimix import *
 from extensions.httpclient import *
-from extensions.hd500 import *
+from extensions.gt1000 import GT1000Patch
 
 # Port name alias
 midimix_midi = "midimix"
 
 q49_midi     = "q49_midi"
-
-gt10b_midi   = "gt10b_midi"
 
 behringer    = "behringer"
 
@@ -56,8 +54,10 @@ mpk_port_a   = "mpk_port_a"
 mpk_port_b   = "mpk_port_b"
 mpk_midi     = "mpk_midi"
 mpk_remote   = "mpk_remote"
-graviton     = "graviton"
 
+gt1000_midi_1 = "gt1000_midi_1"
+gt1000_midi_2 = "gt1000_midi_2"
+ 
 config(
 
     initial_scene = 1,
@@ -65,7 +65,6 @@ config(
     client_name = 'mididings',
 
     out_ports = [
-
         (midimix_midi, ".*MIDI Mix MIDI 1.*",),
         (sd90_port_a,  '.*SD-90 Part A.*'),
         (sd90_port_b,  '.*SD-90 Part B.*'),
@@ -73,16 +72,15 @@ config(
         (sd90_midi_2,  '.*SD-90 MIDI 2.*',),
         (behringer,    '.*UMC204HD 192k MIDI 1.*'),
         (q49_midi,     '.*Q49 MIDI 1.*',),
-        (gt10b_midi,   '.*GT-10B MIDI 1.*',),
         (mpk_port_a,   '.*MPK249 Port A.*',),
-        (mpk_port_b,   '.*MPK249 Port A.*',),
+        (mpk_port_b,   '.*MPK249 Port B.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-        (graviton,     '.*Graviton USB-MIDI MIDI 1.*',),
+        (gt1000_midi_1,'.*GT-1000 MIDI 1.*',),
+        (gt1000_midi_2,'.*GT-1000 MIDI 2.*',),
     ],
 
     in_ports = [
-
         (midimix_midi, ".*MIDI Mix MIDI 1.*",),
         (sd90_port_a,  '.*SD-90 Part A.*'),
         (sd90_port_b,  '.*SD-90 Part B.*'),
@@ -90,12 +88,12 @@ config(
         (sd90_midi_2,  '.*SD-90 MIDI 2.*',),
         (behringer,    '.*UMC204HD 192k MIDI 1.*'),
         (q49_midi,     '.*Q49 MIDI 1.*',),
-        (gt10b_midi,   '.*GT-10B MIDI 1.*',),
         (mpk_port_a,   '.*MPK249 Port A.*',),
-        (mpk_port_b,   '.*MPK249 Port A.*',),
+        (mpk_port_b,   '.*MPK249 Port B.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-        (graviton,     '.*Graviton USB-MIDI MIDI 1.*',),
+        (gt1000_midi_1,'.*GT-1000 MIDI 1.*',),
+        (gt1000_midi_2,'.*GT-1000 MIDI 2.*',),        
     ],
 
 )
