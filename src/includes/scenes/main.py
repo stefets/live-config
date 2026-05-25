@@ -115,7 +115,7 @@ _scenes = {
         ],
     ),
     4: SceneGroup(
-        "",
+        "Not assigned",
         [
             Scene("", init_patch=Discard(), patch=Discard()),
         ],
