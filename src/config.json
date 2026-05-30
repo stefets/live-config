@@ -12,7 +12,7 @@
         "includes/patches/cakewalk.py",
         "includes/patches/execution.py",
         "includes/patches/extensions.py",
-        "includes/scenes/main.py",
+        "includes/scenes.py",
         "includes/controls.py",
         "includes/functions/run.py"
     ],
