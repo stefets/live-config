@@ -20,7 +20,7 @@ cw_trigger_value = 127
 cw_channel = 1
 
 # Output port
-cw_port = sd90_midi_2
+cw_port = um2_midi_2
 
 # ---------------
 
