@@ -304,3 +304,9 @@ restless_natives = [
 
 # Glissando
 p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, sd90_port_a))
+
+p_grand_designs_mando = [
+    (CtrlFilter(89) >> CakePlay),
+    (CtrlFilter(90) >> CakeRecord),
+    (CtrlFilter(81) >> Port(mpk_midi)),
+]

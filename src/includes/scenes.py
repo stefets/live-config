@@ -21,6 +21,7 @@ _scenes = {
                 patch=p_rush_trees,
             ),
             Scene("Grand Designs", init_patch=Call(GT1KPreset("U10-1")), patch=Discard()),
+            Scene("Grand Designs Mando", init_patch=Call(GT1KPreset("U10-4")), patch=p_grand_designs_mando),
             Scene("Marathon", init_patch=i_rush, patch=Discard()),
             Scene("YYZ", init_patch=i_rush // MPG123_PLAYLIST, patch=p_rush),
             Scene("Limelight", init_patch=i_rush // MPG123_PLAYLIST, patch=p_rush),
@@ -131,7 +132,7 @@ _scenes = {
             ),
             Scene("InBigCountry", init_patch=i_big_country, patch=p_big_country),
             Scene("HighlandScenery", init_patch=Discard(), patch=p_highland_scenery),
-            Scene("Inwards", init_patch=Discard(), patch=p_pk5ctrl_generic >> p_base),
+            Scene("Inwards", init_patch=Call(GT1KPreset("U08-5")), patch=Port(mpk_midi)),
             Scene("AnglePark", init_patch=Discard(), patch=p_pk5ctrl_generic >> p_base),
             Scene("Wonderland", init_patch=Call(GT1KPreset("U09-5")), patch=Discard()),
             Scene(
@@ -193,9 +194,9 @@ _scenes = {
         "Cakewalk",
         [
             Scene("Select a Subscene", init_patch=Discard(), patch=Discard()),
-            Scene("Play", init_patch=CakePlay, patch=Discard()),
+            Scene("Play", init_patch=CakePlay, patch=CtrlFilter(89) >> CakePlay),
             Scene("Stop", init_patch=CakeStop, patch=Discard()),
-            Scene("Record", init_patch=CakeRecord, patch=Discard()),
+            Scene("Record", init_patch=CakeRecord, patch=CtrlFilter(90) >> CakeRecord),
             Scene("Rewind", init_patch=CakeRewind, patch=Discard()),
             Scene("Forward", init_patch=CakeForward, patch=Discard()),
             Scene(
@@ -396,6 +397,9 @@ _scenes = {
             Scene("P01-3", init_patch=Call(GT1KPreset("P01-3")), patch=Discard()),
             Scene("P26-3", init_patch=Call(GT1KPreset("P26-3")), patch=Discard()),
             Scene("U47-1", init_patch=Call(GT1KPreset("U47-1")), patch=Discard()),
+            Scene("Num1OnInit",  init_patch=Ctrl(mpk_midi, 9, 1, 127), patch=Discard()),
+            Scene("Num1OffInit",  init_patch=Ctrl(mpk_midi, 9, 1, 0), patch=Discard()),
+            Scene("FCBNUM1",  init_patch=Discard(), patch=Port(mpk_midi)),
         ],
     ),
 }
