@@ -9,7 +9,7 @@ from mididings import engine
 from mididings.extra import *
 from mididings.extra.osc import *
 from mididings.extra.inotify import *
-from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent
+from mididings.event import PitchbendEvent, MidiEvent, NoteOnEvent, NoteOffEvent, CtrlEvent, ProgramEvent, SysExEvent
 from mididings.engine import scenes, current_scene, switch_scene, current_subscene, switch_subscene, output_event
 
 # Setup path
