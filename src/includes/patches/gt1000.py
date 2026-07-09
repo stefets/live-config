@@ -7,15 +7,11 @@
 gt1k_port = "mpk_midi"
 
 # Internal Midi channel configured in the gt1k USB options
-gt1k_channel = 9
+gt1k_listen_channel = 9
 
-gt1kBankSelector = CtrlValueFilter(0, 4) >> [
-      Ctrl(gt1k_port, gt1k_channel, EVENT_CTRL, EVENT_VALUE), 
-      Ctrl(gt1k_port, gt1k_channel, 32, 0),
-]
-gt1kBank1 = Ctrl(0, 0) >> gt1kBankSelector
-gt1kBank2 = Ctrl(0, 1) >> gt1kBankSelector
-gt1kBank3 = Ctrl(0, 2) >> gt1kBankSelector
-gt1kBank4 = Ctrl(0, 3) >> gt1kBankSelector
+gt1k = CtrlSplit({
+    55 : [Print("OK"),Ctrl(gt1k_port, gt1k_listen_channel, 1, EVENT_VALUE)],
+})
 
-gt1kProgramSelector = Program(gt1k_port, channel = gt1k_channel, program = EVENT_VALUE)
+
+
