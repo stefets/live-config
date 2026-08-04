@@ -5,9 +5,9 @@
 Thanks to the programmer Dominic Sacré for that unbeatable MIDI engine - a true masterpiece
 
 https://github.com/mididings/mididings (Community version! My prayers have been answered)
-
 '''
 
+        
 import os
 import sys
 import json
@@ -23,7 +23,6 @@ from mididings.engine import scenes, current_scene, switch_scene, current_subsce
 
 # Setup path
 sys.path.append(os.path.realpath('.'))
-
 # Environment
 from dotenv import load_dotenv
 load_dotenv()
@@ -34,10 +33,7 @@ from extensions.vlc import *
 from extensions.philips import *
 from extensions.spotify import *
 from extensions.midimix import *
-from extensions.httpclient import *
 from extensions.gt1000 import GT1KPreset
-
-
         
 midimix_midi = "midimix"
 
@@ -637,15 +633,15 @@ ui_line_mix=[
         SendOSC(osb_port, mix_path, 1, cursor_value_converter, "l"),
     ]
 
-line_bass = [
+line_bass_stereo = [
         SendOSC(osb_port, bass_path, 0, cursor_value_converter, "l"),    
         SendOSC(osb_port, bass_path, 1, cursor_value_converter, "l"),
     ]
-line_mid = [
+line_mid_stereo = [
         SendOSC(osb_port, mid_path, 0, cursor_value_converter, "l"),    
         SendOSC(osb_port, mid_path, 1, cursor_value_converter, "l"),
     ]
-line_treble = [
+line_treble_stereo = [
         SendOSC(osb_port, treble_path, 0, cursor_value_converter, "l"),    
         SendOSC(osb_port, treble_path, 1, cursor_value_converter, "l"),
     ]
@@ -661,15 +657,15 @@ ui_player_mix=[
         SendOSC(osb_port, mix_path, 1, cursor_value_converter, "p"),
     ]
 
-player_bass = [
+player_bass_stereo = [
         SendOSC(osb_port, bass_path, 0, cursor_value_converter, "p"),    
         SendOSC(osb_port, bass_path, 1, cursor_value_converter, "p"),
     ]
-player_mid = [
+player_mid_stereo = [
         SendOSC(osb_port, mid_path, 0, cursor_value_converter, "p"),    
         SendOSC(osb_port, mid_path, 1, cursor_value_converter, "p"),
     ]
-player_treble = [
+player_treble_stereo = [
         SendOSC(osb_port, treble_path, 0, cursor_value_converter, "p"),
         SendOSC(osb_port, treble_path, 1, cursor_value_converter, "p"),
     ]
@@ -702,23 +698,23 @@ ui_standard_stereo_fx = ChannelSplit({
 # 
 ui_standard_stereo_eq = ChannelSplit({
             1:mix_stereo,
-            2:bass_stereo,
+            2:treble_stereo,
             3:mid_stereo,
-            4:treble_stereo,
+            4:bass_stereo,
         })
 
 ui_line_mix_eq = ChannelSplit({
             1:ui_line_mix,
-            2:line_bass,
-            3:line_mid,
-            4:line_treble,
+            2:line_treble_stereo,
+            3:line_mid_stereo,
+            4:line_bass_stereo,
         })
 
 ui_player_mix_eq = ChannelSplit({
             1:ui_player_mix,
-            2:player_bass,
-            3:player_mid,
-            4:player_treble,
+            2:player_treble_stereo,
+            3:player_mid_stereo,
+            4:player_bass_stereo,
         })
         
 
@@ -1057,8 +1053,10 @@ p_big_country_live =  Pass()
 # Song : Highland Scenery
 p_highland_scenery =  Pass()
 
+# Song : Peace in our time
+p_peace_in_our_time = ([pk5_filter, mpk_a_filter] >> Channel(16) >> Transpose(-24) >> Port(sd90_midi_2))
 
-# Big Country fin de section ------------------------------------------
+# Big Country end region ------------------------------------------
 
 # Band : Octobre ------------------------------------------
 
@@ -1068,7 +1066,7 @@ i_octobre = []
 # Execution patch
 p_octobre =  Pass()
 
-# Octobre fin de section ------------------------------------------
+# Octobre end region ------------------------------------------
 
 # Band : Rush ------------------------------------------
 
@@ -1111,7 +1109,7 @@ p_rush_trees=(pk5_filter >>
         ] >> LatchNotes(False, reset='f3') >> p_rush_trees_foot
     ])
 
-# Rush fin de section ------------------------------------------
+# Rush end region ------------------------------------------
 
 # Muse Band
 p_muse = p_pk5ctrl_generic >> p_base
@@ -1212,7 +1210,7 @@ _scenes = {
             ),
             Scene(
                 "TheTrees",
-                init_patch=MPG123_PLAYLIST,
+                init_patch=[Call(GT1KPreset("U10-3")), MPG123_PLAYLIST],
                 patch=p_rush_trees,
             ),
             Scene("Grand Designs", init_patch=Call(GT1KPreset("U10-1")), patch=Discard()),
@@ -1310,14 +1308,15 @@ _scenes = {
         ],
     ),
     4: SceneGroup(
-        "Recording",
+        "Not assigned",
         [
-            Scene("Bass", init_patch=Discard(), patch=p_transport),
+            Scene("", init_patch=Discard(), patch=Discard()),
         ],
     ),
     5: SceneGroup(
         "BigCountry",
         [
+            Scene("Select a Subscene", init_patch=Discard(), patch=Discard()),
             Scene(
                 "BassCover",
                 init_patch=MPG123_PLAYLIST // Call(GT1KPreset("U47-1")),
@@ -1338,6 +1337,8 @@ _scenes = {
             ),
             Scene("Fields of fire (bass)", init_patch=Call(GT1KPreset("U47-5")), patch=Discard()),
             Scene("Fields of fire (guit)", init_patch=Call(GT1KPreset("U09-2")), patch=Discard()),
+            Scene("PeaceInOurTime (bass)", init_patch=Call(GT1KPreset("U47-5")), patch=p_peace_in_our_time),
+            Scene("PeaceInOurTime (guit)", init_patch=Call(GT1KPreset("U09-1")), patch=Discard()),
         ],
     ),
     6: SceneGroup(
@@ -1565,7 +1566,7 @@ _scenes = {
     17: SceneGroup(
         "VLC",
         [
-            Scene("Select a Subscene", init_patch=Discard(), patch=Discard()),
+            Scene("Select a command", init_patch=Discard(), patch=Discard()),
             Scene("Stop", init_patch=VLC_STOP, patch=Discard()),
             Scene("Play", init_patch=VLC_PLAY, patch=Discard()),
             Scene("Pause", init_patch=VLC_PAUSE, patch=Discard()),
@@ -1580,8 +1581,9 @@ _scenes = {
         ],
     ),
     18: SceneGroup(
-        "GT-1000",
+        "GT1K",
         [
+            Scene("Select GT1K patch", init_patch=Discard(), patch=Discard()),
             Scene("U01-1", init_patch=Call(GT1KPreset("U01-1")), patch=Discard()),
             Scene("U09-3", init_patch=Call(GT1KPreset("U09-3")), patch=Discard()),
             Scene("P01-3", init_patch=Call(GT1KPreset("P01-3")), patch=Discard()),

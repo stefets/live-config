@@ -61,5 +61,9 @@ control_patch = PortSplit({
     behringer   : Pass(),
     
     # Direct routing of the Numark to the virtual port used by Mixxx
-    numark_midi_0 : Port(mixxx_midi_0)  
+    numark_midi_0 : Port(mixxx_midi_0),
+    um2_midi_1 : ChannelSplit({
+        15 : gt1k,
+    }),
+
 })

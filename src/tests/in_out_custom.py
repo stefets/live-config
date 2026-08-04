@@ -21,7 +21,6 @@ load_dotenv()
 # Port name alias
 midimix_midi = "midimix"
 
-
 behringer    = "behringer"
 
 sd90_port_a  = "sd90_port_a"
@@ -33,14 +32,17 @@ mpk_port_a   = "mpk_port_a"
 mpk_port_b   = "mpk_port_b"
 mpk_midi     = "mpk_midi"
 mpk_remote   = "mpk_remote"
-virtual      = "virtual"
-rt_midi      = "rt_midi"
 
 gt1000_midi_1 = "gt1000_midi_1"
 gt1000_midi_2 = "gt1000_midi_2"
-numark_midi   = "numark_midi"
+numark_midi_0 = "numark_midi_0"
+mixxx_midi_0  = "mixxx_midi_0"
+
+um2_midi_1 = "um2_midi_1"
+um2_midi_2 = "um2_midi_2"
 
 config(
+
     initial_scene = 1,
     backend = 'alsa',
     client_name = 'mididings',
@@ -56,11 +58,12 @@ config(
         (mpk_port_b,   '.*MPK249 Port B.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-        #(virtual,      '.*VirMIDI 31-0.*',),
-        #(rt_midi,      '.*RtMidi output.*',),
         (gt1000_midi_1,'.*GT-1000 MIDI 1.*',),
         (gt1000_midi_2,'.*GT-1000 MIDI 2.*',),
-        (numark_midi,  '.*Party Mix MKII MIDI 1.*',),
+        (mixxx_midi_0,'.*VirMIDI.*-0$',),
+        (numark_midi_0,'.*Party Mix MKII MIDI 1.*',),
+        (um2_midi_1,'.*UM-2 MIDI 1.*',),
+        (um2_midi_2,'.*UM-2 MIDI 2.*',),
     ],
 
     in_ports = [
@@ -74,11 +77,11 @@ config(
         (mpk_port_b,   '.*MPK249 Port B.*',),
         (mpk_midi,     '.*MPK249 MIDI.*',),
         (mpk_remote,   '.*MPK249 Remote.*',),
-        #(virtual,      '.*VirMIDI 31-0.*',),
-        #(rt_midi,      '.*RtMidi output.*',),
         (gt1000_midi_1,'.*GT-1000 MIDI 1.*',),
         (gt1000_midi_2,'.*GT-1000 MIDI 2.*',),
-        (numark_midi,  '.*Party Mix MKII MIDI 1.*',),
+        (mixxx_midi_0,'.*VirMIDI.*-0$',),
+        (numark_midi_0,'.*Party Mix MKII MIDI 1.*',),
+        (um2_midi_1,'.*UM-2 MIDI 1.*',),
     ],
 )
 
@@ -88,18 +91,18 @@ hook(
     MemorizeScene(".hook.memorize_scene")
 )
 
-_pre_patch  = Print('input', portnames='in') 
-_post_patch = Print('output',portnames='out')
+pre  = Print('input', portnames='in') 
+post = Print('output',portnames='out')
+
 
 # TODO Not working fine
-EQ_Low = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,20,21,08,00,00,00,25,f7", 13, 6)
+#EQ_Low = Port(sd90_port_a) >> CtrlToSysEx(7, "f0,41,10,00,48,12,02,10,20,21,08,00,00,00,25,f7", 13, 6)
 
 run(
     control=Pass(),
     scenes = {
-        1 : Scene("Empty", init_patch = Discard(), patch = Pass()),
+        1 : Scene("Empty", init_patch = =Discard(), patch =Discard()),
     },
-    pre=_pre_patch,
-    post=_post_patch,
+    pre=pre,
+    post=post,
 )
-

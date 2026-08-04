@@ -25,6 +25,7 @@
 - Update CHANGELOG
 - Update CHANGELOG and README
 - Update CHANGELOG with new scenes and MIDI patch for "Peace in Our Time"
+- Update rendered script example
 
 ### 🧪 Testing
 
@@ -37,6 +38,7 @@
 - Reorder channel check
 - Remove HttpClient and related test files
 - Update scene
+- Update scene name
 ## [0.0.1] - 2025-11-10
 
 ### 🚀 Features
