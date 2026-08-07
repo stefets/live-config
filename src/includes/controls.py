@@ -3,14 +3,14 @@
 # Patches for the run().control patch
 #
 
-# Transport filter Filter for MPG123 and Spotipy and VLC
+# Transport filter
 jump_filter    = CtrlFilter(1)  >> CtrlValueFilter(0, 121)
 volume_filter  = CtrlFilter(7)  >> CtrlValueFilter(0, 101)
 trigger_filter = Filter(NOTEON) >> Transpose(-36)
 transport_filter = [jump_filter, volume_filter, trigger_filter]
 
-mpv_controller_1 = transport_filter >> MPG123_SD90_A
-mpv_controller_2 = transport_filter >> MPG123_SD90_B
+mpv_controller_1 = transport_filter >> AUDIO_DEVICE_SD90_A
+mpv_controller_2 = transport_filter >> AUDIO_DEVICE_SD90_B
 vlc_controller_1 = trigger_filter >> VLC_BASE
 
 sd90_controller = Port(sd90_port_a) >> [ 

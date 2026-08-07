@@ -19,9 +19,9 @@ VLC_REPEAT_OFF    = NoteOn(45, 0)  >> VLC_BASE
 VLC_TOGGLE_LOOP   = NoteOn(127, 0) >> VLC_BASE
 VLC_TOGGLE_REPEAT = NoteOn(126, 0) >> VLC_BASE
 
-# MPG123 multiple instances allow me to play sounds in parallal (dmix)
-MPG123_U192k  = Call(Mp3Player("U192k"))
-MPG123_SD90_A = Call(Mp3Player("SD90"))
-MPG123_SD90_B = Call(Mp3Player("SD90"))
+# AUDIO_DEVICE multiple instances allow me to play sounds in parallal (dmix)
+AUDIO_DEVICE_U192k  = Call(MpvClient("U192k"))
+AUDIO_DEVICE_SD90_A = Call(MpvClient("SD90"))
+AUDIO_DEVICE_SD90_B = Call(MpvClient("SD90"))
 # Playlist according to current scene, a singleton is enough
-MPG123_PLAYLIST = Call(Playlist())
+AUDIO_DEVICE_PLAYLIST = Call(Playlist())
