@@ -35,7 +35,8 @@ mpk_remote   = "mpk_remote"
 
 gt1000_midi_1 = "gt1000_midi_1"
 gt1000_midi_2 = "gt1000_midi_2"
-numark_midi_0 = "numark_midi_0"
+numark_midi_pmv3_0  = "numark_midi_pmv3_0"
+numark_midi_pmv2_0  = "numark_midi_pmv2_0"
 mixxx_midi_0  = "mixxx_midi_0"
 
 um2_midi_1 = "um2_midi_1"
