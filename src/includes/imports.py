@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Extensions
-from plugins.mpv import MpvClient
+from adapters.mpv import MpvAdapter
 from extensions.vlc import *
 from extensions.philips import *
 from extensions.spotify import *
