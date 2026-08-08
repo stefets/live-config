@@ -21,9 +21,11 @@ from mididings.event import NoteOnEvent
 from plugins.mpv import MpvClient
 
 class MpvAdapter():
-    def __init__(self, address: str):
+    def __init__(self, address: str, playlist):
         if address is None:
             raise ValueError("IPC socket path must be provided")
+
+        self.playlist = playlist
         
         self.mpv = MpvClient(address)
         

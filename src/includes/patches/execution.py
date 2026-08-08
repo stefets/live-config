@@ -161,7 +161,7 @@ limelight =  Key('d#6') >> Output(sd90_port_a, channel=16, program=(Special1,12)
 
 # Init patch 
 i_centurion = [
-        Call(Playlist()), 
+        Pass(), 
 ]
 
 # Execution patch

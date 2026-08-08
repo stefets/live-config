@@ -20,8 +20,9 @@ VLC_TOGGLE_LOOP   = NoteOn(127, 0) >> VLC_BASE
 VLC_TOGGLE_REPEAT = NoteOn(126, 0) >> VLC_BASE
 
 # AUDIO_DEVICE multiple instances allow me to play sounds in parallal (dmix)
-AUDIO_DEVICE_U192k  = Call(MpvAdapter("/tmp/u192k.sock"))
-AUDIO_DEVICE_SD90_A = Call(MpvAdapter("/tmp/sd90a.sock"))
-AUDIO_DEVICE_SD90_B = Call(MpvAdapter("/tmp/sd90b.sock"))
+manager = PlaylistManager()
+AUDIO_DEVICE_U192k  = Call(MpvAdapter("/tmp/u192k.sock", manager.playlist))
+AUDIO_DEVICE_SD90_A = Call(MpvAdapter("/tmp/sd90a.sock", manager.playlist))
+AUDIO_DEVICE_SD90_B = Call(MpvAdapter("/tmp/sd90b.sock", manager.playlist))   
 # Playlist according to current scene, a singleton is enough
-MPV_PLAYLIST = Call(Playlist())
+PLAYLIST_MANAGER = Call(manager)
