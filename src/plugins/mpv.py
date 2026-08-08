@@ -1,5 +1,6 @@
 import os
 import json
+import socket
 
 """
 This plugin allows communication with mpv player through socket.
@@ -59,13 +60,7 @@ class MpvClient():
     def toggle_mute(self):
         self.set_property("mute", not self.get_property("mute"))
 
-    def forward(self):
-        self.on_jump(self.jump_offset)
-
-    def rewind(self):
-        self.on_jump(-self.jump_offset)
-
-    def on_jump(self, offset):
+    def seek(self, offset):
         self.command("seek", offset, "relative")
 
     def set_volume(self, value):
