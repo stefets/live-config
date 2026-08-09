@@ -13,7 +13,6 @@ class Terminal:
         self.spacer = " " * 80
 
     def write_line(self, text) -> None:
-        self.clear_screen()
         print("{}{}{}{}".format(Style.BRIGHT, Fore.GREEN, text, Style.RESET_ALL))
 
     def write_line2(self, text1, text2) -> None:
