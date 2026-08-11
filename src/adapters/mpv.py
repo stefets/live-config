@@ -26,6 +26,7 @@ class MpvAdapter():
             raise ValueError("IPC socket path must be provided")
 
         self.playlist = playlist
+        self.volume = 100
         
         self.mpv = MpvClient(address)
         
@@ -66,6 +67,8 @@ class MpvAdapter():
                 (7, 8): self.set_volume,
             }
         )
+
+        self.current_entry = -1
         
     # call from mididings
     def __call__(self, ev):
@@ -138,22 +141,17 @@ class MpvAdapter():
         self.playlist.load_from_file()
 
     def on_play(self, ev):
-        if (
-            self.current_entry == 0
-            or self.current_scene != current_scene()
-            or self.current_subscene != current_subscene()
-        ):
-            """The context has externally been changed"""
-            """ Refresh the playlist according the current scene/subscene """
-            self.mpv.pause()
-            self.current_scene = current_scene()
-            self.current_subscene = current_subscene()
-            self.playlist.load_from_file()
-        if ev.data1 > self.playlist.len():
+        index = ev.data1
+
+        if index > len(self.playlist.songs):
             return
-        self.mpv.load_list(ev.data1, self.playlist.filename)
-        self.current_entry = ev.data1
-        self.update_display()
+
+        self.mpv.command(
+            "loadfile",
+            str(self.playlist.songs[index - 1])
+        )
+
+        self.current_entry = index
 
     def on_toggle_pause(self, ev):
         """Pause if playing, else resume if paused"""
