@@ -126,7 +126,6 @@ class MpvAdapter():
         switch_scene(self.current_scene)
 
         self.current_entry = 0
-        self.playlist.load_from_file()
 
     def next_subscene(self, ev):
         self.on_switch_subscene(1)
@@ -138,7 +137,6 @@ class MpvAdapter():
         switch_subscene(current_subscene() + offset)
         self.current_subscene = current_subscene()
         self.current_entry = 0
-        self.playlist.load_from_file()
 
     def on_play(self, ev):
         index = ev.data1
