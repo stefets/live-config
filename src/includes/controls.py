@@ -11,6 +11,7 @@ transport_filter = [jump_filter, volume_filter, trigger_filter]
 
 mpv_controller_1 = transport_filter >> AUDIO_DEVICE_SD90_A
 mpv_controller_2 = transport_filter >> AUDIO_DEVICE_SD90_B
+mpv_controller_3= transport_filter >> AUDIO_DEVICE_U192k
 vlc_controller_1 = trigger_filter >> VLC_BASE
 
 sd90_controller = Port(sd90_port_a) >> [ 
