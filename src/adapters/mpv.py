@@ -26,9 +26,17 @@ class MpvAdapter():
             raise ValueError("IPC socket path must be provided")
 
         self.playlist = playlist
-        self.volume = 100
-        
+        self.jump_offset = 10
+        self.autonext = False
+
+        # The MPV client instance        
         self.mpv = MpvClient(address)
+
+        self.volume = 100
+        self.mpv.volume(self.volume)
+
+        # Show things in stdout
+        self.terminal = Terminal()
         
         # Accepted range | Range array over the note_mapping array
         # Upper bound is exclusive
@@ -69,7 +77,7 @@ class MpvAdapter():
         )
 
         self.current_entry = -1
-        
+
     # call from mididings
     def __call__(self, ev):
         self.ctrl_range_mapping[ev.data1](
@@ -148,7 +156,6 @@ class MpvAdapter():
             "loadfile",
             str(self.playlist.songs[index - 1])
         )
-
         self.current_entry = index
 
     def on_toggle_pause(self, ev):
@@ -179,11 +186,12 @@ class MpvAdapter():
             self.on_play(ev)
 
     def set_volume(self, ev):
-        if ev.data2 % 5 != 0:
+        if ev.data2 % 2 != 0:
             return
         self.volume = ev.data2
         self.mpv.volume(self.volume)
         self.update_display()
+
 
     def set_offset(self, ev):
         jump = int(ev.data2 / 2)
