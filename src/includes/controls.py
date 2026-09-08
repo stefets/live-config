@@ -51,8 +51,7 @@ control_patch = PortSplit({
         4 : mpg123_controller_2,
     }),
     mpk249_port_a : mpk_249_261_controller,
-    # TODO: Refact to abstract the Transpose later
-    mpk261_port_a : Transpose(12) >> mpk_249_261_controller,
+    mpk261_port_a : mpk_249_261_controller,
     mpk249_port_b : ChannelSplit({
          1 : Program(sd90_port_a, EVENT_CHANNEL, EVENT_VALUE),
          2 : Channel(1) >> Port(mixxx_midi_0),
