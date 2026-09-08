@@ -3,7 +3,7 @@ from typing import Any
 from mididings.engine import output_event
 from mididings.event import ProgramEvent, CtrlEvent, SysExEvent
 
-target_port = "mpk249_midi"    # The output port where the MIDI messages will be sent connected to the MIDI IN of the GT1000
+target_port = "mpk261_midi"    # The output port where the MIDI messages will be sent connected to the MIDI IN of the GT1000
 target_channel = 9          # The listen channel configured in the GT1000 
 
 class GT1KPreset():
