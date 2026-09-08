@@ -3,7 +3,7 @@ from typing import Any
 from mididings.engine import output_event
 from mididings.event import ProgramEvent
 
-target_port = "mpk_midi"    # The output port where the PC will be sent connected to the MIDI IN of the HD500
+target_port = "mpk249_midi"    # The output port where the PC will be sent connected to the MIDI IN of the HD500
 target_channel = 15         # The listen channel configured in the HD500 
 
 class HD500PC():

@@ -8,7 +8,7 @@
 hd500_channel = 15
 
 # Connecté a quel port MIDI ?
-hd500_port = mpk_midi
+hd500_port = mpk249_midi
 
 # Abstract patch (must be chained before by a Ctrl(c,v))
 # Example: 
