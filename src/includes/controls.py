@@ -50,7 +50,10 @@ mpk_249_261_controller =  ChannelSplit({
 control_patch = PortSplit({
     midimix_midi : soundcraft_control,
     mpk249_midi : ChannelSplit({
-        4 : mpg123_controller_2,
+        4 : mpv_controller_2,
+    }),
+    mpk261_midi : ChannelSplit({
+        4 : mpv_controller_2,
     }),
     mpk249_port_a : mpk_249_261_controller,
     mpk261_port_a : mpk_249_261_controller,
