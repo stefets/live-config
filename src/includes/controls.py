@@ -6,7 +6,8 @@
 # Transport filter Filter for MPG123 and Spotipy and VLC
 jump_filter    = CtrlFilter(1)  >> CtrlValueFilter(0, 121)
 volume_filter  = CtrlFilter(7)  >> CtrlValueFilter(0, 101)
-trigger_filter = Filter(NOTEON) >> Transpose(-36)
+# TODO: Adjust Transpose for the MPK249 later (-36) and MPK261 (-24) to match the correct note range for triggering samples
+trigger_filter = Filter(NOTEON) >> Transpose(-24)
 transport_filter = [jump_filter, volume_filter, trigger_filter]
 
 mpg123_controller_1 = transport_filter >> MPG123_SD90_A
