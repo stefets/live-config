@@ -5,6 +5,6 @@
     "controller": {
         "size": 49,
         "channel": 8,
-        "port": "mpk_midi"
+        "port": "mpk249_midi"
     }
 }

@@ -132,7 +132,7 @@ _scenes = {
             ),
             Scene("InBigCountry", init_patch=i_big_country, patch=p_big_country),
             Scene("HighlandScenery", init_patch=Discard(), patch=p_highland_scenery),
-            Scene("Inwards", init_patch=Call(GT1KPreset("U08-5")), patch=Port(mpk_midi)),
+            Scene("Inwards", init_patch=Call(GT1KPreset("U08-5")), patch=Port(mpk249_midi)),
             Scene("AnglePark", init_patch=Discard(), patch=p_pk5ctrl_generic >> p_base),
             Scene("Wonderland", init_patch=Call(GT1KPreset("U09-5")), patch=Discard()),
             Scene(
@@ -397,9 +397,9 @@ _scenes = {
             Scene("P01-3", init_patch=Call(GT1KPreset("P01-3")), patch=Discard()),
             Scene("P26-3", init_patch=Call(GT1KPreset("P26-3")), patch=Discard()),
             Scene("U47-1", init_patch=Call(GT1KPreset("U47-1")), patch=Discard()),
-            Scene("Num1OnInit",  init_patch=Ctrl(mpk_midi, 9, 1, 127), patch=Discard()),
-            Scene("Num1OffInit",  init_patch=Ctrl(mpk_midi, 9, 1, 0), patch=Discard()),
-            Scene("FCBNUM1",  init_patch=Discard(), patch=Port(mpk_midi)),
+            Scene("Num1OnInit",  init_patch=Ctrl(mpk249_midi, 9, 1, 127), patch=Discard()),
+            Scene("Num1OffInit",  init_patch=Ctrl(mpk249_midi, 9, 1, 0), patch=Discard()),
+            Scene("FCBNUM1",  init_patch=Discard(), patch=Port(mpk249_midi)),
         ],
     ),
 }

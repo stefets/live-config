@@ -4,7 +4,7 @@
 # This device has 4 banks, each bank contains 50 programs 
 #
 
-gt1k_port = "mpk_midi"
+gt1k_port = "mpk249_midi"
 
 # Internal Midi channel configured in the gt1k USB options
 gt1k_listen_channel = 9

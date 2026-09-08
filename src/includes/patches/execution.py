@@ -274,7 +274,7 @@ p_muse_stockholm = pk5_filter >> [
 p_rush = p_pk5ctrl_generic >> p_base
 
 p_wonderland_init = [
-    Ctrl(mpk_port_a, 3, 2, 64) >> ui_standard_stereo_fx,
+    Ctrl(mpk249_port_a, 3, 2, 64) >> ui_standard_stereo_fx,
 ]
 p_wonderland = p_pk5ctrl_generic >> [
      p_base,
@@ -308,5 +308,5 @@ p_glissando=(Filter(NOTEON) >> Call(glissando, 48, 84, 100, 0.01, -1, sd90_port_
 p_grand_designs_mando = [
     (CtrlFilter(89) >> CakePlay),
     (CtrlFilter(90) >> CakeRecord),
-    (CtrlFilter(81) >> Port(mpk_midi)),
+    (CtrlFilter(81) >> Port(mpk249_midi)),
 ]

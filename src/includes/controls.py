@@ -34,22 +34,26 @@ soundcraft_controller=Filter(CTRL|NOTE) >> [
         Filter(NOTE) >> NoteOn(EVENT_NOTE, 127) >> Port(midimix_midi),
     ] >> soundcraft_control
 
-
-# Midi input control patch
-control_patch = PortSplit({
-    midimix_midi : soundcraft_control,
-    mpk_midi : ChannelSplit({
-        4 : mpg123_controller_2,
-    }),
-    mpk_port_a : ChannelSplit({
+# Common controller for MPK249 and MPK261
+mpk_249_261_controller =  ChannelSplit({
          1 : CakewalkController,
          8 : mpg123_controller_1,
          4 : mpg123_controller_2,
         12 : vlc_controller_1,
         13 : p_hue,
         14: sd90_controller,
+    })
+
+# Midi input control patch
+control_patch = PortSplit({
+    midimix_midi : soundcraft_control,
+    mpk249_midi : ChannelSplit({
+        4 : mpg123_controller_2,
     }),
-    mpk_port_b : ChannelSplit({
+    mpk249_port_a : mpk_249_261_controller,
+    # TODO: Refact to abstract the Transpose later
+    mpk261_port_a : Transpose(12) >> mpk_249_261_controller,
+    mpk249_port_b : ChannelSplit({
          1 : Program(sd90_port_a, EVENT_CHANNEL, EVENT_VALUE),
          2 : Channel(1) >> Port(mixxx_midi_0),
          8 : mpg123_controller_1,
