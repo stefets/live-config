@@ -152,8 +152,8 @@ class MpvAdapter():
         if index > len(self.playlist.songs):
             return
 
-        self.mpv.command(
-            "loadfile",
+        self.mpv.unpause()  # Unpause before loading the file to ensure playback starts immediately
+        self.mpv.load(
             str(self.playlist.songs[index - 1])
         )
         self.current_entry = index
