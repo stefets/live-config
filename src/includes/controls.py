@@ -39,8 +39,9 @@ soundcraft_controller=Filter(CTRL|NOTE) >> [
 # Common controller for MPK249 and MPK261
 mpk_249_261_controller =  ChannelSplit({
          1 : CakewalkController,
-         8 : mpv_controller_1,
+         2 : mpv_controller_3,
          4 : mpv_controller_2,
+         8 : mpv_controller_1,
         12 : vlc_controller_1,
         13 : p_hue,
         14: sd90_controller,
