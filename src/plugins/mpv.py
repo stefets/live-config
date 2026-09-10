@@ -1,6 +1,8 @@
 import os
 import json
 import socket
+import threading
+from queue import Queue
 
 """
 This plugin allows communication with mpv player through socket.
@@ -16,31 +18,49 @@ class MpvClient():
         
         self.request_id = 0
         self._buffer = b""
+        self.responses = {}
+        
+        self._reader_thread = threading.Thread(
+            target=self._read_socket,
+            daemon=True
+        )
+        self._reader_thread.start()
+        
+        self.command("observe_property", 1, "pause")
 
     def command(self, *args):
         self.request_id += 1
+        request_id = self.request_id
+
+        response_queue = Queue()
+        self.responses[request_id] = response_queue
+            
         payload = {
             "command": list(args),
-            "request_id": self.request_id
+            "request_id": request_id
         }
 
-        self.socket.sendall(
-            (json.dumps(payload) + "\n").encode("utf-8")
-        )
+        try:
+            self.socket.sendall(
+                (json.dumps(payload) + "\n").encode("utf-8")
+            )
+            
+            response = response_queue.get()
+            return response
 
-        return self._read_response(self.request_id)
-        
-    def set_property(self, property_name, value):
-        self.command("set_property", property_name, value)
-        
-    def get_property(self, property_name):
-        response = self.command("get_property", property_name)
-        return response.get("data")
+        finally:
+            del self.responses[request_id]
 
-    def _read_response(self, request_id):
+    def _read_socket(self):
         while True:
+            chunk = self.socket.recv(4096)
 
-            # On a peut-être déjà plusieurs messages dans le buffer
+            if not chunk:
+                print("MPV SOCKET CLOSED")
+                return
+
+            self._buffer += chunk
+
             while b"\n" in self._buffer:
                 line, self._buffer = self._buffer.split(b"\n", 1)
 
@@ -49,22 +69,27 @@ class MpvClient():
 
                 message = json.loads(line.decode("utf-8"))
 
-                print("MPV MESSAGE:", message)
+                request_id = message.get("request_id")
 
-                if message.get("request_id") == request_id:
-                    return message
+                if request_id is not None:
+                    response_queue = self.responses.get(request_id)
 
-            # Pas encore trouvé notre réponse : on lit davantage
-            chunk = self.socket.recv(4096)
+                    if response_queue:
+                        response_queue.put(message)
 
-            if not chunk:
-                raise ConnectionError("MPV IPC socket closed")
-
-            self._buffer += chunk
-            
+                elif "event" in message:
+                    print("MPV EVENT:", message)
+    
+    def set_property(self, property_name, value):
+        self.command("set_property", property_name, value)
+        
+    def get_property(self, property_name):
+        response = self.command("get_property", property_name)
+        return response.get("data")                        
+    
     def load(self, filename):
         self.command("loadfile", filename)
-
+        
     def pause(self):
         self.set_property("pause", True)
 
@@ -88,3 +113,4 @@ class MpvClient():
 
     def volume(self, value):
         self.set_property("volume", value)
+        
